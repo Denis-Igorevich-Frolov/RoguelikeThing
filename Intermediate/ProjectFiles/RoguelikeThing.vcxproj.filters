@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="17.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <None Include="..\..\RoguelikeThing.uproject" />
+    <Filter Include="Source">
+      <UniqueIdentifier>{FDF2A64C-65D3-4B70-B82D-EF92994DE6F6}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Source\RoguelikeThing.Target.cs">
+      <Filter>Source</Filter>
+    </None>
+    <None Include="..\..\Source\RoguelikeThingEditor.Target.cs">
+      <Filter>Source</Filter>
+    </None>
+    <Filter Include="Config">
+      <UniqueIdentifier>{81E89465-F697-4AF2-8192-51D11133F67E}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Config\DefaultEditor.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultEngine.ini">
+      <Filter>Config</Filter>
+    </None>
+    <None Include="..\..\Config\DefaultGame.ini">
+      <Filter>Config</Filter>
+    </None>
+    <Filter Include="Source\RoguelikeThing">
+      <UniqueIdentifier>{7561C60B-357B-41B1-ACB8-BF7BF858D672}</UniqueIdentifier>
+    </Filter>
+    <None Include="..\..\Source\RoguelikeThing\RoguelikeThing.Build.cs">
+      <Filter>Source\RoguelikeThing</Filter>
+    </None>
+    <ClCompile Include="..\..\Source\RoguelikeThing\RoguelikeThing.cpp">
+      <Filter>Source\RoguelikeThing</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\RoguelikeThing\RoguelikeThing.h">
+      <Filter>Source\RoguelikeThing</Filter>
+    </ClInclude>
+    <ClCompile Include="..\..\Source\RoguelikeThing\RoguelikeThingGameModeBase.cpp">
+      <Filter>Source\RoguelikeThing</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\RoguelikeThing\RoguelikeThingGameModeBase.h">
+      <Filter>Source\RoguelikeThing</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

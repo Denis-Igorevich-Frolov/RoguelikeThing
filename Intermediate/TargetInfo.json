@@ -1,0 +1,14 @@
+{
+	"Targets": [
+		{
+			"Name": "RoguelikeThing",
+			"Path": "E:\\Unreal projects\\RoguelikeThing\\RoguelikeThing\\Source\\RoguelikeThing.Target.cs",
+			"Type": "Game"
+		},
+		{
+			"Name": "RoguelikeThingEditor",
+			"Path": "E:\\Unreal projects\\RoguelikeThing\\RoguelikeThing\\Source\\RoguelikeThingEditor.Target.cs",
+			"Type": "Editor"
+		}
+	]
+}
