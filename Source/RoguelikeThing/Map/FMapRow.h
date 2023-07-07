@@ -15,5 +15,5 @@ struct ROGUELIKETHING_API FMapRow
 	GENERATED_BODY()
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-		TArray<FMapCellStructure> row;
+	TArray<FMapCellStructure> row;
 };

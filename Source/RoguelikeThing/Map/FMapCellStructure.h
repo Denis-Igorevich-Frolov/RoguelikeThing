@@ -16,8 +16,20 @@ struct ROGUELIKETHING_API FMapCellStructure
     GENERATED_BODY()
 public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    ECellType type;
+    bool isValid = false;
+
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    bool isExplored = 0;
+    ECellType type = ECellType::Emptiness;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool isExplored = false;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool ThereIsRightWall = false;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool ThereIsLeftWall = false;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool ThereIsRightDoor = false;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool ThereIsLeftDoor = false;
 };
 

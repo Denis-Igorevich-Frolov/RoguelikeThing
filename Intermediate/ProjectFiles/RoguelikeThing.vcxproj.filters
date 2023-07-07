@@ -71,4 +71,9 @@
       <Filter>Source\RoguelikeThing\Save</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Source\RoguelikeThing\Map\FMapRow.cpp">
+      <Filter>Source\RoguelikeThing\Map</Filter>
+    </ClCompile>
+  </ItemGroup>
 </Project>
