@@ -3,7 +3,12 @@
 
 #include "RoguelikeThing/Save/MapMatrix.h"
 
-FMapCellStructure UMapMatrix::GetCell(UPARAM()int32 row, UPARAM()int32 col)
+UMapMatrix::UMapMatrix()
+{
+    InvalidEmptyCell.isValid = false;
+}
+
+const FMapCellStructure& UMapMatrix::GetCell(int32 row, int32 col)
 {
     if (map.IsValidIndex(row)) {
         if (map[row].row.IsValidIndex(col))
@@ -13,7 +18,7 @@ FMapCellStructure UMapMatrix::GetCell(UPARAM()int32 row, UPARAM()int32 col)
             if (GEngine)
                 GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT(
                     "FMapCellStructure gave an error in the GetCell function: Index out of range"));
-            return FMapCellStructure();
+            return InvalidEmptyCell;
         }
     }
     else {
@@ -21,8 +26,42 @@ FMapCellStructure UMapMatrix::GetCell(UPARAM()int32 row, UPARAM()int32 col)
         if (GEngine)
             GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT(
                 "FMapCellStructure gave an error in the GetCell function: Index out of range"));
-        return FMapCellStructure();
+        return InvalidEmptyCell;
     }
+}
+
+bool UMapMatrix::SetCell(FMapCellStructure Cell, int32 row, int32 col)
+{
+    if (map.IsValidIndex(row)) {
+        if (map[row].row.IsValidIndex(col)) {
+            map[col].row[row] = Cell;
+            return true;
+        }
+        else {
+            UE_LOG(LogTemp, Error, TEXT("FMapCellStructure gave an error in the SetCell function: Index out of range"));
+            if (GEngine)
+                GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT(
+                    "FMapCellStructure gave an error in the SetCell function: Index out of range"));
+            return false;
+        }
+    }
+    else {
+        UE_LOG(LogTemp, Error, TEXT("FMapCellStructure gave an error in the SetCell function: Index out of range"));
+        if (GEngine)
+            GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, TEXT(
+                "FMapCellStructure gave an error in the SetCell function: Index out of range"));
+        return false;
+    }
+}
+
+const TArray<FMapRow>& UMapMatrix::GetMap()
+{
+    return map;
+}
+
+void UMapMatrix::SetMap(UPARAM(ref) TArray<FMapRow>& newMap)
+{
+    map = newMap;
 }
 
 int32 UMapMatrix::GetRowLength()
@@ -43,7 +82,6 @@ void UMapMatrix::addRow()
     FMapRow newRow;
     for (int i = 0; i < GetColLength(); i++) {
         FMapCellStructure newCell;
-        newCell.isValid = true;
         newRow.row.Emplace(newCell);
     }
 
@@ -55,22 +93,21 @@ void UMapMatrix::addCol()
     for (FMapRow& row : map)
     {
         FMapCellStructure newCell;
-        newCell.isValid = true;
         row.row.Emplace(newCell);
     }
 }
 
-void UMapMatrix::addMultipleRows(UPARAM() int32 quantity) {
+void UMapMatrix::addMultipleRows(int32 quantity) {
     for (int i = 0; i < quantity; i++)
         addRow();
 }
 
-void UMapMatrix::addMultipleCols(UPARAM() int32 quantity) {
+void UMapMatrix::addMultipleCols(int32 quantity) {
     for (int i = 0; i < quantity; i++)
         addCol();
 }
 
-void UMapMatrix::stretchRows(UPARAM()int32 stretchTo)
+void UMapMatrix::stretchRows(int32 stretchTo)
 {
     int numberOfNewRows = stretchTo - map.Num();
 
@@ -86,7 +123,7 @@ void UMapMatrix::stretchRows(UPARAM()int32 stretchTo)
     }
 }
 
-void UMapMatrix::stretchCols(UPARAM()int32 stretchTo)
+void UMapMatrix::stretchCols(int32 stretchTo)
 {
     int numberOfNewCols;
     if (map.IsValidIndex(0))
@@ -106,7 +143,7 @@ void UMapMatrix::stretchCols(UPARAM()int32 stretchTo)
     }
 }
 
-void UMapMatrix::stretchMap(UPARAM()int32 rowsStretchTo, UPARAM()int32 colsStretchTo)
+void UMapMatrix::stretchMap(int32 rowsStretchTo, int32 colsStretchTo)
 {
     stretchRows(rowsStretchTo);
     stretchCols(colsStretchTo);
@@ -118,7 +155,6 @@ void UMapMatrix::addRowToBeginning()
     FMapRow newRow;
     for (int i = 0; i < GetColLength(); i++) {
         FMapCellStructure newCell;
-        newCell.isValid = true;
         newRow.row.Emplace(newCell);
     }
 
@@ -130,24 +166,23 @@ void UMapMatrix::addColToBeginning()
     for (FMapRow& row : map)
     {
         FMapCellStructure newCell;
-        newCell.isValid = true;
         row.row.Insert(newCell, 0);
     }
 }
 
-void UMapMatrix::addMultipleRowsToBeginning(UPARAM()int32 quantity)
+void UMapMatrix::addMultipleRowsToBeginning(int32 quantity)
 {
     for (int i = 0; i < quantity; i++)
         addRowToBeginning();
 }
 
-void UMapMatrix::addMultipleColsToBeginning(UPARAM()int32 quantity)
+void UMapMatrix::addMultipleColsToBeginning(int32 quantity)
 {
     for (int i = 0; i < quantity; i++)
         addColToBeginning();
 }
 
-void UMapMatrix::stretchRowsAtBeginning(UPARAM()int32 stretchTo)
+void UMapMatrix::stretchRowsAtBeginning(int32 stretchTo)
 {
     int numberOfNewRows = stretchTo - map.Num();
 
@@ -163,7 +198,7 @@ void UMapMatrix::stretchRowsAtBeginning(UPARAM()int32 stretchTo)
     }
 }
 
-void UMapMatrix::stretchColsAtBeginning(UPARAM()int32 stretchTo)
+void UMapMatrix::stretchColsAtBeginning(int32 stretchTo)
 {
     int numberOfNewCols;
     if (map.IsValidIndex(0))
@@ -183,7 +218,7 @@ void UMapMatrix::stretchColsAtBeginning(UPARAM()int32 stretchTo)
     }
 }
 
-void UMapMatrix::stretchMapAtBeginning(UPARAM()int32 rowsStretchTo, UPARAM()int32 colsStretchTo)
+void UMapMatrix::stretchMapAtBeginning(int32 rowsStretchTo, int32 colsStretchTo)
 {
     stretchRowsAtBeginning(rowsStretchTo);
     stretchColsAtBeginning(colsStretchTo);

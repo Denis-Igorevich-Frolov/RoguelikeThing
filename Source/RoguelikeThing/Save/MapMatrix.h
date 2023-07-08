@@ -15,13 +15,25 @@ UCLASS(Blueprintable, BlueprintType)
 class ROGUELIKETHING_API UMapMatrix : public USaveGame
 {
 	GENERATED_BODY()
+
+private:
+	FMapCellStructure InvalidEmptyCell;
+	TArray<FMapRow> map;
 	
 public:
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	TArray<FMapRow> map;
+	UMapMatrix();
 
 	UFUNCTION(BlueprintCallable)
-	FMapCellStructure GetCell (UPARAM() int32 row, UPARAM() int32 col);
+	const FMapCellStructure& GetCell (int32 row,  int32 col);
+
+	UFUNCTION(BlueprintCallable)
+	bool SetCell (FMapCellStructure Cell,  int32 row,  int32 col);
+
+	UFUNCTION(BlueprintCallable)
+	const TArray<FMapRow>& GetMap();
+
+	UFUNCTION(BlueprintCallable)
+	void SetMap(UPARAM(ref) TArray<FMapRow>& newMap);
 
 	UFUNCTION(BlueprintCallable)
 	int32 GetRowLength();
@@ -36,19 +48,19 @@ public:
 	void addCol();
 
 	UFUNCTION(BlueprintCallable)
-	void addMultipleRows(UPARAM() int32 quantity);
+	void addMultipleRows(int32 quantity);
 
 	UFUNCTION(BlueprintCallable)
-	void addMultipleCols(UPARAM() int32 quantity);
+	void addMultipleCols(int32 quantity);
 
 	UFUNCTION(BlueprintCallable)
-	void stretchRows(UPARAM() int32 stretchTo);
+	void stretchRows(int32 stretchTo);
 
 	UFUNCTION(BlueprintCallable)
-	void stretchCols(UPARAM() int32 stretchTo);
+	void stretchCols(int32 stretchTo);
 
 	UFUNCTION(BlueprintCallable)
-	void stretchMap(UPARAM() int32 rowsStretchTo, UPARAM() int32 colsStretchTo);
+	void stretchMap(int32 rowsStretchTo,  int32 colsStretchTo);
 
 
 
@@ -59,17 +71,17 @@ public:
 	void addColToBeginning();
 
 	UFUNCTION(BlueprintCallable)
-	void addMultipleRowsToBeginning(UPARAM() int32 quantity);
+	void addMultipleRowsToBeginning(int32 quantity);
 
 	UFUNCTION(BlueprintCallable)
-	void addMultipleColsToBeginning(UPARAM() int32 quantity);
+	void addMultipleColsToBeginning(int32 quantity);
 
 	UFUNCTION(BlueprintCallable)
-	void stretchRowsAtBeginning(UPARAM() int32 stretchTo);
+	void stretchRowsAtBeginning(int32 stretchTo);
 
 	UFUNCTION(BlueprintCallable)
-	void stretchColsAtBeginning(UPARAM() int32 stretchTo);
+	void stretchColsAtBeginning(int32 stretchTo);
 
 	UFUNCTION(BlueprintCallable)
-	void stretchMapAtBeginning(UPARAM() int32 rowsStretchTo, UPARAM() int32 colsStretchTo);
+	void stretchMapAtBeginning(int32 rowsStretchTo,  int32 colsStretchTo);
 };
