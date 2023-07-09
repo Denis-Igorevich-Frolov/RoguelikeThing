@@ -41,6 +41,8 @@ public:
 	UFUNCTION(BlueprintCallable)
 	int32 GetColLength();
 
+	///////////////////////////////////////////////////////////////////////////////////////////////
+
 	UFUNCTION(BlueprintCallable)
 	void addRow();
 
@@ -54,15 +56,15 @@ public:
 	void addMultipleCols(int32 quantity);
 
 	UFUNCTION(BlueprintCallable)
-	void stretchRows(int32 stretchTo);
+	void enlargeRows(int32 enlargeTo);
 
 	UFUNCTION(BlueprintCallable)
-	void stretchCols(int32 stretchTo);
+	void enlargeCols(int32 enlargeTo);
 
 	UFUNCTION(BlueprintCallable)
-	void stretchMap(int32 rowsStretchTo,  int32 colsStretchTo);
+	void enlargeMap(int32 enlargeRowsTo,  int32 enlargeColsTo);
 
-
+	///////////////////////////////////////////////////////////////////////////////////////////////
 
 	UFUNCTION(BlueprintCallable)
 	void addRowToBeginning();
@@ -77,11 +79,57 @@ public:
 	void addMultipleColsToBeginning(int32 quantity);
 
 	UFUNCTION(BlueprintCallable)
-	void stretchRowsAtBeginning(int32 stretchTo);
+	void enlargeRowsAtBeginning(int32 enlargeTo);
 
 	UFUNCTION(BlueprintCallable)
-	void stretchColsAtBeginning(int32 stretchTo);
+	void enlargeColsAtBeginning(int32 enlargeTo);
 
 	UFUNCTION(BlueprintCallable)
-	void stretchMapAtBeginning(int32 rowsStretchTo,  int32 colsStretchTo);
+	void enlargeMapAtBeginning(int32 enlargeRowsTo,  int32 enlargeColsTo);
+
+	///////////////////////////////////////////////////////////////////////////////////////////////
+
+	UFUNCTION(BlueprintCallable)
+	void deleteLastRow();
+
+	UFUNCTION(BlueprintCallable)
+	void deleteLastCol();
+
+	UFUNCTION(BlueprintCallable)
+	void deleteMultipleLastRows(int32 quantity);
+
+	UFUNCTION(BlueprintCallable)
+	void deleteMultipleLastCols(int32 quantity);
+
+	UFUNCTION(BlueprintCallable)
+	void truncateRowsFromEnd(int32 truncateTo);
+
+	UFUNCTION(BlueprintCallable)
+	void truncateColsFromEnd(int32 truncateTo);
+
+	UFUNCTION(BlueprintCallable)
+	void truncateMapFromEnd(int32 truncateRowsTo,  int32 truncateColsTo);
+
+	///////////////////////////////////////////////////////////////////////////////////////////////
+
+	UFUNCTION(BlueprintCallable)
+	void deleteFirstRow();
+
+	UFUNCTION(BlueprintCallable)
+	void deleteFirstCol();
+
+	UFUNCTION(BlueprintCallable)
+	void deleteMultipleFirstRows(int32 quantity);
+
+	UFUNCTION(BlueprintCallable)
+	void deleteMultipleFirstCols(int32 quantity);
+
+	UFUNCTION(BlueprintCallable)
+	void truncateRowsFromBeginning(int32 truncateTo);
+
+	UFUNCTION(BlueprintCallable)
+	void truncateColsFromBeginning(int32 truncateTo);
+
+	UFUNCTION(BlueprintCallable)
+	void truncateMapFromBeginning(int32 truncateRowsTo,  int32 truncateColsTo);
 };
