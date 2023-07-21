@@ -3,8 +3,11 @@
 
 #include "MapMatrix.h"
 
+DEFINE_LOG_CATEGORY(MapDataBase);
+
 UMapMatrix::UMapMatrix()
 {
+    mapDataBase = new FSQLiteDatabase();
 }
 
 UMapMatrix::~UMapMatrix()
@@ -17,101 +20,19 @@ UMapMatrix::~UMapMatrix()
 
 void UMapMatrix::Test()
 {
-    mapDataBase = new FSQLiteDatabase();
-    mapDataBase->Open(*FilePath, ESQLiteDatabaseOpenMode::ReadWriteCreate);
-
-    if (mapDataBase->IsValid()) {
-        mapDataBase->Execute(TEXT("BEGIN;"));
-
-        bool TableIsExists = LoadStatement->Create(*mapDataBase, TEXT("SELECT * FROM \"Chunk 0:0\" WHERE id IS 51;"));
-
-        mapDataBase->Execute(TEXT(
-            "CREATE TABLE IF NOT EXISTS \"Chunk 0:0\"("
-            "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-            "\"Col 1\"	INTEGER DEFAULT 11,"
-            "\"Col 2\"	INTEGER DEFAULT 22,"
-            "\"Col 3\"	INTEGER DEFAULT 33,"
-            "\"Col 4\"	INTEGER DEFAULT 44,"
-            "\"Col 5\"	INTEGER DEFAULT 55,"
-            "\"Col 6\"	INTEGER DEFAULT 66,"
-            "\"Col 7\"	INTEGER DEFAULT 32,"
-            "\"Col 8\"	INTEGER DEFAULT 32,"
-            "\"Col 9\"	INTEGER DEFAULT 32,"
-            "\"Col 10\"	INTEGER DEFAULT 32,"
-            "\"Col 11\"	INTEGER DEFAULT 32,"
-            "\"Col 12\"	INTEGER DEFAULT 32,"
-            "\"Col 13\"	INTEGER DEFAULT 32,"
-            "\"Col 14\"	INTEGER DEFAULT 32,"
-            "\"Col 15\"	INTEGER DEFAULT 32,"
-            "\"Col 16\"	INTEGER DEFAULT 32,"
-            "\"Col 17\"	INTEGER DEFAULT 32,"
-            "\"Col 18\"	INTEGER DEFAULT 32,"
-            "\"Col 19\"	INTEGER DEFAULT 32,"
-            "\"Col 20\"	INTEGER DEFAULT 32,"
-            "\"Col 21\"	INTEGER DEFAULT 32,"
-            "\"Col 22\"	INTEGER DEFAULT 32,"
-            "\"Col 23\"	INTEGER DEFAULT 32,"
-            "\"Col 24\"	INTEGER DEFAULT 32,"
-            "\"Col 25\"	INTEGER DEFAULT 32,"
-            "\"Col 26\"	INTEGER DEFAULT 32,"
-            "\"Col 27\"	INTEGER DEFAULT 32,"
-            "\"Col 28\"	INTEGER DEFAULT 32,"
-            "\"Col 29\"	INTEGER DEFAULT 32,"
-            "\"Col 30\"	INTEGER DEFAULT 32,"
-            "\"Col 31\"	INTEGER DEFAULT 32,"
-            "\"Col 32\"	INTEGER DEFAULT 32,"
-            "\"Col 33\"	INTEGER DEFAULT 32,"
-            "\"Col 34\"	INTEGER DEFAULT 32,"
-            "\"Col 35\"	INTEGER DEFAULT 32,"
-            "\"Col 36\"	INTEGER DEFAULT 32,"
-            "\"Col 37\"	INTEGER DEFAULT 32,"
-            "\"Col 38\"	INTEGER DEFAULT 32,"
-            "\"Col 39\"	INTEGER DEFAULT 32,"
-            "\"Col 40\"	INTEGER DEFAULT 32,"
-            "\"Col 41\"	INTEGER DEFAULT 32,"
-            "\"Col 42\"	INTEGER DEFAULT 32,"
-            "\"Col 43\"	INTEGER DEFAULT 32,"
-            "\"Col 44\"	INTEGER DEFAULT 32,"
-            "\"Col 45\"	INTEGER DEFAULT 32,"
-            "\"Col 46\"	INTEGER DEFAULT 32,"
-            "\"Col 47\"	INTEGER DEFAULT 32,"
-            "\"Col 48\"	INTEGER DEFAULT 32,"
-            "\"Col 49\"	INTEGER DEFAULT 32,"
-            "\"Col 50\"	INTEGER DEFAULT 32,"
-            "\"Col 51\"	INTEGER DEFAULT 32"
-            "); "));
-
-        if (!TableIsExists) {
-            for (int i = 0; i < 51; i++)
-                mapDataBase->Execute(TEXT("INSERT INTO \"Chunk 0:0\" DEFAULT VALUES;"));
-        }
-        LoadStatement->Destroy();
-
-        mapDataBase->Execute(TEXT("COMMIT;"));
-    }
-    else {
-        UE_LOG(LogTemp, Error, TEXT("Faled to open mapDataBase: %s"), *mapDataBase->GetLastError());
-    }
-
-    if (!mapDataBase->Close()) {
-        UE_LOG(LogTemp, Error, TEXT("Faled to close mapDataBase: %s"), *mapDataBase->GetLastError());
-    }
-
-    /////////////////////////
-
     mapDataBase->Open(*FilePath, ESQLiteDatabaseOpenMode::ReadWrite);
 
     if (mapDataBase->IsValid()) {
         mapDataBase->Execute(TEXT(
-            "UPDATE \"Chunk 0:0\" SET \"Col 1\" = 234 WHERE id = 4;"
+            "UPDATE \"Structure 0:0\" SET \"Col 1\" = 234 WHERE RowNum = 4;"
             "COMMIT;"));
 
         if (!mapDataBase->Close()) {
-            UE_LOG(LogTemp, Error, TEXT("Faled to close mapDataBase: %s"), *mapDataBase->GetLastError());
+            UE_LOG(MapDataBase, Error, TEXT("Faled to close mapDataBase: %s"), *mapDataBase->GetLastError());
         }
     }
     else {
-        UE_LOG(LogTemp, Error, TEXT("Faled to open mapDataBase: %s"), *mapDataBase->GetLastError());
+        UE_LOG(MapDataBase, Error, TEXT("Faled to open mapDataBase: %s"), *mapDataBase->GetLastError());
     }
 
     /////////////////////////
@@ -120,7 +41,7 @@ void UMapMatrix::Test()
 
     if (mapDataBase->IsValid()) {
         LoadStatement->Reset();
-        LoadStatement->Create(*mapDataBase, TEXT("SELECT * FROM \"Chunk 0:0\" WHERE id IS 4;"), ESQLitePreparedStatementFlags::Persistent);
+        LoadStatement->Create(*mapDataBase, TEXT("SELECT * FROM \"Structure 0:0\" WHERE RowNum IS 4;"), ESQLitePreparedStatementFlags::Persistent);
         if (mapDataBase->IsValid() && LoadStatement->IsValid()) {
             if (LoadStatement->Execute() && LoadStatement->Step() == ESQLitePreparedStatementStepResult::Row) {
                 uint32 ii;
@@ -133,16 +54,72 @@ void UMapMatrix::Test()
                 GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("ASSSS"));
         }
         else {
-            UE_LOG(LogTemp, Error, TEXT("Faled to open mapDataBase: %s"), *mapDataBase->GetLastError());
+            UE_LOG(MapDataBase, Error, TEXT("Faled to open mapDataBase: %s"), *mapDataBase->GetLastError());
         }
         LoadStatement->Destroy();
 
         if (!mapDataBase->Close()) {
-            UE_LOG(LogTemp, Error, TEXT("Faled to close mapDataBase: %s"), *mapDataBase->GetLastError());
+            UE_LOG(MapDataBase, Error, TEXT("Faled to close mapDataBase: %s"), *mapDataBase->GetLastError());
         }
         mapDataBase->Execute(TEXT("COMMIT;"));
     }
     else {
-        UE_LOG(LogTemp, Error, TEXT("Faled to open mapDataBase: %s"), *mapDataBase->GetLastError());
+        UE_LOG(MapDataBase, Error, TEXT("Faled to open mapDataBase: %s"), *mapDataBase->GetLastError());
     }
+}
+
+bool UMapMatrix::CreateMapChunkStructure(int32 chunkRow, int32 chunkCol)
+{
+    if (mapDataBase->Open(*FilePath, ESQLiteDatabaseOpenMode::ReadWriteCreate) && mapDataBase->IsValid()) {
+        if (!mapDataBase->Execute(TEXT("BEGIN;"))) {
+            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunkStructure function when trying to start a mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+            return false;
+        }
+
+        bool TableIsExists = LoadStatement->Create(*mapDataBase, *(FString::Printf(TEXT("SELECT * FROM \"Structure %d:%d\" WHERE RowNum IS %d;"), chunkRow, chunkCol, NumberOfRows)));
+        FString QueryToCreateTable = FString::Printf(TEXT(
+            "CREATE TABLE IF NOT EXISTS \"Structure %d:%d\"("
+            "RowNum INTEGER PRIMARY KEY AUTOINCREMENT,"), chunkRow, chunkCol);
+
+        for (int i = 1; i <= NumberOfRows; i++) {
+            QueryToCreateTable += FString::Printf(TEXT("\"Col %d\" INTEGER"), i);
+            if(i != NumberOfRows)
+                QueryToCreateTable += FString(TEXT(","));
+        }
+
+        QueryToCreateTable += FString(TEXT("); "));
+
+        if (!mapDataBase->Execute(*QueryToCreateTable)) {
+            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunkStructure function when trying to create the mapDataBase table: %s"), *mapDataBase->GetLastError());
+            return false;
+        }
+
+        if (!TableIsExists) {
+            for (int i = 0; i < 51; i++) {
+                if (!mapDataBase->Execute(*(FString::Printf(TEXT("INSERT INTO \"Structure %d:%d\" DEFAULT VALUES;"), chunkRow, chunkCol)))) {
+                    UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunkStructure function when trying to insert a row into mapDataBase: %s"), *mapDataBase->GetLastError());
+                    return false;
+                }
+            }
+        }
+
+        if (!LoadStatement->Destroy())
+            UE_LOG(MapDataBase, Warning, TEXT("!!! Warning in MapMatrix class in CreateMapChunkStructure function - LoadStatement was not destroyed"));
+
+        if (!mapDataBase->Execute(TEXT("COMMIT;"))) {
+            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunkStructure function when trying to commit the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+            return false;
+        }
+    }
+    else {
+        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunkStructure function when trying to open mapDataBase: %s"), *mapDataBase->GetLastError());
+        return false;
+    }
+
+    if (!mapDataBase->Close()) {
+        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunkStructure function when trying to close mapDataBase: %s"), *mapDataBase->GetLastError());
+        return false;
+    }
+
+    return true;
 }

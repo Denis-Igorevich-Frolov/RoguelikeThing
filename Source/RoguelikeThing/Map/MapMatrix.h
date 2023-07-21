@@ -8,6 +8,9 @@
 /**
  * 
  */
+
+DECLARE_LOG_CATEGORY_EXTERN(MapDataBase, Log, All);
+
 UCLASS(Blueprintable, BlueprintType)
 class ROGUELIKETHING_API UMapMatrix : public UObject
 {
@@ -15,6 +18,7 @@ class ROGUELIKETHING_API UMapMatrix : public UObject
 
 private:
 	FString FilePath = FPaths::ProjectSavedDir() + TEXT("/Save/Map.db");
+	int32 NumberOfRows = 51;
 
 	FSQLiteDatabase* mapDataBase = new FSQLiteDatabase();
 	FSQLitePreparedStatement* LoadStatement = new FSQLitePreparedStatement();
@@ -25,4 +29,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Test();
+	UFUNCTION(BlueprintCallable)
+	bool CreateMapChunkStructure(int32 chunkRow, int32 chunkCol);
 };
