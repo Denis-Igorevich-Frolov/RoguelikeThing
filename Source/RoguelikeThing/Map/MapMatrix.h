@@ -23,6 +23,8 @@ private:
 	FSQLiteDatabase* mapDataBase = new FSQLiteDatabase();
 	FSQLitePreparedStatement* LoadStatement = new FSQLitePreparedStatement();
 
+	void mapDataBaseClose(FString FunctionName);
+
 public:
 	UMapMatrix();
 	~UMapMatrix();
@@ -31,4 +33,6 @@ public:
 	void Test();
 	UFUNCTION(BlueprintCallable)
 	bool CreateMapChunkStructure(int32 chunkRow, int32 chunkCol);
+	UFUNCTION(BlueprintCallable)
+	bool SetValueOfMapChunkStructureCell(int32 chunkRow, int32 chunkCol, int32 cellRow, int32 cellCol, int32 value);
 };
