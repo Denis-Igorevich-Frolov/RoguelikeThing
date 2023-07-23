@@ -2,6 +2,8 @@
 *.sdf
 *.opensdf
 *.ipch
+*.db-shm
+*.opendb
 
 /Binaries/*
 /DerivedDataCache/*
