@@ -76,20 +76,20 @@ bool UMapMatrix::CreateMapChunkStructure(int32 chunkRow, int32 chunkCol)
 
         UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunkStructure function: A transaction was started to create table \"Structure %d:%d\""), chunkRow, chunkCol);
 
-        bool TableIsExists = LoadStatement->Create(*mapDataBase, *(FString::Printf(TEXT("SELECT * FROM \"Structure %d:%d\" WHERE RowNum IS %d;"), chunkRow, chunkCol, NumberOfRows)));
+        bool TableIsExists = LoadStatement->Create(*mapDataBase, *(FString::Printf(TEXT("SELECT * FROM \"Structure %d:%d\" WHERE RowNum IS %d;"), chunkRow, chunkCol, TableLength)));
         FString QueryToCreateTable = FString::Printf(TEXT(
             "CREATE TABLE IF NOT EXISTS \"Structure %d:%d\"("
             "RowNum INTEGER PRIMARY KEY AUTOINCREMENT,"), chunkRow, chunkCol);
 
-        for (int i = 1; i <= NumberOfRows; i++) {
+        for (int i = 1; i <= TableLength; i++) {
             QueryToCreateTable += FString::Printf(TEXT("\"Col %d\" INTEGER"), i);
-            if(i != NumberOfRows)
+            if(i != TableLength)
                 QueryToCreateTable += FString(TEXT(","));
         }
 
         QueryToCreateTable += FString(TEXT("); "));
 
-        UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunkStructure function: Generated query to create \"Structure %d:%d\" table with %d columns"), chunkRow, chunkCol, NumberOfRows);
+        UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunkStructure function: Generated query to create \"Structure %d:%d\" table with %d columns"), chunkRow, chunkCol, TableLength);
 
         if (!mapDataBase->Execute(*QueryToCreateTable)) {
             UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunkStructure function when trying to create the mapDataBase table: %s"), *mapDataBase->GetLastError());
@@ -101,7 +101,7 @@ bool UMapMatrix::CreateMapChunkStructure(int32 chunkRow, int32 chunkCol)
 
         if (!TableIsExists) {
 
-                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunkStructure function: The table \"Structure %d:%d\" is initialized for the first time, the consciousness of %d rows in the table is started"), chunkRow, chunkCol, NumberOfRows);
+                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunkStructure function: The table \"Structure %d:%d\" is initialized for the first time, the consciousness of %d rows in the table is started"), chunkRow, chunkCol, TableLength);
 
             for (int i = 0; i < 51; i++) {
                 if (!mapDataBase->Execute(*(FString::Printf(TEXT("INSERT INTO \"Structure %d:%d\" DEFAULT VALUES;"), chunkRow, chunkCol)))) {
@@ -111,7 +111,7 @@ bool UMapMatrix::CreateMapChunkStructure(int32 chunkRow, int32 chunkCol)
                 }
             }
 
-            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunkStructure function: The creation of %d rows in the \"Structure %d:%d\" table has been completed"), NumberOfRows, chunkRow, chunkCol);
+            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunkStructure function: The creation of %d rows in the \"Structure %d:%d\" table has been completed"), TableLength, chunkRow, chunkCol);
         }
 
         if (!LoadStatement->Destroy()) {
@@ -144,9 +144,26 @@ bool UMapMatrix::CreateMapChunkStructure(int32 chunkRow, int32 chunkCol)
 
 bool UMapMatrix::SetValueOfMapChunkStructureCell(int32 chunkRow, int32 chunkCol, int32 cellRow, int32 cellCol, int32 value)
 {
+    if (cellRow < 1) {
+        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the UMapMatrix class in the SetValueOfMapChunkStructureCell function - cellRow value (%d) is less than 1"), cellRow);
+        return false;
+    }
+    if (cellRow > TableLength) {
+        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the UMapMatrix class in the SetValueOfMapChunkStructureCell function - cellRow value (%d) is greater than TableLength (%d)"), cellRow , TableLength);
+        return false;
+    }
+    if (cellCol < 1) {
+        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the UMapMatrix class in the SetValueOfMapChunkStructureCell function - cellCol value (%d) is less than 1"), cellCol);
+        return false;
+    }
+    if (cellCol > TableLength) {
+        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the UMapMatrix class in the SetValueOfMapChunkStructureCell function - cellCol value (%d) is greater than TableLength (%d)"), cellCol , TableLength);
+        return false;
+    }
+
     if (mapDataBase->Open(*FilePath, ESQLiteDatabaseOpenMode::ReadWrite) && mapDataBase->IsValid()) {
         if (!mapDataBase->Execute(TEXT("BEGIN;"))) {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the SetValueOfMapChunkStructureCell class in the CreateMapChunkStructure function when trying to start a mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the UMapMatrix class in the SetValueOfMapChunkStructureCell function when trying to start a mapDataBase transaction: %s"), *mapDataBase->GetLastError());
 
             mapDataBaseClose("SetValueOfMapChunkStructureCell");
             return false;

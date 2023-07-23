@@ -18,7 +18,7 @@ class ROGUELIKETHING_API UMapMatrix : public UObject
 
 private:
 	FString FilePath = FPaths::ProjectSavedDir() + TEXT("/Save/Map.db");
-	int32 NumberOfRows = 51;
+	int32 TableLength = 51;
 
 	FSQLiteDatabase* mapDataBase = new FSQLiteDatabase();
 	FSQLitePreparedStatement* LoadStatement = new FSQLitePreparedStatement();
