@@ -32,9 +32,11 @@ public:
 	~UMapMatrix();
 
 	UFUNCTION(BlueprintCallable)
-	bool CreateMapChunkStructure(int32 chunkRow, int32 chunkCol);
+	bool CreateMapChunkStructure(int32 chunkRow, int32 chunkCol, bool autoClose = true);
 	UFUNCTION(BlueprintCallable)
-	bool SetValueOfMapChunkStructureCell(int32 chunkRow, int32 chunkCol, int32 cellRow, int32 cellCol, int32 value);
+	bool SetValueOfMapChunkStructureCell(int32 chunkRow, int32 chunkCol, int32 cellRow, int32 cellCol, int32 value, bool autoClose = true);
 	UFUNCTION(BlueprintCallable)
-	ECellTypeOfMapStructure GetValueOfMapChunkStructureCell(int32 chunkRow, int32 chunkCol, int32 cellRow, int32 cellCol);
+	ECellTypeOfMapStructure GetValueOfMapChunkStructureCell(int32 chunkRow, int32 chunkCol, int32 cellRow, int32 cellCol, bool autoClose = true);
+	UFUNCTION(BlueprintCallable)
+    void mapDataBaseManualClose();
 };
