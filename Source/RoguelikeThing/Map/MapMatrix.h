@@ -2,6 +2,7 @@
 
 #pragma once
 
+#include "CellTypeOfMapStructure.h"
 #include "SQLiteDatabase.h"
 #include "MapMatrix.generated.h"
 
@@ -35,4 +36,6 @@ public:
 	bool CreateMapChunkStructure(int32 chunkRow, int32 chunkCol);
 	UFUNCTION(BlueprintCallable)
 	bool SetValueOfMapChunkStructureCell(int32 chunkRow, int32 chunkCol, int32 cellRow, int32 cellCol, int32 value);
+	UFUNCTION(BlueprintCallable)
+	ECellTypeOfMapStructure GetValueOfMapChunkStructureCell(int32 chunkRow, int32 chunkCol, int32 cellRow, int32 cellCol);
 };
