@@ -25,13 +25,12 @@ private:
 	FSQLitePreparedStatement* LoadStatement = new FSQLitePreparedStatement();
 
 	void mapDataBaseClose(FString FunctionName);
+	void destroyLoadStatement(FString FunctionName);
 
 public:
 	UMapMatrix();
 	~UMapMatrix();
 
-	UFUNCTION(BlueprintCallable)
-	void Test();
 	UFUNCTION(BlueprintCallable)
 	bool CreateMapChunkStructure(int32 chunkRow, int32 chunkCol);
 	UFUNCTION(BlueprintCallable)

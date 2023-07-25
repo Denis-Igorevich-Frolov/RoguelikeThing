@@ -32,9 +32,13 @@ void UMapMatrix::mapDataBaseClose(FString FunctionName)
     UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the %s function: mapDataBase has been closed"), *FunctionName);
 }
 
-void UMapMatrix::Test()
+void UMapMatrix::destroyLoadStatement(FString FunctionName)
 {
-    
+    if (!LoadStatement->Destroy()) {
+        UE_LOG(MapDataBase, Warning, TEXT("Warning in MapMatrix class in %s function - LoadStatement was not destroyed. If this warning appears only once during the initial table initialization, ignore it"), *FunctionName);
+    }
+    else
+        UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the %s function: The LoadStatement object has been destroyed"), *FunctionName);
 }
 
 bool UMapMatrix::CreateMapChunkStructure(int32 chunkRow, int32 chunkCol)
@@ -49,6 +53,8 @@ bool UMapMatrix::CreateMapChunkStructure(int32 chunkRow, int32 chunkCol)
         UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunkStructure function: A transaction was started to create table \"Structure %d:%d\""), chunkRow, chunkCol);
 
         bool TableIsExists = LoadStatement->Create(*mapDataBase, *(FString::Printf(TEXT("SELECT * FROM \"Structure %d:%d\" WHERE RowNum IS %d;"), chunkRow, chunkCol, TableLength)));
+        destroyLoadStatement("CreateMapChunkStructure");
+        
         FString QueryToCreateTable = FString::Printf(TEXT(
             "CREATE TABLE IF NOT EXISTS \"Structure %d:%d\"("
             "RowNum INTEGER PRIMARY KEY AUTOINCREMENT,"), chunkRow, chunkCol);
@@ -85,12 +91,6 @@ bool UMapMatrix::CreateMapChunkStructure(int32 chunkRow, int32 chunkCol)
 
             UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunkStructure function: The creation of %d rows in the \"Structure %d:%d\" table has been completed"), TableLength, chunkRow, chunkCol);
         }
-
-        if (!LoadStatement->Destroy()) {
-            UE_LOG(MapDataBase, Warning, TEXT("Warning in MapMatrix class in CreateMapChunkStructure function - LoadStatement was not destroyed. If this warning appears only once during the initial table initialization, ignore it"));
-        }
-        else
-            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunkStructure function: The LoadStatement object has been destroyed"));
 
         if (!mapDataBase->Execute(TEXT("COMMIT;"))) {
             UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunkStructure function when trying to commit the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
@@ -216,17 +216,12 @@ ECellTypeOfMapStructure UMapMatrix::GetValueOfMapChunkStructureCell(int32 chunkR
 
                 UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the GetValueOfMapChunkStructureCell function: The value %d was obtained at index %d:%d from the \"Structure %d:%d\" table"), result, cellRow, cellCol, chunkRow, chunkCol);
 
-                if (CellType->IsValidEnumValue(result)) {
+                if (result >=0 && result < CellType->GetMaxEnumValue()) {
                     ECellTypeOfMapStructure enumResult = (ECellTypeOfMapStructure)result;
 
                     UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the GetValueOfMapChunkStructureCell function: The value %d received at index %d:%d from the \"Structure %d:%d\" table is valid for conversion to an enumeration"), result, cellRow, cellCol, chunkRow, chunkCol);
 
-                    if (!LoadStatement->Destroy()) {
-                        UE_LOG(MapDataBase, Warning, TEXT("Warning in MapMatrix class in GetValueOfMapChunkStructureCell function - LoadStatement was not destroyed"));
-                    }
-                    else
-                        UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the GetValueOfMapChunkStructureCell function: The LoadStatement object has been destroyed"));
-
+                    destroyLoadStatement("GetValueOfMapChunkStructureCell");
                     mapDataBaseClose("GetValueOfMapChunkStructureCell");
 
                     return enumResult;
@@ -234,6 +229,7 @@ ECellTypeOfMapStructure UMapMatrix::GetValueOfMapChunkStructureCell(int32 chunkR
                 else {
                     UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetValueOfMapChunkStructureCell function when trying to cast the value %d to the ECellTypeOfMapStructure data type obtained at index %d:%d from the \"Structure %d:%d\" table - this number is not valid for casting to ECellTypeOfMapStructure"), result, cellRow, cellCol, chunkRow, chunkCol);
 
+                    destroyLoadStatement("GetValueOfMapChunkStructureCell");
                     mapDataBaseClose("GetValueOfMapChunkStructureCell");
                     return ECellTypeOfMapStructure::Error;
                 }
@@ -241,6 +237,7 @@ ECellTypeOfMapStructure UMapMatrix::GetValueOfMapChunkStructureCell(int32 chunkR
             else {
                 UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetValueOfMapChunkStructureCell function when trying to load the value at index %d:%d from table \"Structure %d:%d\": %s"), cellRow, cellCol, chunkRow, chunkCol, *mapDataBase->GetLastError());
 
+                destroyLoadStatement("GetValueOfMapChunkStructureCell");
                 mapDataBaseClose("GetValueOfMapChunkStructureCell");
                 return ECellTypeOfMapStructure::Error;
             }
@@ -248,6 +245,7 @@ ECellTypeOfMapStructure UMapMatrix::GetValueOfMapChunkStructureCell(int32 chunkR
         else {
             UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetValueOfMapChunkStructureCell function when trying to execute a LoadStatement on table \"Structure %d:%d\": %s"), chunkRow, chunkCol, *mapDataBase->GetLastError());
 
+            destroyLoadStatement("GetValueOfMapChunkStructureCell");
             mapDataBaseClose("GetValueOfMapChunkStructureCell");
             return ECellTypeOfMapStructure::Error;
         }
