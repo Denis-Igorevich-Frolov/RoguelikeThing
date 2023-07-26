@@ -12,6 +12,11 @@
 
 DECLARE_LOG_CATEGORY_EXTERN(MapDataBase, Log, All);
 
+UENUM(BlueprintType)
+enum class MatrixType : uint8 {
+	ChunkStructure	UMETA(DisplayName = "ChunkStructure"),
+};
+
 UCLASS(Blueprintable, BlueprintType)
 class ROGUELIKETHING_API UMapMatrix : public UObject
 {
@@ -24,6 +29,7 @@ private:
 	FSQLiteDatabase* mapDataBase = new FSQLiteDatabase();
 	FSQLitePreparedStatement* LoadStatement = new FSQLitePreparedStatement();
 
+	FString getStringMatrixType(MatrixType matrixType);
 	void mapDataBaseClose(FString FunctionName);
 	void destroyLoadStatement(FString FunctionName);
 
@@ -32,9 +38,9 @@ public:
 	~UMapMatrix();
 
 	UFUNCTION(BlueprintCallable)
-	bool CreateMapChunkStructure(int32 chunkRow, int32 chunkCol, bool autoClose = true);
+	bool CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chunkCol, bool autoClose = true);
 	UFUNCTION(BlueprintCallable)
-	bool SetValueOfMapChunkStructureCell(int32 chunkRow, int32 chunkCol, int32 cellRow, int32 cellCol, int32 value, bool autoClose = true);
+	bool SetValueOfMapChunkCell(MatrixType matrixType,  int32 chunkRow, int32 chunkCol, int32 cellRow, int32 cellCol, int32 value, bool autoClose = true);
 	UFUNCTION(BlueprintCallable)
 	ECellTypeOfMapStructure GetValueOfMapChunkStructureCell(int32 chunkRow, int32 chunkCol, int32 cellRow, int32 cellCol, bool autoClose = true);
 	UFUNCTION(BlueprintCallable)

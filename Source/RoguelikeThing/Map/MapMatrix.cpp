@@ -20,6 +20,19 @@ UMapMatrix::~UMapMatrix()
     }
 }
 
+FString UMapMatrix::getStringMatrixType(MatrixType matrixType)
+{
+    switch (matrixType)
+    {
+    case MatrixType::ChunkStructure:
+        return "Structure";
+        break;
+    default:
+        return "";
+        break;
+    }
+}
+
 void UMapMatrix::mapDataBaseClose(FString FunctionName)
 {
     if (mapDataBase->IsValid()) {
@@ -41,34 +54,36 @@ void UMapMatrix::destroyLoadStatement(FString FunctionName)
         UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the %s function: The LoadStatement object has been destroyed"), *FunctionName);
 }
 
-bool UMapMatrix::CreateMapChunkStructure(int32 chunkRow, int32 chunkCol, bool autoClose)
+bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chunkCol, bool autoClose)
 {
     if (!mapDataBase->IsValid()) {
         if (!mapDataBase->Open(*FilePath, ESQLiteDatabaseOpenMode::ReadWriteCreate)) {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunkStructure function when trying to open mapDataBase: %s"), *mapDataBase->GetLastError());
+            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to open mapDataBase: %s"), *mapDataBase->GetLastError());
             return false;
         }
         else
-            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunkStructure function: mapDataBase has been opened"));
+            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: mapDataBase has been opened"));
     }
 
     if (mapDataBase->IsValid()) {
-        bool TableIsExists = LoadStatement->Create(*mapDataBase, *(FString::Printf(TEXT("SELECT * FROM \"Structure %d:%d\" WHERE RowNum IS %d;"), chunkRow, chunkCol, TableLength)));
-        destroyLoadStatement("CreateMapChunkStructure");
+        FString SMatrixType = getStringMatrixType(matrixType);
+
+        bool TableIsExists = LoadStatement->Create(*mapDataBase, *(FString::Printf(TEXT("SELECT * FROM \"%s %d:%d\" WHERE RowNum IS %d;"), *SMatrixType, chunkRow, chunkCol, TableLength)));
+        destroyLoadStatement("CreateMapChunk");
 
         if (!TableIsExists) {
             if (!mapDataBase->Execute(TEXT("BEGIN;"))) {
-                UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunkStructure function when trying to start a mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+                UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to start a mapDataBase transaction: %s"), *mapDataBase->GetLastError());
                 if (autoClose)
-                    mapDataBaseClose("CreateMapChunkStructure");
+                    mapDataBaseClose("CreateMapChunk");
                 return false;
             }
 
-            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunkStructure function: A transaction was started to create table \"Structure %d:%d\""), chunkRow, chunkCol);
+            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: A transaction was started to create table \"%s %d:%d\""), *SMatrixType, chunkRow, chunkCol);
 
             FString QueryToCreateTable = FString::Printf(TEXT(
-                "CREATE TABLE IF NOT EXISTS \"Structure %d:%d\"("
-                "RowNum INTEGER PRIMARY KEY AUTOINCREMENT,"), chunkRow, chunkCol);
+                "CREATE TABLE IF NOT EXISTS \"%s %d:%d\"("
+                "RowNum INTEGER PRIMARY KEY AUTOINCREMENT,"), *SMatrixType, chunkRow, chunkCol);
 
             for (int i = 1; i <= TableLength; i++) {
                 QueryToCreateTable += FString::Printf(TEXT("\"Col %d\" INTEGER CHECK(\"Col %d\" !=1)"), i, i);
@@ -78,136 +93,138 @@ bool UMapMatrix::CreateMapChunkStructure(int32 chunkRow, int32 chunkCol, bool au
 
             QueryToCreateTable += FString(TEXT("); "));
 
-            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunkStructure function: Generated query to create \"Structure %d:%d\" table with %d columns"), chunkRow, chunkCol, TableLength);
+            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Generated query to create \"%s %d:%d\" table with %d columns"), *SMatrixType, chunkRow, chunkCol, TableLength);
 
             if (!mapDataBase->Execute(*QueryToCreateTable)) {
-                UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunkStructure function when trying to create the mapDataBase table: %s"), *mapDataBase->GetLastError());
+                UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to create the mapDataBase table: %s"), *mapDataBase->GetLastError());
                 if (autoClose)
-                    mapDataBaseClose("CreateMapChunkStructure");
+                    mapDataBaseClose("CreateMapChunk");
                 return false;
             }
 
-            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunkStructure function: Query to create table \"Structure %d:%d\" completed"), chunkRow, chunkCol);
+            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Query to create table \"%s %d:%d\" completed"), *SMatrixType, chunkRow, chunkCol);
 
 
-            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunkStructure function: The consciousness of %d rows in the table \"Structure %d:%d\" is started"), TableLength, chunkRow, chunkCol);
+            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The consciousness of %d rows in the table \"%s %d:%d\" is started"), TableLength, *SMatrixType, chunkRow, chunkCol);
 
             for (int i = 0; i < 51; i++) {
-                if (!mapDataBase->Execute(*(FString::Printf(TEXT("INSERT INTO \"Structure %d:%d\" DEFAULT VALUES;"), chunkRow, chunkCol)))) {
-                    UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunkStructure function when trying to insert a row number %d into mapDataBase: %s"), i+1, *mapDataBase->GetLastError());
+                if (!mapDataBase->Execute(*(FString::Printf(TEXT("INSERT INTO \"%s %d:%d\" DEFAULT VALUES;"), *SMatrixType, chunkRow, chunkCol)))) {
+                    UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to insert a row number %d into mapDataBase: %s"), i+1, *mapDataBase->GetLastError());
                     if (autoClose)
-                        mapDataBaseClose("CreateMapChunkStructure");
+                        mapDataBaseClose("CreateMapChunk");
                     return false;
                 }
             }
 
-            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunkStructure function: The creation of %d rows in the \"Structure %d:%d\" table has been completed"), TableLength, chunkRow, chunkCol);
+            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The creation of %d rows in the \"%s %d:%d\" table has been completed"), TableLength, *SMatrixType, chunkRow, chunkCol);
 
             if (!mapDataBase->Execute(TEXT("COMMIT;"))) {
-                UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunkStructure function when trying to commit the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+                UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to commit the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
 
                 if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
-                    UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkStructureCell function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+                    UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkCell function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
                 }
 
                 if (autoClose)
-                    mapDataBaseClose("CreateMapChunkStructure");
+                    mapDataBaseClose("CreateMapChunk");
                 return false;
             }
 
-            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunkStructure function: The transaction to create the table \"Structure %d:%d\" has been committed"), chunkRow, chunkCol);
-            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunkStructure function: The creation of the \"Structure %d:%d\" table in the %s file is fully complete"), chunkRow, chunkCol, *FilePath);
+            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The transaction to create the table \"%s %d:%d\" has been committed"), *SMatrixType, chunkRow, chunkCol);
+            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The creation of the \"%s %d:%d\" table in the %s file is fully complete"), *SMatrixType, chunkRow, chunkCol, *FilePath);
         }
         else
-            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunkStructure function: Table \"Structure %d:%d\" already exists in file %s"), chunkRow, chunkCol, *FilePath);
+            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Table \"%s %d:%d\" already exists in file %s"), *SMatrixType, chunkRow, chunkCol, *FilePath);
     }
     else {
-        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunkStructure function - mapDataBase is not valid"));
+        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function - mapDataBase is not valid"));
         return false;
     }
 
     if (autoClose)
-        mapDataBaseClose("CreateMapChunkStructure");
+        mapDataBaseClose("CreateMapChunk");
 
     return true;
 }
 
-bool UMapMatrix::SetValueOfMapChunkStructureCell(int32 chunkRow, int32 chunkCol, int32 cellRow, int32 cellCol, int32 value, bool autoClose)
+bool UMapMatrix::SetValueOfMapChunkCell(MatrixType matrixType, int32 chunkRow, int32 chunkCol, int32 cellRow, int32 cellCol, int32 value, bool autoClose)
 {
     if (cellRow < 1) {
-        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the UMapMatrix class in the SetValueOfMapChunkStructureCell function - cellRow value (%d) is less than 1"), cellRow);
+        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the UMapMatrix class in the SetValueOfMapChunkCell function - cellRow value (%d) is less than 1"), cellRow);
         return false;
     }
     if (cellRow > TableLength) {
-        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the UMapMatrix class in the SetValueOfMapChunkStructureCell function - cellRow value (%d) is greater than TableLength (%d)"), cellRow , TableLength);
+        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the UMapMatrix class in the SetValueOfMapChunkCell function - cellRow value (%d) is greater than TableLength (%d)"), cellRow , TableLength);
         return false;
     }
     if (cellCol < 1) {
-        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the UMapMatrix class in the SetValueOfMapChunkStructureCell function - cellCol value (%d) is less than 1"), cellCol);
+        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the UMapMatrix class in the SetValueOfMapChunkCell function - cellCol value (%d) is less than 1"), cellCol);
         return false;
     }
     if (cellCol > TableLength) {
-        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the UMapMatrix class in the SetValueOfMapChunkStructureCell function - cellCol value (%d) is greater than TableLength (%d)"), cellCol , TableLength);
+        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the UMapMatrix class in the SetValueOfMapChunkCell function - cellCol value (%d) is greater than TableLength (%d)"), cellCol , TableLength);
         return false;
     }
 
     if (!mapDataBase->IsValid()) {
         if (!mapDataBase->Open(*FilePath, ESQLiteDatabaseOpenMode::ReadWrite)) {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkStructureCell function when trying to open mapDataBase: %s"), *mapDataBase->GetLastError());
+            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkCell function when trying to open mapDataBase: %s"), *mapDataBase->GetLastError());
             return false;
         }
         else
-            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkStructureCell function: mapDataBase has been opened"));
+            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCell function: mapDataBase has been opened"));
     }
 
     if (mapDataBase->IsValid()) {
+        FString SMatrixType = getStringMatrixType(matrixType);
+
         if (!mapDataBase->Execute(TEXT("BEGIN;"))) {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the UMapMatrix class in the SetValueOfMapChunkStructureCell function when trying to start a mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the UMapMatrix class in the SetValueOfMapChunkCell function when trying to start a mapDataBase transaction: %s"), *mapDataBase->GetLastError());
 
             if (autoClose)
-                mapDataBaseClose("SetValueOfMapChunkStructureCell");
+                mapDataBaseClose("SetValueOfMapChunkCell");
             return false;
         }
 
-        UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkStructureCell function: A transaction to write data to table \"Structure %d:%d\" has begun"), chunkRow, chunkCol);
+        UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCell function: A transaction to write data to table \"%s %d:%d\" has begun"), *SMatrixType, chunkRow, chunkCol);
 
         FString QueryToSetCellValue = FString::Printf(TEXT(
-            "UPDATE \"Structure %d:%d\" SET \"Col %d\" = %d WHERE RowNum = %d;"), chunkRow, chunkCol, cellCol, value, cellRow);
+            "UPDATE \"%s %d:%d\" SET \"Col %d\" = %d WHERE RowNum = %d;"), *SMatrixType, chunkRow, chunkCol, cellCol, value, cellRow);
 
         if (!mapDataBase->Execute(*QueryToSetCellValue)) {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkStructureCell function when trying to set a value %d in the \"Structure %d:%d\" table to cell %d:%d: %s"), value, chunkRow, chunkCol, cellRow, cellCol, *mapDataBase->GetLastError());
+            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkCell function when trying to set a value %d in the \"%s %d:%d\" table to cell %d:%d: %s"), value, *SMatrixType, chunkRow, chunkCol, cellRow, cellCol, *mapDataBase->GetLastError());
 
             if (autoClose)
-                mapDataBaseClose("SetValueOfMapChunkStructureCell");
+                mapDataBaseClose("SetValueOfMapChunkCell");
             return false;
         }
 
-        UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkStructureCell function: The request to write data to table \"Structure %d:%d\" has been completed"), chunkRow, chunkCol);
+        UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCell function: The request to write data to table \"%s %d:%d\" has been completed"), *SMatrixType, chunkRow, chunkCol);
 
         if (!mapDataBase->Execute(TEXT("COMMIT;"))) {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkStructureCell function when trying to commit the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkCell function when trying to commit the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
             
             if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
-                UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkStructureCell function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+                UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkCell function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
             }
 
-            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkStructureCell function: The transaction to write data to table \"Structure %d:%d\" was rolled back"), chunkRow, chunkCol);
+            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCell function: The transaction to write data to table \"%s %d:%d\" was rolled back"), *SMatrixType, chunkRow, chunkCol);
 
             if (autoClose)
-                mapDataBaseClose("SetValueOfMapChunkStructureCell");
+                mapDataBaseClose("SetValueOfMapChunkCell");
             return false;
         }
 
-        UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkStructureCell function: The transaction to write data to table \"Structure %d:%d\" was committed"), chunkRow, chunkCol);
-        UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkStructureCell function: The number %d is fully set to cell %d:%d in the \"Structure %d:%d\" table"), value, cellRow, cellCol, chunkRow, chunkCol);
+        UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCell function: The transaction to write data to table \"%s %d:%d\" was committed"), *SMatrixType, chunkRow, chunkCol);
+        UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCell function: The number %d is fully set to cell %d:%d in the \"%s %d:%d\" table"), value, cellRow, cellCol, *SMatrixType, chunkRow, chunkCol);
     }
     else {
-        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkStructureCell function - mapDataBase is not valid"));
+        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkCell function - mapDataBase is not valid"));
         return false;
     }
 
     if (autoClose)
-        mapDataBaseClose("SetValueOfMapChunkStructureCell");
+        mapDataBaseClose("SetValueOfMapChunkCell");
     return true;
 }
 
