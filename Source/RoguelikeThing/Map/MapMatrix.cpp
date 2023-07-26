@@ -71,7 +71,7 @@ bool UMapMatrix::CreateMapChunkStructure(int32 chunkRow, int32 chunkCol, bool au
                 "RowNum INTEGER PRIMARY KEY AUTOINCREMENT,"), chunkRow, chunkCol);
 
             for (int i = 1; i <= TableLength; i++) {
-                QueryToCreateTable += FString::Printf(TEXT("\"Col %d\" INTEGER"), i);
+                QueryToCreateTable += FString::Printf(TEXT("\"Col %d\" INTEGER CHECK(\"Col %d\" !=1)"), i, i);
                 if (i != TableLength)
                     QueryToCreateTable += FString(TEXT(","));
             }
@@ -175,7 +175,7 @@ bool UMapMatrix::SetValueOfMapChunkStructureCell(int32 chunkRow, int32 chunkCol,
             "UPDATE \"Structure %d:%d\" SET \"Col %d\" = %d WHERE RowNum = %d;"), chunkRow, chunkCol, cellCol, value, cellRow);
 
         if (!mapDataBase->Execute(*QueryToSetCellValue)) {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkStructureCell function when trying to set a value in the \"Structure %d:%d\" table to cell %d:%d: %s"), chunkRow, chunkCol, cellRow, cellCol, *mapDataBase->GetLastError());
+            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkStructureCell function when trying to set a value %d in the \"Structure %d:%d\" table to cell %d:%d: %s"), value, chunkRow, chunkCol, cellRow, cellCol, *mapDataBase->GetLastError());
 
             if (autoClose)
                 mapDataBaseClose("SetValueOfMapChunkStructureCell");
@@ -260,6 +260,7 @@ ECellTypeOfMapStructure UMapMatrix::GetValueOfMapChunkStructureCell(int32 chunkR
 
                 if (result >=0 && result < CellType->GetMaxEnumValue()) {
                     ECellTypeOfMapStructure enumResult = (ECellTypeOfMapStructure)result;
+
 
                     UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the GetValueOfMapChunkStructureCell function: The value %d received at index %d:%d from the  table is valid for conversion to an enumeration"), result, cellRow, cellCol, chunkRow, chunkCol);
 
