@@ -54,6 +54,31 @@ void UMapMatrix::destroyLoadStatement(FString FunctionName)
         UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the %s function: The LoadStatement object has been destroyed"), *FunctionName);
 }
 
+void UMapMatrix::convertingGlobalIndexIntoLocalOne(int32 globalCellRow, int32 globalCellCol, int32& chunkRow, int32& cellRow, int32& chunkCol, int32& cellCol)
+{
+    if (globalCellRow > 0) {
+        chunkRow = (globalCellRow - 1) / TableLength;
+        cellRow = globalCellRow % TableLength;
+    }
+    else {
+        chunkRow = globalCellRow / TableLength - 1;
+        cellRow = globalCellRow % TableLength + TableLength;
+    }
+    if (cellRow == 0)
+        cellRow = TableLength;
+
+    if (globalCellCol > 0) {
+        chunkCol = (globalCellCol - 1) / TableLength;
+        cellCol = globalCellCol % TableLength;
+    }
+    else {
+        chunkCol = globalCellCol / TableLength - 1;
+        cellCol = globalCellCol % TableLength + TableLength;
+    }
+    if (cellCol == 0)
+        cellCol = TableLength;
+}
+
 bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chunkCol, bool autoClose)
 {
     if (!mapDataBase->IsValid()) {
@@ -354,27 +379,7 @@ bool UMapMatrix::SetValueOfMapChunkCellByGlobalIndex(MatrixType matrixType, int3
     int32 chunkCol;
     int32 cellCol;
 
-    if (globalCellRow > 0) {
-        chunkRow = (globalCellRow - 1) / TableLength;
-        cellRow = globalCellRow % TableLength;
-    }
-    else {
-        chunkRow = globalCellRow / TableLength - 1;
-        cellRow = globalCellRow % TableLength + TableLength;
-    }
-    if (cellRow == 0)
-        cellRow = TableLength;
-
-    if (globalCellCol > 0) {
-        chunkCol = (globalCellCol - 1) / TableLength;
-        cellCol = globalCellCol % TableLength;
-    }
-    else {
-        chunkCol = globalCellCol / TableLength - 1;
-        cellCol = globalCellCol % TableLength + TableLength;
-    }
-    if (cellCol == 0)
-        cellCol = TableLength;
+    convertingGlobalIndexIntoLocalOne(globalCellRow, globalCellCol, chunkRow, cellRow, chunkCol, cellCol);
 
     UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCellByGlobalIndex function: Global index %d:%d translated into tables \"%s %d:%d\" cell %d:%d"), globalCellRow, globalCellCol, *getStringMatrixType(matrixType), chunkRow, chunkCol, cellRow, cellCol);
 
@@ -391,4 +396,27 @@ bool UMapMatrix::SetValueOfMapChunkCellByGlobalIndex(MatrixType matrixType, int3
         return SetValueOfMapChunkCell(matrixType, chunkRow, chunkCol, cellRow, cellCol, value, autoClose);
     else
         return false;
+}
+
+ECellTypeOfMapStructure UMapMatrix::GetValueOfMapChunkStructureCellByGlobalIndex(int32 globalCellRow, int32 globalCellCol, bool autoClose)
+{
+    int32 chunkRow;
+    int32 cellRow;
+    int32 chunkCol;
+    int32 cellCol;
+
+    convertingGlobalIndexIntoLocalOne(globalCellRow, globalCellCol, chunkRow, cellRow, chunkCol, cellCol);
+
+    UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the GetValueOfMapChunkStructureCellByGlobalIndex function: Global index %d:%d translated into tables \"%s %d:%d\" cell %d:%d"), globalCellRow, globalCellCol, *getStringMatrixType(MatrixType::ChunkStructure), chunkRow, chunkCol, cellRow, cellCol);
+
+    if (!autoClose && !mapDataBase->IsValid()) {
+        if (!mapDataBase->Open(*FilePath, ESQLiteDatabaseOpenMode::ReadWriteCreate)) {
+            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetValueOfMapChunkStructureCellByGlobalIndex function when trying to open mapDataBase: %s"), *mapDataBase->GetLastError());
+            return ECellTypeOfMapStructure::Error;
+        }
+        else
+            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the GetValueOfMapChunkStructureCellByGlobalIndex function: mapDataBase has been opened"));
+    }
+
+    return GetValueOfMapChunkStructureCell(chunkRow, chunkCol, cellRow, cellCol, autoClose);
 }

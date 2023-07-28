@@ -32,6 +32,7 @@ private:
 	FString getStringMatrixType(MatrixType matrixType);
 	void mapDataBaseClose(FString FunctionName);
 	void destroyLoadStatement(FString FunctionName);
+	void convertingGlobalIndexIntoLocalOne(int32 globalCellRow, int32 globalCellCol, int32& chunkRow, int32& cellRow, int32& chunkCol, int32& cellCol);
 
 public:
 	UMapMatrix();
@@ -51,4 +52,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	bool SetValueOfMapChunkCellByGlobalIndex(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol, int32 value, bool autoClose = true);
+
+	UFUNCTION(BlueprintCallable)
+	ECellTypeOfMapStructure GetValueOfMapChunkStructureCellByGlobalIndex(int32 globalCellRow, int32 globalCellCol, bool autoClose = true);
 };
