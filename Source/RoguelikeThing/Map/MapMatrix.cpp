@@ -97,6 +97,11 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
 
             if (!mapDataBase->Execute(*QueryToCreateTable)) {
                 UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to create the mapDataBase table: %s"), *mapDataBase->GetLastError());
+                
+                if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
+                    UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+                }
+                
                 if (autoClose)
                     mapDataBaseClose("CreateMapChunk");
                 return false;
@@ -110,6 +115,11 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
             for (int i = 0; i < 51; i++) {
                 if (!mapDataBase->Execute(*(FString::Printf(TEXT("INSERT INTO \"%s %d:%d\" DEFAULT VALUES;"), *SMatrixType, chunkRow, chunkCol)))) {
                     UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to insert a row number %d into mapDataBase: %s"), i+1, *mapDataBase->GetLastError());
+                    
+                    if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
+                        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+                    }
+                    
                     if (autoClose)
                         mapDataBaseClose("CreateMapChunk");
                     return false;
@@ -193,6 +203,10 @@ bool UMapMatrix::SetValueOfMapChunkCell(MatrixType matrixType, int32 chunkRow, i
 
         if (!mapDataBase->Execute(*QueryToSetCellValue)) {
             UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkCell function when trying to set a value %d in the \"%s %d:%d\" table to cell %d:%d: %s"), value, *SMatrixType, chunkRow, chunkCol, cellRow, cellCol, *mapDataBase->GetLastError());
+
+            if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
+                UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkCell function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+            }
 
             if (autoClose)
                 mapDataBaseClose("SetValueOfMapChunkCell");
@@ -331,4 +345,50 @@ ECellTypeOfMapStructure UMapMatrix::GetValueOfMapChunkStructureCell(int32 chunkR
 void UMapMatrix::mapDataBaseManualClose()
 {
     mapDataBaseClose("mapDataBaseManualClose");
+}
+
+bool UMapMatrix::SetValueOfMapChunkCellByGlobalIndex(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol, int32 value, bool autoClose)
+{
+    int32 chunkRow;
+    int32 cellRow;
+    int32 chunkCol;
+    int32 cellCol;
+
+    if (globalCellRow > 0) {
+        chunkRow = (globalCellRow - 1) / TableLength;
+        cellRow = globalCellRow % TableLength;
+    }
+    else {
+        chunkRow = globalCellRow / TableLength - 1;
+        cellRow = globalCellRow % TableLength + TableLength;
+    }
+    if (cellRow == 0)
+        cellRow = TableLength;
+
+    if (globalCellCol > 0) {
+        chunkCol = (globalCellCol - 1) / TableLength;
+        cellCol = globalCellCol % TableLength;
+    }
+    else {
+        chunkCol = globalCellCol / TableLength - 1;
+        cellCol = globalCellCol % TableLength + TableLength;
+    }
+    if (cellCol == 0)
+        cellCol = TableLength;
+
+    UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCellByGlobalIndex function: Global index %d:%d translated into tables \"%s %d:%d\" cell %d:%d"), globalCellRow, globalCellCol, *getStringMatrixType(matrixType), chunkRow, chunkCol, cellRow, cellCol);
+
+    if (!autoClose && !mapDataBase->IsValid()) {
+        if (!mapDataBase->Open(*FilePath, ESQLiteDatabaseOpenMode::ReadWriteCreate)) {
+            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkCellByGlobalIndex function when trying to open mapDataBase: %s"), *mapDataBase->GetLastError());
+            return false;
+        }
+        else
+            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCellByGlobalIndex function: mapDataBase has been opened"));
+    }
+
+    if (CreateMapChunk(matrixType, chunkRow, chunkCol, autoClose))
+        return SetValueOfMapChunkCell(matrixType, chunkRow, chunkCol, cellRow, cellCol, value, autoClose);
+    else
+        return false;
 }
