@@ -7,14 +7,14 @@ DEFINE_LOG_CATEGORY(MapDataBase);
 
 UMapMatrix::UMapMatrix()
 {
-    mapDataBase = new FSQLiteDatabase();
 }
 
 UMapMatrix::~UMapMatrix()
 {
-    if(LoadStatement)
+    if(LoadStatement != nullptr)
         delete LoadStatement;
-    if (mapDataBase->IsValid()) {
+
+    if (mapDataBase != nullptr) {
         mapDataBase->Close();
         delete mapDataBase;
     }
