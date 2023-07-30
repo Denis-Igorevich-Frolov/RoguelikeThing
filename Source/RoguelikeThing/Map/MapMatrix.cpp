@@ -203,7 +203,7 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
                 UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to commit the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
 
                 if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
-                    UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkCell function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+                    UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
                 }
 
                 if (autoClose)
@@ -226,6 +226,86 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
 
     if (autoClose)
         mapDataBaseClose("CreateMapChunk");
+
+    return true;
+}
+
+/* Функция, удаляющая фрагмент карты на отснове переданного типа и индекса фрагмента.
+ * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически*/
+bool UMapMatrix::DeleteMapChunk(MatrixType matrixType, int32 chunkRow, int32 chunkCol, bool autoClose)
+{
+    /* Если mapDataBase непроинициализированна, это означает, что база
+     * данных не была открыта. В таком случае её следует открыть.*/
+    if (!mapDataBase->IsValid()) {
+        if (!mapDataBase->Open(*FilePath, ESQLiteDatabaseOpenMode::ReadWriteCreate)) {
+            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the DeleteMapChunk function when trying to open mapDataBase: %s"), *mapDataBase->GetLastError());
+            return false;
+        }
+        else
+            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the DeleteMapChunk function: mapDataBase has been opened"));
+    }
+
+    //После открытия базы данных следует ещё раз проверить её валидность
+    if (mapDataBase->IsValid()) {
+        FString SMatrixType = getStringMatrixType(matrixType);
+
+        /* Если функия getStringMatrixType вернула значение "", то это значит, что в неё
+         * попали некорретные данные и последующее выполнение функции стоит прекратить*/
+        if (SMatrixType == "") {
+            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the DeleteMapChunk function - incorrect map fragment type"));
+
+            if (autoClose)
+                mapDataBaseClose("DeleteMapChunk");
+            return false;
+        }
+
+        //Инициализация транзакции
+        if (!mapDataBase->Execute(TEXT("BEGIN;"))) {
+            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the DeleteMapChunk function when trying to start a mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+            if (autoClose)
+                mapDataBaseClose("DeleteMapChunk");
+            return false;
+        }
+
+        UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the DeleteMapChunk function: A transaction was started to delete table \"%s %d:%d\""), *SMatrixType, chunkRow, chunkCol);
+
+        if (!mapDataBase->Execute(*(FString::Printf(TEXT("DROP TABLE \"%s %d:%d\";"), *SMatrixType, chunkRow, chunkCol)))) {
+            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the DeleteMapChunk function when trying to delete the mapDataBase table: %s"), *mapDataBase->GetLastError());
+
+            if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
+                UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the DeleteMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+            }
+
+            if (autoClose)
+                mapDataBaseClose("DeleteMapChunk");
+            return false;
+        }
+
+        UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the DeleteMapChunk function: Query to delete table \"%s %d:%d\" completed"), *SMatrixType, chunkRow, chunkCol);
+
+        //Закрепление транзакции
+        if (!mapDataBase->Execute(TEXT("COMMIT;"))) {
+            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the DeleteMapChunk function when trying to commit the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+
+            if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
+                UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the DeleteMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+            }
+
+            if (autoClose)
+                mapDataBaseClose("DeleteMapChunk");
+            return false;
+        }
+
+        UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the DeleteMapChunk function: The transaction to delete the table \"%s %d:%d\" has been committed"), *SMatrixType, chunkRow, chunkCol);
+        UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the DeleteMapChunk function: The deleting of the \"%s %d:%d\" table in the %s file is fully complete"), *SMatrixType, chunkRow, chunkCol, *FilePath);
+    }
+    else {
+        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the DeleteMapChunk function - mapDataBase is not valid"));
+        return false;
+    }
+
+    if (autoClose)
+        mapDataBaseClose("DeleteMapChunk");
 
     return true;
 }

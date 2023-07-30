@@ -57,6 +57,11 @@ public:
 	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически*/
 	UFUNCTION(BlueprintCallable)
 	bool CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chunkCol, bool autoClose = true);
+
+	/* Функция, удаляющая фрагмент карты на отснове переданного типа и индекса фрагмента.
+	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически*/
+	UFUNCTION(BlueprintCallable)
+	bool DeleteMapChunk(MatrixType matrixType, int32 chunkRow, int32 chunkCol, bool autoClose = true);
 	
 	/* Функция, записывающая значение в ячейку фрагмента БД по её локальному индексу.
 	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически*/
