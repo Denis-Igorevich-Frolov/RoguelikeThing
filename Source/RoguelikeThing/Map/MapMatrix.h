@@ -25,6 +25,24 @@ enum class MatrixType : uint8 {
 	ChunkStructure	UMETA(DisplayName = "ChunkStructure"),//Структура карты
 };
 
+class CreateTableAsyncTask : public FNonAbandonableTask
+{
+	friend class UMapMatrix;
+public:
+    CreateTableAsyncTask(int32 rowLen, int32 colLen, MatrixType matrixType, UMapMatrix* mapMatrix);
+	FORCEINLINE TStatId GetStatId() const;
+
+	void DoWork();
+	bool getSuccess();
+
+private:
+    int32 rowLen;
+    int32 colLen;
+    MatrixType matrixType;
+    UMapMatrix* mapMatrix;
+    bool success;
+};
+
 UCLASS(Blueprintable, BlueprintType)
 class ROGUELIKETHING_API UMapMatrix : public UObject
 {
@@ -50,7 +68,6 @@ private:
 	void convertingGlobalIndexIntoLocalOne(int32 globalCellRow, int32 globalCellCol, int32& chunkRow, int32& cellRow, int32& chunkCol, int32& cellCol);
 
 public:
-	UMapMatrix();
 	~UMapMatrix();
 
 	/* Функция, создающая новый фрагмент карты на отснове переданного типа и индекса фрагмента.
@@ -86,4 +103,18 @@ public:
 	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически*/
 	UFUNCTION(BlueprintCallable)
 	ECellTypeOfMapStructure GetValueOfMapChunkStructureCellByGlobalIndex(int32 globalCellRow, int32 globalCellCol, bool autoClose = true);
+
+	//Функция, устанавливающая имя файла с базой данных
+	UFUNCTION(BlueprintCallable)
+	void SetFileName(FString fileName);
+
+	//Функция, устанавливающая путь до файла с базой данных
+	UFUNCTION(BlueprintCallable)
+	void SetFilePath(FString filePath);
+
+	UFUNCTION(BlueprintCallable)
+	void AsyncCreateTable(int32 rowLen, int32 colLen, MatrixType matrixType);
+
+	UFUNCTION(BlueprintCallable)
+	void EndTaskEvent() {};
 };

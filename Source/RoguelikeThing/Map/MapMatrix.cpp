@@ -1,23 +1,51 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
+#include <thread>
 #include "MapMatrix.h"
 
 DEFINE_LOG_CATEGORY(MapDataBase);
 
-UMapMatrix::UMapMatrix()
+CreateTableAsyncTask::CreateTableAsyncTask(int32 rowLen, int32 colLen, MatrixType matrixType, UMapMatrix* mapMatrix) :
+rowLen(rowLen), colLen(colLen), matrixType(matrixType), mapMatrix(mapMatrix)
 {
 }
 
+FORCEINLINE TStatId CreateTableAsyncTask::GetStatId() const {
+    RETURN_QUICK_DECLARE_CYCLE_STAT(CreateTableAsyncTask, STATGROUP_ThreadPoolAsyncTasks);
+}
+
+void CreateTableAsyncTask::DoWork() {
+    success = false;
+    if (!success && mapMatrix) {
+        for (int row = 0; row <= rowLen; row++) {
+            for (int col = 0; col <= colLen; col++) {
+                success = mapMatrix->CreateMapChunk(matrixType, row, col, false);
+                if (!success) {
+                    mapMatrix->mapDataBaseClose("CreateTableAsyncTask");
+                    return;
+                }
+            }
+            mapMatrix->mapDataBaseClose("CreateTableAsyncTask");
+        }
+
+        success = true;
+    }
+}
+
+bool CreateTableAsyncTask::getSuccess()
+{
+    return success;
+}
+
+//---------------------------
+
 UMapMatrix::~UMapMatrix()
 {
-    if(LoadStatement != nullptr)
-        delete LoadStatement;
+    delete LoadStatement;
 
-    if (mapDataBase != nullptr) {
-        mapDataBase->Close();
-        delete mapDataBase;
-    }
+    mapDataBase->Close();
+    delete mapDataBase;
 }
 
 //Функция, возвращающая название типа фрагмента карты по перечислению MatrixType
@@ -581,4 +609,36 @@ ECellTypeOfMapStructure UMapMatrix::GetValueOfMapChunkStructureCellByGlobalIndex
     UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the GetValueOfMapChunkStructureCellByGlobalIndex function: Global index %d:%d translated into tables \"%s %d:%d\" cell %d:%d"), globalCellRow, globalCellCol, *getStringMatrixType(MatrixType::ChunkStructure), chunkRow, chunkCol, cellRow, cellCol);
 
     return GetValueOfMapChunkStructureCell(chunkRow, chunkCol, cellRow, cellCol, autoClose);
+}
+
+//Функция, устанавливающая имя файла с базой данных
+void UMapMatrix::SetFileName(FString fileName)
+{
+    FilePath = FPaths::ProjectSavedDir() + TEXT("/Save/") + fileName + TEXT(".db");
+    UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetFileName function: The name of the database file is set to %s, the path to the file is %s"), *fileName, *FilePath);
+    //UE_LOG(MapDataBase, Log, TEXT("AAAAAAAAAAA3, %s"), *fileName);
+}
+
+//Функция, устанавливающая путь до файла с базой данных
+void UMapMatrix::SetFilePath(FString filePath)
+{
+    FilePath = filePath;
+    UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetFilePath function: The path to the database file is set as %s"), *FilePath);
+}
+
+void UMapMatrix::AsyncCreateTable(int32 rowLen, int32 colLen, MatrixType matrixType) {
+    bool success = false;
+
+    AsyncTask(ENamedThreads::AnyBackgroundThreadNormalTask, [rowLen, colLen, matrixType, this, &success]() {
+        FAsyncTask<CreateTableAsyncTask>* MyTask = new FAsyncTask<CreateTableAsyncTask>(rowLen, colLen, matrixType, this);
+
+        MyTask->StartBackgroundTask();
+        MyTask->EnsureCompletion();
+
+        success = MyTask->GetTask().getSuccess();
+
+        delete MyTask;
+        GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Done"));
+        });
+
 }
