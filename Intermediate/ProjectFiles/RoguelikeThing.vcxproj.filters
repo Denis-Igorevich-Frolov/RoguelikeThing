@@ -3,7 +3,7 @@
   <ItemGroup>
     <None Include="..\..\RoguelikeThing.uproject" />
     <Filter Include="Source">
-      <UniqueIdentifier>{707D8953-3BDE-4B0D-ACC3-01D577BF80EC}</UniqueIdentifier>
+      <UniqueIdentifier>{E621A86C-277A-4D1E-9638-DB6C0D521DE7}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Source\RoguelikeThing.Target.cs">
       <Filter>Source</Filter>
@@ -14,7 +14,7 @@
     <None Include="..\..\.gitattributes" />
     <None Include="..\..\.gitignore" />
     <Filter Include="Config">
-      <UniqueIdentifier>{4DB926B7-77B8-4D19-826A-6C5261584726}</UniqueIdentifier>
+      <UniqueIdentifier>{395FE2A0-FA26-4E83-9BC5-9DFB4F8E6B5A}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Config\DefaultEditor.ini">
       <Filter>Config</Filter>
@@ -29,7 +29,7 @@
       <Filter>Config</Filter>
     </None>
     <Filter Include="Source\RoguelikeThing">
-      <UniqueIdentifier>{4AEE19A1-0E23-4AFC-ACD1-FAB1FCAB5396}</UniqueIdentifier>
+      <UniqueIdentifier>{10A826E9-B0D1-417C-A029-BE9B549310CE}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Source\RoguelikeThing\RoguelikeThing.Build.cs">
       <Filter>Source\RoguelikeThing</Filter>
@@ -47,11 +47,8 @@
       <Filter>Source\RoguelikeThing</Filter>
     </ClInclude>
     <Filter Include="Source\RoguelikeThing\Map">
-      <UniqueIdentifier>{28085AEC-5F17-4A6E-A8DC-0E3BDCFD3E97}</UniqueIdentifier>
+      <UniqueIdentifier>{7907C27A-1143-477C-9A9D-C680C4ABD7BC}</UniqueIdentifier>
     </Filter>
-    <ClCompile Include="..\..\Source\RoguelikeThing\Map\CellTypeOfMapStructure.cpp">
-      <Filter>Source\RoguelikeThing\Map</Filter>
-    </ClCompile>
     <ClInclude Include="..\..\Source\RoguelikeThing\Map\CellTypeOfMapStructure.h">
       <Filter>Source\RoguelikeThing\Map</Filter>
     </ClInclude>
@@ -60,6 +57,15 @@
     </ClCompile>
     <ClInclude Include="..\..\Source\RoguelikeThing\Map\MapMatrix.h">
       <Filter>Source\RoguelikeThing\Map</Filter>
+    </ClInclude>
+    <Filter Include="Source\RoguelikeThing\Widgets">
+      <UniqueIdentifier>{0C09F7BE-FFFD-48A3-B653-48D2C9858043}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\RoguelikeThing\Widgets\LoadingWidget.cpp">
+      <Filter>Source\RoguelikeThing\Widgets</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\RoguelikeThing\Widgets\LoadingWidget.h">
+      <Filter>Source\RoguelikeThing\Widgets</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

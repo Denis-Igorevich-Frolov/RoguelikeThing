@@ -26,11 +26,11 @@ enum class MatrixType : uint8 {
 	ChunkStructure	UMETA(DisplayName = "ChunkStructure"),//Структура карты
 };
 
-class CreateTableAsyncTask : public FNonAbandonableTask
+class CreateBlankCardAsyncTask : public FNonAbandonableTask
 {
 	friend class UMapMatrix;
 public:
-    CreateTableAsyncTask(int32 rowLen, int32 colLen, MatrixType matrixType, UMapMatrix* mapMatrix);
+    CreateBlankCardAsyncTask(int32 rowLen, int32 colLen, MatrixType matrixType, UMapMatrix* mapMatrix);
 	FORCEINLINE TStatId GetStatId() const;
 
 	void DoWork();
@@ -50,7 +50,8 @@ class ROGUELIKETHING_API UMapMatrix : public UObject
 	GENERATED_BODY()
 
 private:
-	UUserWidget* WidgetDownloads;
+	ULoadingWidget* DownloadWidget;
+	bool SuccessCreateBlankCard = false;
 
 	//Путь до файла, в котором лежит база данных карты
 	FString FilePath = FPaths::ProjectSavedDir() + TEXT("/Save/Map.db");
@@ -75,7 +76,7 @@ public:
 	~UMapMatrix();
 
 	UFUNCTION(BlueprintCallable)
-	void setWidgetDownloads(UUserWidget* newWidgetDownloads);
+	void setDownloadWidget(ULoadingWidget* newDownloadWidget);
 
 	/* Функция, создающая новый фрагмент карты на отснове переданного типа и индекса фрагмента.
 	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически*/

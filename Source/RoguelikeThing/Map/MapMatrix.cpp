@@ -1,39 +1,40 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include <thread>
 #include "MapMatrix.h"
+#include "RoguelikeThing/Widgets/LoadingWidget.h"
+#include <thread>
 
 DEFINE_LOG_CATEGORY(MapDataBase);
 
-CreateTableAsyncTask::CreateTableAsyncTask(int32 rowLen, int32 colLen, MatrixType matrixType, UMapMatrix* mapMatrix) :
+CreateBlankCardAsyncTask::CreateBlankCardAsyncTask(int32 rowLen, int32 colLen, MatrixType matrixType, UMapMatrix* mapMatrix) :
 rowLen(rowLen), colLen(colLen), matrixType(matrixType), mapMatrix(mapMatrix)
 {
 }
 
-FORCEINLINE TStatId CreateTableAsyncTask::GetStatId() const {
-    RETURN_QUICK_DECLARE_CYCLE_STAT(CreateTableAsyncTask, STATGROUP_ThreadPoolAsyncTasks);
+FORCEINLINE TStatId CreateBlankCardAsyncTask::GetStatId() const {
+    RETURN_QUICK_DECLARE_CYCLE_STAT(CreateBlankCardAsyncTask, STATGROUP_ThreadPoolAsyncTasks);
 }
 
-void CreateTableAsyncTask::DoWork() {
+void CreateBlankCardAsyncTask::DoWork() {
     success = false;
     if (!success && mapMatrix) {
         for (int row = 0; row <= rowLen; row++) {
             for (int col = 0; col <= colLen; col++) {
                 success = mapMatrix->CreateMapChunk(matrixType, row, col, false);
                 if (!success) {
-                    mapMatrix->mapDataBaseClose("CreateTableAsyncTask");
+                    mapMatrix->mapDataBaseClose("CreateBlankCardAsyncTask");
                     return;
                 }
             }
-            mapMatrix->mapDataBaseClose("CreateTableAsyncTask");
+            mapMatrix->mapDataBaseClose("CreateBlankCardAsyncTask");
         }
 
         success = true;
     }
 }
 
-bool CreateTableAsyncTask::getSuccess()
+bool CreateBlankCardAsyncTask::getSuccess()
 {
     return success;
 }
@@ -258,9 +259,9 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
     return true;
 }
 
-void UMapMatrix::setWidgetDownloads(UUserWidget* newWidgetDownloads)
+void UMapMatrix::setDownloadWidget(ULoadingWidget* newDownloadWidget)
 {
-    this->WidgetDownloads = newWidgetDownloads;
+    this->DownloadWidget = newDownloadWidget;
 }
 
 /* Функция, удаляющая фрагмент карты на отснове переданного типа и индекса фрагмента.
@@ -631,25 +632,23 @@ void UMapMatrix::SetFilePath(FString filePath)
 }
 
 void UMapMatrix::AsyncCreateTable(int32 rowLen, int32 colLen, MatrixType matrixType) {
-    bool success = false;
+    SuccessCreateBlankCard = false;
 
-    AsyncTask(ENamedThreads::AnyBackgroundThreadNormalTask, [rowLen, colLen, matrixType, this, &success]() {
-        FAsyncTask<CreateTableAsyncTask>* MyTask = new FAsyncTask<CreateTableAsyncTask>(rowLen, colLen, matrixType, this);
+    AsyncTask(ENamedThreads::AnyBackgroundThreadNormalTask, [rowLen, colLen, matrixType, this]() {
+        FAsyncTask<CreateBlankCardAsyncTask>* MyTask = new FAsyncTask<CreateBlankCardAsyncTask>(rowLen, colLen, matrixType, this);
 
         MyTask->StartBackgroundTask();
         MyTask->EnsureCompletion();
 
-        success = MyTask->GetTask().getSuccess();
+        SuccessCreateBlankCard = MyTask->GetTask().getSuccess();
 
         delete MyTask;
 
         AsyncTask(ENamedThreads::GameThread, [this]() {
-            if (this->WidgetDownloads) {
-                this->WidgetDownloads->RemoveFromParent();
+            if (this->DownloadWidget) {
+                this->DownloadWidget->RemoveFromParent();
+                DownloadWidget->LoadingComplete(SuccessCreateBlankCard);
             }
             });
-
-        GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Done"));
         });
-
 }
