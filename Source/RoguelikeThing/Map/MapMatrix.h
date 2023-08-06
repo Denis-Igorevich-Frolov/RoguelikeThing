@@ -4,6 +4,7 @@
 
 #include "CellTypeOfMapStructure.h"
 #include "SQLiteDatabase.h"
+#include "Blueprint/UserWidget.h"
 #include "MapMatrix.generated.h"
 
 /****************************************************************
@@ -40,7 +41,7 @@ private:
     int32 colLen;
     MatrixType matrixType;
     UMapMatrix* mapMatrix;
-    bool success;
+    bool success = false;
 };
 
 UCLASS(Blueprintable, BlueprintType)
@@ -49,6 +50,8 @@ class ROGUELIKETHING_API UMapMatrix : public UObject
 	GENERATED_BODY()
 
 private:
+	UUserWidget* WidgetDownloads;
+
 	//Путь до файла, в котором лежит база данных карты
 	FString FilePath = FPaths::ProjectSavedDir() + TEXT("/Save/Map.db");
 	//Число строк и столбцов в матрице фрагмента карты
@@ -65,10 +68,14 @@ private:
 	void destroyLoadStatement(FString FunctionName);
 
 	//Функция, конвертирующая глобальный индекс базы данных карты в локальный индекс отдельного фрагмента
-	void convertingGlobalIndexIntoLocalOne(int32 globalCellRow, int32 globalCellCol, int32& chunkRow, int32& cellRow, int32& chunkCol, int32& cellCol);
+	void convertingGlobalIndexIntoLocalOne(int32 globalCellRow, int32 globalCellCol, int32& chunkRow,
+		int32& cellRow, int32& chunkCol, int32& cellCol);
 
 public:
 	~UMapMatrix();
+
+	UFUNCTION(BlueprintCallable)
+	void setWidgetDownloads(UUserWidget* newWidgetDownloads);
 
 	/* Функция, создающая новый фрагмент карты на отснове переданного типа и индекса фрагмента.
 	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически*/
@@ -114,7 +121,4 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void AsyncCreateTable(int32 rowLen, int32 colLen, MatrixType matrixType);
-
-	UFUNCTION(BlueprintCallable)
-	void EndTaskEvent() {};
 };

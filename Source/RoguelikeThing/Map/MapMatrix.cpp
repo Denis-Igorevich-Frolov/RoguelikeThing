@@ -258,6 +258,11 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
     return true;
 }
 
+void UMapMatrix::setWidgetDownloads(UUserWidget* newWidgetDownloads)
+{
+    this->WidgetDownloads = newWidgetDownloads;
+}
+
 /* Функция, удаляющая фрагмент карты на отснове переданного типа и индекса фрагмента.
  * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически*/
 bool UMapMatrix::DeleteMapChunk(MatrixType matrixType, int32 chunkRow, int32 chunkCol, bool autoClose)
@@ -616,7 +621,6 @@ void UMapMatrix::SetFileName(FString fileName)
 {
     FilePath = FPaths::ProjectSavedDir() + TEXT("/Save/") + fileName + TEXT(".db");
     UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetFileName function: The name of the database file is set to %s, the path to the file is %s"), *fileName, *FilePath);
-    //UE_LOG(MapDataBase, Log, TEXT("AAAAAAAAAAA3, %s"), *fileName);
 }
 
 //Функция, устанавливающая путь до файла с базой данных
@@ -638,6 +642,13 @@ void UMapMatrix::AsyncCreateTable(int32 rowLen, int32 colLen, MatrixType matrixT
         success = MyTask->GetTask().getSuccess();
 
         delete MyTask;
+
+        AsyncTask(ENamedThreads::GameThread, [this]() {
+            if (this->WidgetDownloads) {
+                this->WidgetDownloads->RemoveFromParent();
+            }
+            });
+
         GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Done"));
         });
 
