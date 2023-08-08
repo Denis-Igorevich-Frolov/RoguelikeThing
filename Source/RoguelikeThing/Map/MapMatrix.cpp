@@ -7,40 +7,6 @@
 
 DEFINE_LOG_CATEGORY(MapDataBase);
 
-CreateBlankCardAsyncTask::CreateBlankCardAsyncTask(int32 rowLen, int32 colLen, MatrixType matrixType, UMapMatrix* mapMatrix) :
-rowLen(rowLen), colLen(colLen), matrixType(matrixType), mapMatrix(mapMatrix)
-{
-}
-
-FORCEINLINE TStatId CreateBlankCardAsyncTask::GetStatId() const {
-    RETURN_QUICK_DECLARE_CYCLE_STAT(CreateBlankCardAsyncTask, STATGROUP_ThreadPoolAsyncTasks);
-}
-
-void CreateBlankCardAsyncTask::DoWork() {
-    success = false;
-    if (!success && mapMatrix) {
-        for (int row = 0; row <= rowLen; row++) {
-            for (int col = 0; col <= colLen; col++) {
-                success = mapMatrix->CreateMapChunk(matrixType, row, col, false);
-                if (!success) {
-                    mapMatrix->mapDataBaseClose("CreateBlankCardAsyncTask");
-                    return;
-                }
-            }
-            mapMatrix->mapDataBaseClose("CreateBlankCardAsyncTask");
-        }
-
-        success = true;
-    }
-}
-
-bool CreateBlankCardAsyncTask::getSuccess()
-{
-    return success;
-}
-
-//---------------------------
-
 UMapMatrix::~UMapMatrix()
 {
     delete LoadStatement;
@@ -259,7 +225,7 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
     return true;
 }
 
-void UMapMatrix::setDownloadWidget(ULoadingWidget* newDownloadWidget)
+void UMapMatrix::setLoadWidget(ULoadingWidget* newDownloadWidget)
 {
     this->DownloadWidget = newDownloadWidget;
 }
@@ -635,14 +601,17 @@ void UMapMatrix::AsyncCreateTable(int32 rowLen, int32 colLen, MatrixType matrixT
     SuccessCreateBlankCard = false;
 
     AsyncTask(ENamedThreads::AnyBackgroundThreadNormalTask, [rowLen, colLen, matrixType, this]() {
-        FAsyncTask<CreateBlankCardAsyncTask>* MyTask = new FAsyncTask<CreateBlankCardAsyncTask>(rowLen, colLen, matrixType, this);
+        for (int row = 0; row <= rowLen; row++) {
+            for (int col = 0; col <= colLen; col++) {
+                SuccessCreateBlankCard = CreateMapChunk(matrixType, row, col, false);
+                if (!SuccessCreateBlankCard)
+                    break;
+            }
+            if (!SuccessCreateBlankCard)
+                break;
+        }
 
-        MyTask->StartBackgroundTask();
-        MyTask->EnsureCompletion();
-
-        SuccessCreateBlankCard = MyTask->GetTask().getSuccess();
-
-        delete MyTask;
+        mapDataBaseClose("AsyncCreateTable");
 
         AsyncTask(ENamedThreads::GameThread, [this]() {
             if (this->DownloadWidget) {

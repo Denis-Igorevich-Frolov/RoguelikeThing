@@ -26,24 +26,6 @@ enum class MatrixType : uint8 {
 	ChunkStructure	UMETA(DisplayName = "ChunkStructure"),//Структура карты
 };
 
-class CreateBlankCardAsyncTask : public FNonAbandonableTask
-{
-	friend class UMapMatrix;
-public:
-    CreateBlankCardAsyncTask(int32 rowLen, int32 colLen, MatrixType matrixType, UMapMatrix* mapMatrix);
-	FORCEINLINE TStatId GetStatId() const;
-
-	void DoWork();
-	bool getSuccess();
-
-private:
-    int32 rowLen;
-    int32 colLen;
-    MatrixType matrixType;
-    UMapMatrix* mapMatrix;
-    bool success = false;
-};
-
 UCLASS(Blueprintable, BlueprintType)
 class ROGUELIKETHING_API UMapMatrix : public UObject
 {
@@ -76,7 +58,7 @@ public:
 	~UMapMatrix();
 
 	UFUNCTION(BlueprintCallable)
-	void setDownloadWidget(ULoadingWidget* newDownloadWidget);
+	void setLoadWidget(ULoadingWidget* newDownloadWidget);
 
 	/* Функция, создающая новый фрагмент карты на отснове переданного типа и индекса фрагмента.
 	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически*/
