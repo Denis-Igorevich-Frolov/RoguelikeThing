@@ -3,7 +3,6 @@
 
 #include "MapMatrix.h"
 #include "RoguelikeThing/Widgets/LoadingWidget.h"
-#include <thread>
 
 DEFINE_LOG_CATEGORY(MapDataBase);
 
@@ -179,7 +178,7 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
             //После успешного создания всех столбцов, создаётся такое количество строк, какое указанно в TableLength
             for (int i = 0; i < TableLength; i++) {
                 if (!mapDataBase->Execute(*(FString::Printf(TEXT("INSERT INTO \"%s %d:%d\" DEFAULT VALUES;"), *SMatrixType, chunkRow, chunkCol)))) {
-                    UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to insert a row number %d into mapDataBase: %s"), i+1, *mapDataBase->GetLastError());
+                    UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to insert a row number %d into \"%s %d:%d\" table: %s"), i+1, *SMatrixType, chunkRow, chunkCol, *mapDataBase->GetLastError());
                     
                     if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
                         UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
@@ -192,6 +191,185 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
             }
 
             UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The creation of %d rows in the \"%s %d:%d\" table has been completed"), TableLength, *SMatrixType, chunkRow, chunkCol);
+
+            //!!!!!!
+            bool DimensionTableExist = LoadStatement->Create(*mapDataBase, TEXT("SELECT * FROM Dimensions;"), ESQLitePreparedStatementFlags::Persistent);
+            if (!DimensionTableExist) {
+                if (!mapDataBase->Execute(TEXT(
+                    "CREATE TABLE IF NOT EXISTS Dimensions("
+                    "MinCol INTEGER NOT NULL,"
+                    "MaxCol INTEGER NOT NULL,"
+                    "MinRow INTEGER NOT NULL,"
+                    "MaxRow INTEGER NOT NULL);"))) {
+                    UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to create the Dimensions table: %s"), *mapDataBase->GetLastError());
+
+                    if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
+                        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+                    }
+
+                    if (autoClose)
+                        mapDataBaseClose("CreateMapChunk");
+                    return false;
+                }
+
+                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Query to create table Dimensions completed"));
+
+                if (!mapDataBase->Execute(*(FString::Printf(TEXT("INSERT INTO Dimensions (MinCol, MaxCol, MinRow, MaxRow) VALUES(%d, %d, %d, %d);"), chunkRow, chunkRow, chunkCol, chunkCol)))) {
+                    UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to insert a row into Dimensions table: %s"), *mapDataBase->GetLastError());
+
+                    if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
+                        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+                    }
+
+                    if (autoClose)
+                        mapDataBaseClose("CreateMapChunk");
+                    return false;
+                }
+
+                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The creation of row with data row = %d, col = %d in the Dimensions table has been completed"), chunkRow, chunkCol);
+            }
+            else {
+                if (LoadStatement->IsValid() && LoadStatement->Step() == ESQLitePreparedStatementStepResult::Row) {
+                    UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Started checking if chunkCol, equal to %d, is the smallest of the previously created column indexes"), chunkCol);
+                    int32 MinCol;
+                    bool CurrentColIndexSmallest = false;
+                    if (LoadStatement->GetColumnValueByName(TEXT("MinCol"), MinCol)) {
+                        CurrentColIndexSmallest = chunkCol < MinCol;
+                        if (CurrentColIndexSmallest) {
+                            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The new column index of %d is below the previous lowest index of %d. Started writing a new value for MinCol cell in table Dimensions"), chunkCol, MinCol);
+                            if (!mapDataBase->Execute(
+                                *FString::Printf(TEXT("UPDATE Dimensions SET MinCol = %d;"), chunkCol))) {
+                                UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to set a value %d in the Dimensions table to cell MinCol: %s"), chunkCol, *mapDataBase->GetLastError());
+
+                                if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
+                                    UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+                                }
+
+                                if (autoClose)
+                                    mapDataBaseClose("CreateMapChunk");
+                                return false;
+                            }
+                            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Writing to the MinCol cell in the Dimensions table of the value %d is complete"), chunkCol);
+                        }else
+                            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The current chunkCol index of %d is not lower than the previous smallest index of %d"), chunkCol, MinCol);
+                    }
+                    else {
+                        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to load the value at name MinCol from table Dimensions: %s"), *mapDataBase->GetLastError());
+
+                        destroyLoadStatement("CreateMapChunk");
+                        if (autoClose)
+                            mapDataBaseClose("CreateMapChunk");
+                        return false;
+                    }
+
+                    if (!CurrentColIndexSmallest) {
+                        UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Started checking if chunkCol, equal to %d, is the highest of the previously created column indexes"), chunkCol);
+                        int32 MaxCol;
+                        if (LoadStatement->GetColumnValueByName(TEXT("MaxCol"), MaxCol)) {
+                            if (chunkCol > MaxCol) {
+                                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The new column index of %d is greater the previous highest index of %d. Started writing a new value for MaxCol cell in table Dimensions"), chunkCol, MaxCol);
+                                if (!mapDataBase->Execute(
+                                    *FString::Printf(TEXT("UPDATE Dimensions SET MaxCol = %d;"), chunkCol))) {
+                                    UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to set a value %d in the Dimensions table to cell MaxCol: %s"), chunkCol, *mapDataBase->GetLastError());
+
+                                    if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
+                                        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+                                    }
+
+                                    if (autoClose)
+                                        mapDataBaseClose("CreateMapChunk");
+                                    return false;
+                                }
+                                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Writing to the MaxCol cell in the Dimensions table of the value %d is complete"), chunkCol);
+                            }else
+                                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The current chunkCol index of %d is not greater than the previous highest index of %d"), chunkCol, MaxCol);
+                        }
+                        else {
+                            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to load the value at name MaxCol from table Dimensions: %s"), *mapDataBase->GetLastError());
+
+                            destroyLoadStatement("CreateMapChunk");
+                            if (autoClose)
+                                mapDataBaseClose("CreateMapChunk");
+                            return false;
+                        }
+                    }
+
+                    UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Started checking if chunkRow, equal to %d, is the smallest of the previously created row indexes"), chunkRow);
+                    int32 MinRow;
+                    bool CurrentRowIndexSmallest = false;
+                    if (LoadStatement->GetColumnValueByName(TEXT("MinRow"), MinRow)) {
+                        CurrentRowIndexSmallest = chunkRow < MinRow;
+                        if (CurrentRowIndexSmallest) {
+                            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The new row index of %d is below the previous lowest index of %d. Started writing a new value for MinRow cell in table Dimensions"), chunkRow, MinRow);
+                            if (!mapDataBase->Execute(
+                                *FString::Printf(TEXT("UPDATE Dimensions SET MinRow = %d;"), chunkRow))) {
+                                UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to set a value %d in the Dimensions table to cell MinRow: %s"), chunkRow, *mapDataBase->GetLastError());
+
+                                if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
+                                    UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+                                }
+
+                                if (autoClose)
+                                    mapDataBaseClose("CreateMapChunk");
+                                return false;
+                            }
+                            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Writing to the MinRow cell in the Dimensions table of the value %d is complete"), chunkRow);
+                        }else
+                            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The current chunkRow index of %d is not lower than the previous smallest index of %d"), chunkRow, MinRow);
+                    }
+                    else {
+                        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to load the value at name MinRow from table Dimensions: %s"), *mapDataBase->GetLastError());
+
+                        destroyLoadStatement("CreateMapChunk");
+                        if (autoClose)
+                            mapDataBaseClose("CreateMapChunk");
+                        return false;
+                    }
+
+                    if (!CurrentRowIndexSmallest) {
+                        UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Started checking if chunkRow, equal to %d, is the highest of the previously created row indexes"), chunkRow);
+                        int32 MaxRow;
+                        if (LoadStatement->GetColumnValueByName(TEXT("MaxRow"), MaxRow)) {
+                            if (chunkRow > MaxRow) {
+                                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The new row index of %d is greater the previous highest index of %d. Started writing a new value for MaxRow cell in table Dimensions"), chunkRow, MaxRow);
+                                if (!mapDataBase->Execute(
+                                    *FString::Printf(TEXT("UPDATE Dimensions SET MaxRow = %d;"), chunkRow))) {
+                                    UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to set a value %d in the Dimensions table to cell MaxRow: %s"), chunkRow, *mapDataBase->GetLastError());
+
+                                    if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
+                                        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+                                    }
+
+                                    if (autoClose)
+                                        mapDataBaseClose("CreateMapChunk");
+                                    return false;
+                                }
+                                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Writing to the MaxRow cell in the Dimensions table of the value %d is complete"), chunkRow);
+                            }else
+                                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The current chunkRow index of %d is not greater than the previous highest index of %d"), chunkRow, MaxRow);
+                        }
+                        else {
+                            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to load the value at name MaxRow from table Dimensions: %s"), *mapDataBase->GetLastError());
+
+                            destroyLoadStatement("CreateMapChunk");
+                            if (autoClose)
+                                mapDataBaseClose("CreateMapChunk");
+                            return false;
+                        }
+                    }
+                }
+                else {
+                    UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to execute a LoadStatement on table Dimensions: %s"), *mapDataBase->GetLastError());
+
+                    destroyLoadStatement("CreateMapChunk");
+                    if (autoClose)
+                        mapDataBaseClose("CreateMapChunk");
+                    return false;
+                }
+
+                destroyLoadStatement("CreateMapChunk");
+                //!!!!!!!
+            }
 
             //Закрепление транзакции
             if (!mapDataBase->Execute(TEXT("COMMIT;"))) {
@@ -206,7 +384,7 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
                 return false;
             }
 
-            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The transaction to create the table \"%s %d:%d\" has been committed"), *SMatrixType, chunkRow, chunkCol);
+            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The transaction to create the table \"%s %d:%d\" has been committed"), *SMatrixType, chunkRow, chunkCol);            
             UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The creation of the \"%s %d:%d\" table in the %s file is fully complete"), *SMatrixType, chunkRow, chunkCol, *FilePath);
         }
         else
@@ -461,7 +639,7 @@ ECellTypeOfMapStructure UMapMatrix::GetValueOfMapChunkStructureCell(int32 chunkR
 
         UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the GetValueOfMapChunkStructureCell function: A transaction to read data from the table \"Structure %d:%d\" has begun"), chunkRow, chunkCol);
 
-        if (LoadStatement->Execute() && LoadStatement->Step() == ESQLitePreparedStatementStepResult::Row) {
+        if (LoadStatement->IsValid() && LoadStatement->Step() == ESQLitePreparedStatementStepResult::Row) {
             uint8 result;
             //Получение указателя на перечисление ECellTypeOfMapStructure для выполнения проверок
             const UEnum* CellType = FindObject<UEnum>(ANY_PACKAGE, TEXT("ECellTypeOfMapStructure"), true);
@@ -597,10 +775,10 @@ void UMapMatrix::SetFilePath(FString filePath)
     UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetFilePath function: The path to the database file is set as %s"), *FilePath);
 }
 
-void UMapMatrix::AsyncCreateTable(int32 rowLen, int32 colLen, MatrixType matrixType) {
+void UMapMatrix::AsyncCreateBlankCard(int32 rowLen, int32 colLen, MatrixType matrixType) {
     SuccessCreateBlankCard = false;
 
-    AsyncTask(ENamedThreads::AnyBackgroundThreadNormalTask, [rowLen, colLen, matrixType, this]() {
+    AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [rowLen, colLen, matrixType, this]() {
         for (int row = 0; row <= rowLen; row++) {
             for (int col = 0; col <= colLen; col++) {
                 SuccessCreateBlankCard = CreateMapChunk(matrixType, row, col, false);
@@ -611,7 +789,7 @@ void UMapMatrix::AsyncCreateTable(int32 rowLen, int32 colLen, MatrixType matrixT
                 break;
         }
 
-        mapDataBaseClose("AsyncCreateTable");
+        mapDataBaseClose("AsyncCreateBlankCard");
 
         AsyncTask(ENamedThreads::GameThread, [this]() {
             if (this->DownloadWidget) {

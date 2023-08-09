@@ -4,7 +4,6 @@
 
 #include "CellTypeOfMapStructure.h"
 #include "SQLiteDatabase.h"
-#include "Blueprint/UserWidget.h"
 #include "MapMatrix.generated.h"
 
 /****************************************************************
@@ -103,5 +102,5 @@ public:
 	void SetFilePath(FString filePath);
 
 	UFUNCTION(BlueprintCallable)
-	void AsyncCreateTable(int32 rowLen, int32 colLen, MatrixType matrixType);
+	void AsyncCreateBlankCard(int32 rowLen, int32 colLen, MatrixType matrixType);
 };
