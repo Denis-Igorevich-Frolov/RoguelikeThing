@@ -173,21 +173,23 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
             UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Query to create table \"%s %d:%d\" completed"), *SMatrixType, chunkRow, chunkCol);
 
 
-            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The consciousness of %d rows in the table \"%s %d:%d\" is started"), TableLength, *SMatrixType, chunkRow, chunkCol);
-
+            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Started the consciousness of a request to add%d rows in the table \"%s %d:%d\" is started"), TableLength, *SMatrixType, chunkRow, chunkCol);
             //После успешного создания всех столбцов, создаётся такое количество строк, какое указанно в TableLength
+            FString RequestToAddRows;
             for (int i = 0; i < TableLength; i++) {
-                if (!mapDataBase->Execute(*(FString::Printf(TEXT("INSERT INTO \"%s %d:%d\" DEFAULT VALUES;"), *SMatrixType, chunkRow, chunkCol)))) {
-                    UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to insert a row number %d into \"%s %d:%d\" table: %s"), i+1, *SMatrixType, chunkRow, chunkCol, *mapDataBase->GetLastError());
-                    
-                    if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
-                        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
-                    }
-                    
-                    if (autoClose)
-                        mapDataBaseClose("CreateMapChunk");
-                    return false;
+                RequestToAddRows.Append(FString::Printf(TEXT("INSERT INTO \"%s %d:%d\" DEFAULT VALUES;"), *SMatrixType, chunkRow, chunkCol));
+            }
+
+            if (!mapDataBase->Execute(*RequestToAddRows)) {
+                UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to insert a rows into \"%s %d:%d\" table: %s"), *SMatrixType, chunkRow, chunkCol, *mapDataBase->GetLastError());
+
+                if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
+                    UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
                 }
+
+                if (autoClose)
+                    mapDataBaseClose("CreateMapChunk");
+                return false;
             }
 
             UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The creation of %d rows in the \"%s %d:%d\" table has been completed"), TableLength, *SMatrixType, chunkRow, chunkCol);
