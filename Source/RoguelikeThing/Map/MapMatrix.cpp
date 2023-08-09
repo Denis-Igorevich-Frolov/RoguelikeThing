@@ -778,14 +778,20 @@ void UMapMatrix::SetFilePath(FString filePath)
 }
 
 void UMapMatrix::AsyncCreateBlankCard(int32 rowLen, int32 colLen, MatrixType matrixType) {
+    UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: Started asynchronous creation of %d rows by %d columns of map fragments with fragment type %s"), rowLen+1, colLen+1, *getStringMatrixType(matrixType));
     SuccessCreateBlankCard = false;
 
     AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [rowLen, colLen, matrixType, this]() {
+        UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: A thread for creating map fragments has been opened"));
         for (int row = 0; row <= rowLen; row++) {
             for (int col = 0; col <= colLen; col++) {
+                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: The creation of the fragment \"%s %d:%d\" has begun"), *getStringMatrixType(matrixType), row, col);
                 SuccessCreateBlankCard = CreateMapChunk(matrixType, row, col, false);
-                if (!SuccessCreateBlankCard)
+                if (!SuccessCreateBlankCard){
+                    UE_LOG(MapDataBase, Error, TEXT("MapMatrix class in the AsyncCreateBlankCard function: Fragment \"%s %d:%d\" was not created"), *getStringMatrixType(matrixType), row, col);
                     break;
+                }else
+                    UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: Fragment \"%s %d:%d\" has been created"), *getStringMatrixType(matrixType), row, col);
             }
             if (!SuccessCreateBlankCard)
                 break;
@@ -793,11 +799,16 @@ void UMapMatrix::AsyncCreateBlankCard(int32 rowLen, int32 colLen, MatrixType mat
 
         mapDataBaseClose("AsyncCreateBlankCard");
 
+        UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: The creation of all map fragments has been completed"));
+
         AsyncTask(ENamedThreads::GameThread, [this]() {
+            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: Launched a GameThread call from the map fragments creation thread to switch widgets"));
             if (this->DownloadWidget) {
                 this->DownloadWidget->RemoveFromParent();
                 DownloadWidget->LoadingComplete(SuccessCreateBlankCard);
             }
+            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: Widget switching done"));
+            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: A thread for creating map fragments has been closed"));
             });
         });
 }
