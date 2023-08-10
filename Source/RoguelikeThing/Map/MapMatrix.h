@@ -101,6 +101,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetFilePath(FString filePath);
 
+	//Функция, запускающая в отдельном потоке создание в базе даннх матрицы из фрагментов карты указанного типа
 	UFUNCTION(BlueprintCallable)
 	void AsyncCreateBlankCard(int32 rowLen, int32 colLen, MatrixType matrixType);
 };

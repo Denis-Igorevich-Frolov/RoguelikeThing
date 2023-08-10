@@ -194,9 +194,11 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
 
             UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The creation of %d rows in the \"%s %d:%d\" table has been completed"), TableLength, *SMatrixType, chunkRow, chunkCol);
 
-            //!!!!!!
+            //Далее проверяется есть ли в файле таблица габаритов карты
             bool DimensionTableExist = LoadStatement->Create(*mapDataBase, TEXT("SELECT * FROM Dimensions;"), ESQLitePreparedStatementFlags::Persistent);
             if (!DimensionTableExist) {
+            /* Если таблицы нет, то начинается её создание. Эта таблица хранит
+             * в себе минимальные и максимальные индексы столбцов и строк*/
                 if (!mapDataBase->Execute(TEXT(
                     "CREATE TABLE IF NOT EXISTS Dimensions("
                     "MinCol INTEGER NOT NULL,"
@@ -216,6 +218,11 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
 
                 UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Query to create table Dimensions completed"));
 
+                /* В данной таблице всегда есть только одна строка. И исходя из того,
+                 * что таблица была создана только сейчас, следует то, что текущий 
+                 * фрагмент карты является первым и единственным, следовательно все
+                 * его индексы и являются одновременно минимальными и максимальными.
+                 * Так что они сразу записываются в эту строку.*/
                 if (!mapDataBase->Execute(*(FString::Printf(TEXT("INSERT INTO Dimensions (MinCol, MaxCol, MinRow, MaxRow) VALUES(%d, %d, %d, %d);"), chunkRow, chunkRow, chunkCol, chunkCol)))) {
                     UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to insert a row into Dimensions table: %s"), *mapDataBase->GetLastError());
 
@@ -231,12 +238,16 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
                 UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The creation of row with data row = %d, col = %d in the Dimensions table has been completed"), chunkRow, chunkCol);
             }
             else {
+                /* Если таблица уже существует, то начинаются проверки являются
+                 * ли текущие индексы новыми краями матрицы фрагментов*/
                 if (LoadStatement->IsValid() && LoadStatement->Step() == ESQLitePreparedStatementStepResult::Row) {
+                    //Проверка является ли текущий индекс столбца новым наименьшим индексом всех столбцов
                     UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Started checking if chunkCol, equal to %d, is the smallest of the previously created column indexes"), chunkCol);
                     int32 MinCol;
                     bool CurrentColIndexSmallest = false;
                     if (LoadStatement->GetColumnValueByName(TEXT("MinCol"), MinCol)) {
                         CurrentColIndexSmallest = chunkCol < MinCol;
+                        //Если индекс действительно наименьший, то он записывается в таблицу габаритов
                         if (CurrentColIndexSmallest) {
                             UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The new column index of %d is below the previous lowest index of %d. Started writing a new value for MinCol cell in table Dimensions"), chunkCol, MinCol);
                             if (!mapDataBase->Execute(
@@ -264,11 +275,17 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
                         return false;
                     }
 
+                    /* Проверка является ли текущий индекс столбцов новым наибольшим индексом всех столцов.
+                     * Эта проверка не начинается, если индекс столбца уже был определён как наименьший,
+                     * ведь единственный случай, когда столбец может быть одновременно и наибольшим, и
+                     * наименьшим - это случай создания первого и пока что единственного фрагмента карты.
+                     * Но этот вариант обрабатывается и записывается сразу при создании таблицы габаритов.*/
                     if (!CurrentColIndexSmallest) {
                         UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Started checking if chunkCol, equal to %d, is the highest of the previously created column indexes"), chunkCol);
                         int32 MaxCol;
                         if (LoadStatement->GetColumnValueByName(TEXT("MaxCol"), MaxCol)) {
                             if (chunkCol > MaxCol) {
+                                //Если индекс действительно наибольший, то он записывается в таблицу габаритов
                                 UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The new column index of %d is greater the previous highest index of %d. Started writing a new value for MaxCol cell in table Dimensions"), chunkCol, MaxCol);
                                 if (!mapDataBase->Execute(
                                     *FString::Printf(TEXT("UPDATE Dimensions SET MaxCol = %d;"), chunkCol))) {
@@ -296,11 +313,13 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
                         }
                     }
 
+                    //Проверка является ли текущий индекс строки новым наименьшим индексом всех строк
                     UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Started checking if chunkRow, equal to %d, is the smallest of the previously created row indexes"), chunkRow);
                     int32 MinRow;
                     bool CurrentRowIndexSmallest = false;
                     if (LoadStatement->GetColumnValueByName(TEXT("MinRow"), MinRow)) {
                         CurrentRowIndexSmallest = chunkRow < MinRow;
+                        //Если индекс действительно наименьший, то он записывается в таблицу габаритов
                         if (CurrentRowIndexSmallest) {
                             UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The new row index of %d is below the previous lowest index of %d. Started writing a new value for MinRow cell in table Dimensions"), chunkRow, MinRow);
                             if (!mapDataBase->Execute(
@@ -328,11 +347,17 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
                         return false;
                     }
 
+                    /* Проверка является ли текущий индекс строки новым наибольшим индексом всех строк.
+                     * Эта проверка не начинается, если индекс строки уже был определён как наименьший,
+                     * ведь единственный случай, когда строка может быть одновременно и наибольшей, и
+                     * наименьшей - это случай создания первого и пока что единственного фрагмента карты.
+                     * Но этот вариант обрабатывается и записывается сразу при создании таблицы габаритов.*/
                     if (!CurrentRowIndexSmallest) {
                         UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Started checking if chunkRow, equal to %d, is the highest of the previously created row indexes"), chunkRow);
                         int32 MaxRow;
                         if (LoadStatement->GetColumnValueByName(TEXT("MaxRow"), MaxRow)) {
                             if (chunkRow > MaxRow) {
+                                //Если индекс действительно наибольший, то он записывается в таблицу габаритов
                                 UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The new row index of %d is greater the previous highest index of %d. Started writing a new value for MaxRow cell in table Dimensions"), chunkRow, MaxRow);
                                 if (!mapDataBase->Execute(
                                     *FString::Printf(TEXT("UPDATE Dimensions SET MaxRow = %d;"), chunkRow))) {
@@ -370,7 +395,6 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
                 }
 
                 destroyLoadStatement("CreateMapChunk");
-                //!!!!!!!
             }
 
             //Закрепление транзакции
@@ -777,16 +801,19 @@ void UMapMatrix::SetFilePath(FString filePath)
     UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetFilePath function: The path to the database file is set as %s"), *FilePath);
 }
 
+//Функция, запускающая в отдельном потоке создание в базе даннх матрицы из фрагментов карты указанного типа
 void UMapMatrix::AsyncCreateBlankCard(int32 rowLen, int32 colLen, MatrixType matrixType) {
     UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: Started asynchronous creation of %d rows by %d columns of map fragments with fragment type %s"), rowLen+1, colLen+1, *getStringMatrixType(matrixType));
     SuccessCreateBlankCard = false;
 
+    //Запуск асинхронного потока
     AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [rowLen, colLen, matrixType, this]() {
         UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: A thread for creating map fragments has been opened"));
         for (int row = 0; row <= rowLen; row++) {
             for (int col = 0; col <= colLen; col++) {
                 UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: The creation of the fragment \"%s %d:%d\" has begun"), *getStringMatrixType(matrixType), row, col);
                 SuccessCreateBlankCard = CreateMapChunk(matrixType, row, col, false);
+                //Если хотябы одна таблица не создалась, то дальнейшее создание таблиц прекращается
                 if (!SuccessCreateBlankCard){
                     UE_LOG(MapDataBase, Error, TEXT("MapMatrix class in the AsyncCreateBlankCard function: Fragment \"%s %d:%d\" was not created"), *getStringMatrixType(matrixType), row, col);
                     break;
@@ -801,8 +828,20 @@ void UMapMatrix::AsyncCreateBlankCard(int32 rowLen, int32 colLen, MatrixType mat
 
         UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: The creation of all map fragments has been completed"));
 
+        //Следующие функции запускаются в основном потоке так как могут быть выполнены только в нём
         AsyncTask(ENamedThreads::GameThread, [this]() {
             UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: Launched a GameThread call from the map fragments creation thread to switch widgets"));
+            
+            //Если все таблицы не были успешно созданы, то файл с ними удаляется
+            if (!SuccessCreateBlankCard && !FilePath.IsEmpty()) {
+                if (FPaths::ValidatePath(FilePath) && FPaths::FileExists(FilePath))
+                {
+                    IFileManager& FileManager = IFileManager::Get();
+                    FileManager.Delete(*FilePath);
+                }
+            }
+
+            //Виджет загрузки удаляется с экрана, и посылается сигнал окончания создания таблицы
             if (this->DownloadWidget) {
                 this->DownloadWidget->RemoveFromParent();
                 DownloadWidget->LoadingComplete(SuccessCreateBlankCard);
