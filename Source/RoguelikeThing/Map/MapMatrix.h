@@ -25,6 +25,27 @@ enum class MatrixType : uint8 {
 	ChunkStructure	UMETA(DisplayName = "ChunkStructure"),//Структура карты
 };
 
+USTRUCT(BlueprintType)
+struct FMapDimensions
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int32 MinCol;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int32 MaxCol;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int32 MinRow;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int32 MaxRow;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    bool isValid;
+
+	FMapDimensions(int32 MinRow, int32 MaxRow, int32 MinCol, int32 MaxCol, bool isValid = true);
+	FMapDimensions();
+};
+
 UCLASS(Blueprintable, BlueprintType)
 class ROGUELIKETHING_API UMapMatrix : public UObject
 {
@@ -55,6 +76,9 @@ private:
 
 public:
 	~UMapMatrix();
+
+	UFUNCTION(BlueprintCallable)
+	int32 GetTableLength();
 
 	UFUNCTION(BlueprintCallable)
 	void setLoadWidget(ULoadingWidget* newDownloadWidget);
@@ -93,7 +117,7 @@ public:
 
 	//Функция, устанавливающая имя файла с базой данных
 	UFUNCTION(BlueprintCallable)
-	void SetFileName(FString fileName);
+	void SetFileName(FString fileName, bool WithExtension = false);
 
 	//Функция, устанавливающая путь до файла с базой данных
 	UFUNCTION(BlueprintCallable)
@@ -102,4 +126,7 @@ public:
 	//Функция, запускающая в отдельном потоке создание в базе даннх матрицы из фрагментов карты указанного типа
 	UFUNCTION(BlueprintCallable)
 	void AsyncCreateBlankCard(int32 rowLen, int32 colLen, MatrixType matrixType);
+
+	UFUNCTION(BlueprintCallable)
+	FMapDimensions GetMapDimensions(bool autoClose = true);
 };

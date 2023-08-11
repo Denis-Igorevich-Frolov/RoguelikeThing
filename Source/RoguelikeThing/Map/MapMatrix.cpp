@@ -14,6 +14,11 @@ UMapMatrix::~UMapMatrix()
     delete mapDataBase;
 }
 
+int32 UMapMatrix::GetTableLength()
+{
+    return TableLength;
+}
+
 //Функция, возвращающая название типа фрагмента карты по перечислению MatrixType
 FString UMapMatrix::getStringMatrixType(MatrixType matrixType)
 {
@@ -788,9 +793,11 @@ ECellTypeOfMapStructure UMapMatrix::GetValueOfMapChunkStructureCellByGlobalIndex
 }
 
 //Функция, устанавливающая имя файла с базой данных
-void UMapMatrix::SetFileName(FString fileName)
+void UMapMatrix::SetFileName(FString fileName, bool WithExtension)
 {
-    FilePath = FPaths::ProjectSavedDir() + TEXT("/Save/") + fileName + TEXT(".db");
+    FilePath = FPaths::ProjectSavedDir() + TEXT("/Save/") + fileName;
+    if (!WithExtension)
+        FilePath += TEXT(".db");
     UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetFileName function: The name of the database file is set to %s, the path to the file is %s"), *fileName, *FilePath);
 }
 
@@ -851,3 +858,74 @@ void UMapMatrix::AsyncCreateBlankCard(int32 rowLen, int32 colLen, MatrixType mat
             });
         });
 }
+
+FMapDimensions UMapMatrix::GetMapDimensions(bool autoClose)
+{
+    /* Если mapDataBase непроинициализированна, это означает, что база
+     * данных не была открыта. В таком случае её следует открыть.*/
+    if (!mapDataBase->IsValid()) {
+        if (!mapDataBase->Open(*FilePath, ESQLiteDatabaseOpenMode::ReadOnly)) {
+            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetMapDimensions function when trying to open mapDataBase: %s"), *mapDataBase->GetLastError());
+            return FMapDimensions();
+        }
+        else
+            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the GetMapDimensions function: mapDataBase has been opened"));
+    }
+
+    //После открытия базы данных следует ещё раз проверить её валидность
+    if (mapDataBase->IsValid()) {
+        //Далее проверяется есть ли в файле таблица габаритов карты
+        bool DimensionTableExist = LoadStatement->Create(*mapDataBase, TEXT("SELECT * FROM Dimensions;"), ESQLitePreparedStatementFlags::Persistent);
+        if (DimensionTableExist) {
+            if (LoadStatement->IsValid() && LoadStatement->Step() == ESQLitePreparedStatementStepResult::Row) {
+                int32 MinCol;
+                if (!LoadStatement->GetColumnValueByName(TEXT("MinCol"), MinCol)) {
+                    destroyLoadStatement("GetMapDimensions");
+                    if (autoClose)
+                        mapDataBaseClose("GetMapDimensions");
+                    return FMapDimensions();
+                }
+
+                int32 MaxCol;
+                if (!LoadStatement->GetColumnValueByName(TEXT("MaxCol"), MaxCol)) {
+                    destroyLoadStatement("GetMapDimensions");
+                    if (autoClose)
+                        mapDataBaseClose("GetMapDimensions");
+                    return FMapDimensions();
+                }
+
+                int32 MinRow;
+                if (!LoadStatement->GetColumnValueByName(TEXT("MinRow"), MinRow)) {
+                    destroyLoadStatement("GetMapDimensions");
+                    if (autoClose)
+                        mapDataBaseClose("GetMapDimensions");
+                    return FMapDimensions();
+                }
+
+                int32 MaxRow;
+                if (!LoadStatement->GetColumnValueByName(TEXT("MaxRow"), MaxRow)) {
+                    destroyLoadStatement("GetMapDimensions");
+                    if (autoClose)
+                        mapDataBaseClose("GetMapDimensions");
+                    return FMapDimensions();
+                }
+
+                destroyLoadStatement("GetMapDimensions");
+                if (autoClose)
+                    mapDataBaseClose("GetMapDimensions");
+                return FMapDimensions(MinRow, MaxRow, MinCol, MaxCol);
+            }
+        }
+        else
+            return FMapDimensions();
+    }
+
+    return FMapDimensions();
+}
+
+FMapDimensions::FMapDimensions(int32 MinRow, int32 MaxRow, int32 MinCol, int32 MaxCol, bool isValid):
+    MinRow(MinRow), MaxRow(MaxRow), MinCol(MinCol), MaxCol(MaxCol), isValid(isValid)
+{}
+
+FMapDimensions::FMapDimensions() : FMapDimensions(0, 0, 0, 0, false)
+{}
