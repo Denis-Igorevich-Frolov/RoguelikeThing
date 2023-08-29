@@ -123,6 +123,32 @@
 			}
 		},
 		{
+			"File": "../../../Engine/Plugins/BlueprintFileUtils/BlueprintFileUtils.uplugin",
+			"Descriptor": 
+			{
+				"FileVersion": 3,
+				"Version": 1,
+				"VersionName": "1.0",
+				"FriendlyName": "Blueprint File Utilities",
+				"Description": "A blueprint libarary that enables low level file operations such as Move, Copy, Delete, Find",
+				"Category": "Blueprints",
+				"CreatedBy": "",
+				"CreatedByURL": "",
+				"DocsURL": "",
+				"MarketplaceURL": "",
+				"SupportURL": "",
+				"EnabledByDefault": false,
+				"CanContainContent": true,
+				"Modules": [
+					{
+						"Name": "BlueprintFileUtils",
+						"Type": "Runtime",
+						"LoadingPhase": "Default"
+					}
+				]
+			}
+		},
+		{
 			"File": "../../../Engine/Plugins/2D/Paper2D/Paper2D.uplugin",
 			"Descriptor": 
 			{
