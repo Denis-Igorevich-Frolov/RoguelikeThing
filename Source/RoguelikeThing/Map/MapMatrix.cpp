@@ -430,9 +430,9 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
     return true;
 }
 
-void UMapMatrix::setLoadWidget(ULoadingWidget* newDownloadWidget)
+void UMapMatrix::setLoadWidget(ULoadingWidget* newLoadingWidget)
 {
-    this->DownloadWidget = newDownloadWidget;
+    this->LoadingWidget = newLoadingWidget;
 }
 
 /* Функция, удаляющая фрагмент карты на отснове переданного типа и индекса фрагмента.
@@ -845,9 +845,9 @@ void UMapMatrix::AsyncCreateBlankCard(int32 rowLen, int32 colLen, MatrixType mat
             }
 
             //Виджет загрузки удаляется с экрана, и посылается сигнал окончания создания таблицы
-            if (this->DownloadWidget) {
-                this->DownloadWidget->RemoveFromParent();
-                DownloadWidget->LoadingComplete(SuccessCreateBlankCard);
+            if (this->LoadingWidget) {
+                this->LoadingWidget->RemoveFromParent();
+                LoadingWidget->LoadingComplete(SuccessCreateBlankCard);
             }
             UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: Widget switching done"));
             UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: A thread for creating map fragments has been closed"));

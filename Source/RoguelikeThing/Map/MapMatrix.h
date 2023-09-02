@@ -52,7 +52,7 @@ class ROGUELIKETHING_API UMapMatrix : public UObject
 	GENERATED_BODY()
 
 private:
-	ULoadingWidget* DownloadWidget;
+	ULoadingWidget* LoadingWidget;
 	bool SuccessCreateBlankCard = false;
 
 	//Путь до файла, в котором лежит база данных карты
@@ -81,7 +81,7 @@ public:
 	int32 GetTableLength();
 
 	UFUNCTION(BlueprintCallable)
-	void setLoadWidget(ULoadingWidget* newDownloadWidget);
+	void setLoadWidget(ULoadingWidget* newLoadingWidget);
 
 	/* Функция, создающая новый фрагмент карты на отснове переданного типа и индекса фрагмента.
 	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически*/
