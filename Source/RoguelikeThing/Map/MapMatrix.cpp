@@ -6,6 +6,15 @@
 
 DEFINE_LOG_CATEGORY(MapDataBase);
 
+UMapMatrix::UMapMatrix() : UObject()
+{
+    int32 remainder = TableLength % MapTileLength;
+    if (remainder != 0) {
+        UE_LOG(MapDataBase, Warning, TEXT("Warning in MapMatrix class in constructor function - TableLength is %d and not a multiple of 5, it will be truncated to %d"), TableLength, TableLength - remainder);
+        TableLength = TableLength - remainder;
+    }
+}
+
 UMapMatrix::~UMapMatrix()
 {
     delete LoadStatement;
@@ -17,6 +26,11 @@ UMapMatrix::~UMapMatrix()
 int32 UMapMatrix::GetTableLength()
 {
     return TableLength;
+}
+
+int32 UMapMatrix::GetMapTileLength()
+{
+    return MapTileLength;
 }
 
 //Функция, возвращающая название типа фрагмента карты по перечислению MatrixType
@@ -50,7 +64,7 @@ void UMapMatrix::convertingGlobalIndexIntoLocalOne(int32 globalCellRow, int32 gl
         /* Для получения индекса фрагмента карты следует разделить глобальный индекс ячейки на размер таблицы.
          * Но так как переход на следующей индекс начинается не по достижении размера таблицы, а только ещё
          * через одно значение, например, размер таблицы равен 51, так перенос произойдёт на значении 52, из
-         * переданного глобального индекса вычетается 1, чтобы отсрочить перенос индекса на эту единицу*/
+         * переданного глобального индекса вычетается 1, чтобы отсрочить перенос индекса на эту единицу */
         chunkRow = (globalCellRow - 1) / TableLength;
         //Локальный индекс ячейки равен остатку от деления глобального индекса ячейки на размер таблицы
         cellRow = globalCellRow % TableLength;
@@ -59,15 +73,15 @@ void UMapMatrix::convertingGlobalIndexIntoLocalOne(int32 globalCellRow, int32 gl
         /* Если глобальный индекс 0 или меньше, то откладывать перенос, как с положительным индексом, нет смысла,
          * так как 0 и так уже будет считаться одним из индексов. Но так как отрицательный глобальный индекс ячейки
          * всегда означает отрицательный индекс таблицы, а -1 будет получено только при достижении значения, большего,
-         * чем размер таблицы, следует сразу вычесть единицу из итогового значения.*/
+         * чем размер таблицы, следует сразу вычесть единицу из итогового значения. */
         chunkRow = globalCellRow / TableLength - 1;
         /* Локальный индекс ячейки при отрицательном глобальном индексе, в отлиции от положительного, идёт справа налево,
          * а не слева направо, и так, учитывая что полученный от деления остаток всегда отрицательный, то его нужно
-         * прибавить к длинне фрагмента, тем самым получив разницу между длинной фрагмента и модулем остатка от деления*/
+         * прибавить к длинне фрагмента, тем самым получив разницу между длинной фрагмента и модулем остатка от деления */
         cellRow = globalCellRow % TableLength + TableLength;
     }
     /* Если значение индекса ячейки равно 0, то это означает, что оно кратно длинне таблицы. В этом
-     * случае нам как раз нужно число равное длинне таблицы для выставление корректного индекса*/
+     * случае нам как раз нужно число равное длинне таблицы для выставление корректного индекса */
     if (cellRow == 0)
         cellRow = TableLength;
 
@@ -75,7 +89,7 @@ void UMapMatrix::convertingGlobalIndexIntoLocalOne(int32 globalCellRow, int32 gl
         /* Для получения индекса фрагмента карты следует разделить глобальный индекс ячейки на размер таблицы.
          * Но так как переход на следующей индекс начинается не по достижении размера таблицы, а только ещё
          * через одно значение, например, размер таблицы равен 51, так перенос произойдёт на значении 52, из
-         * переданного глобального индекса вычетается 1, чтобы отсрочить перенос индекса на эту единицу.*/
+         * переданного глобального индекса вычетается 1, чтобы отсрочить перенос индекса на эту единицу. */
         chunkCol = (globalCellCol - 1) / TableLength;
         //Локальный индекс ячейки равен остатку от деления глобального индекса ячейки на размер таблицы
         cellCol = globalCellCol % TableLength;
@@ -84,25 +98,25 @@ void UMapMatrix::convertingGlobalIndexIntoLocalOne(int32 globalCellRow, int32 gl
         /* Если глобальный индекс 0 или меньше, то откладывать перенос, как с положительным индексом, нет смысла,
          * так как 0 и так уже будет считаться одним из индексов. Но так как отрицательный глобальный индекс ячейки
          * всегда означает отрицательный индекс таблицы, а -1 будет получено только при достижении значения, большего,
-         * чем размер таблицы, следует сразу вычесть единицу из итогового значения.*/
+         * чем размер таблицы, следует сразу вычесть единицу из итогового значения. */
         chunkCol = globalCellCol / TableLength - 1;
         /* Локальный индекс ячейки при отрицательном глобальном индексе, в отлиции от положительного, идёт справа налево,
          * а не слева направо, и так, учитывая что полученный от деления остаток всегда отрицательный, то его нужно
-         * прибавить к длинне фрагмента, тем самым получив разницу между длинной фрагмента и модулем остатка от деления*/
+         * прибавить к длинне фрагмента, тем самым получив разницу между длинной фрагмента и модулем остатка от деления */
         cellCol = globalCellCol % TableLength + TableLength;
     }
     /* Если значение индекса ячейки равно 0, то это означает, что оно кратно длинне таблицы. В этом
-     * случае нам как раз нужно число равное длинне таблицы для выставление корректного индекса*/
+     * случае нам как раз нужно число равное длинне таблицы для выставление корректного индекса */
     if (cellCol == 0)
         cellCol = TableLength;
 }
 
 /* Функция, создающая новый фрагмент карты на отснове переданного типа и индекса фрагмента.
- * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически*/
+ * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
 bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chunkCol, bool autoClose)
 {
     /* Если mapDataBase непроинициализированна, это означает, что база
-     * данных не была открыта. В таком случае её следует открыть.*/
+     * данных не была открыта. В таком случае её следует открыть. */
     if (!mapDataBase->IsValid()) {
         if (!mapDataBase->Open(*FilePath, ESQLiteDatabaseOpenMode::ReadWriteCreate)) {
             UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to open mapDataBase: %s"), *mapDataBase->GetLastError());
@@ -117,7 +131,7 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
         FString SMatrixType = getStringMatrixType(matrixType);
 
         /* Если функия getStringMatrixType вернула значение "", то это значит, что в неё
-         * попали некорретные данные и последующее выполнение функции стоит прекратить*/
+         * попали некорретные данные и последующее выполнение функции стоит прекратить */
         if (SMatrixType == "") {
             UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function - incorrect map fragment type"));
 
@@ -130,7 +144,7 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
          * Именно из-за этой проверки, где неудачная попытка выделения говорит всего лишь о том, что такой
          * таблицы действительно ещё нет, и её можно спокойно дальше создавать, в логах, при инициализации
          * новой таблицы, отобразится предупреждение о провале операции SELECT. Просто игнорируете это
-         * предупреждение, его появление говорит о корректной работе кода.*/
+         * предупреждение, его появление говорит о корректной работе кода. */
         bool TableIsExists = LoadStatement->Create(*mapDataBase, *(FString::Printf(TEXT("SELECT * FROM \"%s %d:%d\" WHERE RowNum IS %d;"), *SMatrixType, chunkRow, chunkCol, TableLength)));
         if(TableIsExists)
             destroyLoadStatement("CreateMapChunk");
@@ -152,7 +166,7 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
                 "RowNum INTEGER PRIMARY KEY AUTOINCREMENT,"), *SMatrixType, chunkRow, chunkCol);
 
             /* Далее к запросу добавляется такое количество столбцов, какое указанно в TableLength. При
-             * этом число 1 запрещено к записи, так как оно всегда зарезервированно под ошибку загрузки.*/
+             * этом число 1 запрещено к записи, так как оно всегда зарезервированно под ошибку загрузки. */
             for (int i = 1; i <= TableLength; i++) {
                 QueryToCreateTable += FString::Printf(TEXT("\"Col %d\" INTEGER CHECK(\"Col %d\" !=1)"), i, i);
                 if (i != TableLength)
@@ -199,7 +213,7 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
             bool DimensionTableExist = LoadStatement->Create(*mapDataBase, TEXT("SELECT * FROM Dimensions;"), ESQLitePreparedStatementFlags::Persistent);
             if (!DimensionTableExist) {
             /* Если таблицы нет, то начинается её создание. Эта таблица хранит
-             * в себе минимальные и максимальные индексы столбцов и строк*/
+             * в себе минимальные и максимальные индексы столбцов и строк */
                 if (!mapDataBase->Execute(TEXT(
                     "CREATE TABLE IF NOT EXISTS Dimensions("
                     "MinCol INTEGER NOT NULL,"
@@ -223,7 +237,7 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
                  * что таблица была создана только сейчас, следует то, что текущий 
                  * фрагмент карты является первым и единственным, следовательно все
                  * его индексы и являются одновременно минимальными и максимальными.
-                 * Так что они сразу записываются в эту строку.*/
+                 * Так что они сразу записываются в эту строку. */
                 if (!mapDataBase->Execute(*(FString::Printf(TEXT("INSERT INTO Dimensions (MinCol, MaxCol, MinRow, MaxRow) VALUES(%d, %d, %d, %d);"), chunkRow, chunkRow, chunkCol, chunkCol)))) {
                     UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to insert a row into Dimensions table: %s"), *mapDataBase->GetLastError());
 
@@ -240,7 +254,7 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
             }
             else {
                 /* Если таблица уже существует, то начинаются проверки являются
-                 * ли текущие индексы новыми краями матрицы фрагментов*/
+                 * ли текущие индексы новыми краями матрицы фрагментов */
                 if (LoadStatement->IsValid() && LoadStatement->Step() == ESQLitePreparedStatementStepResult::Row) {
                     //Проверка является ли текущий индекс столбца новым наименьшим индексом всех столбцов
                     UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Started checking if chunkCol, equal to %d, is the smallest of the previously created column indexes"), chunkCol);
@@ -280,7 +294,7 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
                      * Эта проверка не начинается, если индекс столбца уже был определён как наименьший,
                      * ведь единственный случай, когда столбец может быть одновременно и наибольшим, и
                      * наименьшим - это случай создания первого и пока что единственного фрагмента карты.
-                     * Но этот вариант обрабатывается и записывается сразу при создании таблицы габаритов.*/
+                     * Но этот вариант обрабатывается и записывается сразу при создании таблицы габаритов. */
                     if (!CurrentColIndexSmallest) {
                         UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Started checking if chunkCol, equal to %d, is the highest of the previously created column indexes"), chunkCol);
                         int32 MaxCol;
@@ -352,7 +366,7 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
                      * Эта проверка не начинается, если индекс строки уже был определён как наименьший,
                      * ведь единственный случай, когда строка может быть одновременно и наибольшей, и
                      * наименьшей - это случай создания первого и пока что единственного фрагмента карты.
-                     * Но этот вариант обрабатывается и записывается сразу при создании таблицы габаритов.*/
+                     * Но этот вариант обрабатывается и записывается сразу при создании таблицы габаритов. */
                     if (!CurrentRowIndexSmallest) {
                         UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Started checking if chunkRow, equal to %d, is the highest of the previously created row indexes"), chunkRow);
                         int32 MaxRow;
@@ -416,7 +430,7 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
         }
         else
             /* Если таблица уже существует, false не возвращается. Главное чтобы после
-             * выполнения этой функции указанная таблица так или иначе существовала*/
+             * выполнения этой функции указанная таблица так или иначе существовала */
             UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Table \"%s %d:%d\" already exists in file %s"), *SMatrixType, chunkRow, chunkCol, *FilePath);
     }
     else {
@@ -436,11 +450,11 @@ void UMapMatrix::setLoadWidget(ULoadingWidget* newLoadingWidget)
 }
 
 /* Функция, удаляющая фрагмент карты на отснове переданного типа и индекса фрагмента.
- * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически*/
+ * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
 bool UMapMatrix::DeleteMapChunk(MatrixType matrixType, int32 chunkRow, int32 chunkCol, bool autoClose)
 {
     /* Если mapDataBase непроинициализированна, это означает, что база
-     * данных не была открыта. В таком случае её следует открыть.*/
+     * данных не была открыта. В таком случае её следует открыть. */
     if (!mapDataBase->IsValid()) {
         if (!mapDataBase->Open(*FilePath, ESQLiteDatabaseOpenMode::ReadWriteCreate)) {
             UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the DeleteMapChunk function when trying to open mapDataBase: %s"), *mapDataBase->GetLastError());
@@ -455,7 +469,7 @@ bool UMapMatrix::DeleteMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
         FString SMatrixType = getStringMatrixType(matrixType);
 
         /* Если функия getStringMatrixType вернула значение "", то это значит, что в неё
-         * попали некорретные данные и последующее выполнение функции стоит прекратить*/
+         * попали некорретные данные и последующее выполнение функции стоит прекратить */
         if (SMatrixType == "") {
             UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the DeleteMapChunk function - incorrect map fragment type"));
 
@@ -516,7 +530,7 @@ bool UMapMatrix::DeleteMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
 }
 
 /* Функция, записывающая значение в ячейку фрагмента БД по её локальному индексу.
- * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически*/
+ * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
 bool UMapMatrix::SetValueOfMapChunkCell(MatrixType matrixType, int32 chunkRow, int32 chunkCol, int32 cellRow, int32 cellCol, int32 value, bool autoClose)
 {
     //Все переданные индексы ячейки должны находиться в диапазоне от 1 до TableLength включительно
@@ -538,7 +552,7 @@ bool UMapMatrix::SetValueOfMapChunkCell(MatrixType matrixType, int32 chunkRow, i
     }
 
     /* Если mapDataBase непроинициализированна, это означает, что база
-     * данных не была открыта. В таком случае её следует открыть.*/
+     * данных не была открыта. В таком случае её следует открыть. */
     if (!mapDataBase->IsValid()) {
         if (!mapDataBase->Open(*FilePath, ESQLiteDatabaseOpenMode::ReadWrite)) {
             UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkCell function when trying to open mapDataBase: %s"), *mapDataBase->GetLastError());
@@ -553,7 +567,7 @@ bool UMapMatrix::SetValueOfMapChunkCell(MatrixType matrixType, int32 chunkRow, i
         FString SMatrixType = getStringMatrixType(matrixType);
 
         /* Если функия getStringMatrixType вернула значение "", то это значит, что в неё
-         * попали некорретные данные и последующее выполнение функции стоит прекратить*/
+         * попали некорретные данные и последующее выполнение функции стоит прекратить */
         if (SMatrixType == "") {
             UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkCell function - incorrect map fragment type"));
 
@@ -620,7 +634,7 @@ bool UMapMatrix::SetValueOfMapChunkCell(MatrixType matrixType, int32 chunkRow, i
 }
 
 /* Функция, считывающая значение из ячейки фрагмента БД по её локальному индексу.
- * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически*/
+ * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
 ECellTypeOfMapStructure UMapMatrix::GetValueOfMapChunkStructureCell(int32 chunkRow, int32 chunkCol, int32 cellRow, int32 cellCol, bool autoClose)
 {
     //Все переданные индексы ячейки должны находиться в диапазоне от 1 до TableLength включительно
@@ -642,7 +656,7 @@ ECellTypeOfMapStructure UMapMatrix::GetValueOfMapChunkStructureCell(int32 chunkR
     }
 
     /* Если mapDataBase непроинициализированна, это означает, что база
-     * данных не была открыта. В таком случае её следует открыть.*/
+     * данных не была открыта. В таком случае её следует открыть. */
     if (!mapDataBase->IsValid()) {
         if (!mapDataBase->Open(*FilePath, ESQLiteDatabaseOpenMode::ReadOnly)) {
             UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetValueOfMapChunkStructureCell function when trying to open mapDataBase: %s"), *mapDataBase->GetLastError());
@@ -741,7 +755,7 @@ void UMapMatrix::mapDataBaseClose(FString FunctionName)
 }
 
 /* Функция, записывающая значение в ячейку фрагмента БД по её глобальному индексу.
- * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически*/
+ * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
 bool UMapMatrix::SetValueOfMapChunkCellByGlobalIndex(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol, int32 value, bool autoClose)
 {
     int32 chunkRow;
@@ -754,7 +768,7 @@ bool UMapMatrix::SetValueOfMapChunkCellByGlobalIndex(MatrixType matrixType, int3
     UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCellByGlobalIndex function: Global index %d:%d translated into tables \"%s %d:%d\" cell %d:%d"), globalCellRow, globalCellCol, *getStringMatrixType(matrixType), chunkRow, chunkCol, cellRow, cellCol);
 
     /* Если автозакрытие отключено, то база данных открывается здесь с модификатором ReadWriteCreate,
-     * который подойдёт и для создания таблиц, и для записи данных в ячейки*/
+     * который подойдёт и для создания таблиц, и для записи данных в ячейки */
     if (!autoClose && !mapDataBase->IsValid()) {
         if (!mapDataBase->Open(*FilePath, ESQLiteDatabaseOpenMode::ReadWriteCreate)) {
             UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkCellByGlobalIndex function when trying to open mapDataBase: %s"), *mapDataBase->GetLastError());
@@ -765,7 +779,7 @@ bool UMapMatrix::SetValueOfMapChunkCellByGlobalIndex(MatrixType matrixType, int3
     }
 
     /* Всегда перед попыткой записать данные в ячейку идёт попытка создать необходимую таблицу.
-     * Если таблица уже существует, просто ничего не произойдёт, и запись данных продолжится*/
+     * Если таблица уже существует, просто ничего не произойдёт, и запись данных продолжится */
     if (CreateMapChunk(matrixType, chunkRow, chunkCol, autoClose))
         return SetValueOfMapChunkCell(matrixType, chunkRow, chunkCol, cellRow, cellCol, value, autoClose);
     else
@@ -773,7 +787,7 @@ bool UMapMatrix::SetValueOfMapChunkCellByGlobalIndex(MatrixType matrixType, int3
 }
 
 /* Функция, считывающая значение из ячейки фрагмента БД по её глобальному индексу.
- * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически*/
+ * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
 ECellTypeOfMapStructure UMapMatrix::GetValueOfMapChunkStructureCellByGlobalIndex(int32 globalCellRow, int32 globalCellCol, bool autoClose)
 {
     int32 chunkRow;
@@ -858,7 +872,7 @@ void UMapMatrix::AsyncCreateBlankCard(int32 rowLen, int32 colLen, MatrixType mat
 FMapDimensions UMapMatrix::GetMapDimensions(bool autoClose)
 {
     /* Если mapDataBase непроинициализированна, это означает, что база
-     * данных не была открыта. В таком случае её следует открыть.*/
+     * данных не была открыта. В таком случае её следует открыть. */
     if (!mapDataBase->IsValid()) {
         if (!mapDataBase->Open(*FilePath, ESQLiteDatabaseOpenMode::ReadOnly)) {
             UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetMapDimensions function when trying to open mapDataBase: %s"), *mapDataBase->GetLastError());
@@ -909,7 +923,7 @@ FMapDimensions UMapMatrix::GetMapDimensions(bool autoClose)
                 destroyLoadStatement("GetMapDimensions");
                 if (autoClose)
                     mapDataBaseClose("GetMapDimensions");
-                return FMapDimensions(MinRow, MaxRow, MinCol, MaxCol);
+                return FMapDimensions(MinRow, MaxRow, MinCol, MaxCol, TableLength, MapTileLength);
             }
         }
         else
@@ -919,9 +933,11 @@ FMapDimensions UMapMatrix::GetMapDimensions(bool autoClose)
     return FMapDimensions();
 }
 
-FMapDimensions::FMapDimensions(int32 MinRow, int32 MaxRow, int32 MinCol, int32 MaxCol, bool isValid):
-    MinRow(MinRow), MaxRow(MaxRow), MinCol(MinCol), MaxCol(MaxCol), isValid(isValid)
+FMapDimensions::FMapDimensions(int32 MinRow, int32 MaxRow, int32 MinCol,
+    int32 MaxCol, int32 TableLength, int32 MapTileLength, bool isValid):
+    MinRow(MinRow), MaxRow(MaxRow), MinCol(MinCol), MaxCol(MaxCol),
+    TableLength(TableLength), MapTileLength(MapTileLength), isValid(isValid)
 {}
 
-FMapDimensions::FMapDimensions() : FMapDimensions(0, 0, 0, 0, false)
+FMapDimensions::FMapDimensions() : FMapDimensions(0, 0, 0, 0, TableLength, MapTileLength, false)
 {}

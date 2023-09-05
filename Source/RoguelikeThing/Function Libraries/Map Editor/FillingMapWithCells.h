@@ -4,13 +4,16 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "RoguelikeThing/Map/MapMatrix.h"
 #include <Components/UniformGridPanel.h>
+#include "RoguelikeThing/Map/MapMatrix.h"
 #include "FillingMapWithCells.generated.h"
 
 /**
  * 
  */
+
+DECLARE_LOG_CATEGORY_EXTERN(FillingMapWithCells, Log, All);
+
 UCLASS(Blueprintable, BlueprintType)
 class ROGUELIKETHING_API UFillingMapWithCells : public UBlueprintFunctionLibrary
 {
@@ -21,7 +24,8 @@ private:
 	
 public:
 	UFUNCTION(BlueprintCallable)
-	void FillMapEditorWithCells(FMapDimensions MapDimensions, int32 TableLength, UUniformGridPanel* GridPanel, UUserWidget* SampleWidget);
+	bool FillMapEditorWithCells(FMapDimensions MapDimensions, UUniformGridPanel* GridPanel,
+		UClass* CellClass, UClass* MapTileClass);
 
 	UFUNCTION(BlueprintCallable)
 	void setLoadWidget(ULoadingWidget* newLoadingWidget);

@@ -22,7 +22,7 @@ DECLARE_LOG_CATEGORY_EXTERN(MapDataBase, Log, All);
 //Данное перечисление включает в себя все возможные типы фрагментов карты
 UENUM(BlueprintType)
 enum class MatrixType : uint8 {
-	ChunkStructure	UMETA(DisplayName = "ChunkStructure"),//Структура карты
+	ChunkStructure	UMETA(DisplayName = "ChunkStructure"), //Структура карты
 };
 
 USTRUCT(BlueprintType)
@@ -38,11 +38,16 @@ struct FMapDimensions
     int32 MinRow;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int32 MaxRow;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int32 TableLength;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int32 MapTileLength;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
     bool isValid;
 
-	FMapDimensions(int32 MinRow, int32 MaxRow, int32 MinCol, int32 MaxCol, bool isValid = true);
+	FMapDimensions(int32 MinRow, int32 MaxRow, int32 MinCol, int32 MaxCol,
+		int32 TableLength, int32 MapTileLength, bool isValid = true);
 	FMapDimensions();
 };
 
@@ -57,8 +62,13 @@ private:
 
 	//Путь до файла, в котором лежит база данных карты
 	FString FilePath = FPaths::ProjectSavedDir() + TEXT("/Save/Map.db");
-	//Число строк и столбцов в матрице фрагмента карты
-	int32 TableLength = 51;
+	/* Число строк и столбцов в матрице фрагмента карты. Это число всегда должно быть
+	 * кратно длине тайла, если это не так, то оно усечётся до ближайшего кратного.
+	 * Фрагменты карты нужны для хранения большого количества ячеек отдельным кластером в БД */
+	int32 TableLength = 50;
+	/* Длина тайлов, на которые будет разбита карта. Она разбивается на маленькие тайлы
+	 * для оптимизации - отображаться будут только те тайлы, которые сейчас видны */
+	int32 MapTileLength = 5;
 
 	FSQLiteDatabase* mapDataBase = new FSQLiteDatabase();
 	//Подготовленное заявление для загрузки данных из БД
@@ -75,10 +85,14 @@ private:
 		int32& cellRow, int32& chunkCol, int32& cellCol);
 
 public:
+	UMapMatrix();
 	~UMapMatrix();
 
 	UFUNCTION(BlueprintCallable)
 	int32 GetTableLength();
+
+	UFUNCTION(BlueprintCallable)
+	int32 GetMapTileLength();
 
 	UFUNCTION(BlueprintCallable)
 	void setLoadWidget(ULoadingWidget* newLoadingWidget);
