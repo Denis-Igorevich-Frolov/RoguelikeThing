@@ -21,12 +21,20 @@ class ROGUELIKETHING_API UFillingMapWithCells : public UBlueprintFunctionLibrary
 
 private:
 	ULoadingWidget* LoadingWidget;
+
+	int ColSize;
+	int RowSize;
 	
 public:
 	UFUNCTION(BlueprintCallable)
 	bool FillMapEditorWithCells(FMapDimensions MapDimensions, UUniformGridPanel* GridPanel,
-		UClass* CellClass, UClass* MapTileClass);
+		UClass* CellClass, UClass* MapTileClass, UMapEditor* MapEditor);
 
 	UFUNCTION(BlueprintCallable)
 	void setLoadWidget(ULoadingWidget* newLoadingWidget);
+
+	UFUNCTION(BlueprintCallable)
+	int32 GetColSize();
+	UFUNCTION(BlueprintCallable)
+	int32 GetRowSize();
 };
