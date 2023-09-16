@@ -12,9 +12,9 @@
 DEFINE_LOG_CATEGORY(FillingMapWithCells);
 
 bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions,
-    UUniformGridPanel* GridPanel, UClass* CellClass, UClass* MapTileClass, UMapEditor* MapEditor)
+    UUniformGridPanel* TileGridPanel, UClass* CellClass, UClass* MapTileClass, UMapEditor* MapEditor)
 {
-    if (!GridPanel)
+    if (!TileGridPanel)
         return false;
     if (!CellClass)
         return false;
@@ -23,7 +23,7 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions,
     if (!MapEditor)
         return false;
 
-    UUserWidget* TestGridWidget = CreateWidget<UUserWidget>(GridPanel, MapTileClass);
+    UUserWidget* TestGridWidget = CreateWidget<UUserWidget>(TileGridPanel, MapTileClass);
     if (!dynamic_cast<UMapTile*>(TestGridWidget)) {
         UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: MapFragmentClass was expected to inherit from UMapTile, but its class is %s"), *MapTileClass->GetName());
 
@@ -42,7 +42,7 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions,
         TestGridWidget->RemoveFromParent();
     }
 
-    UUserWidget* TestCellWidget = CreateWidget<UUserWidget>(GridPanel, CellClass);
+    UUserWidget* TestCellWidget = CreateWidget<UUserWidget>(TileGridPanel, CellClass);
     if (!StaticCast<UMapCell*>(TestCellWidget)) {
         UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: CellClass was expected to inherit from UMapCell, but its class is %s"), *CellClass->GetName());
 
@@ -62,7 +62,7 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions,
     }
 
     if (MapDimensions.isValid) {
-        GridPanel->SetVisibility(ESlateVisibility::Collapsed);
+        TileGridPanel->SetVisibility(ESlateVisibility::Collapsed);
 
         int TableLength = MapDimensions.TableLength;
         int MapTileLength = MapDimensions.MapTileLength;
@@ -78,16 +78,16 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions,
         if (DisplayedRowSize > 3)
             DisplayedRowSize = 3;
 
-        int NumberOfMapFragmentCols = DisplayedColSize * TableLength / MapTileLength;
-        int NumberOfMapFragmentRows = DisplayedRowSize * TableLength / MapTileLength;
+        int NumberOfMapTilesCols = DisplayedColSize * TableLength / MapTileLength;
+        int NumberOfMapTilesRows = DisplayedRowSize * TableLength / MapTileLength;
 
 
-        AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapEditor, NumberOfMapFragmentCols, NumberOfMapFragmentRows,
-            TableLength, MapTileLength, DisplayedColSize, DisplayedRowSize, GridPanel,  CellClass, MapTileClass, this]() {
+        AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapEditor, NumberOfMapTilesCols, NumberOfMapTilesRows,
+            TableLength, MapTileLength, DisplayedColSize, DisplayedRowSize, TileGridPanel,  CellClass, MapTileClass, this]() {
                 FVector2D TileSize(0, 0);
-                for (int col = 0; (col < NumberOfMapFragmentCols); col++) {
-                    for (int row = 0; (row < NumberOfMapFragmentRows); row++) {
-                        UMapTile* MapTile = StaticCast<UMapTile*>(CreateWidget<UUserWidget>(GridPanel, MapTileClass));
+                for (int col = 0; (col < NumberOfMapTilesCols); col++) {
+                    for (int row = 0; (row < NumberOfMapTilesRows); row++) {
+                        UMapTile* MapTile = StaticCast<UMapTile*>(CreateWidget<UUserWidget>(TileGridPanel, MapTileClass));
 
                         for (int tileCol = 0; tileCol < MapTileLength; tileCol++) {
                             for (int tileRow = 0; tileRow < MapTileLength; tileRow++) {
@@ -107,25 +107,23 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions,
                             }
                         }
 
-                        AsyncTask(ENamedThreads::GameThread, [GridPanel, MapTile, row, col]() {
-                                GridPanel->AddChildToUniformGrid(MapTile, row, col);
+                        AsyncTask(ENamedThreads::GameThread, [TileGridPanel, MapTile, row, col]() {
+                                TileGridPanel->AddChildToUniformGrid(MapTile, row, col);
                         });
                     }
                 }
 
-                GridPanel->SetMinDesiredSlotWidth(TileSize.X);
-                GridPanel->SetMinDesiredSlotHeight(TileSize.Y);
+                TileGridPanel->SetMinDesiredSlotWidth(TileSize.X);
+                TileGridPanel->SetMinDesiredSlotHeight(TileSize.Y);
 
-                UE_LOG(FillingMapWithCells, Error, TEXT("%s"), *TileSize.ToString());
-
-                AsyncTask(ENamedThreads::GameThread, [MapEditor, GridPanel, this]() {
+                AsyncTask(ENamedThreads::GameThread, [MapEditor, TileGridPanel, this]() {
                     if (LoadingWidget) {
                         LoadingWidget->RemoveFromParent();
                         LoadingWidget->LoadingComplete(true);
 
                         MapEditor->UpdateMapSize();
 
-                        GridPanel->SetVisibility(ESlateVisibility::Visible);
+                        TileGridPanel->SetVisibility(ESlateVisibility::Visible);
                     }
                 });
         });

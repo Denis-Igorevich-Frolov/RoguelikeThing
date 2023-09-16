@@ -27,7 +27,7 @@ private:
 	
 public:
 	UFUNCTION(BlueprintCallable)
-	bool FillMapEditorWithCells(FMapDimensions MapDimensions, UUniformGridPanel* GridPanel,
+	bool FillMapEditorWithCells(FMapDimensions MapDimensions, UUniformGridPanel* TileGridPanel,
 		UClass* CellClass, UClass* MapTileClass, UMapEditor* MapEditor);
 
 	UFUNCTION(BlueprintCallable)
