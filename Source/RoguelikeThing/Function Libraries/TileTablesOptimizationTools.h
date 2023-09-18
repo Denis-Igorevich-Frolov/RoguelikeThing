@@ -15,6 +15,15 @@ UCLASS(Blueprintable, BlueprintType)
 class ROGUELIKETHING_API UTileTablesOptimizationTools : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
+
+private:
+	int TileLen;
+	int TableRows;
+	int TableCols;
+	FVector2D MinimumTableSize;
+
+	FVector2D minimumTileSize;
+	FVector2D widgetAreaSize;
 	
 public:
 	UFUNCTION(BlueprintCallable)

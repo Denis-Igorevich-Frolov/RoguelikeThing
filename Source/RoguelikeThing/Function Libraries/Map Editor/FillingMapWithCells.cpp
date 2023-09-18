@@ -6,8 +6,6 @@
 #include "RoguelikeThing/Widgets/MapEditor/MapTile.h"
 #include "RoguelikeThing/Widgets/MapEditor/MapCell.h"
 #include "RoguelikeThing/Widgets/MapEditor/MapEditor.h"
-#include "Components/CanvasPanelSlot.h"
-#include <Blueprint/WidgetLayoutLibrary.h>
 
 DEFINE_LOG_CATEGORY(FillingMapWithCells);
 
@@ -102,7 +100,6 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions,
 
                                 if (tileCol == MapTileLength - 1 && tileRow == MapTileLength - 1) {
                                     TileSize = Cell->getSize() * MapTileLength;
-                                    UWidgetLayoutLibrary::SlotAsCanvasSlot(MapTile->GetGridPanel())->SetSize(TileSize);
                                 }
                             }
                         }

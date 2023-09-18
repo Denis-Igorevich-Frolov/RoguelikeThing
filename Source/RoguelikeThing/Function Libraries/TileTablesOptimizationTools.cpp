@@ -6,16 +6,19 @@
 void UTileTablesOptimizationTools::InitializingUncollapseOfTiles(UUniformGridPanel* TileGridPanel,
     FVector2D MinimumTileSize, FVector2D WidgetAreaSize, FMapDimensions MapDimensions)
 {
-    int TileLen = MapDimensions.MapTileLength;
-    int TableRows = (MapDimensions.MaxRow - MapDimensions.MinRow + 1) * (MapDimensions.TableLength / TileLen);
-    int TableCols = (MapDimensions.MaxCol - MapDimensions.MinCol + 1) * (MapDimensions.TableLength / TileLen);
+    TileLen = MapDimensions.MapTileLength;
+    TableRows = (MapDimensions.MaxRow - MapDimensions.MinRow + 1) * (MapDimensions.TableLength / TileLen);
+    TableCols = (MapDimensions.MaxCol - MapDimensions.MinCol + 1) * (MapDimensions.TableLength / TileLen);
 
     if (TableRows > 3 * (MapDimensions.TableLength / TileLen))
         TableRows = 3 * (MapDimensions.TableLength / TileLen);
     if (TableCols > 3 * (MapDimensions.TableLength / TileLen))
         TableCols = 3 * (MapDimensions.TableLength / TileLen);
 
-    FVector2D MinimumTableSize = MinimumTileSize * FVector2D(TableRows, TableCols);
+    minimumTileSize = MinimumTileSize;
+    widgetAreaSize = WidgetAreaSize;
+
+    MinimumTableSize = MinimumTileSize * FVector2D(TableRows, TableCols);
 
     UE_LOG(LogTemp, Error, TEXT("WidgetAreaSize: %s"), *WidgetAreaSize.ToString());
     UE_LOG(LogTemp, Error, TEXT("MinimumTileSize: %s"), *MinimumTileSize.ToString());
