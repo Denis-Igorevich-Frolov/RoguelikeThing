@@ -83,12 +83,12 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions,
         AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapEditor, NumberOfMapTilesCols, NumberOfMapTilesRows,
             TableLength, MapTileLength, DisplayedColSize, DisplayedRowSize, TileGridPanel,  CellClass, MapTileClass, this]() {
                 FVector2D TileSize(0, 0);
-                for (int col = 0; (col < NumberOfMapTilesCols); col++) {
-                    for (int row = 0; (row < NumberOfMapTilesRows); row++) {
+                for (int row = NumberOfMapTilesRows - 1; row >= 0; row--) {
+                    for (int col = 0; col < NumberOfMapTilesCols; col++) {
                         UMapTile* MapTile = StaticCast<UMapTile*>(CreateWidget<UUserWidget>(TileGridPanel, MapTileClass));
 
-                        for (int tileCol = 0; tileCol < MapTileLength; tileCol++) {
-                            for (int tileRow = 0; tileRow < MapTileLength; tileRow++) {
+                        for (int tileRow = MapTileLength - 1; tileRow >= 0; tileRow--) {
+                            for (int tileCol = 0; tileCol < MapTileLength; tileCol++) {
                                 UMapCell* Cell = CreateWidget<UMapCell>(MapTile, CellClass);
 
                                 AsyncTask(ENamedThreads::GameThread, [MapTile, Cell, tileRow, tileCol]() {
@@ -98,7 +98,7 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions,
                                         UE_LOG(FillingMapWithCells, Error, TEXT("ERROR"));
                                 });
 
-                                if (tileCol == MapTileLength - 1 && tileRow == MapTileLength - 1) {
+                                if (tileRow == 0 && tileCol == MapTileLength - 1) {
                                     TileSize = Cell->getSize() * MapTileLength;
                                 }
                             }

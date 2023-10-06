@@ -3,3 +3,16 @@
 
 #include "RoguelikeThing/Widgets/MapEditor/MapEditor.h"
 
+void UMapEditor::ResizeEvent(FViewport* ViewPort, uint32 val)
+{
+    if (OldViewPortSize != ViewPort->GetSizeXY()) {
+        OldViewPortSize = ViewPort->GetSizeXY();
+
+        UpdateItemAreaSize(OldViewPortSize);
+    }
+}
+
+UMapEditor::UMapEditor(const FObjectInitializer& ObjectInitializer) : UUserWidget(ObjectInitializer)
+{
+    GEngine->GameViewport->Viewport->ViewportResizedEvent.AddUObject(this, &UMapEditor::ResizeEvent);
+}
