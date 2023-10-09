@@ -16,7 +16,7 @@ void UTileTablesOptimizationTools::InitMapTiles(UUniformGridPanel* TileGridPanel
         TableCols = 3 * (MapDimensions.TableLength / TileLen);
 
     OriginalTileSize = TileSize;
-    widgetAreaSize = WidgetAreaSize + OriginalTileSize * 2;
+    widgetAreaSize = WidgetAreaSize;
 
     OriginalTableSize = OriginalTileSize * FVector2D(TableRows, TableCols);
     FVector2D SizeDifference = OriginalTableSize - widgetAreaSize;
@@ -64,8 +64,14 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfMapTiles(UUniformGridPane
     FTileCoord MinBiasCoord;
     FTileCoord MaxBiasCoord;
 
-    MinBiasCoord.X = MaxBiasCoord.X = Bias.X / OriginalTileSize.X;
-    MinBiasCoord.Y = MaxBiasCoord.Y = Bias.Y / OriginalTileSize.Y;
+    if(Bias.X > 0)
+        MinBiasCoord.X = MaxBiasCoord.X = (Bias.X + OriginalTileSize.X / 2) / OriginalTileSize.X;
+    else
+        MinBiasCoord.X = MaxBiasCoord.X = (Bias.X - OriginalTileSize.X / 2) / OriginalTileSize.X;
+    if (Bias.Y > 0)
+        MinBiasCoord.Y = MaxBiasCoord.Y = (Bias.Y + OriginalTileSize.Y / 2) / OriginalTileSize.Y;
+    else
+        MinBiasCoord.Y = MaxBiasCoord.Y = (Bias.Y - OriginalTileSize.Y / 2) / OriginalTileSize.Y;
 
     FDimensionsDisplayedArea BiansDimentions = FDimensionsDisplayedArea(MinBiasCoord, MaxBiasCoord);
     CurrentDimensions = OriginalDimensions + BiansDimentions;
