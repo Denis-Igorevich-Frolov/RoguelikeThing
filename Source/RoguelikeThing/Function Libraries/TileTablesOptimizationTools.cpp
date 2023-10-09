@@ -45,8 +45,6 @@ void UTileTablesOptimizationTools::InitMapTiles(UUniformGridPanel* TileGridPanel
         }
     }
 
-    GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, *CurrentDimensions.ToString());
-
     UWidget* HiddenWidget = TileGridPanel->GetChildAt(0);
     if (HiddenWidget && HiddenWidget->GetVisibility() == ESlateVisibility::Collapsed)
         HiddenWidget->SetVisibility(ESlateVisibility::Hidden);
@@ -66,16 +64,11 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfMapTiles(UUniformGridPane
     FTileCoord MinBiasCoord;
     FTileCoord MaxBiasCoord;
 
-    MinBiasCoord.X = Bias.X / OriginalTileSize.X;
-    MaxBiasCoord.X = Bias.X / OriginalTileSize.X;
-    MinBiasCoord.Y = Bias.Y / OriginalTileSize.Y;
-    MaxBiasCoord.Y = Bias.Y / OriginalTileSize.Y;
+    MinBiasCoord.X = MaxBiasCoord.X = Bias.X / OriginalTileSize.X;
+    MinBiasCoord.Y = MaxBiasCoord.Y = Bias.Y / OriginalTileSize.Y;
 
     FDimensionsDisplayedArea BiansDimentions = FDimensionsDisplayedArea(MinBiasCoord, MaxBiasCoord);
     CurrentDimensions = OriginalDimensions + BiansDimentions;
-
-    GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Green, *BiansDimentions.ToString());
-    GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, *CurrentDimensions.ToString());
 
     int NumberOfItemsInTable = TileGridPanel->GetAllChildren().Num();
 
@@ -99,7 +92,79 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfMapTiles(UUniformGridPane
                 }
 
                 for (int row = OldDimensions.Min.Y; row <= CurrentDimensions.Min.Y - 1; row++) {
+                    for (int col = OldDimensions.Min.X; col <= OldDimensions.Max.X; col++) {
+                        UWidget* GridPanelElement = TileGridPanel->GetChildAt(row * TableCols + col);
+                        if (GridPanelElement) {
+                            GridPanelElement->SetVisibility(ESlateVisibility::Collapsed);
+                        }
+                        else
+                            UE_LOG(LogTemp, Error, TEXT("CHORT"));
+                    }
+                }
+            }
+
+            if (NewBottomBoundMore) {
+                for (int row = CurrentDimensions.Min.Y; row <= OldDimensions.Min.Y - 1; row++) {
                     for (int col = CurrentDimensions.Min.X; col <= CurrentDimensions.Max.X; col++) {
+                        UWidget* GridPanelElement = TileGridPanel->GetChildAt(row * TableCols + col);
+                        if (GridPanelElement) {
+                            GridPanelElement->SetVisibility(ESlateVisibility::Visible);
+                        }
+                        else
+                            UE_LOG(LogTemp, Error, TEXT("CHORT"));
+                    }
+                }
+
+                for (int row = CurrentDimensions.Max.Y + 1; row <= OldDimensions.Max.Y; row++) {
+                    for (int col = OldDimensions.Min.X; col <= OldDimensions.Max.X; col++) {
+                        UWidget* GridPanelElement = TileGridPanel->GetChildAt(row * TableCols + col);
+                        if (GridPanelElement) {
+                            GridPanelElement->SetVisibility(ESlateVisibility::Collapsed);
+                        }
+                        else
+                            UE_LOG(LogTemp, Error, TEXT("CHORT"));
+                    }
+                }
+            }
+
+            if (NewLeftBoundMore) {
+                for (int row = CurrentDimensions.Min.Y; row <= CurrentDimensions.Max.Y; row++) {
+                    for (int col = CurrentDimensions.Min.X; col <= OldDimensions.Min.X - 1; col++) {
+                        UWidget* GridPanelElement = TileGridPanel->GetChildAt(row * TableCols + col);
+                        if (GridPanelElement) {
+                            GridPanelElement->SetVisibility(ESlateVisibility::Visible);
+                        }
+                        else
+                            UE_LOG(LogTemp, Error, TEXT("CHORT"));
+                    }
+                }
+
+                for (int row = OldDimensions.Min.Y; row <= OldDimensions.Max.Y; row++) {
+                    for (int col = CurrentDimensions.Max.X + 1; col <= OldDimensions.Max.X; col++) {
+                        UWidget* GridPanelElement = TileGridPanel->GetChildAt(row * TableCols + col);
+                        if (GridPanelElement) {
+                            GridPanelElement->SetVisibility(ESlateVisibility::Collapsed);
+                        }
+                        else
+                            UE_LOG(LogTemp, Error, TEXT("CHORT"));
+                    }
+                }
+            }
+
+            if (NewRightBoundMore) {
+                for (int row = CurrentDimensions.Min.Y; row <= CurrentDimensions.Max.Y; row++) {
+                    for (int col = OldDimensions.Max.X + 1; col <= CurrentDimensions.Max.X; col++) {
+                        UWidget* GridPanelElement = TileGridPanel->GetChildAt(row * TableCols + col);
+                        if (GridPanelElement) {
+                            GridPanelElement->SetVisibility(ESlateVisibility::Visible);
+                        }
+                        else
+                            UE_LOG(LogTemp, Error, TEXT("CHORT"));
+                    }
+                }
+
+                for (int row = OldDimensions.Min.Y; row <= OldDimensions.Max.Y; row++) {
+                    for (int col = OldDimensions.Min.X; col <= CurrentDimensions.Min.X - 1; col++) {
                         UWidget* GridPanelElement = TileGridPanel->GetChildAt(row * TableCols + col);
                         if (GridPanelElement) {
                             GridPanelElement->SetVisibility(ESlateVisibility::Collapsed);
