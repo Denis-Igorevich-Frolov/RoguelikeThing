@@ -22,4 +22,7 @@ class IShiftAndZoomContainsable
 public:
     UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
     void OnContentHasMovedEvent(FVector2D Bias);
+
+    UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+    void OnContentHasZoomedEvent(float ZoomMultiplier);
 };

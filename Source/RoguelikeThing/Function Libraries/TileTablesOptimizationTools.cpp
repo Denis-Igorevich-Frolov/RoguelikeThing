@@ -3,7 +3,7 @@
 
 #include "RoguelikeThing/Function Libraries/TileTablesOptimizationTools.h"
 
-void UTileTablesOptimizationTools::InitMapTiles(UUniformGridPanel* TileGridPanel,
+void UTileTablesOptimizationTools::InitTableTiles(UUniformGridPanel* TileGridPanel,
     FVector2D TileSize, FVector2D WidgetAreaSize, FMapDimensions MapDimensions)
 {
     TileLen = MapDimensions.MapTileLength;
@@ -57,7 +57,7 @@ void UTileTablesOptimizationTools::InitMapTiles(UUniformGridPanel* TileGridPanel
     OldDimensions = CurrentDimensions;
 }
 
-void UTileTablesOptimizationTools::ChangingVisibilityOfMapTiles(UUniformGridPanel* TileGridPanel, FVector2D Bias)
+void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPanel* TileGridPanel, FVector2D Bias, float ZoomMultiplier)
 {
     Bias.X *= -1;
 
@@ -74,16 +74,38 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfMapTiles(UUniformGridPane
         MinBiasCoord.Y = MaxBiasCoord.Y = (Bias.Y - OriginalTileSize.Y / 2) / OriginalTileSize.Y;
 
     FDimensionsDisplayedArea BiansDimentions = FDimensionsDisplayedArea(MinBiasCoord, MaxBiasCoord);
-    CurrentDimensions = OriginalDimensions + BiansDimentions;
+    FDimensionsDisplayedArea ZoomDimentions = FDimensionsDisplayedArea();
+
+    if (ZoomMultiplier > 0)
+    {
+        int width = OriginalDimensions.Max.X - OriginalDimensions.Min.X;
+        int height = OriginalDimensions.Max.Y - OriginalDimensions.Min.Y;
+
+        FTileCoord MinZoomCoord;
+        FTileCoord MaxZoomCoord;
+
+        MaxZoomCoord.X = width / ZoomMultiplier - width;
+        MinZoomCoord.X = -MaxZoomCoord.X;
+        MaxZoomCoord.Y = width / ZoomMultiplier - width;
+        MinZoomCoord.Y = -MaxZoomCoord.Y;
+
+        ZoomDimentions = FDimensionsDisplayedArea(MinZoomCoord, MaxZoomCoord);
+    }
+
+    CurrentDimensions = OriginalDimensions + BiansDimentions + ZoomDimentions;
 
     int NumberOfItemsInTable = TileGridPanel->GetAllChildren().Num();
 
     if (TileGridPanel->HasAnyChildren()) {
         if (OldDimensions != CurrentDimensions){
             bool NewTopBoundMore = CurrentDimensions.Max.Y > OldDimensions.Max.Y;
+            bool OldTopBoundLess = CurrentDimensions.Max.Y < OldDimensions.Max.Y;
             bool NewBottomBoundMore = CurrentDimensions.Min.Y < OldDimensions.Min.Y;
+            bool OldBottomBoundLess = CurrentDimensions.Min.Y > OldDimensions.Min.Y;
             bool NewLeftBoundMore = CurrentDimensions.Min.X < OldDimensions.Min.X;
+            bool OldLeftBoundLess = CurrentDimensions.Min.X > OldDimensions.Min.X;
             bool NewRightBoundMore = CurrentDimensions.Max.X > OldDimensions.Max.X;
+            bool OldRightBoundLess = CurrentDimensions.Max.X < OldDimensions.Max.X;
 
             if (NewTopBoundMore) {
                 for (int row = OldDimensions.Max.Y + 1; row <= CurrentDimensions.Max.Y; row++) {
@@ -96,8 +118,10 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfMapTiles(UUniformGridPane
                             UE_LOG(LogTemp, Error, TEXT("CHORT"));
                     }
                 }
+            }
 
-                for (int row = OldDimensions.Min.Y; row <= CurrentDimensions.Min.Y - 1; row++) {
+            if(OldTopBoundLess){
+                for (int row = CurrentDimensions.Max.Y + 1; row <= OldDimensions.Max.Y; row++) {
                     for (int col = OldDimensions.Min.X; col <= OldDimensions.Max.X; col++) {
                         UWidget* GridPanelElement = TileGridPanel->GetChildAt(row * TableCols + col);
                         if (GridPanelElement) {
@@ -120,8 +144,10 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfMapTiles(UUniformGridPane
                             UE_LOG(LogTemp, Error, TEXT("CHORT"));
                     }
                 }
+            }
 
-                for (int row = CurrentDimensions.Max.Y + 1; row <= OldDimensions.Max.Y; row++) {
+            if (OldBottomBoundLess) {
+                for (int row = OldDimensions.Min.Y; row <= CurrentDimensions.Min.Y - 1; row++) {
                     for (int col = OldDimensions.Min.X; col <= OldDimensions.Max.X; col++) {
                         UWidget* GridPanelElement = TileGridPanel->GetChildAt(row * TableCols + col);
                         if (GridPanelElement) {
@@ -144,9 +170,11 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfMapTiles(UUniformGridPane
                             UE_LOG(LogTemp, Error, TEXT("CHORT"));
                     }
                 }
+            }
 
+            if (OldLeftBoundLess) {
                 for (int row = OldDimensions.Min.Y; row <= OldDimensions.Max.Y; row++) {
-                    for (int col = CurrentDimensions.Max.X + 1; col <= OldDimensions.Max.X; col++) {
+                    for (int col = OldDimensions.Min.X; col <= CurrentDimensions.Min.X - 1; col++) {
                         UWidget* GridPanelElement = TileGridPanel->GetChildAt(row * TableCols + col);
                         if (GridPanelElement) {
                             GridPanelElement->SetVisibility(ESlateVisibility::Collapsed);
@@ -168,9 +196,11 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfMapTiles(UUniformGridPane
                             UE_LOG(LogTemp, Error, TEXT("CHORT"));
                     }
                 }
+            }
 
+            if (OldRightBoundLess) {
                 for (int row = OldDimensions.Min.Y; row <= OldDimensions.Max.Y; row++) {
-                    for (int col = OldDimensions.Min.X; col <= CurrentDimensions.Min.X - 1; col++) {
+                    for (int col = CurrentDimensions.Max.X + 1; col <= OldDimensions.Max.X; col++) {
                         UWidget* GridPanelElement = TileGridPanel->GetChildAt(row * TableCols + col);
                         if (GridPanelElement) {
                             GridPanelElement->SetVisibility(ESlateVisibility::Collapsed);

@@ -75,9 +75,9 @@ private:
 	
 public:
 	UFUNCTION(BlueprintCallable)
-    void InitMapTiles(UUniformGridPanel* TileGridPanel, FVector2D TileSize,
+    void InitTableTiles(UUniformGridPanel* TileGridPanel, FVector2D TileSize,
 		FVector2D WidgetAreaSize, FMapDimensions MapDimensions);
 
 	UFUNCTION(BlueprintCallable)
-	void ChangingVisibilityOfMapTiles(UUniformGridPanel* TileGridPanel, FVector2D Bias);
+	void ChangingVisibilityOfTableTiles(UUniformGridPanel* TileGridPanel, FVector2D Bias, float ZoomMultiplier);
 };
