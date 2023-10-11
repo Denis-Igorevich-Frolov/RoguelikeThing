@@ -55,6 +55,9 @@ void UTileTablesOptimizationTools::InitTableTiles(UUniformGridPanel* TileGridPan
 
     OriginalDimensions = CurrentDimensions;
     OldDimensions = CurrentDimensions;
+
+    OriginalDimensionsSize = FVector2D((OriginalDimensions.Max.X - OriginalDimensions.Min.X) * OriginalTileSize.X,
+        (OriginalDimensions.Max.Y - OriginalDimensions.Min.Y) * OriginalTileSize.Y);
 }
 
 void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPanel* TileGridPanel, FVector2D Bias, float ZoomMultiplier)
@@ -78,15 +81,12 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPa
 
     if (ZoomMultiplier > 0)
     {
-        int width = OriginalDimensions.Max.X - OriginalDimensions.Min.X;
-        int height = OriginalDimensions.Max.Y - OriginalDimensions.Min.Y;
-
         FTileCoord MinZoomCoord;
         FTileCoord MaxZoomCoord;
 
-        MaxZoomCoord.X = width / ZoomMultiplier - width;
+        MaxZoomCoord.X = ceil((OriginalDimensionsSize.X / ZoomMultiplier - widgetAreaSize.X) / OriginalTileSize.X) / 2;
         MinZoomCoord.X = -MaxZoomCoord.X;
-        MaxZoomCoord.Y = width / ZoomMultiplier - width;
+        MaxZoomCoord.Y = ceil((OriginalDimensionsSize.Y / ZoomMultiplier - widgetAreaSize.Y) / OriginalTileSize.Y) / 2;
         MinZoomCoord.Y = -MaxZoomCoord.Y;
 
         ZoomDimentions = FDimensionsDisplayedArea(MinZoomCoord, MaxZoomCoord);
