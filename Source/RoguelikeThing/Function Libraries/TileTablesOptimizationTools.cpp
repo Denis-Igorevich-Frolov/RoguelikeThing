@@ -25,11 +25,16 @@ FVector2D UTileTablesOptimizationTools::InitTableTiles(UUniformGridPanel* TileGr
             OriginalTileSize = TileSize;
             widgetAreaSize = WidgetAreaSize;
 
-            OriginalTableSize = OriginalTileSize * FVector2D(TableRows, TableCols);
+            OriginalTableSize = OriginalTileSize * FVector2D(TableCols, TableRows);
             FVector2D SizeDifference = OriginalTableSize - widgetAreaSize;
 
             int NumberOfCollapsedTilesTopAndBottom = (SizeDifference.Y / 2) / OriginalTileSize.Y;
             int NumberOfCollapsedTilesRinhtAndLeft = (SizeDifference.X / 2) / OriginalTileSize.X;
+
+            if (NumberOfCollapsedTilesTopAndBottom < 0)
+                NumberOfCollapsedTilesTopAndBottom = 0;
+            if (NumberOfCollapsedTilesRinhtAndLeft < 0)
+                NumberOfCollapsedTilesRinhtAndLeft = 0;
 
             UE_LOG(LogTemp, Error, TEXT("%d, %d"), NumberOfCollapsedTilesTopAndBottom, NumberOfCollapsedTilesRinhtAndLeft);
 
@@ -39,7 +44,9 @@ FVector2D UTileTablesOptimizationTools::InitTableTiles(UUniformGridPanel* TileGr
 
             CurrentDimensions = FDimensionsDisplayedArea(
                 FTileCoord(NumberOfCollapsedTilesRinhtAndLeft, NumberOfCollapsedTilesTopAndBottom),
-                FTileCoord(TableRows - NumberOfCollapsedTilesRinhtAndLeft - 1, TableCols - NumberOfCollapsedTilesTopAndBottom - 1));
+                FTileCoord(TableCols - NumberOfCollapsedTilesRinhtAndLeft - 1, TableRows - NumberOfCollapsedTilesTopAndBottom - 1));
+
+            UE_LOG(LogTemp, Error, TEXT("CurrentDimensions: %s"), *CurrentDimensions.ToString());
 
             for (int row = CurrentDimensions.Min.Y; row <= CurrentDimensions.Max.Y; row++) {
                 for (int col = CurrentDimensions.Min.X; col <= CurrentDimensions.Max.X; col++) {
