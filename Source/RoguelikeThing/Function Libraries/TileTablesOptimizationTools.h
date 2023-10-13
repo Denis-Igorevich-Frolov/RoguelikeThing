@@ -64,6 +64,8 @@ private:
 	int TileLen;
 	int TableRows;
 	int TableCols;
+	int RealTableRows;
+	int RealTableCols;
 
 	FVector2D OriginalTableSize;
 	FVector2D OriginalTileSize;
@@ -76,7 +78,7 @@ private:
 	
 public:
 	UFUNCTION(BlueprintCallable)
-    void InitTableTiles(UUniformGridPanel* TileGridPanel, FVector2D TileSize,
+    FVector2D InitTableTiles(UUniformGridPanel* TileGridPanel, FVector2D TileSize,
 		FVector2D WidgetAreaSize, FMapDimensions MapDimensions);
 
 	UFUNCTION(BlueprintCallable)

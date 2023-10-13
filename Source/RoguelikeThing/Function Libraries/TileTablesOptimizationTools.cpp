@@ -3,61 +3,72 @@
 
 #include "RoguelikeThing/Function Libraries/TileTablesOptimizationTools.h"
 
-void UTileTablesOptimizationTools::InitTableTiles(UUniformGridPanel* TileGridPanel,
+FVector2D UTileTablesOptimizationTools::InitTableTiles(UUniformGridPanel* TileGridPanel,
     FVector2D TileSize, FVector2D WidgetAreaSize, FMapDimensions MapDimensions)
 {
-    TileLen = MapDimensions.MapTileLength;
-    TableRows = (MapDimensions.MaxRow - MapDimensions.MinRow + 1) * (MapDimensions.TableLength / TileLen);
-    TableCols = (MapDimensions.MaxCol - MapDimensions.MinCol + 1) * (MapDimensions.TableLength / TileLen);
+    if (MapDimensions.isValid) {
+        if (TileGridPanel->HasAnyChildren()) {
+            TileLen = MapDimensions.MapTileLength;
+            int NumberOfTilesInFragment = MapDimensions.TableLength / TileLen;
 
-    if (TableRows > 3 * (MapDimensions.TableLength / TileLen))
-        TableRows = 3 * (MapDimensions.TableLength / TileLen);
-    if (TableCols > 3 * (MapDimensions.TableLength / TileLen))
-        TableCols = 3 * (MapDimensions.TableLength / TileLen);
+            TableRows = (MapDimensions.MaxRow - MapDimensions.MinRow + 1) * NumberOfTilesInFragment;
+            TableCols = (MapDimensions.MaxCol - MapDimensions.MinCol + 1) * NumberOfTilesInFragment;
 
-    OriginalTileSize = TileSize;
-    widgetAreaSize = WidgetAreaSize;
+            RealTableRows = TableRows;
+            RealTableCols = TableCols;
 
-    OriginalTableSize = OriginalTileSize * FVector2D(TableRows, TableCols);
-    FVector2D SizeDifference = OriginalTableSize - widgetAreaSize;
+            if (TableRows > 3 * NumberOfTilesInFragment)
+                TableRows = 3 * NumberOfTilesInFragment;
+            if (TableCols > 3 * NumberOfTilesInFragment)
+                TableCols = 3 * NumberOfTilesInFragment;
 
-    int NumberOfCollapsedTilesTopAndBottom = (SizeDifference.Y / 2) / OriginalTileSize.Y;
-    int NumberOfCollapsedTilesRinhtAndLeft = (SizeDifference.X / 2) / OriginalTileSize.X;
+            OriginalTileSize = TileSize;
+            widgetAreaSize = WidgetAreaSize;
 
-    UE_LOG(LogTemp, Error, TEXT("%d, %d"), NumberOfCollapsedTilesTopAndBottom, NumberOfCollapsedTilesRinhtAndLeft);
+            OriginalTableSize = OriginalTileSize * FVector2D(TableRows, TableCols);
+            FVector2D SizeDifference = OriginalTableSize - widgetAreaSize;
 
-    int NumberOfItemsInTable = TileGridPanel->GetAllChildren().Num();
-    UE_LOG(LogTemp, Error, TEXT("NumberOfItemsInTable: %d, NumberOfRows: %d, NumberOfCols: %d"), NumberOfItemsInTable, TableRows, TableCols);
+            int NumberOfCollapsedTilesTopAndBottom = (SizeDifference.Y / 2) / OriginalTileSize.Y;
+            int NumberOfCollapsedTilesRinhtAndLeft = (SizeDifference.X / 2) / OriginalTileSize.X;
 
-    if (TileGridPanel->HasAnyChildren()) {
-        CurrentDimensions = FDimensionsDisplayedArea(
-            FTileCoord(NumberOfCollapsedTilesRinhtAndLeft, NumberOfCollapsedTilesTopAndBottom),
-            FTileCoord(TableRows - NumberOfCollapsedTilesRinhtAndLeft - 1, TableCols - NumberOfCollapsedTilesTopAndBottom - 1));
+            UE_LOG(LogTemp, Error, TEXT("%d, %d"), NumberOfCollapsedTilesTopAndBottom, NumberOfCollapsedTilesRinhtAndLeft);
 
-        for (int row = CurrentDimensions.Min.Y; row <= CurrentDimensions.Max.Y; row++) {
-            for (int col = CurrentDimensions.Min.X; col <= CurrentDimensions.Max.X; col++) {
-                UWidget* GridPanelElement = TileGridPanel->GetChildAt(row * TableCols + col);
-                if (GridPanelElement)
-                    GridPanelElement->SetVisibility(ESlateVisibility::Visible);
-                else
-                    UE_LOG(LogTemp, Error, TEXT("CHORT"));
+            int NumberOfItemsInTable = TileGridPanel->GetAllChildren().Num();
+            UE_LOG(LogTemp, Error, TEXT("NumberOfItemsInTable: %d, NumberOfRows: %d, NumberOfCols: %d"), NumberOfItemsInTable, TableRows, TableCols);
+
+
+            CurrentDimensions = FDimensionsDisplayedArea(
+                FTileCoord(NumberOfCollapsedTilesRinhtAndLeft, NumberOfCollapsedTilesTopAndBottom),
+                FTileCoord(TableRows - NumberOfCollapsedTilesRinhtAndLeft - 1, TableCols - NumberOfCollapsedTilesTopAndBottom - 1));
+
+            for (int row = CurrentDimensions.Min.Y; row <= CurrentDimensions.Max.Y; row++) {
+                for (int col = CurrentDimensions.Min.X; col <= CurrentDimensions.Max.X; col++) {
+                    UWidget* GridPanelElement = TileGridPanel->GetChildAt(row * TableCols + col);
+                    if (GridPanelElement)
+                        GridPanelElement->SetVisibility(ESlateVisibility::Visible);
+                    else
+                        UE_LOG(LogTemp, Error, TEXT("CHORT"));
+                }
             }
+
+            UWidget* HiddenWidget = TileGridPanel->GetChildAt(0);
+            if (HiddenWidget && HiddenWidget->GetVisibility() == ESlateVisibility::Collapsed)
+                HiddenWidget->SetVisibility(ESlateVisibility::Hidden);
+
+            HiddenWidget = TileGridPanel->GetChildAt(NumberOfItemsInTable - 1);
+            if (HiddenWidget && HiddenWidget->GetVisibility() == ESlateVisibility::Collapsed)
+                HiddenWidget->SetVisibility(ESlateVisibility::Hidden);
+
+            OriginalDimensions = CurrentDimensions;
+            OldDimensions = CurrentDimensions;
+
+            OriginalDimensionsSize = FVector2D((OriginalDimensions.Max.X - OriginalDimensions.Min.X) * OriginalTileSize.X,
+                (OriginalDimensions.Max.Y - OriginalDimensions.Min.Y) * OriginalTileSize.Y);
+
+            return OriginalTableSize;
         }
     }
-
-    UWidget* HiddenWidget = TileGridPanel->GetChildAt(0);
-    if (HiddenWidget && HiddenWidget->GetVisibility() == ESlateVisibility::Collapsed)
-        HiddenWidget->SetVisibility(ESlateVisibility::Hidden);
-
-    HiddenWidget = TileGridPanel->GetChildAt(NumberOfItemsInTable - 1);
-    if (HiddenWidget && HiddenWidget->GetVisibility() == ESlateVisibility::Collapsed)
-        HiddenWidget->SetVisibility(ESlateVisibility::Hidden);
-
-    OriginalDimensions = CurrentDimensions;
-    OldDimensions = CurrentDimensions;
-
-    OriginalDimensionsSize = FVector2D((OriginalDimensions.Max.X - OriginalDimensions.Min.X) * OriginalTileSize.X,
-        (OriginalDimensions.Max.Y - OriginalDimensions.Min.Y) * OriginalTileSize.Y);
+    return FVector2D();
 }
 
 void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPanel* TileGridPanel, FVector2D Bias, float ZoomMultiplier)
@@ -97,6 +108,10 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPa
     int NumberOfItemsInTable = TileGridPanel->GetAllChildren().Num();
 
     if (TileGridPanel->HasAnyChildren()) {
+        //GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%s"), *CurrentDimensions.ToString()));
+
+
+
         if (OldDimensions != CurrentDimensions){
             bool NewTopBoundMore = CurrentDimensions.Max.Y > OldDimensions.Max.Y;
             bool OldTopBoundLess = CurrentDimensions.Max.Y < OldDimensions.Max.Y;
