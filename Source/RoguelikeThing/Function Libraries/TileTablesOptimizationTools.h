@@ -71,6 +71,7 @@ private:
 	FVector2D OriginalTileSize;
 	FVector2D widgetAreaSize;
 	FVector2D OriginalDimensionsSize;
+	FVector2D SizeDifference;
 
 	FDimensionsDisplayedArea OldDimensions = FDimensionsDisplayedArea();
 	FDimensionsDisplayedArea CurrentDimensions = FDimensionsDisplayedArea();

@@ -26,7 +26,7 @@ FVector2D UTileTablesOptimizationTools::InitTableTiles(UUniformGridPanel* TileGr
             widgetAreaSize = WidgetAreaSize;
 
             OriginalTableSize = OriginalTileSize * FVector2D(TableCols, TableRows);
-            FVector2D SizeDifference = OriginalTableSize - widgetAreaSize;
+            SizeDifference = OriginalTableSize - widgetAreaSize;
 
             int NumberOfCollapsedTilesTopAndBottom = (SizeDifference.Y / 2) / OriginalTileSize.Y;
             int NumberOfCollapsedTilesRinhtAndLeft = (SizeDifference.X / 2) / OriginalTileSize.X;
@@ -85,14 +85,47 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPa
     FTileCoord MinBiasCoord;
     FTileCoord MaxBiasCoord;
 
-    if(Bias.X > 0)
-        MinBiasCoord.X = MaxBiasCoord.X = (Bias.X + OriginalTileSize.X / 2) / OriginalTileSize.X;
-    else
-        MinBiasCoord.X = MaxBiasCoord.X = (Bias.X - OriginalTileSize.X / 2) / OriginalTileSize.X;
-    if (Bias.Y > 0)
-        MinBiasCoord.Y = MaxBiasCoord.Y = (Bias.Y + OriginalTileSize.Y / 2) / OriginalTileSize.Y;
-    else
-        MinBiasCoord.Y = MaxBiasCoord.Y = (Bias.Y - OriginalTileSize.Y / 2) / OriginalTileSize.Y;
+
+    if (Bias.X > 0) {
+        if (Bias.X < SizeDifference.X / 2 - OriginalTileSize.X) {
+            MinBiasCoord.X = floor(Bias.X / OriginalTileSize.X);
+            MaxBiasCoord.X = ceil(Bias.X / OriginalTileSize.X);
+        }
+        else {
+            MinBiasCoord.X = floor((SizeDifference.X / 2 - OriginalTileSize.X) / OriginalTileSize.X);
+            MaxBiasCoord.X = ceil((SizeDifference.X / 2 - OriginalTileSize.X) / OriginalTileSize.X);
+        }
+    }
+    else {
+        if (Bias.X > -(SizeDifference.X / 2 - OriginalTileSize.X)) {
+            MinBiasCoord.X = floor(Bias.X / OriginalTileSize.X);
+            MaxBiasCoord.X = ceil(Bias.X / OriginalTileSize.X);
+        }
+        else {
+            MinBiasCoord.X = floor(-(SizeDifference.X / 2 - OriginalTileSize.X) / OriginalTileSize.X);
+            MaxBiasCoord.X = ceil(-(SizeDifference.X / 2 - OriginalTileSize.X) / OriginalTileSize.X);
+        }
+    }
+    if (Bias.Y > 0) {
+        if (Bias.Y < SizeDifference.Y / 2 - OriginalTileSize.Y) {
+            MinBiasCoord.Y = floor(Bias.Y / OriginalTileSize.Y);
+            MaxBiasCoord.Y = ceil(Bias.Y / OriginalTileSize.Y);
+        }
+        else {
+            MinBiasCoord.Y = floor((SizeDifference.Y / 2 - OriginalTileSize.Y) / OriginalTileSize.Y);
+            MaxBiasCoord.Y = ceil((SizeDifference.Y / 2 - OriginalTileSize.Y) / OriginalTileSize.Y);
+        }
+    }
+    else {
+        if (Bias.Y > -(SizeDifference.Y / 2 - OriginalTileSize.Y)) {
+            MinBiasCoord.Y = floor(Bias.Y / OriginalTileSize.Y);
+            MaxBiasCoord.Y = ceil(Bias.Y / OriginalTileSize.Y);
+        }
+        else {
+            MinBiasCoord.Y = floor(-(SizeDifference.Y / 2 - OriginalTileSize.Y) / OriginalTileSize.Y);
+            MaxBiasCoord.Y = ceil(-(SizeDifference.Y / 2 - OriginalTileSize.Y) / OriginalTileSize.Y);
+        }
+    }
 
     FDimensionsDisplayedArea BiansDimentions = FDimensionsDisplayedArea(MinBiasCoord, MaxBiasCoord);
     FDimensionsDisplayedArea ZoomDimentions = FDimensionsDisplayedArea();
@@ -115,19 +148,23 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPa
     int NumberOfItemsInTable = TileGridPanel->GetAllChildren().Num();
 
     if (TileGridPanel->HasAnyChildren()) {
-        //GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("%s"), *CurrentDimensions.ToString()));
-
-
-
         if (OldDimensions != CurrentDimensions){
-            bool NewTopBoundMore = CurrentDimensions.Max.Y > OldDimensions.Max.Y;
-            bool OldTopBoundLess = CurrentDimensions.Max.Y < OldDimensions.Max.Y;
-            bool NewBottomBoundMore = CurrentDimensions.Min.Y < OldDimensions.Min.Y;
-            bool OldBottomBoundLess = CurrentDimensions.Min.Y > OldDimensions.Min.Y;
-            bool NewLeftBoundMore = CurrentDimensions.Min.X < OldDimensions.Min.X;
-            bool OldLeftBoundLess = CurrentDimensions.Min.X > OldDimensions.Min.X;
-            bool NewRightBoundMore = CurrentDimensions.Max.X > OldDimensions.Max.X;
-            bool OldRightBoundLess = CurrentDimensions.Max.X < OldDimensions.Max.X;
+            bool NewTopBoundMore = (CurrentDimensions.Max.Y > OldDimensions.Max.Y)/* &&
+                (Bias.Y < (OriginalTableSize.Y - widgetAreaSize.Y) / 2 - OriginalTileSize.X / 2)*/;
+            bool OldTopBoundLess = CurrentDimensions.Max.Y < OldDimensions.Max.Y/* &&
+                (Bias.Y < (OriginalTableSize.Y - widgetAreaSize.Y) / 2 - OriginalTileSize.X / 2)*/;
+            bool NewBottomBoundMore = CurrentDimensions.Min.Y < OldDimensions.Min.Y/* &&
+                (Bias.Y > -((OriginalTableSize.Y - widgetAreaSize.Y) / 2 - OriginalTileSize.X / 2))*/;
+            bool OldBottomBoundLess = CurrentDimensions.Min.Y > OldDimensions.Min.Y/* &&
+                (Bias.Y > -((OriginalTableSize.Y - widgetAreaSize.Y) / 2 - OriginalTileSize.X / 2))*/;
+            bool NewLeftBoundMore = CurrentDimensions.Min.X < OldDimensions.Min.X/* &&
+                (Bias.X > -((OriginalTableSize.X - widgetAreaSize.X) / 2 - OriginalTileSize.X / 2))*/;
+            bool OldLeftBoundLess = CurrentDimensions.Min.X > OldDimensions.Min.X/* &&
+                (Bias.X > -((OriginalTableSize.X - widgetAreaSize.X) / 2 - OriginalTileSize.X / 2))*/;
+            bool NewRightBoundMore = CurrentDimensions.Max.X > OldDimensions.Max.X/* &&
+                (Bias.X < (OriginalTableSize.X - widgetAreaSize.X) / 2 - OriginalTileSize.X / 2)*/;
+            bool OldRightBoundLess = CurrentDimensions.Max.X < OldDimensions.Max.X/* &&
+                (Bias.X < (OriginalTableSize.X - widgetAreaSize.X) / 2 - OriginalTileSize.X / 2)*/;
 
             if (NewTopBoundMore) {
                 for (int row = OldDimensions.Max.Y + 1; row <= CurrentDimensions.Max.Y; row++) {
@@ -137,7 +174,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPa
                             GridPanelElement->SetVisibility(ESlateVisibility::Visible);
                         }
                         else
-                            UE_LOG(LogTemp, Error, TEXT("CHORT"));
+                            UE_LOG(LogTemp, Error, TEXT("NewTopBoundMore CHORT"));
                     }
                 }
             }
@@ -150,7 +187,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPa
                             GridPanelElement->SetVisibility(ESlateVisibility::Collapsed);
                         }
                         else
-                            UE_LOG(LogTemp, Error, TEXT("CHORT"));
+                            UE_LOG(LogTemp, Error, TEXT("OldTopBoundLess CHORT"));
                     }
                 }
             }
@@ -163,7 +200,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPa
                             GridPanelElement->SetVisibility(ESlateVisibility::Visible);
                         }
                         else
-                            UE_LOG(LogTemp, Error, TEXT("CHORT"));
+                            UE_LOG(LogTemp, Error, TEXT("NewBottomBoundMore CHORT"));
                     }
                 }
             }
@@ -176,7 +213,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPa
                             GridPanelElement->SetVisibility(ESlateVisibility::Collapsed);
                         }
                         else
-                            UE_LOG(LogTemp, Error, TEXT("CHORT"));
+                            UE_LOG(LogTemp, Error, TEXT("OldBottomBoundLess CHORT"));
                     }
                 }
             }
@@ -189,7 +226,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPa
                             GridPanelElement->SetVisibility(ESlateVisibility::Visible);
                         }
                         else
-                            UE_LOG(LogTemp, Error, TEXT("CHORT"));
+                            UE_LOG(LogTemp, Error, TEXT("NewLeftBoundMore CHORT"));
                     }
                 }
             }
@@ -202,7 +239,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPa
                             GridPanelElement->SetVisibility(ESlateVisibility::Collapsed);
                         }
                         else
-                            UE_LOG(LogTemp, Error, TEXT("CHORT"));
+                            UE_LOG(LogTemp, Error, TEXT("OldLeftBoundLess CHORT"));
                     }
                 }
             }
@@ -215,7 +252,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPa
                             GridPanelElement->SetVisibility(ESlateVisibility::Visible);
                         }
                         else
-                            UE_LOG(LogTemp, Error, TEXT("CHORT"));
+                            UE_LOG(LogTemp, Error, TEXT("NewRightBoundMore CHORT"));
                     }
                 }
             }
@@ -228,7 +265,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPa
                             GridPanelElement->SetVisibility(ESlateVisibility::Collapsed);
                         }
                         else
-                            UE_LOG(LogTemp, Error, TEXT("CHORT"));
+                            UE_LOG(LogTemp, Error, TEXT("OldRightBoundLess CHORT"));
                     }
                 }
             }
