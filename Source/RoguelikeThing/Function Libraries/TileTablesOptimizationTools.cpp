@@ -87,44 +87,28 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPa
 
 
     if (Bias.X > 0) {
-        if (Bias.X < SizeDifference.X / 2 - OriginalTileSize.X) {
-            MinBiasCoord.X = floor(Bias.X / OriginalTileSize.X);
-            MaxBiasCoord.X = ceil(Bias.X / OriginalTileSize.X);
-        }
-        else {
-            MinBiasCoord.X = floor((SizeDifference.X / 2 - OriginalTileSize.X) / OriginalTileSize.X);
-            MaxBiasCoord.X = ceil((SizeDifference.X / 2 - OriginalTileSize.X) / OriginalTileSize.X);
-        }
+        if (Bias.X < SizeDifference.X / 2 - OriginalTileSize.X)
+            MinBiasCoord.X = MaxBiasCoord.X = (Bias.X + OriginalTileSize.X / 2) / OriginalTileSize.X;
+        else
+            MinBiasCoord.X = MaxBiasCoord.X = SizeDifference.X / 2 / OriginalTileSize.X;
     }
     else {
-        if (Bias.X > -(SizeDifference.X / 2 - OriginalTileSize.X)) {
-            MinBiasCoord.X = floor(Bias.X / OriginalTileSize.X);
-            MaxBiasCoord.X = ceil(Bias.X / OriginalTileSize.X);
-        }
-        else {
-            MinBiasCoord.X = floor(-(SizeDifference.X / 2 - OriginalTileSize.X) / OriginalTileSize.X);
-            MaxBiasCoord.X = ceil(-(SizeDifference.X / 2 - OriginalTileSize.X) / OriginalTileSize.X);
-        }
+        if (Bias.X > -(SizeDifference.X / 2 - OriginalTileSize.X))
+            MinBiasCoord.X = MaxBiasCoord.X = (Bias.X - OriginalTileSize.X / 2) / OriginalTileSize.X;
+        else
+            MinBiasCoord.X = MaxBiasCoord.X = -SizeDifference.X / 2 / OriginalTileSize.X;
     }
     if (Bias.Y > 0) {
-        if (Bias.Y < SizeDifference.Y / 2 - OriginalTileSize.Y) {
-            MinBiasCoord.Y = floor(Bias.Y / OriginalTileSize.Y);
-            MaxBiasCoord.Y = ceil(Bias.Y / OriginalTileSize.Y);
-        }
-        else {
-            MinBiasCoord.Y = floor((SizeDifference.Y / 2 - OriginalTileSize.Y) / OriginalTileSize.Y);
-            MaxBiasCoord.Y = ceil((SizeDifference.Y / 2 - OriginalTileSize.Y) / OriginalTileSize.Y);
-        }
+        if (Bias.Y < SizeDifference.Y / 2 - OriginalTileSize.Y)
+            MinBiasCoord.Y = MaxBiasCoord.Y = (Bias.Y + OriginalTileSize.Y / 2) / OriginalTileSize.Y;
+        else
+            MinBiasCoord.Y = MaxBiasCoord.Y = SizeDifference.Y / 2 / OriginalTileSize.Y;
     }
     else {
-        if (Bias.Y > -(SizeDifference.Y / 2 - OriginalTileSize.Y)) {
-            MinBiasCoord.Y = floor(Bias.Y / OriginalTileSize.Y);
-            MaxBiasCoord.Y = ceil(Bias.Y / OriginalTileSize.Y);
-        }
-        else {
-            MinBiasCoord.Y = floor(-(SizeDifference.Y / 2 - OriginalTileSize.Y) / OriginalTileSize.Y);
-            MaxBiasCoord.Y = ceil(-(SizeDifference.Y / 2 - OriginalTileSize.Y) / OriginalTileSize.Y);
-        }
+        if (Bias.Y > -(SizeDifference.Y / 2 - OriginalTileSize.Y))
+            MinBiasCoord.Y = MaxBiasCoord.Y = (Bias.Y - OriginalTileSize.Y / 2) / OriginalTileSize.Y;
+        else
+            MinBiasCoord.Y = MaxBiasCoord.Y = -SizeDifference.Y / 2 / OriginalTileSize.Y;
     }
 
     FDimensionsDisplayedArea BiansDimentions = FDimensionsDisplayedArea(MinBiasCoord, MaxBiasCoord);
@@ -149,22 +133,14 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPa
 
     if (TileGridPanel->HasAnyChildren()) {
         if (OldDimensions != CurrentDimensions){
-            bool NewTopBoundMore = (CurrentDimensions.Max.Y > OldDimensions.Max.Y)/* &&
-                (Bias.Y < (OriginalTableSize.Y - widgetAreaSize.Y) / 2 - OriginalTileSize.X / 2)*/;
-            bool OldTopBoundLess = CurrentDimensions.Max.Y < OldDimensions.Max.Y/* &&
-                (Bias.Y < (OriginalTableSize.Y - widgetAreaSize.Y) / 2 - OriginalTileSize.X / 2)*/;
-            bool NewBottomBoundMore = CurrentDimensions.Min.Y < OldDimensions.Min.Y/* &&
-                (Bias.Y > -((OriginalTableSize.Y - widgetAreaSize.Y) / 2 - OriginalTileSize.X / 2))*/;
-            bool OldBottomBoundLess = CurrentDimensions.Min.Y > OldDimensions.Min.Y/* &&
-                (Bias.Y > -((OriginalTableSize.Y - widgetAreaSize.Y) / 2 - OriginalTileSize.X / 2))*/;
-            bool NewLeftBoundMore = CurrentDimensions.Min.X < OldDimensions.Min.X/* &&
-                (Bias.X > -((OriginalTableSize.X - widgetAreaSize.X) / 2 - OriginalTileSize.X / 2))*/;
-            bool OldLeftBoundLess = CurrentDimensions.Min.X > OldDimensions.Min.X/* &&
-                (Bias.X > -((OriginalTableSize.X - widgetAreaSize.X) / 2 - OriginalTileSize.X / 2))*/;
-            bool NewRightBoundMore = CurrentDimensions.Max.X > OldDimensions.Max.X/* &&
-                (Bias.X < (OriginalTableSize.X - widgetAreaSize.X) / 2 - OriginalTileSize.X / 2)*/;
-            bool OldRightBoundLess = CurrentDimensions.Max.X < OldDimensions.Max.X/* &&
-                (Bias.X < (OriginalTableSize.X - widgetAreaSize.X) / 2 - OriginalTileSize.X / 2)*/;
+            bool NewTopBoundMore = (CurrentDimensions.Max.Y > OldDimensions.Max.Y);
+            bool OldTopBoundLess = CurrentDimensions.Max.Y < OldDimensions.Max.Y;
+            bool NewBottomBoundMore = CurrentDimensions.Min.Y < OldDimensions.Min.Y;
+            bool OldBottomBoundLess = CurrentDimensions.Min.Y > OldDimensions.Min.Y;
+            bool NewLeftBoundMore = CurrentDimensions.Min.X < OldDimensions.Min.X;
+            bool OldLeftBoundLess = CurrentDimensions.Min.X > OldDimensions.Min.X;
+            bool NewRightBoundMore = CurrentDimensions.Max.X > OldDimensions.Max.X;
+            bool OldRightBoundLess = CurrentDimensions.Max.X < OldDimensions.Max.X;
 
             if (NewTopBoundMore) {
                 for (int row = OldDimensions.Max.Y + 1; row <= CurrentDimensions.Max.Y; row++) {
