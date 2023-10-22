@@ -78,7 +78,6 @@ FVector2D UTileTablesOptimizationTools::InitTableTiles(UUniformGridPanel* TileGr
     return FVector2D();
 }
 
-#pragma optimize("", off)
 void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPanel* TileGridPanel, FVector2D Bias, float ZoomMultiplier)
 {
     Bias.X *= -1;
@@ -268,7 +267,6 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPa
 
     OldDimensions = CurrentDimensions;
 }
-#pragma optimize("", on)
 
 FTileCoord::FTileCoord(int32 x, int32 y) : X(x), Y(y)
 {}
