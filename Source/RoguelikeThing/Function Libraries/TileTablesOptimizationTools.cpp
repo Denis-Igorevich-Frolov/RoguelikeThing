@@ -78,13 +78,13 @@ FVector2D UTileTablesOptimizationTools::InitTableTiles(UUniformGridPanel* TileGr
     return FVector2D();
 }
 
+#pragma optimize("", off)
 void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPanel* TileGridPanel, FVector2D Bias, float ZoomMultiplier)
 {
     Bias.X *= -1;
 
     FTileCoord MinBiasCoord;
     FTileCoord MaxBiasCoord;
-
 
     if (Bias.X > 0) {
         if (Bias.X < SizeDifference.X / 2 - OriginalTileSize.X)
@@ -114,20 +114,32 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPa
     FDimensionsDisplayedArea BiansDimentions = FDimensionsDisplayedArea(MinBiasCoord, MaxBiasCoord);
     FDimensionsDisplayedArea ZoomDimentions = FDimensionsDisplayedArea();
 
-    if (ZoomMultiplier > 0)
+    if (ZoomMultiplier != 1)
     {
         FTileCoord MinZoomCoord;
         FTileCoord MaxZoomCoord;
 
-        MaxZoomCoord.X = ceil((OriginalDimensionsSize.X / ZoomMultiplier - widgetAreaSize.X) / OriginalTileSize.X) / 2;
+        MaxZoomCoord.X = ceil((OriginalDimensionsSize.X / ZoomMultiplier - widgetAreaSize.X) / OriginalTileSize.X / 2);
         MinZoomCoord.X = -MaxZoomCoord.X;
-        MaxZoomCoord.Y = ceil((OriginalDimensionsSize.Y / ZoomMultiplier - widgetAreaSize.Y) / OriginalTileSize.Y) / 2;
+        if (Bias.X > 0 && MaxZoomCoord.X + MaxBiasCoord.X > SizeDifference.X / OriginalTileSize.X / 2)
+            MaxZoomCoord.X = SizeDifference.X / OriginalTileSize.Y / 2 - MaxBiasCoord.X;
+        if (Bias.X < 0 && MinZoomCoord.X + MinBiasCoord.X < -SizeDifference.X / OriginalTileSize.X / 2)
+            MinZoomCoord.X = -(SizeDifference.X / OriginalTileSize.Y / 2 + MinBiasCoord.X);
+
+        MaxZoomCoord.Y = ceil((OriginalDimensionsSize.Y / ZoomMultiplier - widgetAreaSize.Y) / OriginalTileSize.Y / 2);
         MinZoomCoord.Y = -MaxZoomCoord.Y;
+        if (Bias.Y > 0 && MaxZoomCoord.Y + MaxBiasCoord.Y > SizeDifference.Y / OriginalTileSize.Y / 2)
+            MaxZoomCoord.Y = SizeDifference.Y / OriginalTileSize.Y / 2 - MaxBiasCoord.Y;
+        if (Bias.Y < 0 && MinZoomCoord.Y + MinBiasCoord.Y < -SizeDifference.Y / OriginalTileSize.Y / 2)
+            MinZoomCoord.Y = -(SizeDifference.Y / OriginalTileSize.Y / 2 + MinBiasCoord.Y);
 
         ZoomDimentions = FDimensionsDisplayedArea(MinZoomCoord, MaxZoomCoord);
     }
 
     CurrentDimensions = OriginalDimensions + BiansDimentions + ZoomDimentions;
+
+    GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("OriginalDimensions: %s; BiansDimentions: %s; ZoomDimentions: %s"),
+        *OriginalDimensions.ToString(), *BiansDimentions.ToString(), *ZoomDimentions.ToString()));
 
     int NumberOfItemsInTable = TileGridPanel->GetAllChildren().Num();
 
@@ -259,6 +271,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPa
 
     OldDimensions = CurrentDimensions;
 }
+#pragma optimize("", on)
 
 FTileCoord::FTileCoord(int32 x, int32 y) : X(x), Y(y)
 {}
