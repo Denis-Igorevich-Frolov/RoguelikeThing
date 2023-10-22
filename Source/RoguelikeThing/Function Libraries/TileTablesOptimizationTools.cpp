@@ -138,9 +138,6 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPa
 
     CurrentDimensions = OriginalDimensions + BiansDimentions + ZoomDimentions;
 
-    GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, FString::Printf(TEXT("OriginalDimensions: %s; BiansDimentions: %s; ZoomDimentions: %s"),
-        *OriginalDimensions.ToString(), *BiansDimentions.ToString(), *ZoomDimentions.ToString()));
-
     int NumberOfItemsInTable = TileGridPanel->GetAllChildren().Num();
 
     if (TileGridPanel->HasAnyChildren()) {
