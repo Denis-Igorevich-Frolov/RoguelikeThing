@@ -79,7 +79,6 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions,
         int NumberOfMapTilesCols = DisplayedColSize * TableLength / MapTileLength;
         int NumberOfMapTilesRows = DisplayedRowSize * TableLength / MapTileLength;
 
-
         AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapEditor, NumberOfMapTilesCols, NumberOfMapTilesRows,
             TableLength, MapTileLength, DisplayedColSize, DisplayedRowSize, TileGridPanel,  CellClass, MapTileClass, this]() {
                 FVector2D TileSize(0, 0);

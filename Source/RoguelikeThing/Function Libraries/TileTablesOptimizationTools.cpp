@@ -4,10 +4,11 @@
 #include "RoguelikeThing/Function Libraries/TileTablesOptimizationTools.h"
 
 FVector2D UTileTablesOptimizationTools::InitTableTiles(UUniformGridPanel* TileGridPanel,
-    FVector2D TileSize, FVector2D WidgetAreaSize, FMapDimensions MapDimensions)
+    FVector2D TileSize, FVector2D WidgetAreaSize, FMapDimensions MapDimensions, FVector2D MinContentSize)
 {
     if (MapDimensions.isValid) {
         if (TileGridPanel->HasAnyChildren()) {
+            minContentSize = MinContentSize;
             TileLen = MapDimensions.MapTileLength;
             int NumberOfTilesInFragment = MapDimensions.TableLength / TileLen;
 
@@ -136,10 +137,22 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPa
     }
 
     CurrentDimensions = OriginalDimensions + BiansDimentions + ZoomDimentions;
+    bool CurrentXLessThanMin = OriginalTableSize.X < minContentSize.X;
+    bool CurrentYLessThanMin = OriginalTableSize.Y < minContentSize.Y;
 
     int NumberOfItemsInTable = TileGridPanel->GetAllChildren().Num();
 
     if (TileGridPanel->HasAnyChildren()) {
+        if (CurrentXLessThanMin) {
+            CurrentDimensions.Min.X = 0;
+            CurrentDimensions.Max.X = TableCols - 1;
+        }
+
+        if (CurrentYLessThanMin) {
+            CurrentDimensions.Min.Y = 0;
+            CurrentDimensions.Max.Y = TableRows - 1;
+        }
+
         if (OldDimensions != CurrentDimensions){
             bool NewTopBoundMore = (CurrentDimensions.Max.Y > OldDimensions.Max.Y);
             bool OldTopBoundLess = CurrentDimensions.Max.Y < OldDimensions.Max.Y;
@@ -163,7 +176,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPa
                 }
             }
 
-            if(OldTopBoundLess){
+            if (OldTopBoundLess) {
                 for (int row = CurrentDimensions.Max.Y + 1; row <= OldDimensions.Max.Y; row++) {
                     for (int col = OldDimensions.Min.X; col <= OldDimensions.Max.X; col++) {
                         UWidget* GridPanelElement = TileGridPanel->GetChildAt(row * TableCols + col);
@@ -202,54 +215,56 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPa
                 }
             }
 
-            if (NewLeftBoundMore) {
-                for (int row = CurrentDimensions.Min.Y; row <= CurrentDimensions.Max.Y; row++) {
-                    for (int col = CurrentDimensions.Min.X; col <= OldDimensions.Min.X - 1; col++) {
-                        UWidget* GridPanelElement = TileGridPanel->GetChildAt(row * TableCols + col);
-                        if (GridPanelElement) {
-                            GridPanelElement->SetVisibility(ESlateVisibility::Visible);
+            if (!CurrentXLessThanMin) {
+                if (NewLeftBoundMore) {
+                    for (int row = CurrentDimensions.Min.Y; row <= CurrentDimensions.Max.Y; row++) {
+                        for (int col = CurrentDimensions.Min.X; col <= OldDimensions.Min.X - 1; col++) {
+                            UWidget* GridPanelElement = TileGridPanel->GetChildAt(row * TableCols + col);
+                            if (GridPanelElement) {
+                                GridPanelElement->SetVisibility(ESlateVisibility::Visible);
+                            }
+                            else
+                                UE_LOG(LogTemp, Error, TEXT("NewLeftBoundMore CHORT"));
                         }
-                        else
-                            UE_LOG(LogTemp, Error, TEXT("NewLeftBoundMore CHORT"));
                     }
                 }
-            }
 
-            if (OldLeftBoundLess) {
-                for (int row = OldDimensions.Min.Y; row <= OldDimensions.Max.Y; row++) {
-                    for (int col = OldDimensions.Min.X; col <= CurrentDimensions.Min.X - 1; col++) {
-                        UWidget* GridPanelElement = TileGridPanel->GetChildAt(row * TableCols + col);
-                        if (GridPanelElement) {
-                            GridPanelElement->SetVisibility(ESlateVisibility::Collapsed);
+                if (OldLeftBoundLess) {
+                    for (int row = OldDimensions.Min.Y; row <= OldDimensions.Max.Y; row++) {
+                        for (int col = OldDimensions.Min.X; col <= CurrentDimensions.Min.X - 1; col++) {
+                            UWidget* GridPanelElement = TileGridPanel->GetChildAt(row * TableCols + col);
+                            if (GridPanelElement) {
+                                GridPanelElement->SetVisibility(ESlateVisibility::Collapsed);
+                            }
+                            else
+                                UE_LOG(LogTemp, Error, TEXT("OldLeftBoundLess CHORT"));
                         }
-                        else
-                            UE_LOG(LogTemp, Error, TEXT("OldLeftBoundLess CHORT"));
                     }
                 }
-            }
 
-            if (NewRightBoundMore) {
-                for (int row = CurrentDimensions.Min.Y; row <= CurrentDimensions.Max.Y; row++) {
-                    for (int col = OldDimensions.Max.X + 1; col <= CurrentDimensions.Max.X; col++) {
-                        UWidget* GridPanelElement = TileGridPanel->GetChildAt(row * TableCols + col);
-                        if (GridPanelElement) {
-                            GridPanelElement->SetVisibility(ESlateVisibility::Visible);
+                if (NewRightBoundMore) {
+                    for (int row = CurrentDimensions.Min.Y; row <= CurrentDimensions.Max.Y; row++) {
+                        for (int col = OldDimensions.Max.X + 1; col <= CurrentDimensions.Max.X; col++) {
+                            UWidget* GridPanelElement = TileGridPanel->GetChildAt(row * TableCols + col);
+                            if (GridPanelElement) {
+                                GridPanelElement->SetVisibility(ESlateVisibility::Visible);
+                            }
+                            else
+                                UE_LOG(LogTemp, Error, TEXT("NewRightBoundMore CHORT"));
                         }
-                        else
-                            UE_LOG(LogTemp, Error, TEXT("NewRightBoundMore CHORT"));
                     }
                 }
-            }
 
-            if (OldRightBoundLess) {
-                for (int row = OldDimensions.Min.Y; row <= OldDimensions.Max.Y; row++) {
-                    for (int col = CurrentDimensions.Max.X + 1; col <= OldDimensions.Max.X; col++) {
-                        UWidget* GridPanelElement = TileGridPanel->GetChildAt(row * TableCols + col);
-                        if (GridPanelElement) {
-                            GridPanelElement->SetVisibility(ESlateVisibility::Collapsed);
+                if (OldRightBoundLess) {
+                    for (int row = OldDimensions.Min.Y; row <= OldDimensions.Max.Y; row++) {
+                        for (int col = CurrentDimensions.Max.X + 1; col <= OldDimensions.Max.X; col++) {
+                            UWidget* GridPanelElement = TileGridPanel->GetChildAt(row * TableCols + col);
+                            if (GridPanelElement) {
+                                GridPanelElement->SetVisibility(ESlateVisibility::Collapsed);
+                            }
+                            else
+                                UE_LOG(LogTemp, Error, TEXT("OldRightBoundLess CHORT"));
                         }
-                        else
-                            UE_LOG(LogTemp, Error, TEXT("OldRightBoundLess CHORT"));
                     }
                 }
             }
