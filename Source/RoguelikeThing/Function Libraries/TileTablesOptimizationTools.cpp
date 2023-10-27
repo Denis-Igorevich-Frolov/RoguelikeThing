@@ -70,8 +70,14 @@ FVector2D UTileTablesOptimizationTools::InitTableTiles(UUniformGridPanel* TileGr
             OriginalDimensions = CurrentDimensions;
             OldDimensions = CurrentDimensions;
 
-            OriginalDimensionsSize = FVector2D((OriginalDimensions.Max.X - OriginalDimensions.Min.X) * OriginalTileSize.X,
-                (OriginalDimensions.Max.Y - OriginalDimensions.Min.Y) * OriginalTileSize.Y);
+            OriginalDimensionsSize = FVector2D((OriginalDimensions.Max.X - OriginalDimensions.Min.X + 1) * OriginalTileSize.X,
+                (OriginalDimensions.Max.Y - OriginalDimensions.Min.Y + 1) * OriginalTileSize.Y);
+
+            DistanceToAppearanceOfNewTiles = (OriginalDimensionsSize - widgetAreaSize) / 2;
+            if (DistanceToAppearanceOfNewTiles.X < 0)
+                DistanceToAppearanceOfNewTiles.X = 0;
+            if (DistanceToAppearanceOfNewTiles.Y < 0)
+                DistanceToAppearanceOfNewTiles.Y = 0;
 
             return OriginalTableSize;
         }
@@ -87,26 +93,34 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPa
     FTileCoord MaxBiasCoord;
 
     if (Bias.X > 0) {
-        if (Bias.X < SizeDifference.X / 2 - OriginalTileSize.X)
-            MinBiasCoord.X = MaxBiasCoord.X = (Bias.X + OriginalTileSize.X / 2) / OriginalTileSize.X;
+        if (Bias.X < SizeDifference.X / 2) {
+            MinBiasCoord.X = (Bias.X + DistanceToAppearanceOfNewTiles.X) / OriginalTileSize.X;
+            MaxBiasCoord.X = (Bias.X + (OriginalTileSize.X - DistanceToAppearanceOfNewTiles.X)) / OriginalTileSize.X;
+        }
         else
             MinBiasCoord.X = MaxBiasCoord.X = SizeDifference.X / 2 / OriginalTileSize.X;
     }
     else {
-        if (Bias.X > -(SizeDifference.X / 2 - OriginalTileSize.X))
-            MinBiasCoord.X = MaxBiasCoord.X = (Bias.X - OriginalTileSize.X / 2) / OriginalTileSize.X;
+        if (Bias.X > -(SizeDifference.X / 2)) {
+            MaxBiasCoord.X = (Bias.X - DistanceToAppearanceOfNewTiles.X) / OriginalTileSize.X;
+            MinBiasCoord.X = (Bias.X - (OriginalTileSize.X - DistanceToAppearanceOfNewTiles.X)) / OriginalTileSize.X;
+        }
         else
             MinBiasCoord.X = MaxBiasCoord.X = -SizeDifference.X / 2 / OriginalTileSize.X;
     }
     if (Bias.Y > 0) {
-        if (Bias.Y < SizeDifference.Y / 2 - OriginalTileSize.Y)
-            MinBiasCoord.Y = MaxBiasCoord.Y = (Bias.Y + OriginalTileSize.Y / 2) / OriginalTileSize.Y;
+        if (Bias.Y < SizeDifference.Y / 2) {
+            MinBiasCoord.Y = (Bias.Y + DistanceToAppearanceOfNewTiles.Y) / OriginalTileSize.Y;
+            MaxBiasCoord.Y = (Bias.Y + (OriginalTileSize.Y - DistanceToAppearanceOfNewTiles.Y)) / OriginalTileSize.Y;
+        }
         else
             MinBiasCoord.Y = MaxBiasCoord.Y = SizeDifference.Y / 2 / OriginalTileSize.Y;
     }
     else {
-        if (Bias.Y > -(SizeDifference.Y / 2 - OriginalTileSize.Y))
-            MinBiasCoord.Y = MaxBiasCoord.Y = (Bias.Y - OriginalTileSize.Y / 2) / OriginalTileSize.Y;
+        if (Bias.Y > -(SizeDifference.Y / 2)) {
+            MaxBiasCoord.Y = (Bias.Y - DistanceToAppearanceOfNewTiles.Y) / OriginalTileSize.Y;
+            MinBiasCoord.Y = (Bias.Y - (OriginalTileSize.Y - DistanceToAppearanceOfNewTiles.Y)) / OriginalTileSize.Y;
+        }
         else
             MinBiasCoord.Y = MaxBiasCoord.Y = -SizeDifference.Y / 2 / OriginalTileSize.Y;
     }
@@ -281,6 +295,22 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPa
     }
 
     OldDimensions = CurrentDimensions;
+}
+
+void UTileTablesOptimizationTools::ExtinguishCurrentDimension(UUniformGridPanel* TileGridPanel)
+{
+    for (int row = CurrentDimensions.Min.Y; row <= CurrentDimensions.Max.Y; row++) {
+        for (int col = CurrentDimensions.Min.X; col <= CurrentDimensions.Max.X; col++) {
+            UWidget* GridPanelElement = TileGridPanel->GetChildAt(row * TableCols + col);
+            if (GridPanelElement)
+                GridPanelElement->SetVisibility(ESlateVisibility::Collapsed);
+            else
+                UE_LOG(LogTemp, Error, TEXT("CHORT"));
+        }
+    }
+
+    OldDimensions = FDimensionsDisplayedArea();
+    CurrentDimensions = FDimensionsDisplayedArea();
 }
 
 FTileCoord::FTileCoord(int32 x, int32 y) : X(x), Y(y)

@@ -117,7 +117,7 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions,
                         LoadingWidget->RemoveFromParent();
                         LoadingWidget->LoadingComplete(true);
 
-                        MapEditor->UpdateMapSize();
+                        MapEditor->UpdateItemAreaContent();
 
                         TileGridPanel->SetVisibility(ESlateVisibility::Visible);
                     }

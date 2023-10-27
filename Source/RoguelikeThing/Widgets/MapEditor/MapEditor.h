@@ -20,8 +20,8 @@ private:
 	
 public:
 	UMapEditor(const FObjectInitializer& ObjectInitializer);
-	UFUNCTION(BlueprintImplementableEvent)
-	void UpdateMapSize();
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void UpdateItemAreaContent();
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void UpdateItemAreaSize(FIntPoint Size);
 };

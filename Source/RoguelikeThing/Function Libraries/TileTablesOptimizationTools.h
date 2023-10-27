@@ -73,6 +73,7 @@ private:
 	FVector2D OriginalDimensionsSize;
 	FVector2D SizeDifference;
 	FVector2D minContentSize;
+	FVector2D DistanceToAppearanceOfNewTiles;
 
 	FDimensionsDisplayedArea OldDimensions = FDimensionsDisplayedArea();
 	FDimensionsDisplayedArea CurrentDimensions = FDimensionsDisplayedArea();
@@ -82,6 +83,9 @@ public:
 	UFUNCTION(BlueprintCallable)
     FVector2D InitTableTiles(UUniformGridPanel* TileGridPanel, FVector2D TileSize,
 		FVector2D WidgetAreaSize, FMapDimensions MapDimensions, FVector2D MinContentSize = FVector2D(2000, 2000));
+
+	UFUNCTION(BlueprintCallable)
+	void ExtinguishCurrentDimension(UUniformGridPanel* TileGridPanel);
 
 	UFUNCTION(BlueprintCallable)
 	void ChangingVisibilityOfTableTiles(UUniformGridPanel* TileGridPanel, FVector2D Bias, float ZoomMultiplier);
