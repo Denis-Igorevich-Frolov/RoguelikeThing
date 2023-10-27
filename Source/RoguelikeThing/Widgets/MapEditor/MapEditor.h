@@ -23,5 +23,5 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void UpdateItemAreaContent();
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void UpdateItemAreaSize(FIntPoint Size);
+	void ResizeEvent(FIntPoint Size);
 };
