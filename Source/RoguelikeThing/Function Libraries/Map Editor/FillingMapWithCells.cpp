@@ -9,8 +9,8 @@
 
 DEFINE_LOG_CATEGORY(FillingMapWithCells);
 
-bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions,
-    UUniformGridPanel* TileGridPanel, UClass* CellClass, UClass* MapTileClass, UMapEditor* MapEditor)
+bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, UUniformGridPanel* TileGridPanel,
+    UClass* CellClass, UClass* MapTileClass, UMapEditor* MapEditor, UCoordWrapperOfTable* TilesCoordWrapper)
 {
     if (!TileGridPanel)
         return false;
@@ -79,8 +79,8 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions,
         int NumberOfMapTilesCols = DisplayedColSize * TableLength / MapTileLength;
         int NumberOfMapTilesRows = DisplayedRowSize * TableLength / MapTileLength;
 
-        AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapEditor, NumberOfMapTilesCols, NumberOfMapTilesRows,
-            TableLength, MapTileLength, DisplayedColSize, DisplayedRowSize, TileGridPanel,  CellClass, MapTileClass, this]() {
+        AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapEditor, NumberOfMapTilesCols, NumberOfMapTilesRows, TableLength,
+            MapTileLength, DisplayedColSize, DisplayedRowSize, TileGridPanel,  CellClass, MapTileClass, TilesCoordWrapper, this]() {
                 FVector2D TileSize(0, 0);
                 for (int row = NumberOfMapTilesRows - 1; row >= 0; row--) {
                     for (int col = 0; col < NumberOfMapTilesCols; col++) {
@@ -103,8 +103,9 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions,
                             }
                         }
 
-                        AsyncTask(ENamedThreads::GameThread, [TileGridPanel, MapTile, row, col]() {
-                                TileGridPanel->AddChildToUniformGrid(MapTile, row, col);
+                        AsyncTask(ENamedThreads::GameThread, [TileGridPanel, MapTile, row, col, TilesCoordWrapper]() {
+                            TilesCoordWrapper->AddWidget(row, col, MapTile);
+                            TileGridPanel->AddChildToUniformGrid(MapTile, row, col);
                         });
                     }
                 }

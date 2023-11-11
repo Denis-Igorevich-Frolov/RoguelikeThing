@@ -6,6 +6,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include <Components/UniformGridPanel.h>
 #include "RoguelikeThing/Map/MapMatrix.h"
+#include "RoguelikeThing/CoordWrapperOfTable.h"
 #include "FillingMapWithCells.generated.h"
 
 /**
@@ -28,7 +29,7 @@ private:
 public:
 	UFUNCTION(BlueprintCallable)
 	bool FillMapEditorWithCells(FMapDimensions MapDimensions, UUniformGridPanel* TileGridPanel,
-		UClass* CellClass, UClass* MapTileClass, UMapEditor* MapEditor);
+		UClass* CellClass, UClass* MapTileClass, UMapEditor* MapEditor, UCoordWrapperOfTable* TilesCoordWrapper);
 
 	UFUNCTION(BlueprintCallable)
 	void setLoadWidget(ULoadingWidget* newLoadingWidget);
