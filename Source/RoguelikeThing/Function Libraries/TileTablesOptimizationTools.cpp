@@ -3,11 +3,13 @@
 
 #include "RoguelikeThing/Function Libraries/TileTablesOptimizationTools.h"
 
-FVector2D UTileTablesOptimizationTools::InitTableTiles(UUniformGridPanel* TileGridPanel,
+FVector2D UTileTablesOptimizationTools::InitTableTiles(UCoordWrapperOfTable* TilesCoordWrapper,
     FVector2D TileSize, FVector2D WidgetAreaSize, FMapDimensions MapDimensions, FVector2D MinContentSize)
 {
+    if(!TilesCoordWrapper)
+        return FVector2D();
     if (MapDimensions.isValid) {
-        if (TileGridPanel->HasAnyChildren()) {
+        if (TilesCoordWrapper->HasAnyEllements()) {
             minContentSize = MinContentSize;
             TileLen = MapDimensions.MapTileLength;
             int NumberOfTilesInFragment = MapDimensions.TableLength / TileLen;
@@ -39,10 +41,6 @@ FVector2D UTileTablesOptimizationTools::InitTableTiles(UUniformGridPanel* TileGr
 
             UE_LOG(LogTemp, Error, TEXT("%d, %d"), NumberOfCollapsedTilesTopAndBottom, NumberOfCollapsedTilesRinhtAndLeft);
 
-            int NumberOfItemsInTable = TileGridPanel->GetAllChildren().Num();
-            UE_LOG(LogTemp, Error, TEXT("NumberOfItemsInTable: %d, NumberOfRows: %d, NumberOfCols: %d"), NumberOfItemsInTable, TableRows, TableCols);
-
-
             CurrentDimensions = FDimensionsDisplayedArea(
                 FTileCoord(NumberOfCollapsedTilesRinhtAndLeft, NumberOfCollapsedTilesTopAndBottom),
                 FTileCoord(TableCols - NumberOfCollapsedTilesRinhtAndLeft - 1, TableRows - NumberOfCollapsedTilesTopAndBottom - 1));
@@ -51,7 +49,7 @@ FVector2D UTileTablesOptimizationTools::InitTableTiles(UUniformGridPanel* TileGr
 
             for (int row = CurrentDimensions.Min.Y; row <= CurrentDimensions.Max.Y; row++) {
                 for (int col = CurrentDimensions.Min.X; col <= CurrentDimensions.Max.X; col++) {
-                    UWidget* GridPanelElement = TileGridPanel->GetChildAt(row * TableCols + col);
+                    UWidget* GridPanelElement = TilesCoordWrapper->FindWidget(row, col);
                     if (GridPanelElement)
                         GridPanelElement->SetVisibility(ESlateVisibility::Visible);
                     else
@@ -59,13 +57,19 @@ FVector2D UTileTablesOptimizationTools::InitTableTiles(UUniformGridPanel* TileGr
                 }
             }
 
-            UWidget* HiddenWidget = TileGridPanel->GetChildAt(0);
-            if (HiddenWidget && HiddenWidget->GetVisibility() == ESlateVisibility::Collapsed)
-                HiddenWidget->SetVisibility(ESlateVisibility::Hidden);
+            GridCoord MinCoord = TilesCoordWrapper->getMinCoord();
+            if (MinCoord.getIsInit()) {
+                UWidget* HiddenWidget = TilesCoordWrapper->FindWidget(MinCoord.Col, MinCoord.Row);
+                if (HiddenWidget && HiddenWidget->GetVisibility() == ESlateVisibility::Collapsed)
+                    HiddenWidget->SetVisibility(ESlateVisibility::Hidden);
+            }
 
-            HiddenWidget = TileGridPanel->GetChildAt(NumberOfItemsInTable - 1);
-            if (HiddenWidget && HiddenWidget->GetVisibility() == ESlateVisibility::Collapsed)
-                HiddenWidget->SetVisibility(ESlateVisibility::Hidden);
+            GridCoord MaxCoord = TilesCoordWrapper->getMaxCoord();
+            if (MaxCoord.getIsInit()) {
+                UWidget* HiddenWidget = TilesCoordWrapper->FindWidget(MaxCoord.Col, MaxCoord.Row);
+                if (HiddenWidget && HiddenWidget->GetVisibility() == ESlateVisibility::Collapsed)
+                    HiddenWidget->SetVisibility(ESlateVisibility::Hidden);
+            }
 
             OriginalDimensions = CurrentDimensions;
             OldDimensions = CurrentDimensions;
@@ -82,11 +86,18 @@ FVector2D UTileTablesOptimizationTools::InitTableTiles(UUniformGridPanel* TileGr
             return OriginalTableSize;
         }
     }
+    else
+    {
+        return FVector2D();
+    }
     return FVector2D();
 }
 
-void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPanel* TileGridPanel, FVector2D Bias, float ZoomMultiplier)
+void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperOfTable* TilesCoordWrapper, FVector2D Bias, float ZoomMultiplier)
 {
+    if (!TilesCoordWrapper)
+        return;
+
     Bias.X *= -1;
 
     FTileCoord MinBiasCoord;
@@ -154,9 +165,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPa
     bool CurrentXLessThanMin = OriginalTableSize.X < minContentSize.X;
     bool CurrentYLessThanMin = OriginalTableSize.Y < minContentSize.Y;
 
-    int NumberOfItemsInTable = TileGridPanel->GetAllChildren().Num();
-
-    if (TileGridPanel->HasAnyChildren()) {
+    if (TilesCoordWrapper->HasAnyEllements()) {
         if (CurrentXLessThanMin) {
             CurrentDimensions.Min.X = 0;
             CurrentDimensions.Max.X = TableCols - 1;
@@ -180,7 +189,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPa
             if (NewTopBoundMore) {
                 for (int row = OldDimensions.Max.Y + 1; row <= CurrentDimensions.Max.Y; row++) {
                     for (int col = CurrentDimensions.Min.X; col <= CurrentDimensions.Max.X; col++) {
-                        UWidget* GridPanelElement = TileGridPanel->GetChildAt(row * TableCols + col);
+                        UWidget* GridPanelElement = TilesCoordWrapper->FindWidget(row, col);
                         if (GridPanelElement) {
                             GridPanelElement->SetVisibility(ESlateVisibility::Visible);
                         }
@@ -193,7 +202,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPa
             if (OldTopBoundLess) {
                 for (int row = CurrentDimensions.Max.Y + 1; row <= OldDimensions.Max.Y; row++) {
                     for (int col = OldDimensions.Min.X; col <= OldDimensions.Max.X; col++) {
-                        UWidget* GridPanelElement = TileGridPanel->GetChildAt(row * TableCols + col);
+                        UWidget* GridPanelElement = TilesCoordWrapper->FindWidget(row, col);
                         if (GridPanelElement) {
                             GridPanelElement->SetVisibility(ESlateVisibility::Collapsed);
                         }
@@ -206,7 +215,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPa
             if (NewBottomBoundMore) {
                 for (int row = CurrentDimensions.Min.Y; row <= OldDimensions.Min.Y - 1; row++) {
                     for (int col = CurrentDimensions.Min.X; col <= CurrentDimensions.Max.X; col++) {
-                        UWidget* GridPanelElement = TileGridPanel->GetChildAt(row * TableCols + col);
+                        UWidget* GridPanelElement = TilesCoordWrapper->FindWidget(row, col);
                         if (GridPanelElement) {
                             GridPanelElement->SetVisibility(ESlateVisibility::Visible);
                         }
@@ -219,7 +228,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPa
             if (OldBottomBoundLess) {
                 for (int row = OldDimensions.Min.Y; row <= CurrentDimensions.Min.Y - 1; row++) {
                     for (int col = OldDimensions.Min.X; col <= OldDimensions.Max.X; col++) {
-                        UWidget* GridPanelElement = TileGridPanel->GetChildAt(row * TableCols + col);
+                        UWidget* GridPanelElement = TilesCoordWrapper->FindWidget(row, col);
                         if (GridPanelElement) {
                             GridPanelElement->SetVisibility(ESlateVisibility::Collapsed);
                         }
@@ -233,7 +242,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPa
                 if (NewLeftBoundMore) {
                     for (int row = CurrentDimensions.Min.Y; row <= CurrentDimensions.Max.Y; row++) {
                         for (int col = CurrentDimensions.Min.X; col <= OldDimensions.Min.X - 1; col++) {
-                            UWidget* GridPanelElement = TileGridPanel->GetChildAt(row * TableCols + col);
+                            UWidget* GridPanelElement = TilesCoordWrapper->FindWidget(row, col);
                             if (GridPanelElement) {
                                 GridPanelElement->SetVisibility(ESlateVisibility::Visible);
                             }
@@ -246,7 +255,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPa
                 if (OldLeftBoundLess) {
                     for (int row = OldDimensions.Min.Y; row <= OldDimensions.Max.Y; row++) {
                         for (int col = OldDimensions.Min.X; col <= CurrentDimensions.Min.X - 1; col++) {
-                            UWidget* GridPanelElement = TileGridPanel->GetChildAt(row * TableCols + col);
+                            UWidget* GridPanelElement = TilesCoordWrapper->FindWidget(row, col);
                             if (GridPanelElement) {
                                 GridPanelElement->SetVisibility(ESlateVisibility::Collapsed);
                             }
@@ -259,7 +268,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPa
                 if (NewRightBoundMore) {
                     for (int row = CurrentDimensions.Min.Y; row <= CurrentDimensions.Max.Y; row++) {
                         for (int col = OldDimensions.Max.X + 1; col <= CurrentDimensions.Max.X; col++) {
-                            UWidget* GridPanelElement = TileGridPanel->GetChildAt(row * TableCols + col);
+                            UWidget* GridPanelElement = TilesCoordWrapper->FindWidget(row, col);
                             if (GridPanelElement) {
                                 GridPanelElement->SetVisibility(ESlateVisibility::Visible);
                             }
@@ -272,7 +281,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPa
                 if (OldRightBoundLess) {
                     for (int row = OldDimensions.Min.Y; row <= OldDimensions.Max.Y; row++) {
                         for (int col = CurrentDimensions.Max.X + 1; col <= OldDimensions.Max.X; col++) {
-                            UWidget* GridPanelElement = TileGridPanel->GetChildAt(row * TableCols + col);
+                            UWidget* GridPanelElement = TilesCoordWrapper->FindWidget(row, col);
                             if (GridPanelElement) {
                                 GridPanelElement->SetVisibility(ESlateVisibility::Collapsed);
                             }
@@ -284,24 +293,30 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UUniformGridPa
             }
         }
 
-        UWidget* HiddenWidget = TileGridPanel->GetChildAt(0);
-        if(HiddenWidget && HiddenWidget->GetVisibility() == ESlateVisibility::Collapsed)
-            HiddenWidget->SetVisibility(ESlateVisibility::Hidden);
+        GridCoord MinCoord = TilesCoordWrapper->getMinCoord();
+        if (MinCoord.getIsInit()) {
+            UWidget* HiddenWidget = TilesCoordWrapper->FindWidget(MinCoord.Col, MinCoord.Row);
+            if (HiddenWidget && HiddenWidget->GetVisibility() == ESlateVisibility::Collapsed)
+                HiddenWidget->SetVisibility(ESlateVisibility::Hidden);
+        }
 
-        HiddenWidget = TileGridPanel->GetChildAt(NumberOfItemsInTable - 1);
-        if (HiddenWidget && HiddenWidget->GetVisibility() == ESlateVisibility::Collapsed)
-            HiddenWidget->SetVisibility(ESlateVisibility::Hidden);
+        GridCoord MaxCoord = TilesCoordWrapper->getMaxCoord();
+        if (MaxCoord.getIsInit()) {
+            UWidget* HiddenWidget = TilesCoordWrapper->FindWidget(MaxCoord.Col, MaxCoord.Row);
+            if (HiddenWidget && HiddenWidget->GetVisibility() == ESlateVisibility::Collapsed)
+                HiddenWidget->SetVisibility(ESlateVisibility::Hidden);
+        }
 
     }
 
     OldDimensions = CurrentDimensions;
 }
 
-void UTileTablesOptimizationTools::ExtinguishCurrentDimension(UUniformGridPanel* TileGridPanel)
+void UTileTablesOptimizationTools::ExtinguishCurrentDimension(UCoordWrapperOfTable* TilesCoordWrapper)
 {
     for (int row = CurrentDimensions.Min.Y; row <= CurrentDimensions.Max.Y; row++) {
         for (int col = CurrentDimensions.Min.X; col <= CurrentDimensions.Max.X; col++) {
-            UWidget* GridPanelElement = TileGridPanel->GetChildAt(row * TableCols + col);
+            UWidget* GridPanelElement = TilesCoordWrapper->FindWidget(row, col);
             if (GridPanelElement)
                 GridPanelElement->SetVisibility(ESlateVisibility::Collapsed);
             else

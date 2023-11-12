@@ -12,6 +12,8 @@ DEFINE_LOG_CATEGORY(FillingMapWithCells);
 bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, UUniformGridPanel* TileGridPanel,
     UClass* CellClass, UClass* MapTileClass, UMapEditor* MapEditor, UCoordWrapperOfTable* TilesCoordWrapper)
 {
+    TilesCoordWrapper->Clear();
+
     if (!TileGridPanel)
         return false;
     if (!CellClass)
@@ -103,8 +105,8 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                             }
                         }
 
-                        AsyncTask(ENamedThreads::GameThread, [TileGridPanel, MapTile, row, col, TilesCoordWrapper]() {
-                            TilesCoordWrapper->AddWidget(row, col, MapTile);
+                        AsyncTask(ENamedThreads::GameThread, [TileGridPanel, MapTile, row, col, TilesCoordWrapper, NumberOfMapTilesRows]() {
+                            TilesCoordWrapper->AddWidget(NumberOfMapTilesRows - 1 - row, col, MapTile);
                             TileGridPanel->AddChildToUniformGrid(MapTile, row, col);
                         });
                     }

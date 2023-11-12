@@ -4,8 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include <Components/UniformGridPanel.h>
 #include "RoguelikeThing/Map/MapMatrix.h"
+#include "RoguelikeThing/CoordWrapperOfTable.h"
 #include "TileTablesOptimizationTools.generated.h"
 
 /**
@@ -81,12 +81,12 @@ private:
 	
 public:
 	UFUNCTION(BlueprintCallable)
-    FVector2D InitTableTiles(UUniformGridPanel* TileGridPanel, FVector2D TileSize,
+    FVector2D InitTableTiles(UCoordWrapperOfTable* TilesCoordWrapper, FVector2D TileSize,
 		FVector2D WidgetAreaSize, FMapDimensions MapDimensions, FVector2D MinContentSize = FVector2D(2000, 2000));
 
 	UFUNCTION(BlueprintCallable)
-	void ExtinguishCurrentDimension(UUniformGridPanel* TileGridPanel);
+	void ExtinguishCurrentDimension(UCoordWrapperOfTable* TilesCoordWrapper);
 
 	UFUNCTION(BlueprintCallable)
-	void ChangingVisibilityOfTableTiles(UUniformGridPanel* TileGridPanel, FVector2D Bias, float ZoomMultiplier);
+	void ChangingVisibilityOfTableTiles(UCoordWrapperOfTable* TilesCoordWrapper, FVector2D Bias, float ZoomMultiplier);
 };
