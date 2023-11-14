@@ -105,10 +105,10 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                             }
                         }
 
-                        AsyncTask(ENamedThreads::GameThread, [TileGridPanel, MapTile, row, col, TilesCoordWrapper, NumberOfMapTilesRows]() {
-                            TilesCoordWrapper->AddWidget(NumberOfMapTilesRows - 1 - row, col, MapTile);
+                        AsyncTask(ENamedThreads::GameThread, [TileGridPanel, MapTile, row, col, TilesCoordWrapper]() {
                             TileGridPanel->AddChildToUniformGrid(MapTile, row, col);
                         });
+                        TilesCoordWrapper->AddWidget(NumberOfMapTilesRows - 1 - row, col, MapTile);
                     }
                 }
 

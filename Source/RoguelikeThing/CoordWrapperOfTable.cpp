@@ -30,7 +30,6 @@ UCoordWrapperOfTable::~UCoordWrapperOfTable()
 
 bool UCoordWrapperOfTable::AddWidget(int row, int col, UWidget* Widget)
 {
-    UE_LOG(LogTemp, Error, TEXT("row: %d, col: %d"), row, col);
     bool success = false;
     if (Col.Contains(col)) {
         WrapperRow* Row = *Col.Find(col);
