@@ -8,7 +8,7 @@ void UMapEditor::ResizeEvent(FViewport* ViewPort, uint32 val)
     if (OldViewPortSize != ViewPort->GetSizeXY()) {
         OldViewPortSize = ViewPort->GetSizeXY();
 
-        ResizeEvent(OldViewPortSize);
+        OnResize(OldViewPortSize);
     }
 }
 
