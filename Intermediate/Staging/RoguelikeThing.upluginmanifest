@@ -149,6 +149,32 @@
 			}
 		},
 		{
+			"File": "../../../Engine/Plugins/Tests/FunctionalTestingEditor/FunctionalTestingEditor.uplugin",
+			"Descriptor": 
+			{
+				"FileVersion": 3,
+				"Version": 1,
+				"VersionName": "1.0",
+				"FriendlyName": "Functional Testing Editor",
+				"Description": "",
+				"Category": "Testing",
+				"CreatedBy": "Epic Games, Inc.",
+				"CreatedByURL": "http://epicgames.com",
+				"DocsURL": "",
+				"MarketplaceURL": "",
+				"SupportURL": "",
+				"EnabledByDefault": false,
+				"CanContainContent": false,
+				"Modules": [
+					{
+						"Name": "FunctionalTestingEditor",
+						"Type": "Editor",
+						"LoadingPhase": "Default"
+					}
+				]
+			}
+		},
+		{
 			"File": "../../../Engine/Plugins/2D/Paper2D/Paper2D.uplugin",
 			"Descriptor": 
 			{

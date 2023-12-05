@@ -4,14 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "RoguelikeThing/Widgets/Interfaces/ShiftAndZoomContainsable.h"
 #include "MapEditor.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ROGUELIKETHING_API UMapEditor : public UUserWidget, public IShiftAndZoomContainsable
+class ROGUELIKETHING_API UMapEditor : public UUserWidget
 {
 	GENERATED_BODY()
 private:
