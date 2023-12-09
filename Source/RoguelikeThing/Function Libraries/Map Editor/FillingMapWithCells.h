@@ -9,9 +9,10 @@
 #include "RoguelikeThing/CoordWrapperOfTable.h"
 #include "FillingMapWithCells.generated.h"
 
-/**
- * 
- */
+/***********************************************************
+ * Данный класс является инструментарием для заполнения 
+ * пустой карты непроинициализированными ячейками
+ ***********************************************************/
 
 DECLARE_LOG_CATEGORY_EXTERN(FillingMapWithCells, Log, All);
 
@@ -21,21 +22,32 @@ class ROGUELIKETHING_API UFillingMapWithCells : public UBlueprintFunctionLibrary
 	GENERATED_BODY()
 
 private:
+	//Виджет загрузки, корторый будет проигрываться во время заполнения карты
 	ULoadingWidget* LoadingWidget;
 
-	int ColSize;
-	int RowSize;
+	//Количество ячеек в столбце карты
+	int ColNum;
+	//Количество ячеек в строке карты
+	int RowNum;
 	
 public:
-	UFUNCTION(BlueprintCallable)
+	/* Функция, заполняющая пустыми ячейками карту.
+	 *
+	 * MapTileClass обязательно должен быть наследником
+	 * класса UMapTile или им самим, CellClass обязательно
+	 * должен быть наследником класса UMapCell или им самим */
+	UFUNCTION(BlueprintCallable, meta = (ToolTip = "MapTileClass must necessarily be an heir of the Umatilla class or be itself, CellClass must necessarily be an heir of the UMapCell class or be itself"))
 	bool FillMapEditorWithCells(FMapDimensions MapDimensions, UUniformGridPanel* TileGridPanel,
 		UClass* CellClass, UClass* MapTileClass, UMapEditor* MapEditor, UCoordWrapperOfTable* TilesCoordWrapper);
 
+	//Если не передать виджет загрузки, то загрузка будет будет без индикации
 	UFUNCTION(BlueprintCallable)
 	void setLoadWidget(ULoadingWidget* newLoadingWidget);
 
+	//Геттер количества фрагментов по горизонтали
 	UFUNCTION(BlueprintCallable)
-	int32 GetColSize();
+	int32 GetColNum();
+	//Геттер количества фрагментов по вертикали
 	UFUNCTION(BlueprintCallable)
-	int32 GetRowSize();
+	int32 GetRowNum();
 };

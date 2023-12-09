@@ -9,142 +9,284 @@
 
 DEFINE_LOG_CATEGORY(FillingMapWithCells);
 
+/* Функция, заполняющая пустыми ячейками карту.
+ *
+ * MapTileClass обязательно должен быть наследником
+ * класса UMapTile или им самим, CellClass обязательно
+ * должен быть наследником класса UMapCell или им самим */
 bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, UUniformGridPanel* TileGridPanel,
     UClass* CellClass, UClass* MapTileClass, UMapEditor* MapEditor, UCoordWrapperOfTable* TilesCoordWrapper)
 {
+    //Координатная обёртка изначально должна быть полность пустой во время заполнения карты
     TilesCoordWrapper->Clear();
 
-    if (!TileGridPanel)
-        return false;
-    if (!CellClass)
-        return false;
-    if (!MapTileClass)
-        return false;
-    if (!MapEditor)
-        return false;
+    //Проверка корректности указателей
+    if (!TileGridPanel) {
+        UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: TileGridPanel is a null pointer"));
 
+        if (LoadingWidget) {
+            LoadingWidget->LoadingComplete(false);
+            LoadingWidget->RemoveFromParent();
+        }
+
+        return false;
+    }
+    if (!CellClass) {
+        UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: CellClass is a null pointer"));
+
+        if (LoadingWidget) {
+            LoadingWidget->LoadingComplete(false);
+            LoadingWidget->RemoveFromParent();
+        }
+
+        return false;
+    }
+    if (!MapTileClass) {
+        UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: MapTileClass is a null pointer"));
+
+        if (LoadingWidget) {
+            LoadingWidget->LoadingComplete(false);
+            LoadingWidget->RemoveFromParent();
+        }
+
+        return false;
+    }
+    if (!MapEditor) {
+        UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: MapEditor is a null pointer"));
+
+        if (LoadingWidget) {
+            LoadingWidget->LoadingComplete(false);
+            LoadingWidget->RemoveFromParent();
+        }
+
+        return false;
+    }
+    if (!TilesCoordWrapper) {
+        UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: TilesCoordWrapper is a null pointer"));
+
+        if (LoadingWidget) {
+            LoadingWidget->LoadingComplete(false);
+            LoadingWidget->RemoveFromParent();
+        }
+
+        return false;
+    }
+
+    /* Здесь проверяется корректность переданного класса, по которому будут делаться тайлы.
+     * Переданный MapTileClass имеет тип данных UClass*, но для корректной работы кода
+     * этот класс обязательно должен наследоваться от UMapTile. Мне не известны
+     * инструменты проверки этого на уровне аргумента функции, так что эта проверка
+     * будет выполняться здесь.
+     *
+     * Для данной проверки создаётся один тестовый виджет, который после будет удалён.
+     * С помощью dynamic_cast выясняется есть ли в древе наследовании переданного класса UMapTile */
     UUserWidget* TestGridWidget = CreateWidget<UUserWidget>(TileGridPanel, MapTileClass);
     if (!dynamic_cast<UMapTile*>(TestGridWidget)) {
         UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: MapFragmentClass was expected to inherit from UMapTile, but its class is %s"), *MapTileClass->GetName());
 
+        //Если класс был некорректен, то тестовый виджет всё равно удаляется
         if (TestGridWidget) {
             TestGridWidget->RemoveFromParent();
         }
 
         if (LoadingWidget) {
-            LoadingWidget->RemoveFromParent();
             LoadingWidget->LoadingComplete(false);
+            LoadingWidget->RemoveFromParent();
         }
 
         return false;
     }
+    //Если проверка была пройдена, то тестовый виджет удаляется, он нужен был сугубо для проверки
     if (TestGridWidget) {
         TestGridWidget->RemoveFromParent();
     }
 
+    /* Здесь проверяется корректность переданного класса, по которому будут делаться ячейки.
+     * Переданный CellClass имеет тип данных UClass*, но для корректной работы кода
+     * этот класс обязательно должен наследоваться от UMapCell. Мне не известны
+     * инструменты проверки этого на уровне аргумента функции, так что эта проверка
+     * будет выполняться здесь.
+     *
+     * Для данной проверки создаётся один тестовый виджет, который после будет удалён.
+     * С помощью dynamic_cast выясняется есть ли в древе наследовании переданного класса UMapCell */
     UUserWidget* TestCellWidget = CreateWidget<UUserWidget>(TileGridPanel, CellClass);
     if (!StaticCast<UMapCell*>(TestCellWidget)) {
         UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: CellClass was expected to inherit from UMapCell, but its class is %s"), *CellClass->GetName());
 
+        //Если класс был некорректен, то тестовый виджет всё равно удаляется
         if (TestCellWidget) {
             TestCellWidget->RemoveFromParent();
         }
 
         if (LoadingWidget) {
-            LoadingWidget->RemoveFromParent();
             LoadingWidget->LoadingComplete(false);
+            LoadingWidget->RemoveFromParent();
         }
 
         return false;
     }
+    //Если проверка была пройдена, то тестовый виджет удаляется, он нужен был сугубо для проверки
     if (TestCellWidget) {
         TestCellWidget->RemoveFromParent();
     }
 
     if (MapDimensions.isValid) {
+        //Чтобы не дёргать отрисовку лишний раз во время всего процесса забивания ячейками карты, следует сделать TileGridPanel колапсированной
         TileGridPanel->SetVisibility(ESlateVisibility::Collapsed);
 
+        //Длина фрагмента карты, обусловленный размером таблиц, которые составляют карту
         int TableLength = MapDimensions.TableLength;
+        //Длинна тайла карты, который необходим сугубо для оптимизации
         int MapTileLength = MapDimensions.MapTileLength;
 
-        ColSize = MapDimensions.MaxCol - MapDimensions.MinCol + 1;
-        RowSize = MapDimensions.MaxRow - MapDimensions.MinRow + 1;
+        //Реальный размер полученной карты (в фрагментах)
+        ColNum = MapDimensions.MaxCol - MapDimensions.MinCol + 1;
+        RowNum = MapDimensions.MaxRow - MapDimensions.MinRow + 1;
 
-        int DisplayedColSize = ColSize;
-        int DisplayedRowSize = RowSize;
+        //Отображаемый размер карты, который никогда не превышает 3 фрагмента для лучшей производительности
+        int DisplayedColNum = ColNum;
+        int DisplayedRowNum = RowNum;
 
-        if (DisplayedColSize > 3)
-            DisplayedColSize = 3;
-        if (DisplayedRowSize > 3)
-            DisplayedRowSize = 3;
+        if (DisplayedColNum > 3)
+            DisplayedColNum = 3;
+        if (DisplayedRowNum > 3)
+            DisplayedRowNum = 3;
 
-        int NumberOfMapTilesCols = DisplayedColSize * TableLength / MapTileLength;
-        int NumberOfMapTilesRows = DisplayedRowSize * TableLength / MapTileLength;
+        //Размер отображаемой карты (в тайлах)
+        int NumberOfMapTilesCols = DisplayedColNum * TableLength / MapTileLength;
+        int NumberOfMapTilesRows = DisplayedRowNum * TableLength / MapTileLength;
 
+        //Само забиваение карты ячейками происходит в отдельном потоке
         AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapEditor, NumberOfMapTilesCols, NumberOfMapTilesRows, TableLength,
-            MapTileLength, DisplayedColSize, DisplayedRowSize, TileGridPanel,  CellClass, MapTileClass, TilesCoordWrapper, this]() {
+            MapTileLength, DisplayedColNum, DisplayedRowNum, TileGridPanel,  CellClass, MapTileClass, TilesCoordWrapper, this]() {
                 FVector2D TileSize(0, 0);
+                /* Данный цикл и вложенный в него создают тайлы. При этом
+                 * это происходит таким образом, чтобы самый первый тайл
+                 * с наименьшим индексом был слева снизу, а последний с
+                 * наибольшим - справа сверху.
+                 * 
+                 * Для этого строки перебираются обратным циклом - 
+                 * от их количества (это число сразу переведено 
+                 * в индекс вычитанием единицы) до нуля.
+                 * Для столбцов же перебор обычный от нуля до их
+                 * количества, при этом, из-за того, что здесь <,
+                 * а не <=, преведение к индексу не требуется, так
+                 * как последнее число всё равно усекается */
                 for (int row = NumberOfMapTilesRows - 1; row >= 0; row--) {
                     for (int col = 0; col < NumberOfMapTilesCols; col++) {
+                        //Карта состоит из тайлов, которые, в свою очередь, состоят из ячеек, так что сначала создаётся тайл
                         UMapTile* MapTile = StaticCast<UMapTile*>(CreateWidget<UUserWidget>(TileGridPanel, MapTileClass));
 
+                        if (!MapTile) {
+                            UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: MapTile was created with an error"));
+
+                            //Виджет загрузки удалятся в основном потоке так как сделать это вне его невозможно
+                            AsyncTask(ENamedThreads::GameThread, [MapEditor, TileGridPanel, this]() {
+                                if (LoadingWidget) {
+                                    LoadingWidget->LoadingComplete(false);
+                                    LoadingWidget->RemoveFromParent();
+                                }
+                                return false;
+                            });
+                        }
+
+                        /* Тайл забивается ячейками по точно такому же принципу, что и карта тайлами -
+                         * первая ячейка находится слева снизу, а последняя - справа сверху */
                         for (int tileRow = MapTileLength - 1; tileRow >= 0; tileRow--) {
                             for (int tileCol = 0; tileCol < MapTileLength; tileCol++) {
                                 UMapCell* Cell = CreateWidget<UMapCell>(MapTile, CellClass);
 
+                                if (!Cell) {
+                                    UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: Cell was created with an error"));
+
+                                    //Виджет загрузки удалятся в основном потоке так как сделать это вне его невозможно
+                                    AsyncTask(ENamedThreads::GameThread, [MapEditor, TileGridPanel, this]() {
+                                        if (LoadingWidget) {
+                                            LoadingWidget->LoadingComplete(false);
+                                            LoadingWidget->RemoveFromParent();
+                                        }
+                                        return false;
+                                    });
+                                }
+
+                                //Добавление созданной ячейки в GridPanel производится в основном потоке так как сделать это вне его невозможно
                                 AsyncTask(ENamedThreads::GameThread, [MapTile, Cell, tileRow, tileCol]() {
                                     if (MapTile->GetGridPanel())
                                         MapTile->GetGridPanel()->AddChildToUniformGrid(Cell, tileRow, tileCol);
                                     else
-                                        UE_LOG(FillingMapWithCells, Error, TEXT("ERROR"));
+                                        UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: Failed to get GridPanel from MapTile"));
                                 });
 
+                                /* Для дальнейшего выполнения кода требуется размер тайла.
+                                 * И чтобы потом не запрашивать доступ к содержимому TileGridPanel,
+                                 * здесь просто считывается этот размпер во время первой итерации */
                                 if (tileRow == 0 && tileCol == MapTileLength - 1) {
+                                    //Размер тайла срого равен общему размеру всех ячеек, никаких дополнительных отступов быть не должно
                                     TileSize = Cell->getSize() * MapTileLength;
                                 }
                             }
                         }
 
+                        //Добавление созданного тайла в GridPanel производится в основном потоке так как сделать это вне его невозможно
                         AsyncTask(ENamedThreads::GameThread, [TileGridPanel, MapTile, row, col, TilesCoordWrapper]() {
                             TileGridPanel->AddChildToUniformGrid(MapTile, row, col);
                         });
+
+                        /* Созданные тайлы забиваются в координатную обёртку. При этом важен их индекс в порядке
+                         * создания, чтобы, например, слева снизу был тайл 0x0, а справа сверху - 10x10.
+                         * Для этого индекс обратного цикла по строкам разворачивается, чтобы передать
+                         * инвертированное значение от того, что было уже инвертировано для корректного
+                         * расположения тайлов в GridPanel */
                         TilesCoordWrapper->AddWidget(NumberOfMapTilesRows - 1 - row, col, MapTile);
                     }
                 }
 
+                //Чтобы таблицу не сжимало устанавливается минимальный размер слота
                 TileGridPanel->SetMinDesiredSlotWidth(TileSize.X);
                 TileGridPanel->SetMinDesiredSlotHeight(TileSize.Y);
 
+                //Все взаимодействия, связанные с изменением состояний виджетов выполняются в основном потоке
                 AsyncTask(ENamedThreads::GameThread, [MapEditor, TileGridPanel, this]() {
                     if (LoadingWidget) {
-                        LoadingWidget->RemoveFromParent();
                         LoadingWidget->LoadingComplete(true);
-
-                        MapEditor->UpdateItemAreaContent();
-
-                        TileGridPanel->SetVisibility(ESlateVisibility::Visible);
+                        LoadingWidget->RemoveFromParent();
                     }
+
+                    MapEditor->UpdateItemAreaContent();
+
+                    //После полного забивания карты ячейками TileGridPanel возвращается сидимость
+                    TileGridPanel->SetVisibility(ESlateVisibility::Visible);
                 });
         });
     }
     else {
+        UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: MapDimensions is not valid"));
+
+        if (LoadingWidget) {
+            LoadingWidget->LoadingComplete(true);
+            LoadingWidget->RemoveFromParent();
+        }
+
         return false;
     }
 
     return true;
 }
 
+//Если не передать виджет загрузки, то загрузка будет будет без индикации
 void UFillingMapWithCells::setLoadWidget(ULoadingWidget* newLoadingWidget)
 {
     this->LoadingWidget = newLoadingWidget;
 }
 
-int32 UFillingMapWithCells::GetColSize()
+//Геттер количества фрагментов по горизонтали
+int32 UFillingMapWithCells::GetColNum()
 {
-    return ColSize;
+    return ColNum;
 }
 
-int32 UFillingMapWithCells::GetRowSize()
+//Геттер количества фрагментов по вертикали
+int32 UFillingMapWithCells::GetRowNum()
 {
-    return RowSize;
+    return RowNum;
 }

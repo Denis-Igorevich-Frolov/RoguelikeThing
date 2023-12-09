@@ -22,27 +22,39 @@ DECLARE_LOG_CATEGORY_EXTERN(MapDataBase, Log, All);
 //Данное перечисление включает в себя все возможные типы фрагментов карты
 UENUM(BlueprintType)
 enum class MatrixType : uint8 {
-	ChunkStructure	UMETA(DisplayName = "ChunkStructure"), //Структура карты
+	ChunkStructure	UMETA(DisplayName = "ChunkStructure"), //Структура чанка карты
 };
 
+//Структура габаритов карты
 USTRUCT(BlueprintType)
 struct FMapDimensions
 {
 	GENERATED_BODY()
 
+	//Минимальная координата стобца
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int32 MinCol;
+    //Максимальная координата столбца
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int32 MaxCol;
+	//Минимальная координата строки
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int32 MinRow;
+	//Максимальная координата строки
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int32 MaxRow;
+	/* Число строк и столбцов в матрице фрагмента карты. Это число всегда должно быть
+	 * кратно длине тайла, если это не так, то оно усечётся до ближайшего кратного.
+	 * Фрагменты карты нужны для хранения большого количества ячеек отдельным кластером в БД */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int32 TableLength;
+	/* Число строк и столбцов тайлов, на которые будет разбита карта. Она разбивается на маленькие
+	 * тайлы для оптимизации - отображаться будут только те тайлы, которые сейчас видны */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
     int32 MapTileLength;
 
+	/* Переменная отражающая работоспособность структуры. Если она равна false,
+	 * то она непроинициализирована и сгенерерована через пустой конструктор */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
     bool isValid;
 
@@ -57,6 +69,7 @@ class ROGUELIKETHING_API UMapMatrix : public UObject
 	GENERATED_BODY()
 
 private:
+	//Виджет загрузки, который проигрывается во время создания карты
 	ULoadingWidget* LoadingWidget;
 	bool SuccessCreateBlankCard = false;
 
@@ -66,8 +79,8 @@ private:
 	 * кратно длине тайла, если это не так, то оно усечётся до ближайшего кратного.
 	 * Фрагменты карты нужны для хранения большого количества ячеек отдельным кластером в БД */
 	int32 TableLength = 50;
-	/* Длина тайлов, на которые будет разбита карта. Она разбивается на маленькие тайлы
-	 * для оптимизации - отображаться будут только те тайлы, которые сейчас видны */
+	/* Число строк и столбцов тайлов, на которые будет разбита карта. Она разбивается на маленькие
+	 * тайлы для оптимизации - отображаться будут только те тайлы, которые сейчас видны */
 	int32 MapTileLength = 5;
 
 	FSQLiteDatabase* mapDataBase = new FSQLiteDatabase();
@@ -93,6 +106,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	int32 GetMapTileLength();
+
+	UFUNCTION(BlueprintCallable)
+	FMapDimensions GetMapDimensions(bool autoClose = true);
 
 	UFUNCTION(BlueprintCallable)
 	void setLoadWidget(ULoadingWidget* newLoadingWidget);
@@ -140,7 +156,4 @@ public:
 	//Функция, запускающая в отдельном потоке создание в базе даннх матрицы из фрагментов карты указанного типа
 	UFUNCTION(BlueprintCallable)
 	void AsyncCreateBlankCard(int32 rowLen, int32 colLen, MatrixType matrixType);
-
-	UFUNCTION(BlueprintCallable)
-	FMapDimensions GetMapDimensions(bool autoClose = true);
 };

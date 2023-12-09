@@ -8,9 +8,11 @@ DEFINE_LOG_CATEGORY(MapDataBase);
 
 UMapMatrix::UMapMatrix() : UObject()
 {
+    //Длина таблицы всегда должна быть кратна длине тайлов из которых она составлена
     int32 remainder = TableLength % MapTileLength;
     if (remainder != 0) {
         UE_LOG(MapDataBase, Warning, TEXT("Warning in MapMatrix class in constructor function - TableLength is %d and not a multiple of 5, it will be truncated to %d"), TableLength, TableLength - remainder);
+        //Если длина таблицы не кратна длине тайла, то она усекается до кратного
         TableLength = TableLength - remainder;
     }
 }
@@ -63,7 +65,7 @@ void UMapMatrix::convertingGlobalIndexIntoLocalOne(int32 globalCellRow, int32 gl
     if (globalCellRow > 0) {
         /* Для получения индекса фрагмента карты следует разделить глобальный индекс ячейки на размер таблицы.
          * Но так как переход на следующей индекс начинается не по достижении размера таблицы, а только ещё
-         * через одно значение, например, размер таблицы равен 51, так перенос произойдёт на значении 52, из
+         * через одно значение, например, размер таблицы равен 50, так перенос произойдёт на значении 51, из
          * переданного глобального индекса вычетается 1, чтобы отсрочить перенос индекса на эту единицу */
         chunkRow = (globalCellRow - 1) / TableLength;
         //Локальный индекс ячейки равен остатку от деления глобального индекса ячейки на размер таблицы

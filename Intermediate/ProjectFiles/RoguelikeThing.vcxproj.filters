@@ -97,21 +97,6 @@
     <ClInclude Include="..\..\Source\RoguelikeThing\Widgets\LoadingWidget.h">
       <Filter>Source\RoguelikeThing\Widgets</Filter>
     </ClInclude>
-    <Filter Include="Source\RoguelikeThing\Widgets\Interfaces">
-      <UniqueIdentifier>{34033F20-8F12-4F5F-BE55-C8E6BFD01042}</UniqueIdentifier>
-    </Filter>
-    <ClCompile Include="..\..\Source\RoguelikeThing\Widgets\Interfaces\MessageBoxContainsable.cpp">
-      <Filter>Source\RoguelikeThing\Widgets\Interfaces</Filter>
-    </ClCompile>
-    <ClInclude Include="..\..\Source\RoguelikeThing\Widgets\Interfaces\MessageBoxContainsable.h">
-      <Filter>Source\RoguelikeThing\Widgets\Interfaces</Filter>
-    </ClInclude>
-    <ClCompile Include="..\..\Source\RoguelikeThing\Widgets\Interfaces\ShiftAndZoomContainsable.cpp">
-      <Filter>Source\RoguelikeThing\Widgets\Interfaces</Filter>
-    </ClCompile>
-    <ClInclude Include="..\..\Source\RoguelikeThing\Widgets\Interfaces\ShiftAndZoomContainsable.h">
-      <Filter>Source\RoguelikeThing\Widgets\Interfaces</Filter>
-    </ClInclude>
     <Filter Include="Source\RoguelikeThing\Widgets\MapEditor">
       <UniqueIdentifier>{46E1D6D4-931E-48DF-930D-91BBA134AA06}</UniqueIdentifier>
     </Filter>
