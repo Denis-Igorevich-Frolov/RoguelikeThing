@@ -29,6 +29,8 @@ private:
 	int ColNum;
 	// оличество €чеек в строке карты
 	int RowNum;
+
+	bool DetailedLogs = false;
 	
 public:
 	/* ‘ункци€, заполн€юща€ пустыми €чейками карту.
@@ -36,7 +38,7 @@ public:
 	 * MapTileClass об€зательно должен быть наследником
 	 * класса UMapTile или им самим, CellClass об€зательно
 	 * должен быть наследником класса UMapCell или им самим */
-	UFUNCTION(BlueprintCallable, meta = (ToolTip = "MapTileClass must necessarily be an heir of the Umatilla class or be itself, CellClass must necessarily be an heir of the UMapCell class or be itself"))
+	UFUNCTION(BlueprintCallable, meta = (ToolTip = "MapTileClass must necessarily be an heir of the UMapTile class or be UMapTile, CellClass must necessarily be an heir of the UMapCell class or be UMapCell"))
 	bool FillMapEditorWithCells(FMapDimensions MapDimensions, UUniformGridPanel* TileGridPanel,
 		UClass* CellClass, UClass* MapTileClass, UMapEditor* MapEditor, UCoordWrapperOfTable* TilesCoordWrapper);
 

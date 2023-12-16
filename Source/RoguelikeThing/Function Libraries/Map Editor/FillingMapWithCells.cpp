@@ -27,6 +27,8 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
         if (LoadingWidget) {
             LoadingWidget->LoadingComplete(false);
             LoadingWidget->RemoveFromParent();
+
+            UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
         }
 
         return false;
@@ -37,6 +39,8 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
         if (LoadingWidget) {
             LoadingWidget->LoadingComplete(false);
             LoadingWidget->RemoveFromParent();
+
+            UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
         }
 
         return false;
@@ -47,6 +51,8 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
         if (LoadingWidget) {
             LoadingWidget->LoadingComplete(false);
             LoadingWidget->RemoveFromParent();
+
+            UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
         }
 
         return false;
@@ -57,6 +63,8 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
         if (LoadingWidget) {
             LoadingWidget->LoadingComplete(false);
             LoadingWidget->RemoveFromParent();
+
+            UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
         }
 
         return false;
@@ -67,6 +75,8 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
         if (LoadingWidget) {
             LoadingWidget->LoadingComplete(false);
             LoadingWidget->RemoveFromParent();
+
+            UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
         }
 
         return false;
@@ -92,6 +102,8 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
         if (LoadingWidget) {
             LoadingWidget->LoadingComplete(false);
             LoadingWidget->RemoveFromParent();
+
+            UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
         }
 
         return false;
@@ -121,6 +133,8 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
         if (LoadingWidget) {
             LoadingWidget->LoadingComplete(false);
             LoadingWidget->RemoveFromParent();
+
+            UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
         }
 
         return false;
@@ -156,10 +170,16 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
         int NumberOfMapTilesCols = DisplayedColNum * TableLength / MapTileLength;
         int NumberOfMapTilesRows = DisplayedRowNum * TableLength / MapTileLength;
 
+        UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: all checks have been passed, the TileGridPanel grid is ready to be filled with cells with dimensions: rows: %d, columns: %d"), NumberOfMapTilesRows, NumberOfMapTilesCols);
+
         //Само забиваение карты ячейками происходит в отдельном потоке
         AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapEditor, NumberOfMapTilesCols, NumberOfMapTilesRows, TableLength,
             MapTileLength, DisplayedColNum, DisplayedRowNum, TileGridPanel,  CellClass, MapTileClass, TilesCoordWrapper, this]() {
+
+                UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The TileGridPanel table population thread has been opened"));
+
                 FVector2D TileSize(0, 0);
+
                 /* Данный цикл и вложенный в него создают тайлы. При этом
                  * это происходит таким образом, чтобы самый первый тайл
                  * с наименьшим индексом был слева снизу, а последний с
@@ -182,13 +202,25 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
 
                             //Виджет загрузки удалятся в основном потоке так как сделать это вне его невозможно
                             AsyncTask(ENamedThreads::GameThread, [MapEditor, TileGridPanel, this]() {
+                                UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: Launched a GameThread call from the TileGridPanel table population thread to remove the loading widget"));
+
                                 if (LoadingWidget) {
                                     LoadingWidget->LoadingComplete(false);
                                     LoadingWidget->RemoveFromParent();
+
+                                    UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
                                 }
+                                else
+                                    UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: There was no download widget"));
+
+                                UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: A thread to remove the loading widget has been closed"));
+
                                 return false;
                             });
                         }
+
+                        if(DetailedLogs)
+                            UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: An uninitialized MapTile is created with coordinates row: %d col: %d"), row, col);
 
                         /* Тайл забивается ячейками по точно такому же принципу, что и карта тайлами -
                          * первая ячейка находится слева снизу, а последняя - справа сверху */
@@ -201,20 +233,42 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
 
                                     //Виджет загрузки удалятся в основном потоке так как сделать это вне его невозможно
                                     AsyncTask(ENamedThreads::GameThread, [MapEditor, TileGridPanel, this]() {
+                                        UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: Launched a GameThread call from the TileGridPanel table population thread to remove the loading widget"));
+
                                         if (LoadingWidget) {
                                             LoadingWidget->LoadingComplete(false);
                                             LoadingWidget->RemoveFromParent();
+
+                                            UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
                                         }
+                                        else
+                                            UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: There was no download widget"));
+
+                                        UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: A thread to remove the loading widget has been closed"));
+
                                         return false;
                                     });
                                 }
 
+                                if (DetailedLogs)
+                                    UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: An uninitialized cell is created with coordinates row: %d col: %d for a MapTile with coordinates row: %d col: %d"), tileRow, tileCol, row, col);
+
                                 //Добавление созданной ячейки в GridPanel производится в основном потоке так как сделать это вне его невозможно
-                                AsyncTask(ENamedThreads::GameThread, [MapTile, Cell, tileRow, tileCol]() {
-                                    if (MapTile->GetGridPanel())
+                                AsyncTask(ENamedThreads::GameThread, [MapTile, Cell, tileRow, tileCol, row, col, this]() {
+                                    if (DetailedLogs)
+                                        UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: Launched a GameThread call from the TileGridPanel table population thread to place a cell in a tile"));
+
+                                    if (MapTile->GetGridPanel()) {
                                         MapTile->GetGridPanel()->AddChildToUniformGrid(Cell, tileRow, tileCol);
+
+                                        if (DetailedLogs)
+                                            UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The cell was placed in a tile located at coordinates col: %d row: %d, at position col: %d row: %d"), tileRow, tileCol, row, col);
+                                    }
                                     else
                                         UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: Failed to get GridPanel from MapTile"));
+
+                                    if (DetailedLogs)
+                                        UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: A thread to place a cell in a tile has been closed"));
                                 });
 
                                 /* Для дальнейшего выполнения кода требуется размер тайла.
@@ -228,8 +282,16 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                         }
 
                         //Добавление созданного тайла в GridPanel производится в основном потоке так как сделать это вне его невозможно
-                        AsyncTask(ENamedThreads::GameThread, [TileGridPanel, MapTile, row, col, TilesCoordWrapper]() {
+                        AsyncTask(ENamedThreads::GameThread, [TileGridPanel, MapTile, row, col, TilesCoordWrapper, this]() {
+                            if (DetailedLogs)
+                                UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: Launched a GameThread call from the TileGridPanel table population thread to place a tile in a TileGridPanel table"));
+
                             TileGridPanel->AddChildToUniformGrid(MapTile, row, col);
+
+                            if (DetailedLogs) {
+                                UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The tile was placed in a TileGridPanel table at position col: %d row: %d"), row, col);
+                                UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: A thread to place a tile in a TileGridPanel table has been closed"));
+                            }
                         });
 
                         /* Созданные тайлы забиваются в координатную обёртку. При этом важен их индекс в порядке
@@ -247,15 +309,22 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
 
                 //Все взаимодействия, связанные с изменением состояний виджетов выполняются в основном потоке
                 AsyncTask(ENamedThreads::GameThread, [MapEditor, TileGridPanel, this]() {
+                    UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: Launched a GameThread call from the TileGridPanel table population thread to configure the necessary widgets at the end of filling the TileGridPanel table and removing the loading widget"));
+
                     if (LoadingWidget) {
                         LoadingWidget->LoadingComplete(true);
                         LoadingWidget->RemoveFromParent();
+
+                        UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
                     }
+                    else
+                        UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: There was no download widget"));
 
                     MapEditor->UpdateItemAreaContent();
 
                     //После полного забивания карты ячейками TileGridPanel возвращается сидимость
                     TileGridPanel->SetVisibility(ESlateVisibility::Visible);
+                    UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: A thread to configure the necessary widgets at the end of filling the TileGridPanel table and removing the loading widget has been closed"));
                 });
         });
     }
@@ -265,6 +334,8 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
         if (LoadingWidget) {
             LoadingWidget->LoadingComplete(true);
             LoadingWidget->RemoveFromParent();
+
+            UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
         }
 
         return false;
@@ -277,6 +348,8 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
 void UFillingMapWithCells::setLoadWidget(ULoadingWidget* newLoadingWidget)
 {
     this->LoadingWidget = newLoadingWidget;
+
+    UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the setLoadWidget function: The download widget has been set"));
 }
 
 //Геттер количества фрагментов по горизонтали

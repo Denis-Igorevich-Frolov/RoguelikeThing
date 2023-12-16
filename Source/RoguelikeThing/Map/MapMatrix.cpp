@@ -11,7 +11,7 @@ UMapMatrix::UMapMatrix() : UObject()
     //Длина таблицы всегда должна быть кратна длине тайлов из которых она составлена
     int32 remainder = TableLength % MapTileLength;
     if (remainder != 0) {
-        UE_LOG(MapDataBase, Warning, TEXT("Warning in MapMatrix class in constructor function - TableLength is %d and not a multiple of 5, it will be truncated to %d"), TableLength, TableLength - remainder);
+        UE_LOG(MapDataBase, Warning, TEXT("Warning in MapMatrix class in constructor function - TableLength is %d and not a multiple of MapTileLength equal to %d, it will be truncated to %d"), TableLength, MapTileLength, TableLength - remainder);
         //Если длина таблицы не кратна длине тайла, то она усекается до кратного
         TableLength = TableLength - remainder;
     }
@@ -827,7 +827,7 @@ void UMapMatrix::AsyncCreateBlankCard(int32 rowLen, int32 colLen, MatrixType mat
 
     //Запуск асинхронного потока
     AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [rowLen, colLen, matrixType, this]() {
-        UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: A thread for creating map fragments has been opened"));
+        UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: A thread to creating map fragments has been opened"));
         for (int row = 0; row <= rowLen; row++) {
             for (int col = 0; col <= colLen; col++) {
                 UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: The creation of the fragment \"%s %d:%d\" has begun"), *getStringMatrixType(matrixType), row, col);
@@ -866,7 +866,7 @@ void UMapMatrix::AsyncCreateBlankCard(int32 rowLen, int32 colLen, MatrixType mat
                 LoadingWidget->LoadingComplete(SuccessCreateBlankCard);
             }
             UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: Widget switching done"));
-            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: A thread for creating map fragments has been closed"));
+            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: A thread to creating map fragments has been closed"));
             });
         });
 }
