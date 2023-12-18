@@ -30,6 +30,9 @@ private:
 	//Количество ячеек в строке карты
 	int RowNum;
 
+	/* Переменная, отвечающая за детальные логи с подробностями создания каждого тайла и ячейки.
+	 * Не влезай - убьёт!
+	 * Такие логи вызывают гарантированное снижение производительности на порядки */
 	bool DetailedLogs = false;
 	
 public:
@@ -39,7 +42,7 @@ public:
 	 * класса UMapTile или им самим, CellClass обязательно
 	 * должен быть наследником класса UMapCell или им самим */
 	UFUNCTION(BlueprintCallable, meta = (ToolTip = "MapTileClass must necessarily be an heir of the UMapTile class or be UMapTile, CellClass must necessarily be an heir of the UMapCell class or be UMapCell"))
-	bool FillMapEditorWithCells(FMapDimensions MapDimensions, UUniformGridPanel* TileGridPanel,
+	bool FillMapEditorWithCells(FMapDimensions MapDimensions, UUniformGridPanel* TilesGridPanel,
 		UClass* CellClass, UClass* MapTileClass, UMapEditor* MapEditor, UCoordWrapperOfTable* TilesCoordWrapper);
 
 	//Если не передать виджет загрузки, то загрузка будет будет без индикации

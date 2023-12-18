@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include <RoguelikeThing/CoordWrapperOfTable.h>
 #include <Components/UniformGridPanel.h>
 #include "MapTile.generated.h"
 
@@ -16,6 +17,11 @@ class ROGUELIKETHING_API UMapTile : public UUserWidget
 	GENERATED_BODY()
 	
 public:
+	UMapTile(const FObjectInitializer& Object);
+
+	//Координатная обёртка, хранящая в себе ячейки этого тайла
+	UCoordWrapperOfTable* CellsCoordWrapper;
+
 	UFUNCTION(BlueprintImplementableEvent)
 	UUniformGridPanel* GetGridPanel();
 };
