@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Denis Igorevich Frolov did all this. Once there. All things reserved.
 
 #pragma once
 
@@ -60,6 +60,11 @@ struct FMapDimensions
 
 	FMapDimensions(int32 MinRow, int32 MaxRow, int32 MinCol, int32 MaxCol,
 		int32 TableLength, int32 MapTileLength, bool isValid = true);
+
+	/* Пустой конструктор по умолчанию.
+	 * Созданный с помощью него экземпляр не будет считаться валидным.
+	 * Создавать такой объект следует, если функция должна вернуть
+	 * экземпляр MapDimensions, но её работа была выполнена неправильно */
 	FMapDimensions();
 };
 

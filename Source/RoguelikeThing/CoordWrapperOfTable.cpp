@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+// Denis Igorevich Frolov did all this. Once there. All things reserved.
 
 
 #include "CoordWrapperOfTable.h"

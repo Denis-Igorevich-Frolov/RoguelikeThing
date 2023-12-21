@@ -1,4 +1,4 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Denis Igorevich Frolov did all this. Once there. All things reserved.
 
 
 #include "MapMatrix.h"
@@ -941,5 +941,9 @@ FMapDimensions::FMapDimensions(int32 MinRow, int32 MaxRow, int32 MinCol,
     TableLength(TableLength), MapTileLength(MapTileLength), isValid(isValid)
 {}
 
+/* Пустой конструктор по умолчанию.
+ * Созданный с помощью него экземпляр не будет считаться валидным.
+ * Создавать такой объект следует, если функция должна вернуть
+ * экземпляр MapDimensions, но её работа была выполнена неправильно */
 FMapDimensions::FMapDimensions() : FMapDimensions(0, 0, 0, 0, TableLength, MapTileLength, false)
 {}

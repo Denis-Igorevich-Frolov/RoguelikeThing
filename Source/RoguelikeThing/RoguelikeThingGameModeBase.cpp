@@ -1,4 +1,4 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// Denis Igorevich Frolov did all this. Once there. All things reserved.
 
 
 #include "RoguelikeThingGameModeBase.h"

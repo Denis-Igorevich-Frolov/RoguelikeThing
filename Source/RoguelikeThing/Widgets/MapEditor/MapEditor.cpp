@@ -5,6 +5,7 @@
 
 void UMapEditor::ResizeEvent(FViewport* ViewPort, uint32 val)
 {
+    //Эвент изменения размера экрана вызывается только если размер окна действительно имзменился
     if (OldViewPortSize != ViewPort->GetSizeXY()) {
         OldViewPortSize = ViewPort->GetSizeXY();
 
@@ -14,5 +15,6 @@ void UMapEditor::ResizeEvent(FViewport* ViewPort, uint32 val)
 
 UMapEditor::UMapEditor(const FObjectInitializer& ObjectInitializer) : UUserWidget(ObjectInitializer)
 {
+    //При создании редактора карты связывается встроеный ViewportResizedEvent и кастомный ResizeEvent, доступный для блюпринтов
     GEngine->GameViewport->Viewport->ViewportResizedEvent.AddUObject(this, &UMapEditor::ResizeEvent);
 }
