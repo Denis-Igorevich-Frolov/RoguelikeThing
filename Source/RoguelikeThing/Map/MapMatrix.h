@@ -4,6 +4,7 @@
 
 #include "CellTypeOfMapStructure.h"
 #include "SQLiteDatabase.h"
+#include "RoguelikeThing/MyGameInstance.h"
 #include "MapMatrix.generated.h"
 
 /****************************************************************
@@ -91,6 +92,9 @@ private:
 	FSQLiteDatabase* mapDataBase = new FSQLiteDatabase();
 	//Подготовленное заявление для загрузки данных из БД
 	FSQLitePreparedStatement* LoadStatement = new FSQLitePreparedStatement();
+
+	//Менеджер высокого уровня для экземпляра запущенной игры
+	UMyGameInstance* GameInstance;
 
 	//Функция, возвращающая название типа фрагмента карты по перечислению MatrixType
 	FString getStringMatrixType(MatrixType matrixType);

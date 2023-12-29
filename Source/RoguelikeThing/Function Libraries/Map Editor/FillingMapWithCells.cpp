@@ -6,8 +6,17 @@
 #include "RoguelikeThing/Widgets/MapEditor/MapTile.h"
 #include "RoguelikeThing/Widgets/MapEditor/MapCell.h"
 #include "RoguelikeThing/Widgets/MapEditor/MapEditor.h"
+#include <Kismet/GameplayStatics.h>
 
 DEFINE_LOG_CATEGORY(FillingMapWithCells);
+
+UFillingMapWithCells::UFillingMapWithCells()
+{
+    //Получение GameInstance из мира
+    GameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+    if (!GameInstance)
+        UE_LOG(FillingMapWithCells, Warning, TEXT("Warning in FillingMapWithCells class in constructor - GameInstance was not retrieved from the world"));
+}
 
 /* Функция, заполняющая пустыми ячейками карту.
  *
@@ -28,7 +37,8 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
             LoadingWidget->LoadingComplete(false);
             LoadingWidget->RemoveFromParent();
 
-            UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
+            if(GameInstance && GameInstance->LogType != ELogType::NONE)
+                UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
         }
 
         return false;
@@ -40,7 +50,8 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
             LoadingWidget->LoadingComplete(false);
             LoadingWidget->RemoveFromParent();
 
-            UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
+            if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
         }
 
         return false;
@@ -52,7 +63,8 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
             LoadingWidget->LoadingComplete(false);
             LoadingWidget->RemoveFromParent();
 
-            UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
+            if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
         }
 
         return false;
@@ -64,7 +76,8 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
             LoadingWidget->LoadingComplete(false);
             LoadingWidget->RemoveFromParent();
 
-            UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
+            if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
         }
 
         return false;
@@ -76,7 +89,8 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
             LoadingWidget->LoadingComplete(false);
             LoadingWidget->RemoveFromParent();
 
-            UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
+            if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
         }
 
         return false;
@@ -103,7 +117,8 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
             LoadingWidget->LoadingComplete(false);
             LoadingWidget->RemoveFromParent();
 
-            UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
+            if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
         }
 
         return false;
@@ -134,7 +149,8 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
             LoadingWidget->LoadingComplete(false);
             LoadingWidget->RemoveFromParent();
 
-            UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
+            if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
         }
 
         return false;
@@ -170,13 +186,15 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
         int NumberOfMapTilesCols = DisplayedColNum * TableLength / MapTileLength;
         int NumberOfMapTilesRows = DisplayedRowNum * TableLength / MapTileLength;
 
-        UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: all checks have been passed, the TilesGridPanel grid is ready to be filled with cells with dimensions: rows: %d, columns: %d"), NumberOfMapTilesRows, NumberOfMapTilesCols);
+        if (GameInstance && GameInstance->LogType != ELogType::NONE)
+            UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: all checks have been passed, the TilesGridPanel grid is ready to be filled with cells with dimensions: rows: %d, columns: %d"), NumberOfMapTilesRows, NumberOfMapTilesCols);
 
         //Само забиваение карты ячейками происходит в отдельном потоке
         AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapEditor, NumberOfMapTilesCols, NumberOfMapTilesRows, TableLength,
             MapTileLength, DisplayedColNum, DisplayedRowNum, TilesGridPanel,  CellClass, MapTileClass, TilesCoordWrapper, this]() {
 
-                UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The TilesGridPanel table population thread has been opened"));
+                if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                    UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The TilesGridPanel table population thread has been opened"));
 
                 FVector2D TileSize(0, 0);
 
@@ -202,24 +220,28 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
 
                             //Виджет загрузки удалятся в основном потоке так как сделать это вне его невозможно
                             AsyncTask(ENamedThreads::GameThread, [MapEditor, TilesGridPanel, this]() {
-                                UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: Launched a GameThread call from the TilesGridPanel table population thread to remove the loading widget"));
+                                if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                                    UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: Launched a GameThread call from the TilesGridPanel table population thread to remove the loading widget"));
 
                                 if (LoadingWidget) {
                                     LoadingWidget->LoadingComplete(false);
                                     LoadingWidget->RemoveFromParent();
 
-                                    UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
+                                    if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                                        UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
                                 }
                                 else
-                                    UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: There was no download widget"));
+                                    if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                                        UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: There was no download widget"));
 
-                                UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: A thread to remove the loading widget has been closed"));
+                                if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                                    UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: A thread to remove the loading widget has been closed"));
 
                                 return false;
                             });
                         }
 
-                        if(DetailedLogs)
+                        if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                             UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: An uninitialized MapTile is created with coordinates row: %d col: %d"), row, col);
 
                         /* Тайл забивается ячейками по точно такому же принципу, что и карта тайлами -
@@ -233,41 +255,45 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
 
                                     //Виджет загрузки удалятся в основном потоке так как сделать это вне его невозможно
                                     AsyncTask(ENamedThreads::GameThread, [MapEditor, TilesGridPanel, this]() {
-                                        UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: Launched a GameThread call from the TilesGridPanel table population thread to remove the loading widget"));
+                                        if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                                            UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: Launched a GameThread call from the TilesGridPanel table population thread to remove the loading widget"));
 
                                         if (LoadingWidget) {
                                             LoadingWidget->LoadingComplete(false);
                                             LoadingWidget->RemoveFromParent();
 
-                                            UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
+                                            if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                                                UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
                                         }
                                         else
-                                            UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: There was no download widget"));
+                                            if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                                                UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: There was no download widget"));
 
-                                        UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: A thread to remove the loading widget has been closed"));
+                                        if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                                            UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: A thread to remove the loading widget has been closed"));
 
                                         return false;
                                     });
                                 }
 
-                                if (DetailedLogs)
+                                if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                                     UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: An uninitialized cell is created with coordinates row: %d col: %d for a MapTile with coordinates row: %d col: %d"), tileRow, tileCol, row, col);
 
                                 //Добавление созданной ячейки в GridPanel производится в основном потоке так как сделать это вне его невозможно
                                 AsyncTask(ENamedThreads::GameThread, [MapTile, Cell, tileRow, tileCol, row, col, this]() {
-                                    if (DetailedLogs)
+                                    if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                                         UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: Launched a GameThread call from the TilesGridPanel table population thread to place a cell in a tile"));
 
                                     if (MapTile->GetGridPanel()) {
                                         MapTile->GetGridPanel()->AddChildToUniformGrid(Cell, tileRow, tileCol);
 
-                                        if (DetailedLogs)
+                                        if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                                             UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The cell was placed in a tile located at coordinates col: %d row: %d, at position col: %d row: %d"), tileRow, tileCol, row, col);
                                     }
                                     else
                                         UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: Failed to get GridPanel from MapTile"));
 
-                                    if (DetailedLogs)
+                                    if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                                         UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: A thread to place a cell in a tile has been closed"));
                                 });
 
@@ -290,12 +316,12 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
 
                         //Добавление созданного тайла в GridPanel производится в основном потоке так как сделать это вне его невозможно
                         AsyncTask(ENamedThreads::GameThread, [TilesGridPanel, MapTile, row, col, TilesCoordWrapper, this]() {
-                            if (DetailedLogs)
+                            if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                                 UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: Launched a GameThread call from the TilesGridPanel table population thread to place a tile in a TilesGridPanel table"));
 
                             TilesGridPanel->AddChildToUniformGrid(MapTile, row, col);
 
-                            if (DetailedLogs) {
+                            if (GameInstance && GameInstance->LogType == ELogType::DETAILED) {
                                 UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The tile was placed in a TilesGridPanel table at position col: %d row: %d"), row, col);
                                 UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: A thread to place a tile in a TilesGridPanel table has been closed"));
                             }
@@ -316,22 +342,26 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
 
                 //Все взаимодействия, связанные с изменением состояний виджетов выполняются в основном потоке
                 AsyncTask(ENamedThreads::GameThread, [MapEditor, TilesGridPanel, this]() {
-                    UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: Launched a GameThread call from the TilesGridPanel table population thread to configure the necessary widgets at the end of filling the TilesGridPanel table and removing the loading widget"));
+                    if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                        UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: Launched a GameThread call from the TilesGridPanel table population thread to configure the necessary widgets at the end of filling the TilesGridPanel table and removing the loading widget"));
 
                     if (LoadingWidget) {
                         LoadingWidget->LoadingComplete(true);
                         LoadingWidget->RemoveFromParent();
 
-                        UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
+                        if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                            UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
                     }
                     else
-                        UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: There was no download widget"));
+                        if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                            UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: There was no download widget"));
 
                     MapEditor->UpdateItemAreaContent();
 
                     //После полного забивания карты ячейками TilesGridPanel возвращается сидимость
                     TilesGridPanel->SetVisibility(ESlateVisibility::Visible);
-                    UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: A thread to configure the necessary widgets at the end of filling the TilesGridPanel table and removing the loading widget has been closed"));
+                    if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                        UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: A thread to configure the necessary widgets at the end of filling the TilesGridPanel table and removing the loading widget has been closed"));
                 });
         });
     }
@@ -342,7 +372,8 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
             LoadingWidget->LoadingComplete(true);
             LoadingWidget->RemoveFromParent();
 
-            UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
+            if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
         }
 
         return false;
@@ -356,7 +387,8 @@ void UFillingMapWithCells::setLoadWidget(ULoadingWidget* newLoadingWidget)
 {
     this->LoadingWidget = newLoadingWidget;
 
-    UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the setLoadWidget function: The download widget has been set"));
+    if (GameInstance && GameInstance->LogType != ELogType::NONE)
+        UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the setLoadWidget function: The download widget has been set"));
 }
 
 //Геттер количества фрагментов по горизонтали

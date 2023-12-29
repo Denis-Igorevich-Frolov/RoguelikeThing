@@ -3,6 +3,8 @@
 
 #include "RoguelikeThing/Function Libraries/TileTablesOptimizationTools.h"
 
+/* Первичная инициализация таблицы тайлов таким образом, чтобы в ней видимыми
+ * были тольо те тайлы, которые влезли в область родительского виджета */
 FVector2D UTileTablesOptimizationTools::InitTableTiles(UCoordWrapperOfTable* TilesCoordWrapper,
     FVector2D TileSize, FVector2D WidgetAreaSize, FMapDimensions MapDimensions, FVector2D MinContentSize)
 {
@@ -101,6 +103,7 @@ FVector2D UTileTablesOptimizationTools::InitTableTiles(UCoordWrapperOfTable* Til
     return FVector2D();
 }
 
+//Функция, изменяющая видимость тайлов от сдвига или масштабирования таблицы
 void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperOfTable* TilesCoordWrapper, FVector2D Bias, float ZoomMultiplier)
 {
     if (!TilesCoordWrapper)
@@ -335,6 +338,8 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
     OldDimensions = CurrentDimensions;
 }
 
+/* Функция, скрывающая отображаемые в данный момент тайлы, делая всю таблицу полностью
+ * неактивной. Используется для сброса состояния таблицы перед переинициализацией */
 void UTileTablesOptimizationTools::ExtinguishCurrentDimension(UCoordWrapperOfTable* TilesCoordWrapper)
 {
     for (int row = CurrentDimensions.Min.Y; row <= CurrentDimensions.Max.Y; row++) {
@@ -354,6 +359,7 @@ void UTileTablesOptimizationTools::ExtinguishCurrentDimension(UCoordWrapperOfTab
 FTileCoord::FTileCoord(int32 x, int32 y) : X(x), Y(y)
 {}
 
+//Преобразоывание координаты в текст для вывода в логи
 FString FTileCoord::ToString()
 {
     return FString("X: " + FString::FromInt(X) + " Y: " + FString::FromInt(Y));

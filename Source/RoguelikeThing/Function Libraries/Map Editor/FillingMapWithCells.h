@@ -7,6 +7,7 @@
 #include <Components/UniformGridPanel.h>
 #include "RoguelikeThing/Map/MapMatrix.h"
 #include "RoguelikeThing/CoordWrapperOfTable.h"
+#include "RoguelikeThing/MyGameInstance.h"
 #include "FillingMapWithCells.generated.h"
 
 /***********************************************************
@@ -30,12 +31,11 @@ private:
 	//Количество ячеек в строке карты
 	int RowNum;
 
-	/* Переменная, отвечающая за детальные логи с подробностями создания каждого тайла и ячейки.
-	 * Не влезай - убьёт!
-	 * Такие логи вызывают гарантированное снижение производительности на порядки */
-	bool DetailedLogs = false;
+	//Менеджер высокого уровня для экземпляра запущенной игры
+	UMyGameInstance* GameInstance;
 	
 public:
+	UFillingMapWithCells();
 	/* Функция, заполняющая пустыми ячейками карту.
 	 *
 	 * MapTileClass обязательно должен быть наследником
