@@ -164,9 +164,7 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
         //„тобы не дЄргать отрисовку лишний раз во врем€ всего процесса забивани€ €чейками карты, следует сделать TilesGridPanel колапсированной
         TilesGridPanel->SetVisibility(ESlateVisibility::Collapsed);
 
-        //ƒлина фрагмента карты, обусловленный размером таблиц, которые составл€ют карту
         int TableLength = MapDimensions.TableLength;
-        //ƒлинна тайла карты, который необходим сугубо дл€ оптимизации
         int MapTileLength = MapDimensions.MapTileLength;
 
         //–еальный размер полученной карты (в фрагментах)
