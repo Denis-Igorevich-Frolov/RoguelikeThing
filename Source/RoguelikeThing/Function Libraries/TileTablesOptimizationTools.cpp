@@ -2,7 +2,6 @@
 
 
 #include "RoguelikeThing/Function Libraries/TileTablesOptimizationTools.h"
-#include <cmath>
 
 DEFINE_LOG_CATEGORY(TileTablesOptimizationTools);
 #pragma optimize( "", off )
@@ -314,8 +313,9 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
         FVector2D CurrentTileSize = OriginalTileSize * ZoomMultiplier;
         FVector2D CurrentDimensionsSize = FVector2D((OriginalDimensions.Max.X - OriginalDimensions.Min.X + 1) * CurrentTileSize.X,
             (OriginalDimensions.Max.Y - OriginalDimensions.Min.Y + 1) * CurrentTileSize.Y);
+        FVector2D SizeDifferenceBetweenOriginalAndCurrentContentSize = (OriginalDimensionsSize - CurrentDimensionsSize) / 2;
 
-        /*!!!!!!(предварительный быстрый комментарий) : (OriginalDimensionsSize.X - CurrentDimensionsSize.X) - разница между изначальным размером контента и текущим,
+        /*!!!!!!(предварительный быстрый комментарий) : SizeDifferenceBetweenOriginalAndCurrentContentSize - разница между изначальным размером контента и текущим,
         она делится по полам потому что сторона одна. Это база, которую надо забить тайлами, но совпадение с экраном же не сто процентное, и
         DistanceToAppearanceOfFirstNewTile - это как раз то, на сколько контент торчит за пределами своего окна. Оговорка - DistanceToAppearanceOfFirstNewTile,
         в отлицие от всего остального в вычислении, зависит от изначального размера контента, а не текущего, так как контент уменьшается, а окно просмотра - нет, а
@@ -326,15 +326,17 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
         от сдвига, но уже могла бы появиться дополнительная ячейка от масштабирования. Этот размер следует прибавить к базе, чтобы приблизить появление нового тайла.
         Ну или вычесть, если Bias.X < 0. Это как бы тогда я прибавляю модуль сдвига в зависимости от стороны сдвига. Потом это очевидно просто делится на актуальную
         длину тайла и всё округляется вверх, так как даже небольшого размера, попавшего в область видимости, достаточно, чтобы появилась необходимость отрисовать весь тайл.*/
-        if(Bias.X > 0)
-            MinZoomCoord.X = -ceil(((OriginalDimensionsSize.X - CurrentDimensionsSize.X) / 2 - DistanceToAppearanceOfFirstNewTile.X + fmod(Bias.X, CurrentTileSize.X)) / CurrentTileSize.X);
-        else
-            MinZoomCoord.X = -ceil(((OriginalDimensionsSize.X - CurrentDimensionsSize.X) / 2 - DistanceToAppearanceOfFirstNewTile.X - fmod(Bias.X, CurrentTileSize.X)) / CurrentTileSize.X);
-        //if (MinZoomCoord.X < 0)
-        //    MinZoomCoord.X = 0;
+        MinZoomCoord.X = -ceil((SizeDifferenceBetweenOriginalAndCurrentContentSize.X - DistanceToAppearanceOfFirstNewTile.X - (Bias.X - MinBiasCoord.X * OriginalTileSize.X)) / CurrentTileSize.X);
 
-        MaxZoomCoord.X = 0;
-         if (Bias.X > 0 && MaxZoomCoord.X + MaxBiasCoord.X > SizeDifference.X / OriginalTileSize.X / 2)
+        if (MinZoomCoord.X > 0)
+            MinZoomCoord.X = 0;
+
+        MaxZoomCoord.X = ceil((SizeDifferenceBetweenOriginalAndCurrentContentSize.X - DistanceToAppearanceOfFirstNewTile.X + (Bias.X - MaxBiasCoord.X * OriginalTileSize.X)) / CurrentTileSize.X);
+
+        if (MaxZoomCoord.X < 0)
+            MaxZoomCoord.X = 0;
+
+        if (Bias.X > 0 && MaxZoomCoord.X + MaxBiasCoord.X > SizeDifference.X / OriginalTileSize.X / 2)
             MaxZoomCoord.X = SizeDifference.X / OriginalTileSize.Y / 2 - MaxBiasCoord.X;
         if (Bias.X < 0 && MinZoomCoord.X + MinBiasCoord.X < -SizeDifference.X / OriginalTileSize.X / 2)
             MinZoomCoord.X = -(SizeDifference.X / OriginalTileSize.Y / 2 + MinBiasCoord.X);
