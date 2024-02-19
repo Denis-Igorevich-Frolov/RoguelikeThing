@@ -60,8 +60,8 @@ FVector2D UTileTablesOptimizationTools::InitTableTiles(UCoordWrapperOfTable* Til
                 SizeDifference.Y = 0;
 
             //На основе разницы размеров вычисляется сколько строк и с столбцов должны быть скрыты сверху и снизу, справа и слева
-            int NumberOfCollapsedTilesTopAndBottom = (SizeDifference.Y / 2) / OriginalTileSize.Y;
-            int NumberOfCollapsedTilesRinhtAndLeft = (SizeDifference.X / 2) / OriginalTileSize.X;
+            int NumberOfCollapsedTilesTopAndBottom = (SizeDifference.Y / 2.0) / OriginalTileSize.Y;
+            int NumberOfCollapsedTilesRinhtAndLeft = (SizeDifference.X / 2.0) / OriginalTileSize.X;
 
             /* Если по каким-то причинам число скрытых столбцов или строк отрицательное, то
              * этот параметр игнорируется. Отрицательные значения здесь ломают логику функции */
@@ -146,7 +146,7 @@ FVector2D UTileTablesOptimizationTools::InitTableTiles(UCoordWrapperOfTable* Til
             /* Расстояние, при преодолении которого появляется первый новый тайл вычисляется путём нахождения половины разницы
              * между размерами изначально видимой области и области отображаемого контента. Тем самым находинся вектор, равный
              * такому размеру, который как бы торчит за пределами виджета, внутрь которого помещена тайловая таблица */
-            DistanceToAppearanceOfFirstNewTile = (OriginalDimensionsSize - widgetAreaSize) / 2;
+            DistanceToAppearanceOfFirstNewTile = (OriginalDimensionsSize - widgetAreaSize) / 2.0;
             /* Если размер тайловой таблицы меньше, чем виджет, в который она помещена, то показатель расстояния до появления
              * нового первого тайла может стать отрицательным. В таком случае, никаких новых тайлов за пределами виджета нет, и
              * появляться нечему. Пременная приравнивается к 0, что будет индикатором того, что ничего грузить не надо */
@@ -210,7 +210,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
     //Смещение по X больше 0 означает сдвиг видимой области вправо
     if (Bias.X > 0) {
         //Если камера не уткнулась в край контента, то все изменения происходят в обычном режиме
-        if (Bias.X < SizeDifference.X / 2) {
+        if (Bias.X < SizeDifference.X / 2.0) {
             /* Смещение минимальной, а конкретнее левой, координаты при сдвиге камеры слева направо всегда отвечает за погашение лишних левых ячеек.
              * Расстояние до появления первого нового тайла здесь прибавляется к ширине смещения, чтобы учесть, что первый тайл можно погасить раньше
              * остальных, а именно в момент набора суммы смещения и расстояния до появления нового тайла равной ширине хотя бы 1 целого тайла. То есть
@@ -226,12 +226,12 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
         else
             /* При камере, упревшейся в границу контента, вычислять смещение координат проще - они всегда будут равны друг другу и такому
              * количеству тайлов, какое уложится в расстоянии на которое контент изначально торчал справа за пределами своей области */
-            MinBiasCoord.X = MaxBiasCoord.X = SizeDifference.X / 2 / OriginalTileSize.X;
+            MinBiasCoord.X = MaxBiasCoord.X = SizeDifference.X / 2.0 / OriginalTileSize.X;
     }
     //Иначе сдвиг видимой области влево
     else {
         //Если камера не уткнулась в край контента, то все изменения происходят в обычном режиме
-        if (Bias.X > -(SizeDifference.X / 2)) {
+        if (Bias.X > -(SizeDifference.X / 2.0)) {
             /* Смещение максимальной, а конкретнее правой, координаты при сдвиге камеры спарава налево всегда отвечает за сокрытие лишних правых ячеек.
              * Расстояние до появления первого нового тайла здесь отнимается от ширины смещения, которая здесь всегда нулевая или отрицательная, чтобы
              * учесть, что первый тайл можно сокрыть раньше остальных, а именно в момент набора модуля разницы смещения и расстояния до появления нового
@@ -248,13 +248,13 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
         else
             /* При камере, упревшейся в границу контента, вычислять смещение координат проще - они всегда будут равны друг другу и такому
              * количеству тайлов, какое уложится в модуле расстояния на которое контент изначально торчал слева за пределами своей области */
-            MinBiasCoord.X = MaxBiasCoord.X = -SizeDifference.X / 2 / OriginalTileSize.X;
+            MinBiasCoord.X = MaxBiasCoord.X = -SizeDifference.X / 2.0 / OriginalTileSize.X;
     }
 
     //Смещение по Y больше 0 означает сдвиг видимой области вверх
     if (Bias.Y > 0) {
         //Если камера не уткнулась в край контента, то все изменения происходят в обычном режиме
-        if (Bias.Y < SizeDifference.Y / 2) {
+        if (Bias.Y < SizeDifference.Y / 2.0) {
             /* Смещение минимальной, а конкретнее нижней, координаты при сдвиге камеры снизу вверх всегда отвечает за погашение лишних нижних ячеек.
              * Расстояние до появления первого нового тайла здесь прибавляется к высоте смещения, чтобы учесть, что первый тайл можно погасить раньше
              * остальных, а именно в момент набора суммы смещения и расстояния до появления нового тайла равной высоте хотя бы 1 целого тайла. То есть
@@ -270,12 +270,12 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
         else
             /* При камере, упревшейся в границу контента, вычислять смещение координат проще - они всегда будут равны друг другу и такому
              * количеству тайлов, какое уложится в расстоянии на которое контент изначально торчал сверху за пределами своей области */
-            MinBiasCoord.Y = MaxBiasCoord.Y = SizeDifference.Y / 2 / OriginalTileSize.Y;
+            MinBiasCoord.Y = MaxBiasCoord.Y = SizeDifference.Y / 2.0 / OriginalTileSize.Y;
     }
     //Иначе сдвиг видимой области вниз
     else {
         //Если камера не уткнулась в край контента, то все изменения происходят в обычном режиме
-        if (Bias.Y > -(SizeDifference.Y / 2)) {
+        if (Bias.Y > -(SizeDifference.Y / 2.0)) {
             /* Смещение максимальной, а конкретнее верхней, координаты при сдвиге камеры сверху вниз всегда отвечает за сокрытие лишних верхних ячеек.
              * Расстояние до появления первого нового тайла здесь отнимается от высоты смещения, которая здесь всегда нулевая или отрицательная, чтобы
              * учесть, что первый тайл можно сокрыть раньше остальных, а именно в момент набора модуля разницы смещения и расстояния до появления нового
@@ -292,7 +292,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
         else
             /* При камере, упревшейся в границу контента, вычислять смещение координат проще - они всегда будут равны друг другу и такому
              * количеству тайлов, какое уложится в модуле расстояния на которое контент изначально торчал снизу за пределами своей области */
-            MinBiasCoord.Y = MaxBiasCoord.Y = -SizeDifference.Y / 2 / OriginalTileSize.Y;
+            MinBiasCoord.Y = MaxBiasCoord.Y = -SizeDifference.Y / 2.0 / OriginalTileSize.Y;
     }
 
     //Координаты тайлов, отражающие сдвиг контента, записываются в габариты разницы между изначальным положением контента и текущим положением
@@ -311,9 +311,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
         FTileCoord MaxZoomCoord;
 
         FVector2D CurrentTileSize = OriginalTileSize * ZoomMultiplier;
-        FVector2D CurrentDimensionsSize = FVector2D((OriginalDimensions.Max.X - OriginalDimensions.Min.X + 1) * CurrentTileSize.X,
-            (OriginalDimensions.Max.Y - OriginalDimensions.Min.Y + 1) * CurrentTileSize.Y);
-        FVector2D SizeDifferenceBetweenOriginalAndCurrentContentSize = (OriginalDimensionsSize - CurrentDimensionsSize) / 2;
+        FVector2D SizeDifferenceBetweenOriginalAndCurrentContentSize = (OriginalDimensionsSize - OriginalDimensionsSize * ZoomMultiplier) / 2.0;
 
         /*!!!!!!(предварительный быстрый комментарий) : SizeDifferenceBetweenOriginalAndCurrentContentSize - разница между изначальным размером контента и текущим,
         она делится по полам потому что сторона одна. Это база, которую надо забить тайлами, но совпадение с экраном же не сто процентное, и
@@ -326,31 +324,35 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
         от сдвига, но уже могла бы появиться дополнительная ячейка от масштабирования. Этот размер следует прибавить к базе, чтобы приблизить появление нового тайла.
         Ну или вычесть, если Bias.X < 0. Это как бы тогда я прибавляю модуль сдвига в зависимости от стороны сдвига. Потом это очевидно просто делится на актуальную
         длину тайла и всё округляется вверх, так как даже небольшого размера, попавшего в область видимости, достаточно, чтобы появилась необходимость отрисовать весь тайл.*/
-        MinZoomCoord.X = -ceil((SizeDifferenceBetweenOriginalAndCurrentContentSize.X - DistanceToAppearanceOfFirstNewTile.X - (Bias.X - MinBiasCoord.X * OriginalTileSize.X)) / CurrentTileSize.X);
+        MinZoomCoord.X = -ceil((SizeDifferenceBetweenOriginalAndCurrentContentSize.X - DistanceToAppearanceOfFirstNewTile.X * ZoomMultiplier - (Bias.X - MinBiasCoord.X * OriginalTileSize.X)) / CurrentTileSize.X);
 
         if (MinZoomCoord.X > 0)
             MinZoomCoord.X = 0;
 
-        MaxZoomCoord.X = ceil((SizeDifferenceBetweenOriginalAndCurrentContentSize.X - DistanceToAppearanceOfFirstNewTile.X + (Bias.X - MaxBiasCoord.X * OriginalTileSize.X)) / CurrentTileSize.X);
+        MaxZoomCoord.X = ceil((SizeDifferenceBetweenOriginalAndCurrentContentSize.X - DistanceToAppearanceOfFirstNewTile.X * ZoomMultiplier + (Bias.X - MaxBiasCoord.X * OriginalTileSize.X)) / CurrentTileSize.X);
 
         if (MaxZoomCoord.X < 0)
             MaxZoomCoord.X = 0;
 
-        if (Bias.X > 0 && MaxZoomCoord.X + MaxBiasCoord.X > SizeDifference.X / OriginalTileSize.X / 2)
-            MaxZoomCoord.X = SizeDifference.X / OriginalTileSize.Y / 2 - MaxBiasCoord.X;
-        if (Bias.X < 0 && MinZoomCoord.X + MinBiasCoord.X < -SizeDifference.X / OriginalTileSize.X / 2)
-            MinZoomCoord.X = -(SizeDifference.X / OriginalTileSize.Y / 2 + MinBiasCoord.X);
+        if (Bias.X > 0 && MaxZoomCoord.X + MaxBiasCoord.X > SizeDifference.X / OriginalTileSize.X / 2.0)
+            MaxZoomCoord.X = SizeDifference.X / OriginalTileSize.Y / 2.0 - MaxBiasCoord.X;
+        if (Bias.X < 0 && MinZoomCoord.X + MinBiasCoord.X < -SizeDifference.X / OriginalTileSize.X / 2.0)
+            MinZoomCoord.X = -(SizeDifference.X / OriginalTileSize.Y / 2.0 + MinBiasCoord.X);
 
-        float Y_SizeDifferenceWhenZoom = widgetAreaSize.Y - (OriginalDimensionsSize.Y * ZoomMultiplier);
-        if (Y_SizeDifferenceWhenZoom > 0)
+        MinZoomCoord.Y = -ceil((SizeDifferenceBetweenOriginalAndCurrentContentSize.Y - DistanceToAppearanceOfFirstNewTile.Y * ZoomMultiplier - (Bias.Y - MinBiasCoord.Y * OriginalTileSize.Y)) / CurrentTileSize.Y);
+
+        if (MinZoomCoord.Y > 0)
+            MinZoomCoord.Y = 0;
+
+        MaxZoomCoord.Y = ceil((SizeDifferenceBetweenOriginalAndCurrentContentSize.Y - DistanceToAppearanceOfFirstNewTile.Y * ZoomMultiplier + (Bias.Y - MaxBiasCoord.Y * OriginalTileSize.Y)) / CurrentTileSize.Y);
+
+        if (MaxZoomCoord.Y < 0)
             MaxZoomCoord.Y = 0;
-        else
-            Y_SizeDifferenceWhenZoom = 0;
-        MinZoomCoord.Y = -MaxZoomCoord.Y;
-        if (Bias.Y > 0 && MaxZoomCoord.Y + MaxBiasCoord.Y > SizeDifference.Y / OriginalTileSize.Y / 2)
-            MaxZoomCoord.Y = SizeDifference.Y / OriginalTileSize.Y / 2 - MaxBiasCoord.Y;
-        if (Bias.Y < 0 && MinZoomCoord.Y + MinBiasCoord.Y < -SizeDifference.Y / OriginalTileSize.Y / 2)
-            MinZoomCoord.Y = -(SizeDifference.Y / OriginalTileSize.Y / 2 + MinBiasCoord.Y);
+
+        if (Bias.Y > 0 && MaxZoomCoord.Y + MaxBiasCoord.Y > SizeDifference.Y / OriginalTileSize.Y / 2.0)
+            MaxZoomCoord.Y = SizeDifference.Y / OriginalTileSize.Y / 2.0 - MaxBiasCoord.Y;
+        if (Bias.Y < 0 && MinZoomCoord.Y + MinBiasCoord.Y < -SizeDifference.Y / OriginalTileSize.Y / 2.0)
+            MinZoomCoord.Y = -(SizeDifference.Y / OriginalTileSize.Y / 2.0 + MinBiasCoord.Y);
 
         ZoomDimentions = FDimensionsDisplayedArea(MinZoomCoord, MaxZoomCoord);
     }
