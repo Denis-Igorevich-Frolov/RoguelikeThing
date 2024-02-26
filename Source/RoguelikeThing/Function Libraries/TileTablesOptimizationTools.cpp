@@ -1,10 +1,8 @@
 // Denis Igorevich Frolov did all this. Once there. All things reserved.
 
-
 #include "RoguelikeThing/Function Libraries/TileTablesOptimizationTools.h"
 
 DEFINE_LOG_CATEGORY(TileTablesOptimizationTools);
-#pragma optimize( "", off )
 
 /* Первичная инициализация таблицы тайлов таким образом, чтобы в ней видимыми
  * были тольо те тайлы, которые влезли в область родительского виджета */
@@ -193,7 +191,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
     }
 
     if (!TilesCoordWrapper) {
-        UE_LOG(TileTablesOptimizationTools, Error, TEXT("!!! An error occurred in the ChangingVisibilityOfTableTiles class in the InitTableTiles function: TilesCoordWrapper is not valid"));
+        UE_LOG(TileTablesOptimizationTools, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: TilesCoordWrapper is not valid"));
         return;
     }
 
@@ -311,58 +309,83 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
         FTileCoord MaxZoomCoord;
 
         FVector2D CurrentTileSize = OriginalTileSize * ZoomMultiplier;
+        /* Разница в размерах между изначальным размером контента и текущим. Поделено на 2 потому, что всегда
+           требуется именно разница за одну сторону, например за правую, а не общая разница по координате x. */
         FVector2D SizeDifferenceBetweenOriginalAndCurrentContentSize = (OriginalDimensionsSize - OriginalDimensionsSize * ZoomMultiplier) / 2.0;
 
-        /*!!!!!!(предварительный быстрый комментарий) : SizeDifferenceBetweenOriginalAndCurrentContentSize - разница между изначальным размером контента и текущим,
-        она делится по полам потому что сторона одна. Это база, которую надо забить тайлами, но совпадение с экраном же не сто процентное, и
-        DistanceToAppearanceOfFirstNewTile - это как раз то, на сколько контент торчит за пределами своего окна. Оговорка - DistanceToAppearanceOfFirstNewTile,
-        в отлицие от всего остального в вычислении, зависит от изначального размера контента, а не текущего, так как контент уменьшается, а окно просмотра - нет, а
-        так как следует забить разницу между изначальным и текущим размером, следует брать "торчание" именно базового размера. Так вот, из этой базы вычитается
-        размер изначального торчания, чтобы отдалить начало заполнения расстояния ячейками на то расстояние, которое изначально торчало. И это торчание должно
-        компенчироваться либо всё большим масштабированием, либо сдвигом. Но весь сдвиг не нужен, так как появление ячеек от сдвига задаётся не здесь. А нужен
-        лишь остаток от деления сдвига на текущий размер тайла. Этот "лишний" размер как раз тот размер, на который можно сдвинуть контент, чтобы не появилась ячейка
-        от сдвига, но уже могла бы появиться дополнительная ячейка от масштабирования. Этот размер следует прибавить к базе, чтобы приблизить появление нового тайла.
-        Ну или вычесть, если Bias.X < 0. Это как бы тогда я прибавляю модуль сдвига в зависимости от стороны сдвига. Потом это очевидно просто делится на актуальную
-        длину тайла и всё округляется вверх, так как даже небольшого размера, попавшего в область видимости, достаточно, чтобы появилась необходимость отрисовать весь тайл.*/
-        MinZoomCoord.X = -ceil((SizeDifferenceBetweenOriginalAndCurrentContentSize.X - DistanceToAppearanceOfFirstNewTile.X * ZoomMultiplier - (Bias.X - MinBiasCoord.X * OriginalTileSize.X)) / CurrentTileSize.X);
+        /* Задача оптимизатора забить тайлами разницу в размерах между изначальным размером контента и текущим, то есть забить SizeDifferenceBetweenOriginalAndCurrentContentSize.
+         * Но прежду чем начать это делать следует решить пару проблем. Во-первых совпадение размеров контента и его области стопроцентным не будет. Практически всегда контент
+         * будет торчать за границами своей области, а так как торчащую часть и так не видно, то и забивать её смысла нет. Чтобы узнать на сколько в данный момент контент торчит
+         * из-за пределов своих границ следует умножить изначальный размер DistanceToAppearanceOfFirstNewTile на множитель зума. Это будет не очень точно, но погрешность небольшая
+         * и всегда в меньшую сторону, так что не сильно страшно. Полученное расстояние вычетается из изначальной разницы в размерах. Вторая проблема заключается в том, что конент
+         * не только масштабируется, но и сдвигается. Если после сдвига активная часть контента расположена не так же по центру, как и была изначально, то меняется и расстояние до
+         * отображения нового тайла, при этом с одного края в большую, а с другой - в меньшую сторону. Чтобы учесть этот сдвиг (Bias) надо его прибавить. Но здесь требуется не общий
+         * сдвиг, а сдвиг на масштабах одного последнего тайла со всех сторон, то есть такой сдвиг, который остаётся от всех предыдущих появлений новых тайлов от сдвига. Этот остаток,
+         * которого уже не хватает для появленя новых тайлов, но который смещает активную часть контента от центра и необходимо прибавить к размеру разницы. Затем полученное расстояние
+         * просто делится на текущий размер тайла с округлением вверх, ведь тайл надо отображать даже если он не полностью показался из-за границ виджета. */
+        MaxZoomCoord.X = ceil((SizeDifferenceBetweenOriginalAndCurrentContentSize.X - DistanceToAppearanceOfFirstNewTile.X * ZoomMultiplier +
+            (Bias.X - MaxBiasCoord.X * OriginalTileSize.X)) / CurrentTileSize.X);
 
-        if (MinZoomCoord.X > 0)
-            MinZoomCoord.X = 0;
-
-        MaxZoomCoord.X = ceil((SizeDifferenceBetweenOriginalAndCurrentContentSize.X - DistanceToAppearanceOfFirstNewTile.X * ZoomMultiplier + (Bias.X - MaxBiasCoord.X * OriginalTileSize.X)) / CurrentTileSize.X);
-
+        //Если по какой-либо причине максимальная коордиата смещения от зума стала меньше 0, то это исправляется. Зум никогда не приблизит контент ближе изначальной нулевой позиции
         if (MaxZoomCoord.X < 0)
             MaxZoomCoord.X = 0;
 
+        /* Вычисление отображаемых тайлов от зума у минимальной координаты очень похоже на то, как это происходит у максимальной. Есть лишь пара отличий - вместо прибавления сдвига,
+         * он вычитается, а итоговое число координаты делается отрицательным. Это необходимо так как эти координаты будут прибавлены к стартовым, а минимальная координата должна
+         * сдвигать активную часть контента влево. И для возникновения этого сдвига показатель MinZoomCoord должен быть отрицательным */
+        MinZoomCoord.X = -ceil((SizeDifferenceBetweenOriginalAndCurrentContentSize.X - DistanceToAppearanceOfFirstNewTile.X * ZoomMultiplier -
+            (Bias.X - MinBiasCoord.X * OriginalTileSize.X)) / CurrentTileSize.X);
+
+        //Если по какой-либо причине минимальная коордиата смещения от зума стала больше 0, то это исправляется. Зум никогда не приблизит контент ближе изначальной нулевой позиции
+        if (MinZoomCoord.X > 0)
+            MinZoomCoord.X = 0;
+
+        /* Производится проверка не привысило ли количество отображаемых тайлов реальное количество тайлов. Да, такое вполне может произойти
+         * в моменты прокрутки контента близко от края родительского виджета из-за большого количества float'ов и неточного, но быстрого способа
+         * рассчёта длины части контента, торчащей из-за пределов своей области. Если же количество тайлов для отображения действительно вышло
+         * за пределы реального количества тайлов, то, зная, что такая проблема может возникнуть лишь почти вплотную у края виджета, просто
+         * делаются видимыми все тайлы от габаритов смещения до соответствующей стороны контента. Тем самым лишняя часть габаритов зума просто
+         * усекается до реальных габаритов контента. */
         if (Bias.X > 0 && MaxZoomCoord.X + MaxBiasCoord.X > SizeDifference.X / OriginalTileSize.X / 2.0)
             MaxZoomCoord.X = SizeDifference.X / OriginalTileSize.Y / 2.0 - MaxBiasCoord.X;
         if (Bias.X < 0 && MinZoomCoord.X + MinBiasCoord.X < -SizeDifference.X / OriginalTileSize.X / 2.0)
             MinZoomCoord.X = -(SizeDifference.X / OriginalTileSize.Y / 2.0 + MinBiasCoord.X);
 
-        MinZoomCoord.Y = -ceil((SizeDifferenceBetweenOriginalAndCurrentContentSize.Y - DistanceToAppearanceOfFirstNewTile.Y * ZoomMultiplier - (Bias.Y - MinBiasCoord.Y * OriginalTileSize.Y)) / CurrentTileSize.Y);
+        /* расчёты появления новых отображаемых тайлов от зума у координаты Y идентичны расчётам по координате X, где
+         * MaxZoomCoord.Y - верх, который считается как право, а MinZoomCoord.Y - низ, который считается как лево */
 
-        if (MinZoomCoord.Y > 0)
-            MinZoomCoord.Y = 0;
-
-        MaxZoomCoord.Y = ceil((SizeDifferenceBetweenOriginalAndCurrentContentSize.Y - DistanceToAppearanceOfFirstNewTile.Y * ZoomMultiplier + (Bias.Y - MaxBiasCoord.Y * OriginalTileSize.Y)) / CurrentTileSize.Y);
+        MaxZoomCoord.Y = ceil((SizeDifferenceBetweenOriginalAndCurrentContentSize.Y - DistanceToAppearanceOfFirstNewTile.Y * ZoomMultiplier +
+            (Bias.Y - MaxBiasCoord.Y * OriginalTileSize.Y)) / CurrentTileSize.Y);
 
         if (MaxZoomCoord.Y < 0)
             MaxZoomCoord.Y = 0;
+
+        MinZoomCoord.Y = -ceil((SizeDifferenceBetweenOriginalAndCurrentContentSize.Y - DistanceToAppearanceOfFirstNewTile.Y * ZoomMultiplier -
+            (Bias.Y - MinBiasCoord.Y * OriginalTileSize.Y)) / CurrentTileSize.Y);
+
+        if (MinZoomCoord.Y > 0)
+            MinZoomCoord.Y = 0;
 
         if (Bias.Y > 0 && MaxZoomCoord.Y + MaxBiasCoord.Y > SizeDifference.Y / OriginalTileSize.Y / 2.0)
             MaxZoomCoord.Y = SizeDifference.Y / OriginalTileSize.Y / 2.0 - MaxBiasCoord.Y;
         if (Bias.Y < 0 && MinZoomCoord.Y + MinBiasCoord.Y < -SizeDifference.Y / OriginalTileSize.Y / 2.0)
             MinZoomCoord.Y = -(SizeDifference.Y / OriginalTileSize.Y / 2.0 + MinBiasCoord.Y);
 
+        //Координаты тайлов, отражающие масштабирование контента, записываются в габариты разницы между изначальным размером контента и его текущим размером
         ZoomDimentions = FDimensionsDisplayedArea(MinZoomCoord, MaxZoomCoord);
     }
 
     CurrentDimensions = CurrentDimensions + ZoomDimentions;
 
+    /* Бывают моменты, когда размер контента меньше минимального. В этом случае нужные размеры виджету контента помогает
+     * держать специальная подложка, но размер меньше минимального так же говорит и о том, что все рассчёты по габаритам
+     * были не нужны, а настоящая рабочая область контента банально меньше размера своего виджета, так что по соответствующей
+     * координате все тайлы должны быть всегда показаны */
     bool CurrentXLessThanMin = OriginalTableSize.X < minContentSize.X;
     bool CurrentYLessThanMin = OriginalTableSize.Y < minContentSize.Y;
 
     if (TilesCoordWrapper->HasAnyEllements()) {
+        //Если одна из осей контента меньше минимального размера, то отображаются все тайлы по соответствующей оси
         if (CurrentXLessThanMin) {
             CurrentDimensions.Min.X = 0;
             CurrentDimensions.Max.X = TableTileCols - 1;
@@ -373,7 +396,9 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
             CurrentDimensions.Max.Y = TableTileRows - 1;
         }
 
+        //Изменения производятся если габариты контента изменились
         if (OldDimensions != CurrentDimensions) {
+            //Чтобы таргитировано убирать или добавлять строки и стобцы, проверяется как именно изменились габариты контента
             bool NewTopBoundMore = (CurrentDimensions.Max.Y > OldDimensions.Max.Y);
             bool OldTopBoundLess = CurrentDimensions.Max.Y < OldDimensions.Max.Y;
             bool NewBottomBoundMore = CurrentDimensions.Min.Y < OldDimensions.Min.Y;
@@ -392,7 +417,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
                                 GridPanelElement->SetVisibility(ESlateVisibility::Visible);
                             }
                             else
-                                UE_LOG(LogTemp, Error, TEXT("NewTopBoundMore CHORT"));
+                                UE_LOG(LogTemp, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: When trying to display a new top tile at coordinates row: %d, col: %d, an error occurred - the GridPanelElement is not valid"), row, col);
                         }
                     }
                 }
@@ -405,7 +430,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
                                 GridPanelElement->SetVisibility(ESlateVisibility::Collapsed);
                             }
                             else
-                                UE_LOG(LogTemp, Error, TEXT("OldTopBoundLess CHORT"));
+                                UE_LOG(LogTemp, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: When trying to hide a top tile at coordinates row: %d, col: %d, an error occurred - the GridPanelElement is not valid"), row, col);
                         }
                     }
                 }
@@ -418,7 +443,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
                                 GridPanelElement->SetVisibility(ESlateVisibility::Visible);
                             }
                             else
-                                UE_LOG(LogTemp, Error, TEXT("NewBottomBoundMore CHORT"));
+                                UE_LOG(LogTemp, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: When trying to display a new bottom tile at coordinates row: %d, col: %d, an error occurred - the GridPanelElement is not valid"), row, col);
                         }
                     }
                 }
@@ -431,7 +456,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
                                 GridPanelElement->SetVisibility(ESlateVisibility::Collapsed);
                             }
                             else
-                                UE_LOG(LogTemp, Error, TEXT("OldBottomBoundLess CHORT"));
+                                UE_LOG(LogTemp, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: When trying to hide a bottom tile at coordinates row: %d, col: %d, an error occurred - the GridPanelElement is not valid"), row, col);
                         }
                     }
                 }
@@ -446,7 +471,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
                                 GridPanelElement->SetVisibility(ESlateVisibility::Visible);
                             }
                             else
-                                UE_LOG(LogTemp, Error, TEXT("NewLeftBoundMore CHORT"));
+                                UE_LOG(LogTemp, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: When trying to display a new left tile at coordinates row: %d, col: %d, an error occurred - the GridPanelElement is not valid"), row, col);
                         }
                     }
                 }
@@ -459,7 +484,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
                                 GridPanelElement->SetVisibility(ESlateVisibility::Collapsed);
                             }
                             else
-                                UE_LOG(LogTemp, Error, TEXT("OldLeftBoundLess CHORT"));
+                                UE_LOG(LogTemp, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: When trying to hide a left tile at coordinates row: %d, col: %d, an error occurred - the GridPanelElement is not valid"), row, col);
                         }
                     }
                 }
@@ -472,7 +497,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
                                 GridPanelElement->SetVisibility(ESlateVisibility::Visible);
                             }
                             else
-                                UE_LOG(LogTemp, Error, TEXT("NewRightBoundMore CHORT"));
+                                UE_LOG(LogTemp, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: When trying to display a new right tile at coordinates row: %d, col: %d, an error occurred - the GridPanelElement is not valid"), row, col);
                         }
                     }
                 }
@@ -485,7 +510,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
                                 GridPanelElement->SetVisibility(ESlateVisibility::Collapsed);
                             }
                             else
-                                UE_LOG(LogTemp, Error, TEXT("OldRightBoundLess CHORT"));
+                                UE_LOG(LogTemp, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: When trying to hide a right tile at coordinates row: %d, col: %d, an error occurred - the GridPanelElement is not valid"), row, col);
                         }
                     }
                 }
@@ -500,10 +525,10 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
                     HiddenWidget->SetVisibility(ESlateVisibility::Hidden);
             }
             else
-                UE_LOG(LogTemp, Error, TEXT("MinCoord CHORT 1"));
+                UE_LOG(LogTemp, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: A tile found at the TilesCoordWrapper minimum coordinate is not valid"));
 
         }else
-            UE_LOG(LogTemp, Error, TEXT("MinCoord CHORT 2"));
+            UE_LOG(LogTemp, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: TilesCoordWrapper minimum coordinate is not initialized"));
 
         GridCoord MaxCoord = TilesCoordWrapper->getMaxCoord();
         if (MaxCoord.getIsInit()) {
@@ -513,12 +538,14 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
                     HiddenWidget->SetVisibility(ESlateVisibility::Hidden);
             }
             else
-                UE_LOG(LogTemp, Error, TEXT("MaxCoord CHORT 1"));
+                UE_LOG(LogTemp, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: A tile found at the TilesCoordWrapper maximum coordinate is not valid"));
         }
         else
-            UE_LOG(LogTemp, Error, TEXT("MaxCoord CHORT 2"));
+            UE_LOG(LogTemp, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: TilesCoordWrapper maximum coordinate is not initialized"));
 
     }
+    else
+        UE_LOG(LogTemp, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: TilesCoordWrapper does not include any elements"));
 
     OldDimensions = CurrentDimensions;
 }
