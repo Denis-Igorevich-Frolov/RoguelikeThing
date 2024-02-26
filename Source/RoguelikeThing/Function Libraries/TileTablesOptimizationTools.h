@@ -155,7 +155,7 @@ public:
 	/* Функция, скрывающая отображаемые в данный момент тайлы, делая всю таблицу полностью
 	 * неактивной. Используется для сброса состояния таблицы перед переинициализацией */
 	UFUNCTION(BlueprintCallable)
-	void ExtinguishCurrentDimension(UCoordWrapperOfTable* TilesCoordWrapper);
+	void CollapsedCurrentDimension(UCoordWrapperOfTable* TilesCoordWrapper);
 
 	//Функция, изменяющая видимость тайлов от сдвига или масштабирования таблицы
 	UFUNCTION(BlueprintCallable)

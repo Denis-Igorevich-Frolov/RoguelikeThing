@@ -408,8 +408,12 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
             bool NewRightBoundMore = CurrentDimensions.Max.X > OldDimensions.Max.X;
             bool OldRightBoundLess = CurrentDimensions.Max.X < OldDimensions.Max.X;
 
+            //Если размер контента по Y меньше минимального, то это означает, что все тайлы по вертикали и так всегда отображены, и нет смысла гонять эти проверки и цыклы
             if (!CurrentYLessThanMin) {
+                //Если было зарегистрировано, что новая текущая область выше верхней границы предыдущей области, то все необходимые новые строки становятся видимыми
                 if (NewTopBoundMore) {
+                    /* Так как известно, что новая область выше предыдущей, цикл стартует со строки на 1 выше, чем предыдущая верхняя
+                     * граница, чтобы затронуть только неотображённые тайлы, и проходит до новой верхней границы включительно */
                     for (int row = OldDimensions.Max.Y + 1; row <= CurrentDimensions.Max.Y; row++) {
                         for (int col = CurrentDimensions.Min.X; col <= CurrentDimensions.Max.X; col++) {
                             UWidget* GridPanelElement = TilesCoordWrapper->FindWidget(row, col);
@@ -422,7 +426,10 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
                     }
                 }
 
+                //Если было зарегистрировано, что новая текущая область ниже верхней границы предыдущей области, то все необходимые старые строки становятся сколлапсированными
                 if (OldTopBoundLess) {
+                    /* Так как известно, что новая область ниже предыдущей, цикл стартует со строки на 1 выше, чем текущая верхняя
+                     * граница, чтобы затронуть только отображённые тайлы, и проходит до старой верхней границы включительно */
                     for (int row = CurrentDimensions.Max.Y + 1; row <= OldDimensions.Max.Y; row++) {
                         for (int col = OldDimensions.Min.X; col <= OldDimensions.Max.X; col++) {
                             UWidget* GridPanelElement = TilesCoordWrapper->FindWidget(row, col);
@@ -435,7 +442,10 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
                     }
                 }
 
+                //Если было зарегистрировано, что новая текущая область ниже нижней границы предыдущей области, то все необходимые новые строки становятся видимыми
                 if (NewBottomBoundMore) {
+                    /* Так как известно, что новая область ниже предыдущей, цикл стартует со строки равной текущей нижней границе, и проходит
+                     * до строки, расположенной на 1 ниже, чем старая нижняя граница, чтобы затронуть только неотображённые тайлы */
                     for (int row = CurrentDimensions.Min.Y; row <= OldDimensions.Min.Y - 1; row++) {
                         for (int col = CurrentDimensions.Min.X; col <= CurrentDimensions.Max.X; col++) {
                             UWidget* GridPanelElement = TilesCoordWrapper->FindWidget(row, col);
@@ -448,7 +458,10 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
                     }
                 }
 
+                //Если было зарегистрировано, что новая текущая область выше нижней границы предыдущей области, то все необходимые старые строки становятся сколлапсированными
                 if (OldBottomBoundLess) {
+                    /* Так как известно, что новая область выше предыдущей, цикл стартует со строки равной старой нижней границе, и
+                     * проходит до строки, расположенной на 1 ниже, чем текущая нижняя граница, чтобы затронуть только отображённые тайлы */
                     for (int row = OldDimensions.Min.Y; row <= CurrentDimensions.Min.Y - 1; row++) {
                         for (int col = OldDimensions.Min.X; col <= OldDimensions.Max.X; col++) {
                             UWidget* GridPanelElement = TilesCoordWrapper->FindWidget(row, col);
@@ -462,9 +475,13 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
                 }
             }
 
+            //Если размер контента по X меньше минимального, то это означает, что все тайлы по горизонтали и так всегда отображены, и нет смысла гонять эти проверки и цыклы
             if (!CurrentXLessThanMin) {
+                //Если было зарегистрировано, что новая текущая область левее левой границы предыдущей области, то все необходимые новые столбцы становятся видимыми
                 if (NewLeftBoundMore) {
                     for (int row = CurrentDimensions.Min.Y; row <= CurrentDimensions.Max.Y; row++) {
+                        /* Так как известно, что новая область левее предыдущей, цикл стартует со столбца равного текущей левой границе, и проходит
+                         * до столбца, расположенного на 1 левее, чем старая левая граница, чтобы затронуть только неотображённые тайлы */
                         for (int col = CurrentDimensions.Min.X; col <= OldDimensions.Min.X - 1; col++) {
                             UWidget* GridPanelElement = TilesCoordWrapper->FindWidget(row, col);
                             if (GridPanelElement) {
@@ -476,8 +493,11 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
                     }
                 }
 
+                //Если было зарегистрировано, что новая текущая область правее левой границы предыдущей области, то все необходимые старые столбцы становятся сколлапсированными
                 if (OldLeftBoundLess) {
                     for (int row = OldDimensions.Min.Y; row <= OldDimensions.Max.Y; row++) {
+                        /* Так как известно, что новая область правее предыдущей, цикл стартует со столбца равного старой левой границе, и
+                         * проходит до столбца, расположенного на 1 левее, чем текущая левая граница, чтобы затронуть только отображённые тайлы */
                         for (int col = OldDimensions.Min.X; col <= CurrentDimensions.Min.X - 1; col++) {
                             UWidget* GridPanelElement = TilesCoordWrapper->FindWidget(row, col);
                             if (GridPanelElement) {
@@ -489,8 +509,11 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
                     }
                 }
 
+                //Если было зарегистрировано, что новая текущая область правее правой границы предыдущей области, то все необходимые новые столбцы становятся видимыми
                 if (NewRightBoundMore) {
                     for (int row = CurrentDimensions.Min.Y; row <= CurrentDimensions.Max.Y; row++) {
+                        /* Так как известно, что новая область правее предыдущей, цикл стартует со столбца на 1 правее, чем предыдущая правая
+                         * граница, чтобы затронуть только неотображённые тайлы, и проходит до новой правой границы включительно */
                         for (int col = OldDimensions.Max.X + 1; col <= CurrentDimensions.Max.X; col++) {
                             UWidget* GridPanelElement = TilesCoordWrapper->FindWidget(row, col);
                             if (GridPanelElement) {
@@ -502,8 +525,11 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
                     }
                 }
 
+                //Если было зарегистрировано, что новая текущая область левее правой границы предыдущей области, то все необходимые старые столбцы становятся сколлапсированными
                 if (OldRightBoundLess) {
                     for (int row = OldDimensions.Min.Y; row <= OldDimensions.Max.Y; row++) {
+                        /* Так как известно, что новая область левее предыдущей, цикл стартует со столбца на 1 правее, чем текущая правая
+                         * граница, чтобы затронуть только отображённые тайлы, и проходит до старой правой границы включительно */
                         for (int col = CurrentDimensions.Max.X + 1; col <= OldDimensions.Max.X; col++) {
                             UWidget* GridPanelElement = TilesCoordWrapper->FindWidget(row, col);
                             if (GridPanelElement) {
@@ -517,10 +543,23 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
             }
         }
 
+        /* Так как все неотображённые тайлы сколлапсированы, они имеют нулевой размер. Это в свою очередь ведёт к
+         * уменьшению размеров всей матрицы, но для корректной работы, матрица должна оставаться неизменной в своих 
+         * габаритах. Если задать фиксированный размер самой матрице, то все оставшиеся в ней элементы равномерно по
+         * ней распределятся, что будет выглядеть тоже неправильно. Вместо этого фиксированный размер задан для ячеек
+         * матрицы, но чтобы столбцы и строки таки стали занимать место со сколлапсироваными тайлами в них, перед ними
+         * для левой нижней стороны, и после них - для правой верхней, должны быть хотя бы по 1 действительно занятой
+         * ячейке. Эти ячейки в углах как бы "натягивают" всю матрицу и она обретает нужные габариты без потери позиций
+         * каждой отдельно взятой ячейки. */
+
         GridCoord MinCoord = TilesCoordWrapper->getMinCoord();
         if (MinCoord.getIsInit()) {
             UWidget* HiddenWidget = TilesCoordWrapper->FindWidget(MinCoord.Row, MinCoord.Col);
             if (HiddenWidget) {
+                /* Если минимальный тайл сколапсирован, то всё, что выше и правее от него станет занималь нулевой
+                 * размер вплоть до отображённых тайлов. Чтобы избежать этого, минимальный тайл просто скрыт, а не
+                 * сколапсирован, тем самым он, хоть и не видем, но продолжает занимать место, и заставляет все
+                 * ячейки после него также сохранять свои заданые размеры даже со сколлапсированными тайлами внутри */
                 if (HiddenWidget->GetVisibility() == ESlateVisibility::Collapsed)
                     HiddenWidget->SetVisibility(ESlateVisibility::Hidden);
             }
@@ -534,6 +573,10 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
         if (MaxCoord.getIsInit()) {
             UWidget* HiddenWidget = TilesCoordWrapper->FindWidget(MaxCoord.Row, MaxCoord.Col);
             if (HiddenWidget) {
+                /* Если максимальный тайл сколапсирован, то всё, что ниже и левее от него станет занималь нулевой
+                 * размер вплоть до отображённых тайлов. Чтобы избежать этого, максимальный тайл просто скрыт, а не
+                 * сколапсирован, тем самым он, хоть и не видем, но продолжает занимать место, и заставляет все
+                 * ячейки после него также сохранять свои заданые размеры даже со сколлапсированными тайлами внутри */
                 if (HiddenWidget->GetVisibility() == ESlateVisibility::Collapsed)
                     HiddenWidget->SetVisibility(ESlateVisibility::Hidden);
             }
@@ -552,7 +595,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
 
 /* Функция, скрывающая отображаемые в данный момент тайлы, делая всю таблицу полностью
  * неактивной. Используется для сброса состояния таблицы перед переинициализацией */
-void UTileTablesOptimizationTools::ExtinguishCurrentDimension(UCoordWrapperOfTable* TilesCoordWrapper)
+void UTileTablesOptimizationTools::CollapsedCurrentDimension(UCoordWrapperOfTable* TilesCoordWrapper)
 {
     for (int row = CurrentDimensions.Min.Y; row <= CurrentDimensions.Max.Y; row++) {
         for (int col = CurrentDimensions.Min.X; col <= CurrentDimensions.Max.X; col++) {
@@ -560,7 +603,7 @@ void UTileTablesOptimizationTools::ExtinguishCurrentDimension(UCoordWrapperOfTab
             if (GridPanelElement)
                 GridPanelElement->SetVisibility(ESlateVisibility::Collapsed);
             else
-                UE_LOG(LogTemp, Error, TEXT("CHORT"));
+                UE_LOG(LogTemp, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the CollapsedCurrentDimension function: GridPanelElement row: %d, col: %d is not valid"), row, col);
         }
     }
 
