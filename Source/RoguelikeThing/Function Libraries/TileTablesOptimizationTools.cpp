@@ -721,7 +721,6 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
         }
         else
             UE_LOG(LogTemp, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: TilesCoordWrapper maximum coordinate is not initialized"));
-
     }
     else
         UE_LOG(LogTemp, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: TilesCoordWrapper does not include any elements"));

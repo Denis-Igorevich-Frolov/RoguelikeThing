@@ -6,9 +6,9 @@
 #include "Blueprint/UserWidget.h"
 #include "LoadingWidget.generated.h"
 
-/**
- * 
- */
+/********************************************************
+ * Данный класс является базовым бдя виджета загрузки
+ ********************************************************/
 UCLASS()
 class ROGUELIKETHING_API ULoadingWidget : public UUserWidget
 {

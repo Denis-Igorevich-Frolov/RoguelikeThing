@@ -32,6 +32,7 @@ bool UCoordWrapperOfTable::AddWidget(int row, int col, UWidget* Widget)
 {
     bool success = false;
     if (Col.Contains(col)) {
+        //Если строка существует в неё добавляется новый элемент
         WrapperRow* Row = *Col.Find(col);
 
         if (Row) {
@@ -43,6 +44,7 @@ bool UCoordWrapperOfTable::AddWidget(int row, int col, UWidget* Widget)
         }
     }
     else {
+        //Если строки не существует, она создаётся и в неё добавляется новый элемент
         WrapperRow* newRow = new WrapperRow();
 
         if (newRow) {
@@ -60,6 +62,7 @@ bool UCoordWrapperOfTable::AddWidget(int row, int col, UWidget* Widget)
     }
 
     if (success) {
+        //Если минимальная координата не существует, значит матрица была пуста, и текущий элемент единственный и минимальный
         if (!MinCoord.getIsInit())
             MinCoord = GridCoord(row, col);
         else {
@@ -69,6 +72,7 @@ bool UCoordWrapperOfTable::AddWidget(int row, int col, UWidget* Widget)
                 MinCoord.Row = row;
         }
 
+        //Если максимальная координата не существует, значит матрица была пуста, и текущий элемент единственный и максимальный
         if (!MaxCoord.getIsInit())
             MaxCoord = GridCoord(row, col);
         else {
@@ -102,6 +106,7 @@ bool UCoordWrapperOfTable::HasAnyEllements()
         Col.GetKeys(Keys);
         for (int32 k : Keys)
         {
+            //Проверяется есть ли в существующих столбцах хотя бы одна строка с хотя бы одним элементом
             if ((*Col.Find(k))->HasAnyEllements())
                 return true;
         }
@@ -115,6 +120,7 @@ const int UCoordWrapperOfTable::getNumberOfItemsInTable()
     return NumberOfItemsInTable;
 }
 
+//Получение самой левой нижней координаты
 GridCoord UCoordWrapperOfTable::getMinCoord()
 {
     return MinCoord;
@@ -133,6 +139,7 @@ void UCoordWrapperOfTable::Clear()
     NumberOfItemsInTable = 0;
 }
 
+//Получение самой правой верхней координаты
 GridCoord UCoordWrapperOfTable::getMaxCoord()
 {
     return MaxCoord;
@@ -144,6 +151,7 @@ GridCoord::GridCoord() : Row(-1), Col(-1), isInit(false)
 GridCoord::GridCoord(int row, int col) : Row(row), Col(col), isInit(true)
 {}
 
+//Проверка проинициализированности координаты
 bool GridCoord::getIsInit()
 {
     return isInit;
