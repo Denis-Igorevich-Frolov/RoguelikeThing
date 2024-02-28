@@ -109,6 +109,12 @@ class ROGUELIKETHING_API UTileTablesOptimizationTools : public UBlueprintFunctio
 	GENERATED_BODY()
 
 private:
+	//Менеджер высокого уровня для экземпляра запущенной игры
+	UMyGameInstance* GameInstance;
+
+	//Максимальное количество фрагментов в строках и столбцах таблицы
+	int RowLimit = 3;
+	int ColLimit = 3;
 	//Переменная, отображающая на сколько удачно была произведена инициализация оптимизации тайловой таблицы
 	FInitializationValidity InitializationValidity = FInitializationValidity::WAS_NOT_PERFORMED;
 	//Длина стороны матрицы тайла
@@ -146,6 +152,8 @@ private:
 	FDimensionsDisplayedArea OriginalDimensions = FDimensionsDisplayedArea();
 	
 public:
+	UTileTablesOptimizationTools();
+
 	/* Первичная инициализация таблицы тайлов таким образом, чтобы в ней видимыми
 	 * были тольо те тайлы, которые влезли в область родительского виджета */
 	UFUNCTION(BlueprintCallable)

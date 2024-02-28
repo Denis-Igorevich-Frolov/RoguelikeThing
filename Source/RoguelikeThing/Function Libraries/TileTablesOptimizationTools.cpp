@@ -1,8 +1,17 @@
 // Denis Igorevich Frolov did all this. Once there. All things reserved.
 
 #include "RoguelikeThing/Function Libraries/TileTablesOptimizationTools.h"
+#include <Kismet/GameplayStatics.h>
 
 DEFINE_LOG_CATEGORY(TileTablesOptimizationTools);
+
+UTileTablesOptimizationTools::UTileTablesOptimizationTools()
+{
+    //Получение GameInstance из мира
+    GameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+    if (!GameInstance)
+        UE_LOG(TileTablesOptimizationTools, Warning, TEXT("Warning in TileTablesOptimizationTools class in constructor - GameInstance was not retrieved from the world"));
+}
 
 /* Первичная инициализация таблицы тайлов таким образом, чтобы в ней видимыми
  * были тольо те тайлы, которые влезли в область родительского виджета */
@@ -35,10 +44,16 @@ FVector2D UTileTablesOptimizationTools::InitTableTiles(UCoordWrapperOfTable* Til
             RealTableTileCols = TableTileCols;
 
             //Таблица не отображает более 3 фрагментов в строках или столбцах за раз. Это сделано для оптимизации
-            if (TableTileRows > 3 * TilesInFragmentLen)
-                TableTileRows = 3 * TilesInFragmentLen;
-            if (TableTileCols > 3 * TilesInFragmentLen)
-                TableTileCols = 3 * TilesInFragmentLen;
+            if (TableTileRows > RowLimit * TilesInFragmentLen) {
+                TableTileRows = RowLimit * TilesInFragmentLen;
+                if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                    UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the InitTableTiles function: The number of tiles in rows is truncated to %d (actual rows of lines is %d)"), TableTileRows, RealTableTileRows);
+            }
+            if (TableTileCols > ColLimit * TilesInFragmentLen) {
+                TableTileCols = ColLimit * TilesInFragmentLen;
+                if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                    UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the InitTableTiles function: The number of tiles in columns is truncated to %d (actual colums of lines is %d)"), TableTileCols, RealTableTileCols);
+            }
 
             /* Запоминаются те размеры, которыми изначально обладали виджеты тайла и области
              * контента. Это понадобится позже для вычисления масштабирования и сдвига */
@@ -51,7 +66,7 @@ FVector2D UTileTablesOptimizationTools::InitTableTiles(UCoordWrapperOfTable* Til
             SizeDifference = OriginalTableSize - widgetAreaSize;
 
             /* Если размер тайловой таблицы меньше, чем минимальный размер, предусмтренный для виджета области
-             * контента, то разница размеров игнорируется, здесь необходимо учитывать только положительную разницу */
+             * контента, то разница размеров игнорируется. Здесь необходимо учитывать только положительную разницу */
             if (OriginalTableSize.X < minContentSize.X)
                 SizeDifference.X = 0;
             if (OriginalTableSize.Y < minContentSize.Y)
@@ -68,7 +83,8 @@ FVector2D UTileTablesOptimizationTools::InitTableTiles(UCoordWrapperOfTable* Til
             if (NumberOfCollapsedTilesRinhtAndLeft < 0)
                 NumberOfCollapsedTilesRinhtAndLeft = 0;
 
-            /***************************************************************/UE_LOG(LogTemp, Log, TEXT("%d, %d"), NumberOfCollapsedTilesTopAndBottom, NumberOfCollapsedTilesRinhtAndLeft);//!!!!
+            if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the InitTableTiles function: Based on the difference in size between the parent widget and its content, it was calculated that initially %d rows will be hidden at the top and bottom, and %d columns at the right and left"), NumberOfCollapsedTilesTopAndBottom, NumberOfCollapsedTilesRinhtAndLeft);
 
             /* Запоминаются текущие габариты отображаемой области. Минимальная точка будет сразу же после левых
              * нижних скрытых строк и столбцов, и так как искомое число - это индекс, порядковый номер нужно
@@ -81,14 +97,18 @@ FVector2D UTileTablesOptimizationTools::InitTableTiles(UCoordWrapperOfTable* Til
                 FTileCoord(NumberOfCollapsedTilesRinhtAndLeft, NumberOfCollapsedTilesTopAndBottom),
                 FTileCoord(TableTileCols - NumberOfCollapsedTilesRinhtAndLeft - 1, TableTileRows - NumberOfCollapsedTilesTopAndBottom - 1));
 
-            /***************************************************************/UE_LOG(LogTemp, Log, TEXT("CurrentDimensions: %s"), *CurrentDimensions.ToString());//!!!!
+            if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the InitTableTiles function: Current dimensions of the visible content area: %s"), *CurrentDimensions.ToString());
 
             //Все тыйлы, входящие в область текущей видимости делаются видимыми
             for (int row = CurrentDimensions.Min.Y; row <= CurrentDimensions.Max.Y; row++) {
                 for (int col = CurrentDimensions.Min.X; col <= CurrentDimensions.Max.X; col++) {
                     UWidget* GridPanelElement = TilesCoordWrapper->FindWidget(row, col);
-                    if (GridPanelElement)
+                    if (GridPanelElement) {
                         GridPanelElement->SetVisibility(ESlateVisibility::Visible);
+                        if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                            UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the InitTableTiles function: During initialization, the tile row: %d col: %d was made visible"), row, col);
+                    }
                     else {
                         UE_LOG(TileTablesOptimizationTools, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the InitTableTiles function: Tile Row:%d Col:%d is not valid"), row, col);
                         InitializationValidity = FInitializationValidity::ERROR;
@@ -153,6 +173,9 @@ FVector2D UTileTablesOptimizationTools::InitTableTiles(UCoordWrapperOfTable* Til
             if (DistanceToAppearanceOfFirstNewTile.Y < 0)
                 DistanceToAppearanceOfFirstNewTile.Y = 0;
 
+            if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the InitTableTiles function: Distance to appearance of first new tile is X: %f; Y: %f"), DistanceToAppearanceOfFirstNewTile.X, DistanceToAppearanceOfFirstNewTile.Y);
+
             InitializationValidity = FInitializationValidity::VALID;
             return OriginalTableSize;
         }
@@ -173,7 +196,7 @@ FVector2D UTileTablesOptimizationTools::InitTableTiles(UCoordWrapperOfTable* Til
 //Функция, изменяющая видимость тайлов от сдвига или масштабирования таблицы
 void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperOfTable* TilesCoordWrapper, FVector2D Bias, float ZoomMultiplier)
 {
-    //Проверяется валидность проведённой инициализации таблицы
+    //Проверяется валидность произведённой инициализации таблицы
     switch (InitializationValidity)
     {
     case FInitializationValidity::WAS_NOT_PERFORMED:
@@ -181,6 +204,8 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
         return;
         break;
     case FInitializationValidity::VALID:
+        if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+            UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: Initialization was performed validly"));
         break;
     case FInitializationValidity::ERROR:
         UE_LOG(TileTablesOptimizationTools, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: Tile table initialization completed with errors (see logs above). Optimization is not possible until errors that occur during initialization are corrected"));
@@ -207,6 +232,9 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
 
     //Смещение по X больше 0 означает сдвиг видимой области вправо
     if (Bias.X > 0) {
+        if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+            UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: The visible area has moved to the right of the center"));
+
         //Если камера не уткнулась в край контента, то все изменения происходят в обычном режиме
         if (Bias.X < SizeDifference.X / 2.0) {
             /* Смещение минимальной, а конкретнее левой, координаты при сдвиге камеры слева направо всегда отвечает за погашение лишних левых ячеек.
@@ -221,13 +249,20 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
              * То есть смещению достаточно будет покрыть расстояние, равное расстоянию до появления первого тайла, чтобы отобразить справа этот первый тайл */
             MaxBiasCoord.X = (Bias.X + (OriginalTileSize.X - DistanceToAppearanceOfFirstNewTile.X)) / OriginalTileSize.X;
         }
-        else
+        else {
             /* При камере, упревшейся в границу контента, вычислять смещение координат проще - они всегда будут равны друг другу и такому
              * количеству тайлов, какое уложится в расстоянии на которое контент изначально торчал справа за пределами своей области */
             MinBiasCoord.X = MaxBiasCoord.X = SizeDifference.X / 2.0 / OriginalTileSize.X;
+
+            if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: The content rests against the right edge of the widget"));
+        }
     }
     //Иначе сдвиг видимой области влево
     else {
+        if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+            UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: The visible area has moved to the left of the center"));
+
         //Если камера не уткнулась в край контента, то все изменения происходят в обычном режиме
         if (Bias.X > -(SizeDifference.X / 2.0)) {
             /* Смещение максимальной, а конкретнее правой, координаты при сдвиге камеры спарава налево всегда отвечает за сокрытие лишних правых ячеек.
@@ -243,14 +278,21 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
              * расстояния до появления первого тайла, чтобы отобразить слева этот первый тайл */
             MinBiasCoord.X = (Bias.X - (OriginalTileSize.X - DistanceToAppearanceOfFirstNewTile.X)) / OriginalTileSize.X;
         }
-        else
+        else {
             /* При камере, упревшейся в границу контента, вычислять смещение координат проще - они всегда будут равны друг другу и такому
              * количеству тайлов, какое уложится в модуле расстояния на которое контент изначально торчал слева за пределами своей области */
             MinBiasCoord.X = MaxBiasCoord.X = -SizeDifference.X / 2.0 / OriginalTileSize.X;
+
+            if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: The content rests against the left edge of the widget"));
+        }
     }
 
     //Смещение по Y больше 0 означает сдвиг видимой области вверх
     if (Bias.Y > 0) {
+        if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+            UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: The visible area has moved to the top of the center"));
+
         //Если камера не уткнулась в край контента, то все изменения происходят в обычном режиме
         if (Bias.Y < SizeDifference.Y / 2.0) {
             /* Смещение минимальной, а конкретнее нижней, координаты при сдвиге камеры снизу вверх всегда отвечает за погашение лишних нижних ячеек.
@@ -265,13 +307,20 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
              * То есть смещению достаточно будет покрыть расстояние, равное расстоянию до появления первого тайла, чтобы отобразить сверху этот первый тайл */
             MaxBiasCoord.Y = (Bias.Y + (OriginalTileSize.Y - DistanceToAppearanceOfFirstNewTile.Y)) / OriginalTileSize.Y;
         }
-        else
+        else {
             /* При камере, упревшейся в границу контента, вычислять смещение координат проще - они всегда будут равны друг другу и такому
              * количеству тайлов, какое уложится в расстоянии на которое контент изначально торчал сверху за пределами своей области */
             MinBiasCoord.Y = MaxBiasCoord.Y = SizeDifference.Y / 2.0 / OriginalTileSize.Y;
+
+            if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: The content rests against the top edge of the widget"));
+        }
     }
     //Иначе сдвиг видимой области вниз
     else {
+        if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+            UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: The visible area has moved to the bottom of the center"));
+
         //Если камера не уткнулась в край контента, то все изменения происходят в обычном режиме
         if (Bias.Y > -(SizeDifference.Y / 2.0)) {
             /* Смещение максимальной, а конкретнее верхней, координаты при сдвиге камеры сверху вниз всегда отвечает за сокрытие лишних верхних ячеек.
@@ -287,16 +336,23 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
              * расстояния до появления первого тайла, чтобы отобразить снизу этот первый тайл */
             MinBiasCoord.Y = (Bias.Y - (OriginalTileSize.Y - DistanceToAppearanceOfFirstNewTile.Y)) / OriginalTileSize.Y;
         }
-        else
+        else {
             /* При камере, упревшейся в границу контента, вычислять смещение координат проще - они всегда будут равны друг другу и такому
              * количеству тайлов, какое уложится в модуле расстояния на которое контент изначально торчал снизу за пределами своей области */
             MinBiasCoord.Y = MaxBiasCoord.Y = -SizeDifference.Y / 2.0 / OriginalTileSize.Y;
+
+            if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: The content rests against the bottom edge of the widget"));
+        }
     }
 
     //Координаты тайлов, отражающие сдвиг контента, записываются в габариты разницы между изначальным положением контента и текущим положением
-    FDimensionsDisplayedArea BiansDimentions = FDimensionsDisplayedArea(MinBiasCoord, MaxBiasCoord);
+    FDimensionsDisplayedArea BiasDimentions = FDimensionsDisplayedArea(MinBiasCoord, MaxBiasCoord);
 
-    CurrentDimensions = OriginalDimensions + BiansDimentions;
+    if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+        UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: With а visible area bias %s, the current bias dimensions are equal to %s"), *Bias.ToString(), *BiasDimentions.ToString());
+
+    CurrentDimensions = OriginalDimensions + BiasDimentions;
 
     //Габариты, отображающие разницу между изначальным масштабом и текущим
     FDimensionsDisplayedArea ZoomDimentions = FDimensionsDisplayedArea();
@@ -309,9 +365,16 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
         FTileCoord MaxZoomCoord;
 
         FVector2D CurrentTileSize = OriginalTileSize * ZoomMultiplier;
+
+        if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+            UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: Current tile size is %s"), *CurrentTileSize.ToString());
+
         /* Разница в размерах между изначальным размером контента и текущим. Поделено на 2 потому, что всегда
            требуется именно разница за одну сторону, например за правую, а не общая разница по координате x. */
         FVector2D SizeDifferenceBetweenOriginalAndCurrentContentSize = (OriginalDimensionsSize - OriginalDimensionsSize * ZoomMultiplier) / 2.0;
+
+        if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+            UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: Size difference between original and current content size on each side is %s"), *SizeDifferenceBetweenOriginalAndCurrentContentSize.ToString());
 
         /* Задача оптимизатора забить тайлами разницу в размерах между изначальным размером контента и текущим, то есть забить SizeDifferenceBetweenOriginalAndCurrentContentSize.
          * Но прежду чем начать это делать следует решить пару проблем. Во-первых совпадение размеров контента и его области стопроцентным не будет. Практически всегда контент
@@ -373,13 +436,18 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
 
         //Координаты тайлов, отражающие масштабирование контента, записываются в габариты разницы между изначальным размером контента и его текущим размером
         ZoomDimentions = FDimensionsDisplayedArea(MinZoomCoord, MaxZoomCoord);
+
+        if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+            UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: With a zoom multiplier of %f, the current zoom dimensions are equal to %s"), ZoomMultiplier, *ZoomDimentions.ToString());
     }
+    else if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+        UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: ZoomMultiplier is equal to 1 - no scaling"));
 
     CurrentDimensions = CurrentDimensions + ZoomDimentions;
 
     /* Бывают моменты, когда размер контента меньше минимального. В этом случае нужные размеры виджету контента помогает
      * держать специальная подложка, но размер меньше минимального так же говорит и о том, что все рассчёты по габаритам
-     * были не нужны, а настоящая рабочая область контента банально меньше размера своего виджета, так что по соответствующей
+     * были не нужны, а настоящая рабочая область контента просто меньше размера своего виджета, так что по соответствующей
      * координате все тайлы должны быть всегда показаны */
     bool CurrentXLessThanMin = OriginalTableSize.X < minContentSize.X;
     bool CurrentYLessThanMin = OriginalTableSize.Y < minContentSize.Y;
@@ -389,16 +457,25 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
         if (CurrentXLessThanMin) {
             CurrentDimensions.Min.X = 0;
             CurrentDimensions.Max.X = TableTileCols - 1;
+
+            if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: The current width is less than the minimum"));
         }
 
         if (CurrentYLessThanMin) {
             CurrentDimensions.Min.Y = 0;
             CurrentDimensions.Max.Y = TableTileRows - 1;
+
+            if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: The current height is less than the minimum"));
         }
+
+        if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+            UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: Current final dimensions of the visible content area is %s"), *CurrentDimensions.ToString());
 
         //Изменения производятся если габариты контента изменились
         if (OldDimensions != CurrentDimensions) {
-            //Чтобы таргитировано убирать или добавлять строки и стобцы, проверяется как именно изменились габариты контента
+            //Чтобы таргетировано убирать или добавлять строки и стобцы, проверяется как именно изменились габариты контента
             bool NewTopBoundMore = (CurrentDimensions.Max.Y > OldDimensions.Max.Y);
             bool OldTopBoundLess = CurrentDimensions.Max.Y < OldDimensions.Max.Y;
             bool NewBottomBoundMore = CurrentDimensions.Min.Y < OldDimensions.Min.Y;
@@ -412,6 +489,9 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
             if (!CurrentYLessThanMin) {
                 //Если было зарегистрировано, что новая текущая область выше верхней границы предыдущей области, то все необходимые новые строки становятся видимыми
                 if (NewTopBoundMore) {
+                    if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                        UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: The new current area is higher than the top of the previous area"));
+
                     /* Так как известно, что новая область выше предыдущей, цикл стартует со строки на 1 выше, чем предыдущая верхняя
                      * граница, чтобы затронуть только неотображённые тайлы, и проходит до новой верхней границы включительно */
                     for (int row = OldDimensions.Max.Y + 1; row <= CurrentDimensions.Max.Y; row++) {
@@ -419,6 +499,9 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
                             UWidget* GridPanelElement = TilesCoordWrapper->FindWidget(row, col);
                             if (GridPanelElement) {
                                 GridPanelElement->SetVisibility(ESlateVisibility::Visible);
+
+                                if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                                    UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: Top tile at coordinates row: %d, col: %d has been made visible"), row, col);
                             }
                             else
                                 UE_LOG(LogTemp, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: When trying to display a new top tile at coordinates row: %d, col: %d, an error occurred - the GridPanelElement is not valid"), row, col);
@@ -428,6 +511,9 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
 
                 //Если было зарегистрировано, что новая текущая область ниже верхней границы предыдущей области, то все необходимые старые строки становятся сколлапсированными
                 if (OldTopBoundLess) {
+                    if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                        UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: The new current area is below the top of the previous area"));
+
                     /* Так как известно, что новая область ниже предыдущей, цикл стартует со строки на 1 выше, чем текущая верхняя
                      * граница, чтобы затронуть только отображённые тайлы, и проходит до старой верхней границы включительно */
                     for (int row = CurrentDimensions.Max.Y + 1; row <= OldDimensions.Max.Y; row++) {
@@ -435,6 +521,9 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
                             UWidget* GridPanelElement = TilesCoordWrapper->FindWidget(row, col);
                             if (GridPanelElement) {
                                 GridPanelElement->SetVisibility(ESlateVisibility::Collapsed);
+
+                                if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                                    UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: Top tile at coordinates row: %d, col: %d has been made collapsed"), row, col);
                             }
                             else
                                 UE_LOG(LogTemp, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: When trying to hide a top tile at coordinates row: %d, col: %d, an error occurred - the GridPanelElement is not valid"), row, col);
@@ -444,6 +533,9 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
 
                 //Если было зарегистрировано, что новая текущая область ниже нижней границы предыдущей области, то все необходимые новые строки становятся видимыми
                 if (NewBottomBoundMore) {
+                    if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                        UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: The new current area is below the lower boundary of the previous area"));
+
                     /* Так как известно, что новая область ниже предыдущей, цикл стартует со строки равной текущей нижней границе, и проходит
                      * до строки, расположенной на 1 ниже, чем старая нижняя граница, чтобы затронуть только неотображённые тайлы */
                     for (int row = CurrentDimensions.Min.Y; row <= OldDimensions.Min.Y - 1; row++) {
@@ -451,6 +543,9 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
                             UWidget* GridPanelElement = TilesCoordWrapper->FindWidget(row, col);
                             if (GridPanelElement) {
                                 GridPanelElement->SetVisibility(ESlateVisibility::Visible);
+
+                                if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                                    UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: Bottom tile at coordinates row: %d, col: %d has been made visible"), row, col);
                             }
                             else
                                 UE_LOG(LogTemp, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: When trying to display a new bottom tile at coordinates row: %d, col: %d, an error occurred - the GridPanelElement is not valid"), row, col);
@@ -460,6 +555,9 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
 
                 //Если было зарегистрировано, что новая текущая область выше нижней границы предыдущей области, то все необходимые старые строки становятся сколлапсированными
                 if (OldBottomBoundLess) {
+                    if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                        UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: The new current area is higher than the lower border of the previous area"));
+
                     /* Так как известно, что новая область выше предыдущей, цикл стартует со строки равной старой нижней границе, и
                      * проходит до строки, расположенной на 1 ниже, чем текущая нижняя граница, чтобы затронуть только отображённые тайлы */
                     for (int row = OldDimensions.Min.Y; row <= CurrentDimensions.Min.Y - 1; row++) {
@@ -467,6 +565,9 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
                             UWidget* GridPanelElement = TilesCoordWrapper->FindWidget(row, col);
                             if (GridPanelElement) {
                                 GridPanelElement->SetVisibility(ESlateVisibility::Collapsed);
+
+                                if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                                    UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: Bottom tile at coordinates row: %d, col: %d has been made collapsed"), row, col);
                             }
                             else
                                 UE_LOG(LogTemp, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: When trying to hide a bottom tile at coordinates row: %d, col: %d, an error occurred - the GridPanelElement is not valid"), row, col);
@@ -479,6 +580,9 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
             if (!CurrentXLessThanMin) {
                 //Если было зарегистрировано, что новая текущая область левее левой границы предыдущей области, то все необходимые новые столбцы становятся видимыми
                 if (NewLeftBoundMore) {
+                    if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                        UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: The current area is to the left of the left border of the previous area"));
+
                     for (int row = CurrentDimensions.Min.Y; row <= CurrentDimensions.Max.Y; row++) {
                         /* Так как известно, что новая область левее предыдущей, цикл стартует со столбца равного текущей левой границе, и проходит
                          * до столбца, расположенного на 1 левее, чем старая левая граница, чтобы затронуть только неотображённые тайлы */
@@ -486,6 +590,9 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
                             UWidget* GridPanelElement = TilesCoordWrapper->FindWidget(row, col);
                             if (GridPanelElement) {
                                 GridPanelElement->SetVisibility(ESlateVisibility::Visible);
+
+                                if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                                    UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: Left tile at coordinates row: %d, col: %d has been made visible"), row, col);
                             }
                             else
                                 UE_LOG(LogTemp, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: When trying to display a new left tile at coordinates row: %d, col: %d, an error occurred - the GridPanelElement is not valid"), row, col);
@@ -495,6 +602,9 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
 
                 //Если было зарегистрировано, что новая текущая область правее левой границы предыдущей области, то все необходимые старые столбцы становятся сколлапсированными
                 if (OldLeftBoundLess) {
+                    if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                        UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: The new current area is to the right of the left border of the previous area"));
+
                     for (int row = OldDimensions.Min.Y; row <= OldDimensions.Max.Y; row++) {
                         /* Так как известно, что новая область правее предыдущей, цикл стартует со столбца равного старой левой границе, и
                          * проходит до столбца, расположенного на 1 левее, чем текущая левая граница, чтобы затронуть только отображённые тайлы */
@@ -502,6 +612,9 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
                             UWidget* GridPanelElement = TilesCoordWrapper->FindWidget(row, col);
                             if (GridPanelElement) {
                                 GridPanelElement->SetVisibility(ESlateVisibility::Collapsed);
+
+                                if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                                    UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: Left tile at coordinates row: %d, col: %d has been made collapsed"), row, col);
                             }
                             else
                                 UE_LOG(LogTemp, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: When trying to hide a left tile at coordinates row: %d, col: %d, an error occurred - the GridPanelElement is not valid"), row, col);
@@ -511,6 +624,9 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
 
                 //Если было зарегистрировано, что новая текущая область правее правой границы предыдущей области, то все необходимые новые столбцы становятся видимыми
                 if (NewRightBoundMore) {
+                    if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                        UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: The new current area is to the right of the right border of the previous area"));
+
                     for (int row = CurrentDimensions.Min.Y; row <= CurrentDimensions.Max.Y; row++) {
                         /* Так как известно, что новая область правее предыдущей, цикл стартует со столбца на 1 правее, чем предыдущая правая
                          * граница, чтобы затронуть только неотображённые тайлы, и проходит до новой правой границы включительно */
@@ -518,6 +634,9 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
                             UWidget* GridPanelElement = TilesCoordWrapper->FindWidget(row, col);
                             if (GridPanelElement) {
                                 GridPanelElement->SetVisibility(ESlateVisibility::Visible);
+
+                                if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                                    UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: Right tile at coordinates row: %d, col: %d has been made visible"), row, col);
                             }
                             else
                                 UE_LOG(LogTemp, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: When trying to display a new right tile at coordinates row: %d, col: %d, an error occurred - the GridPanelElement is not valid"), row, col);
@@ -527,6 +646,9 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
 
                 //Если было зарегистрировано, что новая текущая область левее правой границы предыдущей области, то все необходимые старые столбцы становятся сколлапсированными
                 if (OldRightBoundLess) {
+                    if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                        UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: The new current area is to the left of the right border of the previous area"));
+
                     for (int row = OldDimensions.Min.Y; row <= OldDimensions.Max.Y; row++) {
                         /* Так как известно, что новая область левее предыдущей, цикл стартует со столбца на 1 правее, чем текущая правая
                          * граница, чтобы затронуть только отображённые тайлы, и проходит до старой правой границы включительно */
@@ -534,6 +656,9 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
                             UWidget* GridPanelElement = TilesCoordWrapper->FindWidget(row, col);
                             if (GridPanelElement) {
                                 GridPanelElement->SetVisibility(ESlateVisibility::Collapsed);
+
+                                if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                                    UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: Right tile at coordinates row: %d, col: %d has been made collapsed"), row, col);
                             }
                             else
                                 UE_LOG(LogTemp, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: When trying to hide a right tile at coordinates row: %d, col: %d, an error occurred - the GridPanelElement is not valid"), row, col);
@@ -541,6 +666,9 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
                     }
                 }
             }
+        } else {
+            if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: The current content dimensions do not differ from the previous ones"));
         }
 
         /* Так как все неотображённые тайлы сколлапсированы, они имеют нулевой размер. Это в свою очередь ведёт к
@@ -560,8 +688,12 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
                  * размер вплоть до отображённых тайлов. Чтобы избежать этого, минимальный тайл просто скрыт, а не
                  * сколапсирован, тем самым он, хоть и не видем, но продолжает занимать место, и заставляет все
                  * ячейки после него также сохранять свои заданые размеры даже со сколлапсированными тайлами внутри */
-                if (HiddenWidget->GetVisibility() == ESlateVisibility::Collapsed)
+                if (HiddenWidget->GetVisibility() == ESlateVisibility::Collapsed) {
                     HiddenWidget->SetVisibility(ESlateVisibility::Hidden);
+
+                    if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                        UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: The tile at the minimum coordinate row: %d col: %d was made hidden to \"stretch\" the tile table"), MinCoord.Row, MinCoord.Col);
+                }
             }
             else
                 UE_LOG(LogTemp, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: A tile found at the TilesCoordWrapper minimum coordinate is not valid"));
@@ -577,8 +709,12 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
                  * размер вплоть до отображённых тайлов. Чтобы избежать этого, максимальный тайл просто скрыт, а не
                  * сколапсирован, тем самым он, хоть и не видем, но продолжает занимать место, и заставляет все
                  * ячейки после него также сохранять свои заданые размеры даже со сколлапсированными тайлами внутри */
-                if (HiddenWidget->GetVisibility() == ESlateVisibility::Collapsed)
+                if (HiddenWidget->GetVisibility() == ESlateVisibility::Collapsed) {
                     HiddenWidget->SetVisibility(ESlateVisibility::Hidden);
+
+                    if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                        UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: The tile at the maximum coordinate row: %d col: %d was made hidden to \"stretch\" the tile table"), MaxCoord.Row, MaxCoord.Col);
+                }
             }
             else
                 UE_LOG(LogTemp, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: A tile found at the TilesCoordWrapper maximum coordinate is not valid"));
@@ -597,11 +733,18 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
  * неактивной. Используется для сброса состояния таблицы перед переинициализацией */
 void UTileTablesOptimizationTools::CollapsedCurrentDimension(UCoordWrapperOfTable* TilesCoordWrapper)
 {
+    if (GameInstance && GameInstance->LogType != ELogType::NONE)
+        UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the CollapsedCurrentDimension function: The current dimensions will be collapsed"));
+
     for (int row = CurrentDimensions.Min.Y; row <= CurrentDimensions.Max.Y; row++) {
         for (int col = CurrentDimensions.Min.X; col <= CurrentDimensions.Max.X; col++) {
             UWidget* GridPanelElement = TilesCoordWrapper->FindWidget(row, col);
-            if (GridPanelElement)
+            if (GridPanelElement) {
                 GridPanelElement->SetVisibility(ESlateVisibility::Collapsed);
+
+                if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                    UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the CollapsedCurrentDimension function: The tile at the coordinate row: %d col: %d was made collapsed"), row, col);
+            }
             else
                 UE_LOG(LogTemp, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the CollapsedCurrentDimension function: GridPanelElement row: %d, col: %d is not valid"), row, col);
         }
