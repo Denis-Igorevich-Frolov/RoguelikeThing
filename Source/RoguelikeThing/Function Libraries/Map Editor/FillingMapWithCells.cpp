@@ -23,8 +23,8 @@ UFillingMapWithCells::UFillingMapWithCells()
  * MapTileClass обязательно должен быть наследником
  * класса UMapTile или им самим, CellClass обязательно
  * должен быть наследником класса UMapCell или им самим */
-bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, UUniformGridPanel* TilesGridPanel,
-    UClass* CellClass, UClass* MapTileClass, UMapEditor* MapEditor, UCoordWrapperOfTable* TilesCoordWrapper)
+bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, UUniformGridPanel* TilesGridPanel, UClass* CellClass,
+    UClass* MapTileClass, UMapEditor* MapEditor, UCoordWrapperOfTable* TilesCoordWrapper, UPARAM(ref) UMapEditorBrushType* BrushType)
 {
     //Координатная обёртка изначально должна быть полность пустой во время заполнения карты
     TilesCoordWrapper->Clear();
@@ -189,7 +189,7 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
 
         //Само забиваение карты ячейками происходит в отдельном потоке
         AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapEditor, NumberOfMapTilesCols, NumberOfMapTilesRows, TableLength,
-            MapTileLength, DisplayedColNum, DisplayedRowNum, TilesGridPanel,  CellClass, MapTileClass, TilesCoordWrapper, this]() {
+            MapTileLength, DisplayedColNum, DisplayedRowNum, TilesGridPanel,  CellClass, MapTileClass, TilesCoordWrapper, BrushType, this]() {
 
                 if (GameInstance && GameInstance->LogType != ELogType::NONE)
                     UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The TilesGridPanel table population thread has been opened"));
@@ -273,6 +273,8 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                                         return false;
                                     });
                                 }
+
+                                Cell->BrushType = BrushType;
 
                                 if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                                     UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: An uninitialized cell is created with coordinates row: %d col: %d for a MapTile with coordinates row: %d col: %d"), tileRow, tileCol, row, col);

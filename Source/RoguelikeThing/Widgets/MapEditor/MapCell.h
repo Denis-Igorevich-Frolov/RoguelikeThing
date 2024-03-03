@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "RoguelikeThing/Enumerations/MapEditorBrushType.h"
 #include "MapCell.generated.h"
 
 /*****************************************************************
@@ -18,4 +19,7 @@ class ROGUELIKETHING_API UMapCell : public UUserWidget
 public:
 	UFUNCTION(BlueprintImplementableEvent)
 	FVector2D getSize();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UMapEditorBrushType* BrushType;
 };

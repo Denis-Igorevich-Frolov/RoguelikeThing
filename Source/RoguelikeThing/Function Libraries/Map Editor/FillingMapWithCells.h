@@ -8,6 +8,7 @@
 #include "RoguelikeThing/Map/MapMatrix.h"
 #include "RoguelikeThing/CoordWrapperOfTable.h"
 #include "RoguelikeThing/MyGameInstance.h"
+#include "RoguelikeThing/Enumerations/MapEditorBrushType.h"
 #include "FillingMapWithCells.generated.h"
 
 /**********************************************************************************************************************
@@ -60,8 +61,8 @@ public:
 	 * класса UMapTile или им самим, CellClass обязательно
 	 * должен быть наследником класса UMapCell или им самим */
 	UFUNCTION(BlueprintCallable, meta = (ToolTip = "MapTileClass must necessarily be an heir of the UMapTile class or be UMapTile, CellClass must necessarily be an heir of the UMapCell class or be UMapCell"))
-	bool FillMapEditorWithCells(FMapDimensions MapDimensions, UUniformGridPanel* TilesGridPanel,
-		UClass* CellClass, UClass* MapTileClass, UMapEditor* MapEditor, UCoordWrapperOfTable* TilesCoordWrapper);
+	bool FillMapEditorWithCells(FMapDimensions MapDimensions, UUniformGridPanel* TilesGridPanel, UClass* CellClass,
+		UClass* MapTileClass, UMapEditor* MapEditor, UCoordWrapperOfTable* TilesCoordWrapper, UPARAM(ref) UMapEditorBrushType* BrushType);
 
 	//Если не передать виджет загрузки, то загрузка будет будет без индикации
 	UFUNCTION(BlueprintCallable)
