@@ -15,8 +15,14 @@ UCLASS(Blueprintable, BlueprintType)
 class ROGUELIKETHING_API UMyFileManager : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
+
+private:
+	IPlatformFile& FileManager = FPlatformFileManager::Get().GetPlatformFile();
 	
 public:
 	UFUNCTION(BlueprintCallable)
-	bool CopyFileToTemporaryDirectory(FString OriginalFileName, FString PathToDirectoryInsideTemporaryFolder, FString TemporaryFileName);
+	bool CopyFileToTemporaryDirectory(FString PathToOriginalFile, FString PathToDirectoryInsideTempFolder, FString TemporaryFileName);
+
+	UFUNCTION(BlueprintCallable)
+	bool SaveTempFileToOriginalDirectory(FString PathToOriginalFile, FString PathToTempFolder);
 };

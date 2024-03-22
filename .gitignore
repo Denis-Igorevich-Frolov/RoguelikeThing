@@ -9,6 +9,8 @@
 /DerivedDataCache/*
 /Intermediate/Build/*
 /Saved/*
+/Temp/*
+/BackUp/*
 /.vs/RoguelikeThing/FileContentIndex/*
 
 /.vs/RoguelikeThing/v17/Browse.VC.db
