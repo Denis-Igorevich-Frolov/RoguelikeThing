@@ -630,8 +630,11 @@ bool UMapMatrix::SetValueOfMapChunkCell(MatrixType matrixType, int32 chunkRow, i
             UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCell function: A transaction to write data to table \"%s %d:%d\" has begun"), *SMatrixType, chunkRow, chunkCol);
 
         //Формирование запроса на запись данных в ячейку
-        FString QueryToSetCellValue = FString::Printf(TEXT(
-            "UPDATE \"%s %d:%d\" SET \"Col %d\" = %d WHERE RowNum = %d;"), *SMatrixType, chunkRow, chunkCol, cellCol, value, cellRow);
+        FString QueryToSetCellValue;
+        if(value == 0)
+            QueryToSetCellValue = FString::Printf(TEXT("UPDATE \"%s %d:%d\" SET \"Col %d\" = NULL WHERE RowNum = %d;"), *SMatrixType, chunkRow, chunkCol, cellCol, cellRow);
+        else
+            QueryToSetCellValue = FString::Printf(TEXT("UPDATE \"%s %d:%d\" SET \"Col %d\" = %d WHERE RowNum = %d;"), *SMatrixType, chunkRow, chunkCol, cellCol, value, cellRow);
 
         if (!mapDataBase->Execute(*QueryToSetCellValue)) {
             UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkCell function when trying to set a value %d in the \"%s %d:%d\" table to cell %d:%d: %s"), value, *SMatrixType, chunkRow, chunkCol, cellRow, cellCol, *mapDataBase->GetLastError());

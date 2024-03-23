@@ -98,7 +98,7 @@
 			{
 				"FileVersion": 3,
 				"Version": 1,
-				"VersionName": "2.1",
+				"VersionName": "2.2",
 				"FriendlyName": "Visual Studio Integration Tools",
 				"Description": "Enables integration with Visual Studio IDE.",
 				"Category": "Programming",
@@ -872,114 +872,6 @@
 			}
 		},
 		{
-			"File": "../../../Engine/Plugins/Experimental/AlembicImporter/AlembicImporter.uplugin",
-			"Descriptor": 
-			{
-				"FileVersion": 3,
-				"Version": 1,
-				"VersionName": "0.1",
-				"FriendlyName": "Alembic Importer (Experimental)",
-				"Description": "Support importing Alembic files",
-				"Category": "Importers",
-				"CreatedBy": "Epic Games, Inc.",
-				"CreatedByURL": "http://epicgames.com",
-				"DocsURL": "",
-				"MarketplaceURL": "",
-				"SupportURL": "",
-				"EnabledByDefault": true,
-				"CanContainContent": false,
-				"IsBetaVersion": true,
-				"Modules": [
-					{
-						"Name": "AlembicImporter",
-						"Type": "Editor",
-						"LoadingPhase": "Default",
-						"WhitelistPlatforms": [
-							"Win64",
-							"Mac",
-							"Linux"
-						]
-					},
-					{
-						"Name": "AlembicLibrary",
-						"Type": "Editor",
-						"LoadingPhase": "Default",
-						"WhitelistPlatforms": [
-							"Win64",
-							"Mac",
-							"Linux"
-						]
-					}
-				],
-				"Plugins": [
-					{
-						"Name": "GeometryCache",
-						"Enabled": true
-					}
-				]
-			}
-		},
-		{
-			"File": "../../../Engine/Plugins/Experimental/GeometryCache/GeometryCache.uplugin",
-			"Descriptor": 
-			{
-				"FileVersion": 3,
-				"Version": 1,
-				"VersionName": "0.1",
-				"FriendlyName": "Geometry Cache (Experimental)",
-				"Description": "Support for distilled Geometry animations",
-				"Category": "Importers",
-				"CreatedBy": "Epic Games, Inc.",
-				"CreatedByURL": "http://epicgames.com",
-				"DocsURL": "",
-				"MarketplaceURL": "",
-				"SupportURL": "",
-				"EnabledByDefault": true,
-				"CanContainContent": false,
-				"IsBetaVersion": true,
-				"Modules": [
-					{
-						"Name": "GeometryCacheEd",
-						"Type": "Editor",
-						"LoadingPhase": "Default",
-						"WhitelistPlatforms": [
-							"Win64",
-							"Mac"
-						]
-					},
-					{
-						"Name": "GeometryCacheSequencer",
-						"Type": "Editor",
-						"LoadingPhase": "Default",
-						"WhitelistPlatforms": [
-							"Win64",
-							"Mac"
-						]
-					},
-					{
-						"Name": "GeometryCacheStreamer",
-						"Type": "Editor",
-						"LoadingPhase": "Default",
-						"WhitelistPlatforms": [
-							"Win64",
-							"Mac",
-							"Linux"
-						]
-					},
-					{
-						"Name": "GeometryCache",
-						"Type": "Runtime",
-						"LoadingPhase": "Default"
-					},
-					{
-						"Name": "GeometryCacheTracks",
-						"Type": "Runtime",
-						"LoadingPhase": "Default"
-					}
-				]
-			}
-		},
-		{
 			"File": "../../../Engine/Plugins/Experimental/AutomationUtils/AutomationUtils.uplugin",
 			"Descriptor": 
 			{
@@ -1538,6 +1430,66 @@
 						"Name": "CharacterAI",
 						"Type": "Runtime",
 						"LoadingPhase": "PostEngineInit"
+					}
+				]
+			}
+		},
+		{
+			"File": "../../../Engine/Plugins/Experimental/GeometryCache/GeometryCache.uplugin",
+			"Descriptor": 
+			{
+				"FileVersion": 3,
+				"Version": 1,
+				"VersionName": "0.1",
+				"FriendlyName": "Geometry Cache (Experimental)",
+				"Description": "Support for distilled Geometry animations",
+				"Category": "Importers",
+				"CreatedBy": "Epic Games, Inc.",
+				"CreatedByURL": "http://epicgames.com",
+				"DocsURL": "",
+				"MarketplaceURL": "",
+				"SupportURL": "",
+				"EnabledByDefault": true,
+				"CanContainContent": false,
+				"IsBetaVersion": true,
+				"Modules": [
+					{
+						"Name": "GeometryCacheEd",
+						"Type": "Editor",
+						"LoadingPhase": "Default",
+						"WhitelistPlatforms": [
+							"Win64",
+							"Mac"
+						]
+					},
+					{
+						"Name": "GeometryCacheSequencer",
+						"Type": "Editor",
+						"LoadingPhase": "Default",
+						"WhitelistPlatforms": [
+							"Win64",
+							"Mac"
+						]
+					},
+					{
+						"Name": "GeometryCacheStreamer",
+						"Type": "Editor",
+						"LoadingPhase": "Default",
+						"WhitelistPlatforms": [
+							"Win64",
+							"Mac",
+							"Linux"
+						]
+					},
+					{
+						"Name": "GeometryCache",
+						"Type": "Runtime",
+						"LoadingPhase": "Default"
+					},
+					{
+						"Name": "GeometryCacheTracks",
+						"Type": "Runtime",
+						"LoadingPhase": "Default"
 					}
 				]
 			}
@@ -2332,38 +2284,6 @@
 							"UnrealLightmass",
 							"CrashReportClientEditor"
 						]
-					}
-				]
-			}
-		},
-		{
-			"File": "../../../Engine/Plugins/MovieScene/ActorSequence/ActorSequence.uplugin",
-			"Descriptor": 
-			{
-				"FileVersion": 3,
-				"Version": 1,
-				"VersionName": "0.1",
-				"FriendlyName": "Actor Sequence (Experimental)",
-				"Description": "Runtime for embedded actor sequences",
-				"Category": "Editor",
-				"CreatedBy": "Epic Games, Inc.",
-				"CreatedByURL": "http://epicgames.com",
-				"DocsURL": "",
-				"MarketplaceURL": "",
-				"SupportURL": "",
-				"EnabledByDefault": true,
-				"CanContainContent": false,
-				"IsBetaVersion": true,
-				"Modules": [
-					{
-						"Name": "ActorSequence",
-						"Type": "Runtime",
-						"LoadingPhase": "PreDefault"
-					},
-					{
-						"Name": "ActorSequenceEditor",
-						"Type": "Editor",
-						"LoadingPhase": "PostEngineInit"
 					}
 				]
 			}
