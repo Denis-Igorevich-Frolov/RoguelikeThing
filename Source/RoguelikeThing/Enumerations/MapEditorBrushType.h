@@ -14,6 +14,7 @@ enum class FMapEditorBrushType : uint8 {
 	CORRIDOR	UMETA(DisplayName = "Corridor"),
     ROOM		UMETA(DisplayName = "Room"),
 	ERASER		UMETA(DisplayName = "Eraser"),
+	MOVEMAP		UMETA(DisplayName = "Move map"),
 };
 
 UCLASS(Blueprintable, BlueprintType)
