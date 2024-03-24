@@ -571,8 +571,9 @@ bool UMapMatrix::DeleteMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
 
 /* Функция, записывающая значение в ячейку фрагмента БД по её локальному индексу.
  * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
-bool UMapMatrix::SetValueOfMapChunkCell(MatrixType matrixType, int32 chunkRow, int32 chunkCol, int32 cellRow, int32 cellCol, int32 value, bool autoClose)
+bool UMapMatrix::SetValueOfMapChunkCell(MatrixType matrixType, int32 chunkRow, int32 chunkCol, int32 cellRow, int32 cellCol, ECellTypeOfMapStructure value, bool autoClose)
 {
+    int32 Value = (int32)value;
     //Все переданные индексы ячейки должны находиться в диапазоне от 1 до TableLength включительно
     if (cellRow < 1) {
         UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the UMapMatrix class in the SetValueOfMapChunkCell function - cellRow value (%d) is less than 1"), cellRow);
@@ -631,13 +632,13 @@ bool UMapMatrix::SetValueOfMapChunkCell(MatrixType matrixType, int32 chunkRow, i
 
         //Формирование запроса на запись данных в ячейку
         FString QueryToSetCellValue;
-        if(value == 0)
+        if(Value == 0)
             QueryToSetCellValue = FString::Printf(TEXT("UPDATE \"%s %d:%d\" SET \"Col %d\" = NULL WHERE RowNum = %d;"), *SMatrixType, chunkRow, chunkCol, cellCol, cellRow);
         else
-            QueryToSetCellValue = FString::Printf(TEXT("UPDATE \"%s %d:%d\" SET \"Col %d\" = %d WHERE RowNum = %d;"), *SMatrixType, chunkRow, chunkCol, cellCol, value, cellRow);
+            QueryToSetCellValue = FString::Printf(TEXT("UPDATE \"%s %d:%d\" SET \"Col %d\" = %d WHERE RowNum = %d;"), *SMatrixType, chunkRow, chunkCol, cellCol, Value, cellRow);
 
         if (!mapDataBase->Execute(*QueryToSetCellValue)) {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkCell function when trying to set a value %d in the \"%s %d:%d\" table to cell %d:%d: %s"), value, *SMatrixType, chunkRow, chunkCol, cellRow, cellCol, *mapDataBase->GetLastError());
+            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkCell function when trying to set a value %d in the \"%s %d:%d\" table to cell %d:%d: %s"), Value, *SMatrixType, chunkRow, chunkCol, cellRow, cellCol, *mapDataBase->GetLastError());
 
             if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
                 UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkCell function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
@@ -669,7 +670,7 @@ bool UMapMatrix::SetValueOfMapChunkCell(MatrixType matrixType, int32 chunkRow, i
 
         if (GameInstance && GameInstance->LogType != ELogType::NONE) {
             UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCell function: The transaction to write data to table \"%s %d:%d\" was committed"), *SMatrixType, chunkRow, chunkCol);
-            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCell function: The number %d is fully set to cell %d:%d in the \"%s %d:%d\" table"), value, cellRow, cellCol, *SMatrixType, chunkRow, chunkCol);
+            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCell function: The number %d is fully set to cell %d:%d in the \"%s %d:%d\" table"), Value, cellRow, cellCol, *SMatrixType, chunkRow, chunkCol);
         }
     }
     else {
@@ -811,7 +812,7 @@ void UMapMatrix::mapDataBaseClose(FString FunctionName)
 
 /* Функция, записывающая значение в ячейку фрагмента БД по её глобальному индексу.
  * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
-bool UMapMatrix::SetValueOfMapChunkCellByGlobalIndex(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol, int32 value, bool autoClose)
+bool UMapMatrix::SetValueOfMapChunkCellByGlobalIndex(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol, ECellTypeOfMapStructure value, bool autoClose)
 {
     int32 chunkRow;
     int32 cellRow;

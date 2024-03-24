@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "RoguelikeThing/Map/CellTypeOfMapStructure.h"
+#include "RoguelikeThing/Widgets/MapEditor/CellCoord.h"
 #include "MapEditor.generated.h"
 
 /************************************************************************
@@ -21,6 +23,9 @@ private:
 	
 public:
 	UMapEditor(const FObjectInitializer& ObjectInitializer);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetDBCellValue(ECellTypeOfMapStructure value, FCellCoord CellCoord);
 
 	//Эвент, при котором следует пересчитать какие тайлы стоит отобразить, а какие скрыть
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)

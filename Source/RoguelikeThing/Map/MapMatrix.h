@@ -133,7 +133,7 @@ public:
 	/* Функция, записывающая значение в ячейку фрагмента БД по её локальному индексу.
 	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически*/
 	UFUNCTION(BlueprintCallable)
-	bool SetValueOfMapChunkCell(MatrixType matrixType,  int32 chunkRow, int32 chunkCol, int32 cellRow, int32 cellCol, int32 value, bool autoClose = true);
+	bool SetValueOfMapChunkCell(MatrixType matrixType,  int32 chunkRow, int32 chunkCol, int32 cellRow, int32 cellCol, ECellTypeOfMapStructure value, bool autoClose = true);
 	
 	/* Функция, считывающая значение из ячейки фрагмента БД по её локальному индексу.
 	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически*/
@@ -147,7 +147,7 @@ public:
 	/* Функция, записывающая значение в ячейку фрагмента БД по её глобальному индексу.
 	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически*/
 	UFUNCTION(BlueprintCallable)
-	bool SetValueOfMapChunkCellByGlobalIndex(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol, int32 value, bool autoClose = true);
+	bool SetValueOfMapChunkCellByGlobalIndex(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol, ECellTypeOfMapStructure value, bool autoClose = true);
 
 	/* Функция, считывающая значение из ячейки фрагмента БД по её глобальному индексу.
 	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически*/

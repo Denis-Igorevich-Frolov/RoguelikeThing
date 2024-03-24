@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "RoguelikeThing/Enumerations/MapEditorBrushType.h"
+#include "RoguelikeThing/Widgets/MapEditor/MapEditor.h"
+#include "RoguelikeThing/Widgets/MapEditor/CellCoord.h"
 #include "MapCell.generated.h"
 
 /*****************************************************************
@@ -26,8 +28,14 @@ class ROGUELIKETHING_API UMapCell : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UMapEditor* MyEditor;
+
 	UFUNCTION(BlueprintImplementableEvent)
 	FVector2D getSize();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FCellCoord MyCoord;
 
 	//”казатель на тип кисти из редактора карт. —лужит дл€ понимани€ €чейкой на какой тип ей стоит мен€тьс€ при нажатии по ней
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

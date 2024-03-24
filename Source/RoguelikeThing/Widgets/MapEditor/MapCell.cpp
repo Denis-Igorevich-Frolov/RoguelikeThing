@@ -2,4 +2,3 @@
 
 
 #include "RoguelikeThing/Widgets/MapEditor/MapCell.h"
-
