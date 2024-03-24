@@ -31,6 +31,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UMapEditor* MyEditor;
 
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetCorridorStyle();
+	
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetRoomStyle();
+	
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void SetEmptinessStyle();
+
 	UFUNCTION(BlueprintImplementableEvent)
 	FVector2D getSize();
 

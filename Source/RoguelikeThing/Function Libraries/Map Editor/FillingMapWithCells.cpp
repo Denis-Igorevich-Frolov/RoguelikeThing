@@ -279,7 +279,7 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                                 else
                                     UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: BrushType pointer is not valid"));
 
-                                Cell->MyCoord = FCellCoord(row, col, tileRow + 1, tileCol + 1);
+                                Cell->MyCoord = FCellCoord(row * MapTileLength + tileRow + 1, col * MapTileLength + tileCol + 1);
                                 Cell->MyEditor = MapEditor;
 
                                 if (GameInstance && GameInstance->LogType == ELogType::DETAILED)

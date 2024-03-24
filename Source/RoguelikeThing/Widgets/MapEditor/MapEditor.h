@@ -25,7 +25,7 @@ public:
 	UMapEditor(const FObjectInitializer& ObjectInitializer);
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void SetDBCellValue(ECellTypeOfMapStructure value, FCellCoord CellCoord);
+	void SetDBCellValue(ECellTypeOfMapStructure value, FCellCoord CellCoord, UMapCell* CallingCell);
 
 	//Эвент, при котором следует пересчитать какие тайлы стоит отобразить, а какие скрыть
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)

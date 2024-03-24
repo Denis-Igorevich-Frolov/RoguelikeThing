@@ -14,16 +14,10 @@ struct FCellCoord
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 ChuncRow = -1;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	int32 ChuncColl = -1;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 Row = -1;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int32 Coll = -1;
 
-	FCellCoord(int32 ChuncRow = -1, int32 ChuncColl = -1, int32 Row = -1, int32 Coll = -1);
+	FCellCoord(int32 Row = -1, int32 Coll = -1);
 };

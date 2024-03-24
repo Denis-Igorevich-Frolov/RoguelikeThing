@@ -121,6 +121,9 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void setLoadWidget(ULoadingWidget* newLoadingWidget);
+	
+	UFUNCTION(BlueprintCallable)
+	bool CheckCorrectOfCorridorLocation(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol, int PassageDepthNumber = 1, bool autoClose = true);
 
 	/* Функция, создающая новый фрагмент карты на отснове переданного типа и индекса фрагмента.
 	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически*/
