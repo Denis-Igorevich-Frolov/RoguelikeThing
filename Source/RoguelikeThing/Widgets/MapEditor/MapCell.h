@@ -7,6 +7,7 @@
 #include "RoguelikeThing/Enumerations/MapEditorBrushType.h"
 #include "RoguelikeThing/Widgets/MapEditor/MapEditor.h"
 #include "RoguelikeThing/Widgets/MapEditor/CellCoord.h"
+#include "RoguelikeThing/Structs/Widgets/MapEditor/MapCell/NeighbourhoodOfCell.h"
 #include "MapCell.generated.h"
 
 /*****************************************************************
@@ -32,12 +33,10 @@ public:
 	UMapEditor* MyEditor;
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void SetCorridorStyle();
-	
+	void SetCorridorStyle(FNeighbourhoodOfCell NeighbourhoodOfCell);
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetRoomStyle();
-	
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetEmptinessStyle();

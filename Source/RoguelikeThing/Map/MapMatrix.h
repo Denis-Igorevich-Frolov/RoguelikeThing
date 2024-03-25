@@ -5,6 +5,7 @@
 #include "CellTypeOfMapStructure.h"
 #include "SQLiteDatabase.h"
 #include "RoguelikeThing/MyGameInstance.h"
+#include "RoguelikeThing/Structs/Widgets/MapEditor/MapCell/NeighbourhoodOfCell.h"
 #include "MapMatrix.generated.h"
 
 /****************************************************************
@@ -124,6 +125,12 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	bool CheckCorrectOfCorridorLocation(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol, int PassageDepthNumber = 1, bool autoClose = true);
+
+	UFUNCTION(BlueprintCallable)
+	bool CheckCorrectOfRoomLocation(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol, bool autoClose = true);
+
+	UFUNCTION(BlueprintCallable)
+	FNeighbourhoodOfCell CheckNeighbourhoodOfCell(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol, bool autoClose = true);
 
 	/* Функция, создающая новый фрагмент карты на отснове переданного типа и индекса фрагмента.
 	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически*/

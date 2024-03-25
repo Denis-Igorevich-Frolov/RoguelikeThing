@@ -7,8 +7,6 @@
 
 DEFINE_LOG_CATEGORY(MapDataBase);
 
-#pragma optimize("", off)
-
 UMapMatrix::UMapMatrix() : UObject()
 {
     //Получение GameInstance из мира
@@ -575,6 +573,145 @@ bool UMapMatrix::CheckCorrectOfCorridorLocation(MatrixType matrixType, int32 glo
         return false;
     else
         return true;
+}
+
+bool UMapMatrix::CheckCorrectOfRoomLocation(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol, bool autoClose)
+{
+    FMapDimensions Dimensions = GetMapDimensions(false);
+    int TotalRows = (Dimensions.MaxRow - Dimensions.MinRow + 1) * Dimensions.TableLength;
+    int TotalCols = (Dimensions.MaxCol - Dimensions.MinCol + 1) * Dimensions.TableLength;
+
+    if (globalCellRow - 1 > 0) {
+        ECellTypeOfMapStructure CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow - 1, globalCellCol, false);
+
+        if (CellType == ECellTypeOfMapStructure::Error) {
+            if (autoClose)
+                mapDataBaseClose("CheckCorrectOfRoomLocation");
+            return false;
+        }
+
+        if (CellType == ECellTypeOfMapStructure::Corridor) {
+            if (!CheckCorrectOfCorridorLocation(matrixType, globalCellRow - 1, globalCellCol, 2, false))
+                return false;
+        }
+    }
+
+    if (globalCellRow + 1 <= TotalRows) {
+        ECellTypeOfMapStructure CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow + 1, globalCellCol, false);
+
+        if (CellType == ECellTypeOfMapStructure::Error) {
+            if (autoClose)
+                mapDataBaseClose("CheckCorrectOfRoomLocation");
+            return false;
+        }
+
+        if (CellType == ECellTypeOfMapStructure::Corridor) {
+            if (!CheckCorrectOfCorridorLocation(matrixType, globalCellRow + 1, globalCellCol, 2, false))
+                return false;
+        }
+    }
+
+    if (globalCellCol - 1 > 0) {
+        ECellTypeOfMapStructure CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow, globalCellCol - 1, false);
+
+        if (CellType == ECellTypeOfMapStructure::Error) {
+            if (autoClose)
+                mapDataBaseClose("CheckCorrectOfRoomLocation");
+            return false;
+        }
+
+        if (CellType == ECellTypeOfMapStructure::Corridor) {
+            if (!CheckCorrectOfCorridorLocation(matrixType, globalCellRow, globalCellCol - 1, 2, false))
+                return false;
+        }
+    }
+
+    if (globalCellCol + 1 <= TotalCols) {
+        ECellTypeOfMapStructure CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow, globalCellCol + 1, false);
+
+        if (CellType == ECellTypeOfMapStructure::Error) {
+            if (autoClose)
+                mapDataBaseClose("CheckCorrectOfRoomLocation");
+            return false;
+        }
+
+        if (CellType == ECellTypeOfMapStructure::Corridor) {
+            if (!CheckCorrectOfCorridorLocation(matrixType, globalCellRow, globalCellCol + 1, 2, false))
+                return false;
+        }
+    }
+
+    if (autoClose)
+        mapDataBaseClose("CheckCorrectOfRoomLocation");
+
+    return true;
+}
+
+FNeighbourhoodOfCell UMapMatrix::CheckNeighbourhoodOfCell(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol, bool autoClose)
+{
+    FMapDimensions Dimensions = GetMapDimensions(false);
+    int TotalRows = (Dimensions.MaxRow - Dimensions.MinRow + 1) * Dimensions.TableLength;
+    int TotalCols = (Dimensions.MaxCol - Dimensions.MinCol + 1) * Dimensions.TableLength;
+
+    FNeighbourhoodOfCell NeighbourhoodOfCell = FNeighbourhoodOfCell();
+
+    if (globalCellRow - 1 > 0) {
+        ECellTypeOfMapStructure CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow - 1, globalCellCol, false);
+
+        if (CellType == ECellTypeOfMapStructure::Error) {
+            if (autoClose)
+                mapDataBaseClose("CheckNeighbourhoodOfCell");
+            return FNeighbourhoodOfCell();
+        }
+
+        if (CellType == ECellTypeOfMapStructure::Corridor || CellType == ECellTypeOfMapStructure::Room) {
+            NeighbourhoodOfCell.SomethingOnTop = true;
+        }
+    }
+
+    if (globalCellRow + 1 <= TotalRows) {
+        ECellTypeOfMapStructure CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow + 1, globalCellCol, false);
+
+        if (CellType == ECellTypeOfMapStructure::Error) {
+            if (autoClose)
+                mapDataBaseClose("CheckNeighbourhoodOfCell");
+            return FNeighbourhoodOfCell();
+        }
+
+        if (CellType == ECellTypeOfMapStructure::Corridor || CellType == ECellTypeOfMapStructure::Room) {
+            NeighbourhoodOfCell.SomethingOnBottom = true;
+        }
+    }
+
+    if (globalCellCol - 1 > 0) {
+        ECellTypeOfMapStructure CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow, globalCellCol - 1, false);
+
+        if (CellType == ECellTypeOfMapStructure::Error) {
+            if (autoClose)
+                mapDataBaseClose("CheckNeighbourhoodOfCell");
+            return FNeighbourhoodOfCell();
+        }
+
+        if (CellType == ECellTypeOfMapStructure::Corridor || CellType == ECellTypeOfMapStructure::Room) {
+            NeighbourhoodOfCell.SomethingOnLeft = true;
+        }
+    }
+
+    if (globalCellCol + 1 <= TotalCols) {
+        ECellTypeOfMapStructure CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow, globalCellCol + 1, false);
+
+        if (CellType == ECellTypeOfMapStructure::Error) {
+            if (autoClose)
+                mapDataBaseClose("CheckNeighbourhoodOfCell");
+            return FNeighbourhoodOfCell();
+        }
+
+        if (CellType == ECellTypeOfMapStructure::Corridor || CellType == ECellTypeOfMapStructure::Room) {
+            NeighbourhoodOfCell.SomethingOnRight = true;
+        }
+    }
+
+    return NeighbourhoodOfCell;
 }
 
 /* Функция, удаляющая фрагмент карты на отснове переданного типа и индекса фрагмента.
