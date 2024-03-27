@@ -64,7 +64,7 @@ bool UCoordWrapperOfTable::AddWidget(int row, int col, UWidget* Widget)
     if (success) {
         //Если минимальная координата не существует, значит матрица была пуста, и текущий элемент единственный и минимальный
         if (!MinCoord.getIsInit())
-            MinCoord = GridCoord(row, col);
+            MinCoord = FGridCoord(row, col);
         else {
             if (col < MinCoord.Col)
                 MinCoord.Col = col;
@@ -74,7 +74,7 @@ bool UCoordWrapperOfTable::AddWidget(int row, int col, UWidget* Widget)
 
         //Если максимальная координата не существует, значит матрица была пуста, и текущий элемент единственный и максимальный
         if (!MaxCoord.getIsInit())
-            MaxCoord = GridCoord(row, col);
+            MaxCoord = FGridCoord(row, col);
         else {
             if (col > MaxCoord.Col)
                 MaxCoord.Col = col;
@@ -121,7 +121,7 @@ const int UCoordWrapperOfTable::getNumberOfItemsInTable()
 }
 
 //Получение самой левой нижней координаты
-GridCoord UCoordWrapperOfTable::getMinCoord()
+FGridCoord UCoordWrapperOfTable::getMinCoord()
 {
     return MinCoord;
 }
@@ -134,25 +134,25 @@ void UCoordWrapperOfTable::Clear()
     }
     Col.Empty();
 
-    MinCoord = GridCoord();
-    MaxCoord = GridCoord();
+    MinCoord = FGridCoord();
+    MaxCoord = FGridCoord();
     NumberOfItemsInTable = 0;
 }
 
 //Получение самой правой верхней координаты
-GridCoord UCoordWrapperOfTable::getMaxCoord()
+FGridCoord UCoordWrapperOfTable::getMaxCoord()
 {
     return MaxCoord;
 }
 
-GridCoord::GridCoord() : Row(-1), Col(-1), isInit(false)
+FGridCoord::FGridCoord() : Row(-1), Col(-1), isInit(false)
 {}
 
-GridCoord::GridCoord(int row, int col) : Row(row), Col(col), isInit(true)
+FGridCoord::FGridCoord(int row, int col) : Row(row), Col(col), isInit(true)
 {}
 
 //Проверка проинициализированности координаты
-bool GridCoord::getIsInit()
+bool FGridCoord::getIsInit()
 {
     return isInit;
 }

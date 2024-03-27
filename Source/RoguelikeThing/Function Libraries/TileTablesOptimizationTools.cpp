@@ -124,7 +124,7 @@ FVector2D UTileTablesOptimizationTools::InitTableTiles(UCoordWrapperOfTable* Til
              * (Hidden), а не схлопнутыми (Collapsed) тайлы с наибольшей и наименьшей координатами. Ёти тайлы как бы
              * "нат€гивают" всю таблицу, наход€сь в еЄ двух противоположных углах */
 
-            GridCoord MinCoord = TilesCoordWrapper->getMinCoord();
+            FGridCoord MinCoord = TilesCoordWrapper->getMinCoord();
             if (MinCoord.getIsInit()) {
                 UWidget* HiddenWidget = TilesCoordWrapper->FindWidget(MinCoord.Row, MinCoord.Col);
                 /* ≈сли крайний тайл не схлопнут, это значит, что размер всей таблицы не превышает размеров видимой 
@@ -138,7 +138,7 @@ FVector2D UTileTablesOptimizationTools::InitTableTiles(UCoordWrapperOfTable* Til
                 return FVector2D();
             }
 
-            GridCoord MaxCoord = TilesCoordWrapper->getMaxCoord();
+            FGridCoord MaxCoord = TilesCoordWrapper->getMaxCoord();
             if (MaxCoord.getIsInit()) {
                 UWidget* HiddenWidget = TilesCoordWrapper->FindWidget(MaxCoord.Row, MaxCoord.Col);
                 /* ≈сли крайний тайл не схлопнут, это значит, что размер всей таблицы не превышает размеров видимой
@@ -680,7 +680,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
          * €чейке. Ёти €чейки в углах как бы "нат€гивают" всю матрицу и она обретает нужные габариты без потери позиций
          * каждой отдельно вз€той €чейки. */
 
-        GridCoord MinCoord = TilesCoordWrapper->getMinCoord();
+        FGridCoord MinCoord = TilesCoordWrapper->getMinCoord();
         if (MinCoord.getIsInit()) {
             UWidget* HiddenWidget = TilesCoordWrapper->FindWidget(MinCoord.Row, MinCoord.Col);
             if (HiddenWidget) {
@@ -701,7 +701,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(UCoordWrapperO
         }else
             UE_LOG(LogTemp, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: TilesCoordWrapper minimum coordinate is not initialized"));
 
-        GridCoord MaxCoord = TilesCoordWrapper->getMaxCoord();
+        FGridCoord MaxCoord = TilesCoordWrapper->getMaxCoord();
         if (MaxCoord.getIsInit()) {
             UWidget* HiddenWidget = TilesCoordWrapper->FindWidget(MaxCoord.Row, MaxCoord.Col);
             if (HiddenWidget) {

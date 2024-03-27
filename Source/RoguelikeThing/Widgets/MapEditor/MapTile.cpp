@@ -7,3 +7,8 @@ UMapTile::UMapTile(const FObjectInitializer& Object) : UUserWidget(Object)
 {
     CellsCoordWrapper = NewObject<UCoordWrapperOfTable>();
 }
+
+UCoordWrapperOfTable* UMapTile::GetCellsCoordWrapper()
+{
+    return CellsCoordWrapper;
+}

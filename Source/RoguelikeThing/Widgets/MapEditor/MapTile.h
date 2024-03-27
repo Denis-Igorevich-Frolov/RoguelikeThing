@@ -23,6 +23,9 @@ public:
 	//Координатная обёртка, хранящая в себе ячейки этого тайла
 	UCoordWrapperOfTable* CellsCoordWrapper;
 
+	UFUNCTION(BlueprintCallable)
+	UCoordWrapperOfTable* GetCellsCoordWrapper();
+
 	UFUNCTION(BlueprintImplementableEvent)
 	UUniformGridPanel* GetGridPanel();
 };

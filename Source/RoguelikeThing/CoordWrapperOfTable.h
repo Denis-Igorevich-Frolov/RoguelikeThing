@@ -28,8 +28,11 @@ public:
 
 /* Ёто структура экземпл€ра координаты. ≈сть строка, есть столбец - всЄ просто. ≈сли координата была 
  * создана через пустой конструкторо она непроинициализирована, иначе она полностью готова к работе */
-struct GridCoord
+USTRUCT(BlueprintType)
+struct FGridCoord
 {
+	GENERATED_BODY()
+
 private:
 	bool isInit = false;
 
@@ -38,12 +41,14 @@ public:
 	 * не будет работать с такой координатой. “ребуютс€ непроинициализированые координаты дл€ функций, которым
 	 * в любом случае надо вернуть какую-нибудь координату, а возврат непроинициализированых координат от таких
 	 * функций означает ошибку при их выполнении */
-	GridCoord();
-	GridCoord(int row, int col);
+	FGridCoord();
+	FGridCoord(int row, int col);
 	//ѕроверка проинициализированности координаты
 	bool getIsInit();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int Col;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int Row;
 };
 
@@ -55,8 +60,8 @@ private:
 	TMap<int32, WrapperRow*> Col;
 	int NumberOfItemsInTable = 0;
 
-	GridCoord MinCoord;
-	GridCoord MaxCoord;
+	FGridCoord MinCoord;
+	FGridCoord MaxCoord;
 
 public:
 	~UCoordWrapperOfTable();
@@ -73,7 +78,9 @@ public:
 	void Clear();
 
 	//ѕолучение самой левой нижней координаты
-	GridCoord getMinCoord();
+	UFUNCTION(BlueprintCallable)
+	FGridCoord getMinCoord();
 	//ѕолучение самой правой верхней координаты
-	GridCoord getMaxCoord();
+	UFUNCTION(BlueprintCallable)
+	FGridCoord getMaxCoord();
 };
