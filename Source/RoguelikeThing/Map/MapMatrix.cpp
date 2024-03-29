@@ -62,7 +62,7 @@ void UMapMatrix::destroyLoadStatement(FString FunctionName)
         UE_LOG(MapDataBase, Warning, TEXT("Warning in MapMatrix class in %s function - LoadStatement was not destroyed"), *FunctionName);
     }
     else
-        if (GameInstance && GameInstance->LogType != ELogType::NONE)
+        if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
             UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the %s function: The LoadStatement object has been destroyed"), *FunctionName);
 }
 
@@ -830,7 +830,7 @@ bool UMapMatrix::SetValueOfMapChunkCell(MatrixType matrixType, int32 chunkRow, i
             return false;
         }
         else
-            if (GameInstance && GameInstance->LogType != ELogType::NONE)
+            if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                 UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCell function: mapDataBase has been opened"));
     }
 
@@ -857,7 +857,7 @@ bool UMapMatrix::SetValueOfMapChunkCell(MatrixType matrixType, int32 chunkRow, i
             return false;
         }
 
-        if (GameInstance && GameInstance->LogType != ELogType::NONE)
+        if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
             UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCell function: A transaction to write data to table \"%s %d:%d\" has begun"), *SMatrixType, chunkRow, chunkCol);
 
         //Формирование запроса на запись данных в ячейку
@@ -879,7 +879,7 @@ bool UMapMatrix::SetValueOfMapChunkCell(MatrixType matrixType, int32 chunkRow, i
             return false;
         }
 
-        if (GameInstance && GameInstance->LogType != ELogType::NONE)
+        if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
             UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCell function: The request to write data to table \"%s %d:%d\" has been completed"), *SMatrixType, chunkRow, chunkCol);
 
         //Закрепление транзакции
@@ -890,7 +890,7 @@ bool UMapMatrix::SetValueOfMapChunkCell(MatrixType matrixType, int32 chunkRow, i
                 UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkCell function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
             }
 
-            if (GameInstance && GameInstance->LogType != ELogType::NONE)
+            if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                 UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCell function: The transaction to write data to table \"%s %d:%d\" was rolled back"), *SMatrixType, chunkRow, chunkCol);
 
             if (autoClose)
@@ -898,7 +898,7 @@ bool UMapMatrix::SetValueOfMapChunkCell(MatrixType matrixType, int32 chunkRow, i
             return false;
         }
 
-        if (GameInstance && GameInstance->LogType != ELogType::NONE) {
+        if (GameInstance && GameInstance->LogType == ELogType::DETAILED) {
             UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCell function: The transaction to write data to table \"%s %d:%d\" was committed"), *SMatrixType, chunkRow, chunkCol);
             UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCell function: The number %d is fully set to cell %d:%d in the \"%s %d:%d\" table"), Value, cellRow, cellCol, *SMatrixType, chunkRow, chunkCol);
         }
@@ -943,7 +943,7 @@ ECellTypeOfMapStructure UMapMatrix::GetValueOfMapChunkStructureCell(int32 chunkR
             return ECellTypeOfMapStructure::Error;
         }
         else
-            if (GameInstance && GameInstance->LogType != ELogType::NONE)
+            if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                 UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the GetValueOfMapChunkStructureCell function: mapDataBase has been opened"));
     }
 
@@ -959,7 +959,7 @@ ECellTypeOfMapStructure UMapMatrix::GetValueOfMapChunkStructureCell(int32 chunkR
             return ECellTypeOfMapStructure::Error;
         }
 
-        if (GameInstance && GameInstance->LogType != ELogType::NONE)
+        if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
             UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the GetValueOfMapChunkStructureCell function: A transaction to read data from the table \"Structure %d:%d\" has begun"), chunkRow, chunkCol);
 
         if (LoadStatement->IsValid() && LoadStatement->Step() == ESQLitePreparedStatementStepResult::Row) {
@@ -969,21 +969,21 @@ ECellTypeOfMapStructure UMapMatrix::GetValueOfMapChunkStructureCell(int32 chunkR
             //Получение значения из выше выбранной строки по порядковому номеру столбца
             if (LoadStatement->GetColumnValueByIndex(cellCol, result)) {
 
-                if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                     UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the GetValueOfMapChunkStructureCell function: The value %d was obtained at index %d:%d from the \"Structure %d:%d\" table"), result, cellRow, cellCol, chunkRow, chunkCol);
 
                 //Проверка является ли полученное значение допустимым для преобразования в перечисление ECellTypeOfMapStructure
                 if (result >=0 && result < CellType->GetMaxEnumValue()) {
                     ECellTypeOfMapStructure enumResult = (ECellTypeOfMapStructure)result;
 
-                    if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                    if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                         UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the GetValueOfMapChunkStructureCell function: The value %d received at index %d:%d from the  table is valid for conversion to an enumeration"), result, cellRow, cellCol, chunkRow, chunkCol);
 
                     destroyLoadStatement("GetValueOfMapChunkStructureCell");
                     if (autoClose)
                         mapDataBaseClose("GetValueOfMapChunkStructureCell");
 
-                    if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                    if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                         UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the GetValueOfMapChunkStructureCell function: The value %d in the table \"Structure %d:%d\" at index %d:%d is fully loaded"), result, chunkRow, chunkCol, cellRow, cellCol);
 
                     return enumResult;
@@ -1032,7 +1032,7 @@ void UMapMatrix::mapDataBaseClose(FString FunctionName)
             return;
         }
 
-        if (GameInstance && GameInstance->LogType != ELogType::NONE)
+        if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
             UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the %s function: mapDataBase has been closed"), *FunctionName);
     }
     else {
@@ -1051,7 +1051,7 @@ bool UMapMatrix::SetValueOfMapChunkCellByGlobalIndex(MatrixType matrixType, int3
 
     convertingGlobalIndexIntoLocalOne(globalCellRow, globalCellCol, chunkRow, cellRow, chunkCol, cellCol);
 
-    if (GameInstance && GameInstance->LogType != ELogType::NONE)
+    if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
         UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCellByGlobalIndex function: Global index %d:%d translated into tables \"%s %d:%d\" cell %d:%d"), globalCellRow, globalCellCol, *getStringMatrixType(matrixType), chunkRow, chunkCol, cellRow, cellCol);
 
     /* Если автозакрытие отключено, то база данных открывается здесь с модификатором ReadWriteCreate,
@@ -1062,7 +1062,7 @@ bool UMapMatrix::SetValueOfMapChunkCellByGlobalIndex(MatrixType matrixType, int3
             return false;
         }
         else
-            if (GameInstance && GameInstance->LogType != ELogType::NONE)
+            if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                 UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCellByGlobalIndex function: mapDataBase has been opened"));
     }
 
@@ -1085,7 +1085,7 @@ ECellTypeOfMapStructure UMapMatrix::GetValueOfMapChunkStructureCellByGlobalIndex
 
     convertingGlobalIndexIntoLocalOne(globalCellRow, globalCellCol, chunkRow, cellRow, chunkCol, cellCol);
 
-    if (GameInstance && GameInstance->LogType != ELogType::NONE)
+    if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
         UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the GetValueOfMapChunkStructureCellByGlobalIndex function: Global index %d:%d translated into tables \"%s %d:%d\" cell %d:%d"), globalCellRow, globalCellCol, *getStringMatrixType(MatrixType::ChunkStructure), chunkRow, chunkCol, cellRow, cellCol);
 
     return GetValueOfMapChunkStructureCell(chunkRow, chunkCol, cellRow, cellCol, autoClose);
@@ -1179,7 +1179,7 @@ FMapDimensions UMapMatrix::GetMapDimensions(bool autoClose)
             return FMapDimensions();
         }
         else
-            if (GameInstance && GameInstance->LogType != ELogType::NONE)
+            if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                 UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the GetMapDimensions function: mapDataBase has been opened"));
     }
 

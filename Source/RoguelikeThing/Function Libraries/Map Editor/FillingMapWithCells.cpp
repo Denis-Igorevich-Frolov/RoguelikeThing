@@ -274,6 +274,8 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                                     });
                                 }
 
+                                /* В виджет ячейки перелаётся указатель на тип кисти редактора карт. Тем самым у
+                                 * ячейки всегда будет информация о том, какой стиль выбрать при нажатии по ней */
                                 if(BrushType)
                                     Cell->BrushType = BrushType;
                                 else

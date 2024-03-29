@@ -5,10 +5,13 @@
 #include "CoreMinimal.h"
 #include "MapEditorBrushType.generated.h"
 
-/**
- * 
- */
+/**********************************************************************************
+ * Данный класс является классом текущего типа кисти. Сам UMapEditorBrushType
+ * по факту должен быть структурой, но он является классом наследником UObject,
+ * чтобы его легко можно было прередавать и хранить по указателю
+ **********************************************************************************/
 
+//Перечисление всех возможных типов кисти
 UENUM(BlueprintType)
 enum class FMapEditorBrushType : uint8 {
 	CORRIDOR	UMETA(DisplayName = "Corridor"),
@@ -25,6 +28,8 @@ class ROGUELIKETHING_API UMapEditorBrushType : public UObject
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FMapEditorBrushType BrushType;
+
+	//Помимо текущего типа кисти, данный класс также хранит и все прочие характеристики, которые сопутствуют кистям
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool Researched = false;

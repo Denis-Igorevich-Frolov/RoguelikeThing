@@ -33,7 +33,6 @@ bool UMyFileManager::CopyFileToTemporaryDirectory(FString PathToOriginalFile, FS
     return true;
 }
 
-#pragma optimize( "", off )
 bool UMyFileManager::SaveTempFileToOriginalDirectory(FString PathToOriginalFile, FString PathToTempFile)
 {
     if (!FileManager.FileExists(*PathToTempFile)) {

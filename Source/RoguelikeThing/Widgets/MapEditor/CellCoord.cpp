@@ -3,6 +3,6 @@
 
 #include "RoguelikeThing/Widgets/MapEditor/CellCoord.h"
 
-FCellCoord::FCellCoord(int32 Row, int32 Coll) : Row(Row), Coll(Coll)
+FCellCoord::FCellCoord(int32 Row, int32 Col) : Row(Row), Col(Col)
 {
 }
