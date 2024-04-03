@@ -24,6 +24,7 @@ private:
 public:
 	UMapEditor(const FObjectInitializer& ObjectInitializer);
 
+	//Ёвент, вызываемой €чейкой, который определ€ет какой стиль к ней стоит применить
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetDBCellValue(ECellTypeOfMapStructure value, FCellCoord CellCoord, UMapCell* CallingCell);
 

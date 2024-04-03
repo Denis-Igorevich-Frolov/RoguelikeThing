@@ -862,6 +862,7 @@ bool UMapMatrix::SetValueOfMapChunkCell(MatrixType matrixType, int32 chunkRow, i
 
         //Формирование запроса на запись данных в ячейку
         FString QueryToSetCellValue;
+        //Если значение равно 0, то чтобы не загружать базу данных, в неё передаётся NULL, который будет работать эквивалентно 0, но весить меньше
         if(Value == 0)
             QueryToSetCellValue = FString::Printf(TEXT("UPDATE \"%s %d:%d\" SET \"Col %d\" = NULL WHERE RowNum = %d;"), *SMatrixType, chunkRow, chunkCol, cellCol, cellRow);
         else
