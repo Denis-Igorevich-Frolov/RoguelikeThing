@@ -132,7 +132,7 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
             return false;
         }
         else
-            if (GameInstance && GameInstance->LogType != ELogType::NONE)
+            if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                 UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: mapDataBase has been opened"));
     }
 
@@ -465,7 +465,7 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
         else
             /* Если таблица уже существует, false не возвращается. Главное чтобы после
              * выполнения этой функции указанная таблица так или иначе существовала */
-                 if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                 if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                      UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Table \"%s %d:%d\" already exists in file %s"), *SMatrixType, chunkRow, chunkCol, *FilePath);
     }
     else {
