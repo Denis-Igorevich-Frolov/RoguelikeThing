@@ -495,72 +495,72 @@ bool UMapMatrix::CheckCorrectOfCorridorLocation(MatrixType matrixType, int32 glo
     int TotalCols = (Dimensions.MaxCol - Dimensions.MinCol + 1) * Dimensions.TableLength;
 
     if (globalCellRow - 1 > 0) {
-        ECellTypeOfMapStructure CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow - 1, globalCellCol, false);
+        FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow - 1, globalCellCol, false);
 
-        if (CellType == ECellTypeOfMapStructure::Error) {
+        if (CellType == FMapEditorBrushType::Error) {
             if (autoClose)
                 mapDataBaseClose("CheckingCorrectOfCorridorLocation");
             return false;
         }
 
-        if (CellType == ECellTypeOfMapStructure::Corridor || CellType == ECellTypeOfMapStructure::Room) {
+        if (CellType == FMapEditorBrushType::Corridor || CellType == FMapEditorBrushType::Room) {
             CounterOfSurroundingStructures++;
 
-            if (CellType == ECellTypeOfMapStructure::Corridor)
+            if (CellType == FMapEditorBrushType::Corridor)
                 if (!CheckCorrectOfCorridorLocation(matrixType, globalCellRow - 1, globalCellCol, PassageDepthNumber + 1, false))
                     return false;
         }
     }
 
     if (globalCellRow + 1 <= TotalRows) {
-        ECellTypeOfMapStructure CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow + 1, globalCellCol, false);
+        FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow + 1, globalCellCol, false);
 
-        if (CellType == ECellTypeOfMapStructure::Error) {
+        if (CellType == FMapEditorBrushType::Error) {
             if (autoClose)
                 mapDataBaseClose("CheckingCorrectOfCorridorLocation");
             return false;
         }
 
-        if (CellType == ECellTypeOfMapStructure::Corridor || CellType == ECellTypeOfMapStructure::Room) {
+        if (CellType == FMapEditorBrushType::Corridor || CellType == FMapEditorBrushType::Room) {
             CounterOfSurroundingStructures++;
 
-            if (CellType == ECellTypeOfMapStructure::Corridor)
+            if (CellType == FMapEditorBrushType::Corridor)
                 if (!CheckCorrectOfCorridorLocation(matrixType, globalCellRow + 1, globalCellCol, PassageDepthNumber + 1, false))
                     return false;
         }
     }
 
     if (globalCellCol - 1 > 0) {
-        ECellTypeOfMapStructure CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow, globalCellCol - 1, false);
+        FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow, globalCellCol - 1, false);
 
-        if (CellType == ECellTypeOfMapStructure::Error) {
+        if (CellType == FMapEditorBrushType::Error) {
             if (autoClose)
                 mapDataBaseClose("CheckingCorrectOfCorridorLocation");
             return false;
         }
 
-        if (CellType == ECellTypeOfMapStructure::Corridor || CellType == ECellTypeOfMapStructure::Room) {
+        if (CellType == FMapEditorBrushType::Corridor || CellType == FMapEditorBrushType::Room) {
             CounterOfSurroundingStructures++;
 
-            if (CellType == ECellTypeOfMapStructure::Corridor)
+            if (CellType == FMapEditorBrushType::Corridor)
                 if (!CheckCorrectOfCorridorLocation(matrixType, globalCellRow, globalCellCol - 1, PassageDepthNumber + 1, false))
                     return false;
         }
     }
 
     if (globalCellCol + 1 <= TotalCols) {
-        ECellTypeOfMapStructure CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow, globalCellCol + 1, false);
+        FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow, globalCellCol + 1, false);
 
-        if (CellType == ECellTypeOfMapStructure::Error) {
+        if (CellType == FMapEditorBrushType::Error) {
             if (autoClose)
                 mapDataBaseClose("CheckingCorrectOfCorridorLocation");
             return false;
         }
 
-        if (CellType == ECellTypeOfMapStructure::Corridor || CellType == ECellTypeOfMapStructure::Room) {
+        if (CellType == FMapEditorBrushType::Corridor || CellType == FMapEditorBrushType::Room) {
             CounterOfSurroundingStructures++;
 
-            if(CellType == ECellTypeOfMapStructure::Corridor)
+            if(CellType == FMapEditorBrushType::Corridor)
                 if (!CheckCorrectOfCorridorLocation(matrixType, globalCellRow, globalCellCol + 1, PassageDepthNumber + 1, false))
                     return false;
         }
@@ -582,60 +582,60 @@ bool UMapMatrix::CheckCorrectOfRoomLocation(MatrixType matrixType, int32 globalC
     int TotalCols = (Dimensions.MaxCol - Dimensions.MinCol + 1) * Dimensions.TableLength;
 
     if (globalCellRow - 1 > 0) {
-        ECellTypeOfMapStructure CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow - 1, globalCellCol, false);
+        FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow - 1, globalCellCol, false);
 
-        if (CellType == ECellTypeOfMapStructure::Error) {
+        if (CellType == FMapEditorBrushType::Error) {
             if (autoClose)
                 mapDataBaseClose("CheckCorrectOfRoomLocation");
             return false;
         }
 
-        if (CellType == ECellTypeOfMapStructure::Corridor) {
+        if (CellType == FMapEditorBrushType::Corridor) {
             if (!CheckCorrectOfCorridorLocation(matrixType, globalCellRow - 1, globalCellCol, 2, false))
                 return false;
         }
     }
 
     if (globalCellRow + 1 <= TotalRows) {
-        ECellTypeOfMapStructure CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow + 1, globalCellCol, false);
+        FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow + 1, globalCellCol, false);
 
-        if (CellType == ECellTypeOfMapStructure::Error) {
+        if (CellType == FMapEditorBrushType::Error) {
             if (autoClose)
                 mapDataBaseClose("CheckCorrectOfRoomLocation");
             return false;
         }
 
-        if (CellType == ECellTypeOfMapStructure::Corridor) {
+        if (CellType == FMapEditorBrushType::Corridor) {
             if (!CheckCorrectOfCorridorLocation(matrixType, globalCellRow + 1, globalCellCol, 2, false))
                 return false;
         }
     }
 
     if (globalCellCol - 1 > 0) {
-        ECellTypeOfMapStructure CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow, globalCellCol - 1, false);
+        FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow, globalCellCol - 1, false);
 
-        if (CellType == ECellTypeOfMapStructure::Error) {
+        if (CellType == FMapEditorBrushType::Error) {
             if (autoClose)
                 mapDataBaseClose("CheckCorrectOfRoomLocation");
             return false;
         }
 
-        if (CellType == ECellTypeOfMapStructure::Corridor) {
+        if (CellType == FMapEditorBrushType::Corridor) {
             if (!CheckCorrectOfCorridorLocation(matrixType, globalCellRow, globalCellCol - 1, 2, false))
                 return false;
         }
     }
 
     if (globalCellCol + 1 <= TotalCols) {
-        ECellTypeOfMapStructure CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow, globalCellCol + 1, false);
+        FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow, globalCellCol + 1, false);
 
-        if (CellType == ECellTypeOfMapStructure::Error) {
+        if (CellType == FMapEditorBrushType::Error) {
             if (autoClose)
                 mapDataBaseClose("CheckCorrectOfRoomLocation");
             return false;
         }
 
-        if (CellType == ECellTypeOfMapStructure::Corridor) {
+        if (CellType == FMapEditorBrushType::Corridor) {
             if (!CheckCorrectOfCorridorLocation(matrixType, globalCellRow, globalCellCol + 1, 2, false))
                 return false;
         }
@@ -656,57 +656,57 @@ FNeighbourhoodOfCell UMapMatrix::CheckNeighbourhoodOfCell(MatrixType matrixType,
     FNeighbourhoodOfCell NeighbourhoodOfCell = FNeighbourhoodOfCell();
 
     if (globalCellRow - 1 > 0) {
-        ECellTypeOfMapStructure CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow - 1, globalCellCol, false);
+        FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow - 1, globalCellCol, false);
 
-        if (CellType == ECellTypeOfMapStructure::Error) {
+        if (CellType == FMapEditorBrushType::Error) {
             if (autoClose)
                 mapDataBaseClose("CheckNeighbourhoodOfCell");
             return FNeighbourhoodOfCell();
         }
 
-        if (CellType == ECellTypeOfMapStructure::Corridor || CellType == ECellTypeOfMapStructure::Room) {
+        if (CellType == FMapEditorBrushType::Corridor || CellType == FMapEditorBrushType::Room) {
             NeighbourhoodOfCell.SomethingOnTop = true;
         }
     }
 
     if (globalCellRow + 1 <= TotalRows) {
-        ECellTypeOfMapStructure CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow + 1, globalCellCol, false);
+        FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow + 1, globalCellCol, false);
 
-        if (CellType == ECellTypeOfMapStructure::Error) {
+        if (CellType == FMapEditorBrushType::Error) {
             if (autoClose)
                 mapDataBaseClose("CheckNeighbourhoodOfCell");
             return FNeighbourhoodOfCell();
         }
 
-        if (CellType == ECellTypeOfMapStructure::Corridor || CellType == ECellTypeOfMapStructure::Room) {
+        if (CellType == FMapEditorBrushType::Corridor || CellType == FMapEditorBrushType::Room) {
             NeighbourhoodOfCell.SomethingOnBottom = true;
         }
     }
 
     if (globalCellCol - 1 > 0) {
-        ECellTypeOfMapStructure CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow, globalCellCol - 1, false);
+        FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow, globalCellCol - 1, false);
 
-        if (CellType == ECellTypeOfMapStructure::Error) {
+        if (CellType == FMapEditorBrushType::Error) {
             if (autoClose)
                 mapDataBaseClose("CheckNeighbourhoodOfCell");
             return FNeighbourhoodOfCell();
         }
 
-        if (CellType == ECellTypeOfMapStructure::Corridor || CellType == ECellTypeOfMapStructure::Room) {
+        if (CellType == FMapEditorBrushType::Corridor || CellType == FMapEditorBrushType::Room) {
             NeighbourhoodOfCell.SomethingOnLeft = true;
         }
     }
 
     if (globalCellCol + 1 <= TotalCols) {
-        ECellTypeOfMapStructure CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow, globalCellCol + 1, false);
+        FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow, globalCellCol + 1, false);
 
-        if (CellType == ECellTypeOfMapStructure::Error) {
+        if (CellType == FMapEditorBrushType::Error) {
             if (autoClose)
                 mapDataBaseClose("CheckNeighbourhoodOfCell");
             return FNeighbourhoodOfCell();
         }
 
-        if (CellType == ECellTypeOfMapStructure::Corridor || CellType == ECellTypeOfMapStructure::Room) {
+        if (CellType == FMapEditorBrushType::Corridor || CellType == FMapEditorBrushType::Room) {
             NeighbourhoodOfCell.SomethingOnRight = true;
         }
     }
@@ -801,7 +801,7 @@ bool UMapMatrix::DeleteMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
 
 /* Функция, записывающая значение в ячейку фрагмента БД по её локальному индексу.
  * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
-bool UMapMatrix::SetValueOfMapChunkCell(MatrixType matrixType, int32 chunkRow, int32 chunkCol, int32 cellRow, int32 cellCol, ECellTypeOfMapStructure value, bool autoClose)
+bool UMapMatrix::SetValueOfMapChunkCell(MatrixType matrixType, int32 chunkRow, int32 chunkCol, int32 cellRow, int32 cellCol, FMapEditorBrushType value, bool autoClose)
 {
     int32 Value = (int32)value;
     //Все переданные индексы ячейки должны находиться в диапазоне от 1 до TableLength включительно
@@ -916,24 +916,24 @@ bool UMapMatrix::SetValueOfMapChunkCell(MatrixType matrixType, int32 chunkRow, i
 
 /* Функция, считывающая значение из ячейки фрагмента БД по её локальному индексу.
  * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
-ECellTypeOfMapStructure UMapMatrix::GetValueOfMapChunkStructureCell(int32 chunkRow, int32 chunkCol, int32 cellRow, int32 cellCol, bool autoClose)
+FMapEditorBrushType UMapMatrix::GetValueOfMapChunkStructureCell(int32 chunkRow, int32 chunkCol, int32 cellRow, int32 cellCol, bool autoClose)
 {
     //Все переданные индексы ячейки должны находиться в диапазоне от 1 до TableLength включительно
     if (cellRow < 1) {
         UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the UMapMatrix class in the GetValueOfMapChunkStructureCell function - cellRow value (%d) is less than 1"), cellRow);
-        return ECellTypeOfMapStructure::Error;
+        return FMapEditorBrushType::Error;
     }
     if (cellRow > TableLength) {
         UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the UMapMatrix class in the GetValueOfMapChunkStructureCell function - cellRow value (%d) is greater than TableLength (%d)"), cellRow, TableLength);
-        return ECellTypeOfMapStructure::Error;
+        return FMapEditorBrushType::Error;
     }
     if (cellCol < 1) {
         UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the UMapMatrix class in the GetValueOfMapChunkStructureCell function - cellCol value (%d) is less than 1"), cellCol);
-        return ECellTypeOfMapStructure::Error;
+        return FMapEditorBrushType::Error;
     }
     if (cellCol > TableLength) {
         UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the UMapMatrix class in the GetValueOfMapChunkStructureCell function - cellCol value (%d) is greater than TableLength (%d)"), cellCol, TableLength);
-        return ECellTypeOfMapStructure::Error;
+        return FMapEditorBrushType::Error;
     }
 
     /* Если mapDataBase непроинициализированна, это означает, что база
@@ -941,7 +941,7 @@ ECellTypeOfMapStructure UMapMatrix::GetValueOfMapChunkStructureCell(int32 chunkR
     if (!mapDataBase->IsValid()) {
         if (!mapDataBase->Open(*FilePath, ESQLiteDatabaseOpenMode::ReadOnly)) {
             UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetValueOfMapChunkStructureCell function when trying to open mapDataBase: %s"), *mapDataBase->GetLastError());
-            return ECellTypeOfMapStructure::Error;
+            return FMapEditorBrushType::Error;
         }
         else
             if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
@@ -957,7 +957,7 @@ ECellTypeOfMapStructure UMapMatrix::GetValueOfMapChunkStructureCell(int32 chunkR
 
             if (autoClose)
                 mapDataBaseClose("GetValueOfMapChunkStructureCell");
-            return ECellTypeOfMapStructure::Error;
+            return FMapEditorBrushType::Error;
         }
 
         if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
@@ -965,17 +965,17 @@ ECellTypeOfMapStructure UMapMatrix::GetValueOfMapChunkStructureCell(int32 chunkR
 
         if (LoadStatement->IsValid() && LoadStatement->Step() == ESQLitePreparedStatementStepResult::Row) {
             uint8 result;
-            //Получение указателя на перечисление ECellTypeOfMapStructure для выполнения проверок
-            const UEnum* CellType = FindObject<UEnum>(ANY_PACKAGE, TEXT("ECellTypeOfMapStructure"), true);
+            //Получение указателя на перечисление FMapEditorBrushType для выполнения проверок
+            const UEnum* CellType = FindObject<UEnum>(ANY_PACKAGE, TEXT("FMapEditorBrushType"), true);
             //Получение значения из выше выбранной строки по порядковому номеру столбца
             if (LoadStatement->GetColumnValueByIndex(cellCol, result)) {
 
                 if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                     UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the GetValueOfMapChunkStructureCell function: The value %d was obtained at index %d:%d from the \"Structure %d:%d\" table"), result, cellRow, cellCol, chunkRow, chunkCol);
 
-                //Проверка является ли полученное значение допустимым для преобразования в перечисление ECellTypeOfMapStructure
+                //Проверка является ли полученное значение допустимым для преобразования в перечисление FMapEditorBrushType
                 if (result >=0 && result < CellType->GetMaxEnumValue()) {
-                    ECellTypeOfMapStructure enumResult = (ECellTypeOfMapStructure)result;
+                    FMapEditorBrushType enumResult = (FMapEditorBrushType)result;
 
                     if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                         UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the GetValueOfMapChunkStructureCell function: The value %d received at index %d:%d from the  table is valid for conversion to an enumeration"), result, cellRow, cellCol, chunkRow, chunkCol);
@@ -990,12 +990,12 @@ ECellTypeOfMapStructure UMapMatrix::GetValueOfMapChunkStructureCell(int32 chunkR
                     return enumResult;
                 }
                 else {
-                    UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetValueOfMapChunkStructureCell function when trying to cast the value %d to the ECellTypeOfMapStructure data type obtained at index %d:%d from the \"Structure %d:%d\" table - this number is not valid for casting to ECellTypeOfMapStructure"), result, cellRow, cellCol, chunkRow, chunkCol);
+                    UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetValueOfMapChunkStructureCell function when trying to cast the value %d to the FMapEditorBrushType data type obtained at index %d:%d from the \"Structure %d:%d\" table - this number is not valid for casting to FMapEditorBrushType"), result, cellRow, cellCol, chunkRow, chunkCol);
 
                     destroyLoadStatement("GetValueOfMapChunkStructureCell");
                     if (autoClose)
                         mapDataBaseClose("GetValueOfMapChunkStructureCell");
-                    return ECellTypeOfMapStructure::Error;
+                    return FMapEditorBrushType::Error;
                 }
             }
             else {
@@ -1004,7 +1004,7 @@ ECellTypeOfMapStructure UMapMatrix::GetValueOfMapChunkStructureCell(int32 chunkR
                 destroyLoadStatement("GetValueOfMapChunkStructureCell");
                 if (autoClose)
                     mapDataBaseClose("GetValueOfMapChunkStructureCell");
-                return ECellTypeOfMapStructure::Error;
+                return FMapEditorBrushType::Error;
             }
         }
         else {
@@ -1013,14 +1013,14 @@ ECellTypeOfMapStructure UMapMatrix::GetValueOfMapChunkStructureCell(int32 chunkR
             destroyLoadStatement("GetValueOfMapChunkStructureCell");
             if (autoClose)
                 mapDataBaseClose("GetValueOfMapChunkStructureCell");
-            return ECellTypeOfMapStructure::Error;
+            return FMapEditorBrushType::Error;
         }
 
         destroyLoadStatement("GetValueOfMapChunkStructureCell");
     }
     else {
         UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetValueOfMapChunkStructureCell function - mapDataBase is not valid"));
-        return ECellTypeOfMapStructure::Error;
+        return FMapEditorBrushType::Error;
     }
 }
 
@@ -1043,7 +1043,7 @@ void UMapMatrix::mapDataBaseClose(FString FunctionName)
 
 /* Функция, записывающая значение в ячейку фрагмента БД по её глобальному индексу.
  * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
-bool UMapMatrix::SetValueOfMapChunkCellByGlobalIndex(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol, ECellTypeOfMapStructure value, bool autoClose)
+bool UMapMatrix::SetValueOfMapChunkCellByGlobalIndex(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol, FMapEditorBrushType value, bool autoClose)
 {
     int32 chunkRow;
     int32 cellRow;
@@ -1077,7 +1077,7 @@ bool UMapMatrix::SetValueOfMapChunkCellByGlobalIndex(MatrixType matrixType, int3
 
 /* Функция, считывающая значение из ячейки фрагмента БД по её глобальному индексу.
  * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
-ECellTypeOfMapStructure UMapMatrix::GetValueOfMapChunkStructureCellByGlobalIndex(int32 globalCellRow, int32 globalCellCol, bool autoClose)
+FMapEditorBrushType UMapMatrix::GetValueOfMapChunkStructureCellByGlobalIndex(int32 globalCellRow, int32 globalCellCol, bool autoClose)
 {
     int32 chunkRow;
     int32 cellRow;

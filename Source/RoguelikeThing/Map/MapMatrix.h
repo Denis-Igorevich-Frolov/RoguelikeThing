@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "CellTypeOfMapStructure.h"
+#include "RoguelikeThing/Enumerations/MapEditorBrushType.h"
 #include "SQLiteDatabase.h"
 #include "RoguelikeThing/MyGameInstance.h"
 #include "RoguelikeThing/Structs/Widgets/MapEditor/MapCell/NeighbourhoodOfCell.h"
@@ -143,12 +143,12 @@ public:
 	/* Функция, записывающая значение в ячейку фрагмента БД по её локальному индексу.
 	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически*/
 	UFUNCTION(BlueprintCallable)
-	bool SetValueOfMapChunkCell(MatrixType matrixType,  int32 chunkRow, int32 chunkCol, int32 cellRow, int32 cellCol, ECellTypeOfMapStructure value, bool autoClose = true);
+	bool SetValueOfMapChunkCell(MatrixType matrixType,  int32 chunkRow, int32 chunkCol, int32 cellRow, int32 cellCol, FMapEditorBrushType value, bool autoClose = true);
 	
 	/* Функция, считывающая значение из ячейки фрагмента БД по её локальному индексу.
 	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически*/
 	UFUNCTION(BlueprintCallable)
-	ECellTypeOfMapStructure GetValueOfMapChunkStructureCell(int32 chunkRow, int32 chunkCol, int32 cellRow, int32 cellCol, bool autoClose = true);
+	FMapEditorBrushType GetValueOfMapChunkStructureCell(int32 chunkRow, int32 chunkCol, int32 cellRow, int32 cellCol, bool autoClose = true);
 	
     //Функция, закрывающая базу данных карты
 	UFUNCTION(BlueprintCallable)
@@ -157,12 +157,12 @@ public:
 	/* Функция, записывающая значение в ячейку фрагмента БД по её глобальному индексу.
 	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически*/
 	UFUNCTION(BlueprintCallable)
-	bool SetValueOfMapChunkCellByGlobalIndex(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol, ECellTypeOfMapStructure value, bool autoClose = true);
+	bool SetValueOfMapChunkCellByGlobalIndex(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol, FMapEditorBrushType value, bool autoClose = true);
 
 	/* Функция, считывающая значение из ячейки фрагмента БД по её глобальному индексу.
 	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически*/
 	UFUNCTION(BlueprintCallable)
-	ECellTypeOfMapStructure GetValueOfMapChunkStructureCellByGlobalIndex(int32 globalCellRow, int32 globalCellCol, bool autoClose = true);
+	FMapEditorBrushType GetValueOfMapChunkStructureCellByGlobalIndex(int32 globalCellRow, int32 globalCellCol, bool autoClose = true);
 
 	//Функция, устанавливающая имя файла с базой данных
 	UFUNCTION(BlueprintCallable)

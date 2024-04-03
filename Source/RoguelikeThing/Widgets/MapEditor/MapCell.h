@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "RoguelikeThing/Enumerations/MapEditorBrushType.h"
 #include "RoguelikeThing/Widgets/MapEditor/MapEditor.h"
 #include "RoguelikeThing/Widgets/MapEditor/CellCoord.h"
 #include "RoguelikeThing/Structs/Widgets/MapEditor/MapCell/NeighbourhoodOfCell.h"
@@ -46,10 +45,6 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FCellCoord MyCoord;
-
-	//”казатель на тип кисти из редактора карт. —лужит дл€ понимани€ €чейкой на какой тип ей стоит мен€тьс€ при нажатии по ней
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UMapEditorBrushType* BrushType;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FCellType CurrentType = FCellType::NONE;

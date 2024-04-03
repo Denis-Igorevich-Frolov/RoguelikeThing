@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "RoguelikeThing/Map/CellTypeOfMapStructure.h"
 #include "RoguelikeThing/Widgets/MapEditor/CellCoord.h"
 #include "MapEditor.generated.h"
 
@@ -26,7 +25,7 @@ public:
 
 	//Ёвент, вызываемой €чейкой, который определ€ет какой стиль к ней стоит применить
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void SetDBCellValue(ECellTypeOfMapStructure value, FCellCoord CellCoord, UMapCell* CallingCell);
+	void SetDBCellValue(FCellCoord CellCoord, UMapCell* CallingCell);
 
 	//Ёвент, при котором следует пересчитать какие тайлы стоит отобразить, а какие скрыть
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)

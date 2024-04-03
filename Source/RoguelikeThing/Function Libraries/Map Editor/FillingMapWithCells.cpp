@@ -24,7 +24,7 @@ UFillingMapWithCells::UFillingMapWithCells()
  * класса UMapTile или им самим, CellClass обязательно
  * должен быть наследником класса UMapCell или им самим */
 bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, UUniformGridPanel* TilesGridPanel, UClass* CellClass,
-    UClass* MapTileClass, UMapEditor* MapEditor, UCoordWrapperOfTable* TilesCoordWrapper, UPARAM(ref) UMapEditorBrushType* BrushType)
+    UClass* MapTileClass, UMapEditor* MapEditor, UCoordWrapperOfTable* TilesCoordWrapper)
 {
     //Координатная обёртка изначально должна быть полность пустой во время заполнения карты
     TilesCoordWrapper->Clear();
@@ -189,7 +189,7 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
 
         //Само забиваение карты ячейками происходит в отдельном потоке
         AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapEditor, NumberOfMapTilesCols, NumberOfMapTilesRows, TableLength,
-            MapTileLength, DisplayedColNum, DisplayedRowNum, TilesGridPanel,  CellClass, MapTileClass, TilesCoordWrapper, BrushType, this]() {
+            MapTileLength, DisplayedColNum, DisplayedRowNum, TilesGridPanel,  CellClass, MapTileClass, TilesCoordWrapper, this]() {
 
                 if (GameInstance && GameInstance->LogType != ELogType::NONE)
                     UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The TilesGridPanel table population thread has been opened"));
@@ -273,13 +273,6 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                                         return false;
                                     });
                                 }
-
-                                /* В виджет ячейки перелаётся указатель на тип кисти редактора карт. Тем самым у
-                                 * ячейки всегда будет информация о том, какой стиль выбрать при нажатии по ней */
-                                if(BrushType)
-                                    Cell->BrushType = BrushType;
-                                else
-                                    UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: BrushType pointer is not valid"));
 
                                 Cell->MyCoord = FCellCoord(row * MapTileLength + tileRow + 1, col * MapTileLength + tileCol + 1);
                                 Cell->MyEditor = MapEditor;

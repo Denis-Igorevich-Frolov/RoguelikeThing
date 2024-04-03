@@ -100,9 +100,6 @@
     <Filter Include="Source\RoguelikeThing\Map">
       <UniqueIdentifier>{2B4AEDB6-FA68-4770-9759-55AFEF3223D8}</UniqueIdentifier>
     </Filter>
-    <ClInclude Include="..\..\Source\RoguelikeThing\Map\CellTypeOfMapStructure.h">
-      <Filter>Source\RoguelikeThing\Map</Filter>
-    </ClInclude>
     <ClCompile Include="..\..\Source\RoguelikeThing\Map\MapMatrix.cpp">
       <Filter>Source\RoguelikeThing\Map</Filter>
     </ClCompile>

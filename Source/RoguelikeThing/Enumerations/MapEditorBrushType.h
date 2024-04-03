@@ -14,10 +14,11 @@
 //Перечисление всех возможных типов кисти
 UENUM(BlueprintType)
 enum class FMapEditorBrushType : uint8 {
-	CORRIDOR	UMETA(DisplayName = "Corridor"),
-    ROOM		UMETA(DisplayName = "Room"),
-	ERASER		UMETA(DisplayName = "Eraser"),
-	MOVEMAP		UMETA(DisplayName = "Move map"),
+	Emptiness	 = 0     UMETA(DisplayName = "Emptiness"),
+	Error		 = 1     UMETA(DisplayName = "Error"),
+	Corridor	 = 2     UMETA(DisplayName = "Corridor"),
+	Room		 = 3     UMETA(DisplayName = "Room"),
+	MOVEMAP		 = 4	 UMETA(DisplayName = "Move map"),
 };
 
 UCLASS(Blueprintable, BlueprintType)
