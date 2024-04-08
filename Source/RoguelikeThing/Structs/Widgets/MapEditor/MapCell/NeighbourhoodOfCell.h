@@ -22,5 +22,13 @@ struct FNeighbourhoodOfCell
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool SomethingOnBottom = false;
 
-	FNeighbourhoodOfCell(bool SomethingOnRight = false, bool SomethingOnLeft = false, bool SomethingOnTop = false, bool SomethingOnBottom = false);
+	/* Переменная, отражающая то была ли структура проинициализирована или сделана через конструктор по умолчанию.
+	 * Непроинициализированные экземпляры считаются невалидными и возвращаются функциями при ошибке */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	bool IsInit = false;
+
+	/* Конструктор по умолчанию делает экземпляры, у кторых IsInit равна false. Такие структуры будут считаться
+	 * невалидными, их следует заполнить и после этого установить переменной IsInit значение true вручную */
+	FNeighbourhoodOfCell();
+	FNeighbourhoodOfCell(bool SomethingOnRight, bool SomethingOnLeft, bool SomethingOnTop, bool SomethingOnBottom);
 };

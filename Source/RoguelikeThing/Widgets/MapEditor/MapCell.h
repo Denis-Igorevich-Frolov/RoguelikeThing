@@ -28,21 +28,26 @@ class ROGUELIKETHING_API UMapCell : public UUserWidget
 	GENERATED_BODY()
 
 public:
+	//”казатель на редактор карт, который управл€ет этой €чейкой
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UMapEditor* MyEditor;
 
+	//‘ункци€, устанавливающа€ €чейке стиль коридора исход€ из еЄ окружени€
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetCorridorStyle(FNeighbourhoodOfCell NeighbourhoodOfCell);
 
+	//‘ункци€, устанавливающа€ €чейке стиль комнаты
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetRoomStyle();
 
+	//‘ункци€, устанавливающа€ €чейке пустой стиль
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetEmptinessStyle();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	FVector2D getSize();
 
+	//√лобальный пор€дковый номер €чейки
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FCellCoord MyCoord;
 

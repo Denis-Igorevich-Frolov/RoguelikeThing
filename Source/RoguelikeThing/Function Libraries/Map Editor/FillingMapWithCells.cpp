@@ -274,7 +274,9 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                                     });
                                 }
 
+                                //Ячейке передаётся её глобальная координата, равная её порядковому номеру по вертикали и горизонтали (точка отсчёта с 1)
                                 Cell->MyCoord = FCellCoord(row * MapTileLength + tileRow + 1, col * MapTileLength + tileCol + 1);
+                                //Также ей передаётся указатель на её редактор карт
                                 Cell->MyEditor = MapEditor;
 
                                 if (GameInstance && GameInstance->LogType == ELogType::DETAILED)

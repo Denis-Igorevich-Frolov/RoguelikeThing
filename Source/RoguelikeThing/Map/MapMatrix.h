@@ -120,33 +120,43 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FMapDimensions GetMapDimensions(bool autoClose = true);
 
+	//Функция, устанавливающая ссылку на виджет загрузки, который будет проигрываться при операциях с картой
 	UFUNCTION(BlueprintCallable)
 	void setLoadWidget(ULoadingWidget* newLoadingWidget);
 	
+	/* Функция, проверяющая корректность применения к определённой ячейке стиля корридора исходя из её окружения.
+	 * Данная функция призвана не допустить создание неоднозначных путей (развилок) в коридорах. Переменную
+	 * PassageDepthNumber не стоит трогать, это глубина прохода рекурсивной функции. Она нужна для того, чтобы
+	 * проверить не только не нарушает ли новый коридор правила расположения, но и не вызывает ли он такое же
+	 * нарушение у соседних клеток */
 	UFUNCTION(BlueprintCallable)
-	bool CheckCorrectOfCorridorLocation(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol, int PassageDepthNumber = 1, bool autoClose = true);
+	bool CheckCorrectOfCorridorLocation(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol, bool autoClose = true, int PassageDepthNumber = 1);
 
+	/* Функция, проверяющая корректность применения к определённой ячейке стиля комнаты исходя из её окружения.
+	 * И хоть от самой комнаты развилки коридоров разрешены, но размещение новой комнаты рядом с коридором
+	 * может приводить к созданию неоднозначных путей */
 	UFUNCTION(BlueprintCallable)
 	bool CheckCorrectOfRoomLocation(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol, bool autoClose = true);
 
+	//Функция, просматривающая есть ли непустые клетки вокруг указаной
 	UFUNCTION(BlueprintCallable)
 	FNeighbourhoodOfCell CheckNeighbourhoodOfCell(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol, bool autoClose = true);
 
 	/* Функция, создающая новый фрагмент карты на отснове переданного типа и индекса фрагмента.
-	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически*/
+	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
 	bool CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chunkCol, bool autoClose = true);
 
 	/* Функция, удаляющая фрагмент карты на отснове переданного типа и индекса фрагмента.
-	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически*/
+	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
 	bool DeleteMapChunk(MatrixType matrixType, int32 chunkRow, int32 chunkCol, bool autoClose = true);
 	
 	/* Функция, записывающая значение в ячейку фрагмента БД по её локальному индексу.
-	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически*/
+	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
 	UFUNCTION(BlueprintCallable)
 	bool SetValueOfMapChunkCell(MatrixType matrixType,  int32 chunkRow, int32 chunkCol, int32 cellRow, int32 cellCol, FMapEditorBrushType value, bool autoClose = true);
 	
 	/* Функция, считывающая значение из ячейки фрагмента БД по её локальному индексу.
-	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически*/
+	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
 	UFUNCTION(BlueprintCallable)
 	FMapEditorBrushType GetValueOfMapChunkStructureCell(int32 chunkRow, int32 chunkCol, int32 cellRow, int32 cellCol, bool autoClose = true);
 	
@@ -155,12 +165,12 @@ public:
 	void mapDataBaseClose(FString FunctionName);
 
 	/* Функция, записывающая значение в ячейку фрагмента БД по её глобальному индексу.
-	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически*/
+	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
 	UFUNCTION(BlueprintCallable)
 	bool SetValueOfMapChunkCellByGlobalIndex(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol, FMapEditorBrushType value, bool autoClose = true);
 
 	/* Функция, считывающая значение из ячейки фрагмента БД по её глобальному индексу.
-	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически*/
+	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
 	UFUNCTION(BlueprintCallable)
 	FMapEditorBrushType GetValueOfMapChunkStructureCellByGlobalIndex(int32 globalCellRow, int32 globalCellCol, bool autoClose = true);
 
