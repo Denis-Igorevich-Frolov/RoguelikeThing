@@ -18,13 +18,13 @@ UFillingMapWithCells::UFillingMapWithCells()
         UE_LOG(FillingMapWithCells, Warning, TEXT("Warning in FillingMapWithCells class in constructor - GameInstance was not retrieved from the world"));
 }
 
-/* ‘ункци€, заполн€юща€ пустыми €чейками карту.
+/* ‘ункци€, заполн€юща€ карту €чейками на основе Ѕƒ.
  *
  * MapTileClass об€зательно должен быть наследником
  * класса UMapTile или им самим, CellClass об€зательно
  * должен быть наследником класса UMapCell или им самим */
 bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, UUniformGridPanel* TilesGridPanel, UClass* CellClass,
-    UClass* MapTileClass, UMapEditor* MapEditor, UCoordWrapperOfTable* TilesCoordWrapper)
+    UClass* MapTileClass, UMapEditor* MapEditor, UCoordWrapperOfTable* TilesCoordWrapper, UMapMatrix* MapMatrix)
 {
     // оординатна€ обЄртка изначально должна быть полность пустой во врем€ заполнени€ карты
     TilesCoordWrapper->Clear();
@@ -84,6 +84,19 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
     }
     if (!TilesCoordWrapper) {
         UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: TilesCoordWrapper is a null pointer"));
+
+        if (LoadingWidget) {
+            LoadingWidget->LoadingComplete(false);
+            LoadingWidget->RemoveFromParent();
+
+            if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
+        }
+
+        return false;
+    }
+    if (!MapMatrix) {
+        UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: MapMatrix is a null pointer"));
 
         if (LoadingWidget) {
             LoadingWidget->LoadingComplete(false);
@@ -189,7 +202,7 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
 
         //—амо забиваение карты €чейками происходит в отдельном потоке
         AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapEditor, NumberOfMapTilesCols, NumberOfMapTilesRows, TableLength,
-            MapTileLength, DisplayedColNum, DisplayedRowNum, TilesGridPanel,  CellClass, MapTileClass, TilesCoordWrapper, this]() {
+            MapTileLength, DisplayedColNum, DisplayedRowNum, TilesGridPanel,  CellClass, MapTileClass, TilesCoordWrapper, MapMatrix, this]() {
 
                 if (GameInstance && GameInstance->LogType != ELogType::NONE)
                     UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The TilesGridPanel table population thread has been opened"));
@@ -299,6 +312,27 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                                     if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                                         UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: A thread to place a cell in a tile has been closed"));
                                 });
+
+                                //“еперь пришло врем€ придать новой €чейке необходимый стиль. ƒл€ этого из Ѕƒ читаетс€ тип структуры €чейки
+                                FMapEditorBrushType CellType = MapMatrix->GetValueOfMapChunkStructureCellByGlobalIndex(row * MapTileLength + tileRow + 1, col * MapTileLength + tileCol + 1, false);
+
+                                /* » затем в соответствии с полученым типом, €чейке присваиваетс€ необходимый стиль.
+                                 * ѕри этом пустой стиль назначать не надо, он и так €вл€етс€ стилем по умолчанию */
+                                switch (CellType)
+                                {
+                                case FMapEditorBrushType::Corridor:
+                                    Cell->SetCorridorStyle(MapMatrix->CheckNeighbourhoodOfCell(MatrixType::ChunkStructure, row * MapTileLength + tileRow + 1, col * MapTileLength + tileCol + 1, false));
+                                    if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                                        UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: Cell Row: %d Col: %d is set to the corridor style"), row * MapTileLength + tileRow + 1, col * MapTileLength + tileCol + 1);
+                                    break;
+                                case FMapEditorBrushType::Room:
+                                    Cell->SetRoomStyle();
+                                    if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                                        UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: Cell Row: %d Col: %d is set to the room style"), row * MapTileLength + tileRow + 1, col * MapTileLength + tileCol + 1);
+                                    break;
+                                default:
+                                    break;
+                                }
 
                                 /* —озданные €чейки забиваютс€ в координатную обЄртку. ѕри этом важен их индекс в пор€дке
                                  * создани€, чтобы, например, слева снизу была €чейка 0x0, а справа сверху - 5x5.
