@@ -249,7 +249,7 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                                     UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: A thread to remove the loading widget has been closed"));
 
                                 return false;
-                            });
+                                });
                         }
 
                         if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
@@ -284,7 +284,7 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                                             UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: A thread to remove the loading widget has been closed"));
 
                                         return false;
-                                    });
+                                        });
                                 }
 
                                 //Ячейке передаётся её глобальная координата, равная её порядковому номеру по вертикали и горизонтали (точка отсчёта с 1)
@@ -311,7 +311,7 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
 
                                     if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                                         UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: A thread to place a cell in a tile has been closed"));
-                                });
+                                    });
 
                                 //Теперь пришло время придать новой ячейке необходимый стиль. Для этого из БД читается тип структуры ячейки
                                 FMapEditorBrushType CellType = MapMatrix->GetValueOfMapChunkStructureCellByGlobalIndex(row * MapTileLength + tileRow + 1, col * MapTileLength + tileCol + 1, false);
@@ -340,15 +340,42 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                                  * инвертированное значение от того, что было уже инвертировано для корректного
                                  * расположения ячеек в GridPanel */
                                 MapTile->CellsCoordWrapper->AddWidget(MapTileLength - 1 - tileRow, tileCol, Cell);
-
-                                /* Для дальнейшего выполнения кода требуется размер тайла.
-                                 * И чтобы потом не запрашивать доступ к содержимому TilesGridPanel,
-                                 * здесь просто считывается этот размпер во время первой итерации */
-                                if (tileRow == 0 && tileCol == MapTileLength - 1) {
-                                    //Размер тайла срого равен общему размеру всех ячеек, никаких дополнительных отступов быть не должно
-                                    TileSize = Cell->getSize() * MapTileLength;
-                                }
                             }
+                        }
+
+                        if (MapTile->GetGridPanel()->HasAnyChildren()) {
+                            if (dynamic_cast<UMapCell*>(MapTile->GetGridPanel()->GetChildAt(0))) {
+                                TileSize = static_cast<UMapCell*>(MapTile->GetGridPanel()->GetChildAt(0))->getSize() * MapTileLength;
+                            }
+                            else {
+                                UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: The MapTile child cell at index 0 is not a UMapCell* or is not valid"));
+                                AsyncTask(ENamedThreads::GameThread, [this]() {
+                                    if (LoadingWidget) {
+                                        LoadingWidget->LoadingComplete(true);
+                                        LoadingWidget->RemoveFromParent();
+
+                                        if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                                            UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
+                                    }
+
+                                    return false;
+                                });
+                            }
+                        }
+                        else {
+                            UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: MapTile does not have any children"));
+                        
+                            AsyncTask(ENamedThreads::GameThread, [this]() {
+                                if (LoadingWidget) {
+                                    LoadingWidget->LoadingComplete(true);
+                                    LoadingWidget->RemoveFromParent();
+
+                                    if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                                        UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
+                                }
+
+                                return false;
+                            });
                         }
 
                         //Добавление созданного тайла в GridPanel производится в основном потоке так как сделать это вне его невозможно
