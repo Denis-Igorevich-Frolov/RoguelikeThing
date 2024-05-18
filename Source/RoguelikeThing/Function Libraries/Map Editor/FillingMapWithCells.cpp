@@ -209,6 +209,8 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
 
                 FVector2D TileSize(0, 0);
 
+                UMapTile* LastMapTile = nullptr;
+
                 /* ƒанный цикл и вложенный в него создают тайлы. ѕри этом
                  * это происходит таким образом, чтобы самый первый тайл
                  * с наименьшим индексом был слева снизу, а последний с
@@ -343,41 +345,6 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                             }
                         }
 
-                        if (MapTile->GetGridPanel()->HasAnyChildren()) {
-                            if (dynamic_cast<UMapCell*>(MapTile->GetGridPanel()->GetChildAt(0))) {
-                                TileSize = static_cast<UMapCell*>(MapTile->GetGridPanel()->GetChildAt(0))->getSize() * MapTileLength;
-                            }
-                            else {
-                                UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: The MapTile child cell at index 0 is not a UMapCell* or is not valid"));
-                                AsyncTask(ENamedThreads::GameThread, [this]() {
-                                    if (LoadingWidget) {
-                                        LoadingWidget->LoadingComplete(true);
-                                        LoadingWidget->RemoveFromParent();
-
-                                        if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                                            UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
-                                    }
-
-                                    return false;
-                                });
-                            }
-                        }
-                        else {
-                            UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: MapTile does not have any children"));
-                        
-                            AsyncTask(ENamedThreads::GameThread, [this]() {
-                                if (LoadingWidget) {
-                                    LoadingWidget->LoadingComplete(true);
-                                    LoadingWidget->RemoveFromParent();
-
-                                    if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                                        UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
-                                }
-
-                                return false;
-                            });
-                        }
-
                         //ƒобавление созданного тайла в GridPanel производитс€ в основном потоке так как сделать это вне его невозможно
                         AsyncTask(ENamedThreads::GameThread, [TilesGridPanel, MapTile, row, col, TilesCoordWrapper, this]() {
                             if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
@@ -397,7 +364,44 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                          * инвертированное значение от того, что было уже инвертировано дл€ корректного
                          * расположени€ тайлов в GridPanel */
                         TilesCoordWrapper->AddWidget(NumberOfMapTilesRows - 1 - row, col, MapTile);
+
+                        LastMapTile = MapTile;
                     }
+                }
+
+                if (LastMapTile && LastMapTile->GetGridPanel()->HasAnyChildren()) {
+                    if (dynamic_cast<UMapCell*>(LastMapTile->GetGridPanel()->GetChildAt(0))) {
+                        TileSize = static_cast<UMapCell*>(LastMapTile->GetGridPanel()->GetChildAt(0))->getSize() * MapTileLength;
+                    }
+                    else {
+                        UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: The MapTile child cell at index 0 is not a UMapCell* or is not valid"));
+                        AsyncTask(ENamedThreads::GameThread, [this]() {
+                            if (LoadingWidget) {
+                                LoadingWidget->LoadingComplete(true);
+                                LoadingWidget->RemoveFromParent();
+
+                                if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                                    UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
+                            }
+
+                            return false;
+                            });
+                    }
+                }
+                else {
+                    UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: MapTile does not have any children"));
+
+                    AsyncTask(ENamedThreads::GameThread, [this]() {
+                        if (LoadingWidget) {
+                            LoadingWidget->LoadingComplete(true);
+                            LoadingWidget->RemoveFromParent();
+
+                            if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                                UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
+                        }
+
+                        return false;
+                        });
                 }
 
                 //„тобы таблицу не сжимало устанавливаетс€ минимальный размер слота
