@@ -168,10 +168,10 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
 
         return false;
     }
-    //≈сли проверка была пройдена, то тестовый виджет удал€етс€, он нужен был сугубо дл€ проверки
-    if (TestCellWidget) {
-        TestCellWidget->RemoveFromParent();
-    }
+    /* “естовый виджет €чейки пока не удал€етс€, он ещЄ пригодитс€ дл€ вычислени€ размеров тайла. ¬ычисл€ть будем именно с тестовой
+     * €чейки потому что здесь уже проведена точна€ и недвусмысленна€ проверка, что €чейка - это €чейка и она определЄнно существует,
+     * в то врем€ как €чейки, созданные в процессе заполнени€ карты могут быть не настолько корректными, например может быть загружена
+     * полностью пуста€ карта вовсе без €чеек, да и банально до их указател€ добиратьс€ дольше и сложнее через несколько StaticCast'ов. */
 
     if (MapDimensions.isValid) {
         //„тобы не дЄргать отрисовку лишний раз во врем€ всего процесса забивани€ €чейками карты, следует сделать TilesGridPanel колапсированной
@@ -201,7 +201,7 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
             UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: all checks have been passed, the TilesGridPanel grid is ready to be filled with cells with dimensions: rows: %d, columns: %d"), NumberOfMapTilesRows, NumberOfMapTilesCols);
 
         //—амо забиваение карты €чейками происходит в отдельном потоке
-        AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapEditor, NumberOfMapTilesCols, NumberOfMapTilesRows, TableLength,
+        AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapEditor, NumberOfMapTilesCols, NumberOfMapTilesRows, TableLength, TestCellWidget,
             MapTileLength, DisplayedColNum, DisplayedRowNum, TilesGridPanel,  CellClass, MapTileClass, TilesCoordWrapper, MapMatrix, this]() {
 
                 if (GameInstance && GameInstance->LogType != ELogType::NONE)
@@ -369,39 +369,12 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                     }
                 }
 
-                if (LastMapTile && LastMapTile->GetGridPanel()->HasAnyChildren()) {
-                    if (dynamic_cast<UMapCell*>(LastMapTile->GetGridPanel()->GetChildAt(0))) {
-                        TileSize = static_cast<UMapCell*>(LastMapTile->GetGridPanel()->GetChildAt(0))->getSize() * MapTileLength;
-                    }
-                    else {
-                        UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: The MapTile child cell at index 0 is not a UMapCell* or is not valid"));
-                        AsyncTask(ENamedThreads::GameThread, [this]() {
-                            if (LoadingWidget) {
-                                LoadingWidget->LoadingComplete(true);
-                                LoadingWidget->RemoveFromParent();
-
-                                if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                                    UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
-                            }
-
-                            return false;
-                            });
-                    }
+                if (TestCellWidget) {
+                    TileSize = static_cast<UMapCell*>(TestCellWidget)->getSize() * MapTileLength;
                 }
-                else {
-                    UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: MapTile does not have any children"));
-
-                    AsyncTask(ENamedThreads::GameThread, [this]() {
-                        if (LoadingWidget) {
-                            LoadingWidget->LoadingComplete(true);
-                            LoadingWidget->RemoveFromParent();
-
-                            if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                                UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
-                        }
-
-                        return false;
-                        });
+                //» только сейчас удал€етс€ тестовый виджет €чейки
+                if (TestCellWidget) {
+                    TestCellWidget->RemoveFromParent();
                 }
 
                 //„тобы таблицу не сжимало устанавливаетс€ минимальный размер слота
