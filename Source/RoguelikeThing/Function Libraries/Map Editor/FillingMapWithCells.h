@@ -36,6 +36,21 @@
 
 DECLARE_LOG_CATEGORY_EXTERN(FillingMapWithCells, Log, All);
 
+USTRUCT(BlueprintType)
+struct FNumberOfTilesThatFit
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int Cols = -1;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int Rows = -1;
+
+	FNumberOfTilesThatFit(int Cols = -1, int Rows = -1);
+};
+
 UCLASS(Blueprintable, BlueprintType)
 class ROGUELIKETHING_API UFillingMapWithCells : public UBlueprintFunctionLibrary
 {
@@ -46,9 +61,15 @@ private:
 	ULoadingWidget* LoadingWidget;
 
 	//Количество ячеек в столбце карты
-	int ColNum;
+	int ColsNum;
 	//Количество ячеек в строке карты
-	int RowNum;
+	int RowsNum;
+
+	int NumberOfMapTilesCols = 0;
+	int NumberOfMapTilesRows = 0;
+
+	FVector2D TileSize = FVector2D(0, 0);
+    FVector2D ChunkSize = FVector2D(0, 0);
 
 	//Менеджер высокого уровня для экземпляра запущенной игры
 	UMyGameInstance* GameInstance;
@@ -61,8 +82,8 @@ public:
 	 * класса UMapTile или им самим, CellClass обязательно
 	 * должен быть наследником класса UMapCell или им самим */
 	UFUNCTION(BlueprintCallable, meta = (ToolTip = "MapTileClass must necessarily be an heir of the UMapTile class or be UMapTile, CellClass must necessarily be an heir of the UMapCell class or be UMapCell"))
-	bool FillMapEditorWithCells(FMapDimensions MapDimensions, UUniformGridPanel* TilesGridPanel, UClass* CellClass,
-		UClass* MapTileClass, UMapEditor* MapEditor, UCoordWrapperOfTable* TilesCoordWrapper, UMapMatrix* MapMatrix);
+	FNumberOfTilesThatFit FillMapEditorWithCells(FMapDimensions MapDimensions, UUniformGridPanel* TilesGridPanel, UClass* CellClass, UClass* MapTileClass,
+		UMapEditor* MapEditor, UCoordWrapperOfTable* TilesCoordWrapper, UMapMatrix* MapMatrix, FVector2D WidgetAreaSize);
 
 	//Если не передать виджет загрузки, то загрузка будет будет без индикации
 	UFUNCTION(BlueprintCallable)

@@ -6,6 +6,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "RoguelikeThing/Map/MapMatrix.h"
 #include "RoguelikeThing/CoordWrapperOfTable.h"
+#include "Map Editor/FillingMapWithCells.h"
 #include "TileTablesOptimizationTools.generated.h"
 
 /**********************************************************************************************************************
@@ -112,9 +113,6 @@ private:
 	//Менеджер высокого уровня для экземпляра запущенной игры
 	UMyGameInstance* GameInstance;
 
-	//Максимальное количество фрагментов в строках и столбцах таблицы
-	int RowLimit = 3;
-	int ColLimit = 3;
 	//Переменная, отображающая на сколько удачно была произведена инициализация оптимизации тайловой таблицы
 	FInitializationValidity InitializationValidity = FInitializationValidity::WAS_NOT_PERFORMED;
 	//Длина стороны матрицы тайла
@@ -157,8 +155,8 @@ public:
 	/* Первичная инициализация таблицы тайлов таким образом, чтобы в ней видимыми
 	 * были тольо те тайлы, которые влезли в область родительского виджета */
 	UFUNCTION(BlueprintCallable)
-    FVector2D InitTableTiles(UCoordWrapperOfTable* TilesCoordWrapper, FVector2D TileSize,
-		FVector2D WidgetAreaSize, FMapDimensions MapDimensions, FVector2D MinContentSize = FVector2D(2000, 2000));
+    FVector2D InitTableTiles(UCoordWrapperOfTable* TilesCoordWrapper, FVector2D TileSize, FVector2D WidgetAreaSize,
+		FMapDimensions MapDimensions, FNumberOfTilesThatFit NumberOfTilesThatFit, FVector2D MinContentSize = FVector2D(2000, 2000));
 
 	/* Функция, скрывающая отображаемые в данный момент тайлы, делая всю таблицу полностью
 	 * неактивной. Используется для сброса состояния таблицы перед переинициализацией */

@@ -9,6 +9,7 @@
 #include <Kismet/GameplayStatics.h>
 
 DEFINE_LOG_CATEGORY(FillingMapWithCells);
+#pragma optimize("", off)
 
 UFillingMapWithCells::UFillingMapWithCells()
 {
@@ -23,8 +24,8 @@ UFillingMapWithCells::UFillingMapWithCells()
  * MapTileClass обязательно должен быть наследником
  * класса UMapTile или им самим, CellClass обязательно
  * должен быть наследником класса UMapCell или им самим */
-bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, UUniformGridPanel* TilesGridPanel, UClass* CellClass,
-    UClass* MapTileClass, UMapEditor* MapEditor, UCoordWrapperOfTable* TilesCoordWrapper, UMapMatrix* MapMatrix)
+FNumberOfTilesThatFit UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, UUniformGridPanel* TilesGridPanel, UClass* CellClass,
+    UClass* MapTileClass, UMapEditor* MapEditor, UCoordWrapperOfTable* TilesCoordWrapper, UMapMatrix* MapMatrix, FVector2D WidgetAreaSize)
 {
     //Координатная обёртка изначально должна быть полность пустой во время заполнения карты
     TilesCoordWrapper->Clear();
@@ -41,7 +42,7 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                 UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
         }
 
-        return false;
+        return FNumberOfTilesThatFit();
     }
     if (!CellClass) {
         UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: CellClass is a null pointer"));
@@ -54,7 +55,7 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                 UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
         }
 
-        return false;
+        return FNumberOfTilesThatFit();
     }
     if (!MapTileClass) {
         UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: MapTileClass is a null pointer"));
@@ -67,7 +68,7 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                 UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
         }
 
-        return false;
+        return FNumberOfTilesThatFit();
     }
     if (!MapEditor) {
         UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: MapEditor is a null pointer"));
@@ -80,7 +81,7 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                 UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
         }
 
-        return false;
+        return FNumberOfTilesThatFit();
     }
     if (!TilesCoordWrapper) {
         UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: TilesCoordWrapper is a null pointer"));
@@ -93,7 +94,7 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                 UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
         }
 
-        return false;
+        return FNumberOfTilesThatFit();
     }
     if (!MapMatrix) {
         UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: MapMatrix is a null pointer"));
@@ -106,7 +107,7 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                 UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
         }
 
-        return false;
+        return FNumberOfTilesThatFit();
     }
 
     /* Здесь проверяется корректность переданного класса, по которому будут делаться тайлы.
@@ -134,7 +135,7 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                 UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
         }
 
-        return false;
+        return FNumberOfTilesThatFit();
     }
     //Если проверка была пройдена, то тестовый виджет удаляется, он нужен был сугубо для проверки
     if (TestGridWidget) {
@@ -166,7 +167,7 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                 UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
         }
 
-        return false;
+        return FNumberOfTilesThatFit();
     }
     /* Тестовый виджет ячейки пока не удаляется, он ещё пригодится для вычисления размеров тайла. Вычислять будем именно с тестовой
      * ячейки потому что здесь уже проведена точная и недвусмысленная проверка, что ячейка - это ячейка и она определённо существует,
@@ -181,33 +182,63 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
         int MapTileLength = MapDimensions.MapTileLength;
 
         //Реальный размер полученной карты (в фрагментах)
-        ColNum = MapDimensions.MaxCol - MapDimensions.MinCol + 1;
-        RowNum = MapDimensions.MaxRow - MapDimensions.MinRow + 1;
+        ColsNum = MapDimensions.MaxCol - MapDimensions.MinCol + 1;
+        RowsNum = MapDimensions.MaxRow - MapDimensions.MinRow + 1;
 
-        //Отображаемый размер карты, который никогда не превышает 3 фрагмента для лучшей производительности
-        int DisplayedColNum = ColNum;
-        int DisplayedRowNum = RowNum;
+        if (TestCellWidget) {
+            FVector2D CellSize = static_cast<UMapCell*>(TestCellWidget)->getSize();
+            TileSize = CellSize * MapTileLength;
+            ChunkSize = CellSize * TableLength;
+        }
+        //И только сейчас удаляется тестовый виджет ячейки
+        if (TestCellWidget) {
+            TestCellWidget->RemoveFromParent();
+        }
 
-        if (DisplayedColNum > 3)
-            DisplayedColNum = 3;
-        if (DisplayedRowNum > 3)
-            DisplayedRowNum = 3;
+        //Количество чанков, влезающих на экран
+        int NumberOfChunksColsThatFitOnScreen = ceil(WidgetAreaSize.X / ChunkSize.X);
+        int NumberOfChunksRowsThatFitOnScreen = ceil(WidgetAreaSize.Y / ChunkSize.Y);
+
+        //Если количество чанков, влезающих на экран, больше фактического количества чанков, то оно усекается
+        if (NumberOfChunksColsThatFitOnScreen > ColsNum)
+            NumberOfChunksColsThatFitOnScreen = ColsNum;
+        if (NumberOfChunksRowsThatFitOnScreen > RowsNum)
+            NumberOfChunksRowsThatFitOnScreen = RowsNum;
+
+        //Переманные, отражающие чётность фактического количества чанков
+        bool IsNumberOfChunksColsEven = (ColsNum % 2) == 0;
+        bool IsNumberOfChunksRowsEven = (RowsNum % 2) == 0;
+
+        //Переманные, отражающие чётность влезающего на экран количества чанков
+        bool IsNumberOfFittingChunksColsEven = (NumberOfChunksColsThatFitOnScreen % 2) == 0;
+        bool IsNumberOfFittingChunksRowsEven = (NumberOfChunksRowsThatFitOnScreen % 2) == 0;
+
+        /* Чётность фактического и влезающего на экран количества чанков всегда должна совпадать для нормальной
+         * центровки таблицы. При расхождении чётности, количество влезающих на кран ячеек увеличивается на 1.
+         * Так как выше уже была проведена усекающая проверка, не дающая влезающему количеству ячеек превысить
+         * фактическое, а быть равными эти количества при расходящейся чётности также не могут, то при увеличении
+         * влезающего количества ячеек на 1, превышение фактического количества никогда не произоёдёт. */
+        if (IsNumberOfChunksColsEven != IsNumberOfFittingChunksColsEven)
+            NumberOfChunksColsThatFitOnScreen++;
+        if (IsNumberOfChunksRowsEven != IsNumberOfFittingChunksRowsEven)
+            NumberOfChunksRowsThatFitOnScreen++;
+
+        int DisplayedColNum = NumberOfChunksColsThatFitOnScreen;
+        int DisplayedRowNum = NumberOfChunksRowsThatFitOnScreen;
 
         //Размер отображаемой карты (в тайлах)
-        int NumberOfMapTilesCols = DisplayedColNum * TableLength / MapTileLength;
-        int NumberOfMapTilesRows = DisplayedRowNum * TableLength / MapTileLength;
+        NumberOfMapTilesCols = DisplayedColNum * TableLength / MapTileLength;
+        NumberOfMapTilesRows = DisplayedRowNum * TableLength / MapTileLength;
 
         if (GameInstance && GameInstance->LogType != ELogType::NONE)
             UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: all checks have been passed, the TilesGridPanel grid is ready to be filled with cells with dimensions: rows: %d, columns: %d"), NumberOfMapTilesRows, NumberOfMapTilesCols);
 
         //Само забиваение карты ячейками происходит в отдельном потоке
-        AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapEditor, NumberOfMapTilesCols, NumberOfMapTilesRows, TableLength, TestCellWidget,
-            MapTileLength, DisplayedColNum, DisplayedRowNum, TilesGridPanel,  CellClass, MapTileClass, TilesCoordWrapper, MapMatrix, this]() {
+        AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapEditor, TableLength, TestCellWidget, MapTileLength, DisplayedColNum,
+            DisplayedRowNum, TilesGridPanel,  CellClass, MapTileClass, TilesCoordWrapper, MapMatrix, this]() {
 
                 if (GameInstance && GameInstance->LogType != ELogType::NONE)
                     UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The TilesGridPanel table population thread has been opened"));
-
-                FVector2D TileSize(0, 0);
 
                 UMapTile* LastMapTile = nullptr;
 
@@ -250,7 +281,7 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                                 if (GameInstance && GameInstance->LogType != ELogType::NONE)
                                     UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: A thread to remove the loading widget has been closed"));
 
-                                return false;
+                                return FNumberOfTilesThatFit();
                                 });
                         }
 
@@ -285,7 +316,7 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                                         if (GameInstance && GameInstance->LogType != ELogType::NONE)
                                             UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: A thread to remove the loading widget has been closed"));
 
-                                        return false;
+                                        return FNumberOfTilesThatFit();
                                         });
                                 }
 
@@ -369,14 +400,6 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                     }
                 }
 
-                if (TestCellWidget) {
-                    TileSize = static_cast<UMapCell*>(TestCellWidget)->getSize() * MapTileLength;
-                }
-                //И только сейчас удаляется тестовый виджет ячейки
-                if (TestCellWidget) {
-                    TestCellWidget->RemoveFromParent();
-                }
-
                 //Чтобы таблицу не сжимало устанавливается минимальный размер слота
                 TilesGridPanel->SetMinDesiredSlotWidth(TileSize.X);
                 TilesGridPanel->SetMinDesiredSlotHeight(TileSize.Y);
@@ -417,10 +440,10 @@ bool UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                 UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
         }
 
-        return false;
+        return FNumberOfTilesThatFit();
     }
 
-    return true;
+    return FNumberOfTilesThatFit(NumberOfMapTilesCols, NumberOfMapTilesRows);
 }
 
 //Если не передать виджет загрузки, то загрузка будет будет без индикации
@@ -435,11 +458,14 @@ void UFillingMapWithCells::setLoadWidget(ULoadingWidget* newLoadingWidget)
 //Геттер количества фрагментов по горизонтали
 int32 UFillingMapWithCells::GetColNum()
 {
-    return ColNum;
+    return ColsNum;
 }
 
 //Геттер количества фрагментов по вертикали
 int32 UFillingMapWithCells::GetRowNum()
 {
-    return RowNum;
+    return RowsNum;
 }
+
+FNumberOfTilesThatFit::FNumberOfTilesThatFit(int Cols, int Rows) : Cols(Cols), Rows(Rows)
+{}

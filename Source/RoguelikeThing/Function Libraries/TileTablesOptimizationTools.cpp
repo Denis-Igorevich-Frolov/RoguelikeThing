@@ -15,8 +15,8 @@ UTileTablesOptimizationTools::UTileTablesOptimizationTools()
 
 /* Первичная инициализация таблицы тайлов таким образом, чтобы в ней видимыми
  * были тольо те тайлы, которые влезли в область родительского виджета */
-FVector2D UTileTablesOptimizationTools::InitTableTiles(UCoordWrapperOfTable* TilesCoordWrapper,
-    FVector2D TileSize, FVector2D WidgetAreaSize, FMapDimensions MapDimensions, FVector2D MinContentSize)
+FVector2D UTileTablesOptimizationTools::InitTableTiles(UCoordWrapperOfTable* TilesCoordWrapper, FVector2D TileSize,
+    FVector2D WidgetAreaSize, FMapDimensions MapDimensions, FNumberOfTilesThatFit NumberOfTilesThatFit, FVector2D MinContentSize)
 {
     if (!TilesCoordWrapper) {
         UE_LOG(TileTablesOptimizationTools, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the InitTableTiles function: TilesCoordWrapper is not valid"));
@@ -35,25 +35,12 @@ FVector2D UTileTablesOptimizationTools::InitTableTiles(UCoordWrapperOfTable* Til
              * путём вычитания из наибольшей координаты наименьшей. Но так как вычисления производились с индексами, у
              * которых отсчёт ведётся с 0, то полученное значение следует привести к порядковому номеру прибавив единицу.
              * Затем полученное количество строк фрагментов просто умножается на количество тайлов в стороне матрицы фрагментов */
-            TableTileRows = (MapDimensions.MaxRow - MapDimensions.MinRow + 1) * TilesInFragmentLen;
+            RealTableTileRows = (MapDimensions.MaxRow - MapDimensions.MinRow + 1) * TilesInFragmentLen;
             //Количество столбцов ищется также, как и количество строк
-            TableTileCols = (MapDimensions.MaxCol - MapDimensions.MinCol + 1) * TilesInFragmentLen;
+            RealTableTileCols = (MapDimensions.MaxCol - MapDimensions.MinCol + 1) * TilesInFragmentLen;
 
-            //Запоминается реальное количество строк и столбцов, так как отображаемое количество может не совпадать
-            RealTableTileRows = TableTileRows;
-            RealTableTileCols = TableTileCols;
-
-            //Таблица не отображает более 3 фрагментов в строках или столбцах за раз. Это сделано для оптимизации
-            if (TableTileRows > RowLimit * TilesInFragmentLen) {
-                TableTileRows = RowLimit * TilesInFragmentLen;
-                if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                    UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the InitTableTiles function: The number of tiles in rows is truncated to %d (actual rows of lines is %d)"), TableTileRows, RealTableTileRows);
-            }
-            if (TableTileCols > ColLimit * TilesInFragmentLen) {
-                TableTileCols = ColLimit * TilesInFragmentLen;
-                if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                    UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the InitTableTiles function: The number of tiles in columns is truncated to %d (actual colums of lines is %d)"), TableTileCols, RealTableTileCols);
-            }
+            TableTileRows = NumberOfTilesThatFit.Rows;
+            TableTileCols = NumberOfTilesThatFit.Cols;
 
             /* Запоминаются те размеры, которыми изначально обладали виджеты тайла и области
              * контента. Это понадобится позже для вычисления масштабирования и сдвига */
