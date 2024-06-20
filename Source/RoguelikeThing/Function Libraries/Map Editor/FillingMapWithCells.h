@@ -9,6 +9,7 @@
 #include "RoguelikeThing/CoordWrapperOfTable.h"
 #include "RoguelikeThing/MyGameInstance.h"
 #include "RoguelikeThing/Enumerations/MapEditorBrushType.h"
+#include <RoguelikeThing/Map/TileBuffer.h>
 #include "FillingMapWithCells.generated.h"
 
 /**********************************************************************************************************************
@@ -65,11 +66,10 @@ private:
 	//Количество ячеек в строке карты
 	int RowsNum;
 
-	int NumberOfMapTilesCols = 0;
-	int NumberOfMapTilesRows = 0;
+	int NumberOfTilesColsThatFitOnScreen = 0;
+	int NumberOfTilesRowsThatFitOnScreen = 0;
 
 	FVector2D TileSize = FVector2D(0, 0);
-    FVector2D ChunkSize = FVector2D(0, 0);
 
 	//Менеджер высокого уровня для экземпляра запущенной игры
 	UMyGameInstance* GameInstance;
@@ -82,7 +82,7 @@ public:
 	 * класса UMapTile или им самим, CellClass обязательно
 	 * должен быть наследником класса UMapCell или им самим */
 	UFUNCTION(BlueprintCallable, meta = (ToolTip = "MapTileClass must necessarily be an heir of the UMapTile class or be UMapTile, CellClass must necessarily be an heir of the UMapCell class or be UMapCell"))
-	FNumberOfTilesThatFit FillMapEditorWithCells(FMapDimensions MapDimensions, UUniformGridPanel* TilesGridPanel, UClass* CellClass, UClass* MapTileClass,
+	FNumberOfTilesThatFit FillMapEditorWithCells(FMapDimensions MapDimensions, UUniformGridPanel* TilesGridPanel, UClass* CellClass, UClass* MapTileClass, UTileBuffer* TileBuf,
 		UMapEditor* MapEditor, UCoordWrapperOfTable* TilesCoordWrapper, UMapMatrix* MapMatrix, FVector2D WidgetAreaSize, float MaxDiffSizeFromScalingToLargerSide);
 
 	//Если не передать виджет загрузки, то загрузка будет будет без индикации
@@ -95,4 +95,9 @@ public:
 	//Геттер количества фрагментов по вертикали
 	UFUNCTION(BlueprintCallable)
 	int32 GetRowNum();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGridCoord MinOriginalVisibleTile = FGridCoord();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGridCoord MaxOriginalVisibleTile = FGridCoord();
 };

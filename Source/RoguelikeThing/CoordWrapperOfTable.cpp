@@ -156,3 +156,63 @@ bool FGridCoord::getIsInit()
 {
     return isInit;
 }
+
+
+FString FGridCoord::ToString()
+{
+    return FString("Row: " + FString::FromInt(Row) + " Col: " + FString::FromInt(Col));
+}
+
+bool FGridCoord::operator==(const FGridCoord& Coord) const
+{
+    return Row == Coord.Row && Col == Coord.Col;
+}
+
+bool FGridCoord::operator!=(const FGridCoord& Coord) const
+{
+    return Row != Coord.Row || Col != Coord.Col;
+}
+
+FGridCoord FGridCoord::operator+(const FGridCoord Bias) const
+{
+    return FGridCoord(Row + Bias.Row, Col + Bias.Col);
+}
+
+FGridCoord FGridCoord::operator-(const FGridCoord Bias) const
+{
+    return FGridCoord(Row - Bias.Row, Col - Bias.Col);
+}
+
+
+FGridDimensions::FGridDimensions(FGridCoord min, FGridCoord max) : Min(min), Max(max)
+{}
+
+FString FGridDimensions::ToString()
+{
+    return FString("Min(" + Min.ToString() + "), Max(" + Max.ToString() + ")");
+}
+
+bool FGridDimensions::IsEmpty()
+{
+    return Min.Row == 0 && Min.Col == 0 && Max.Row == 0 && Max.Col == 0;
+}
+
+bool FGridDimensions::operator==(const FGridDimensions& Dimensions) const
+{
+    return Min == Dimensions.Min && Max == Dimensions.Max;
+}
+
+bool FGridDimensions::operator!=(const FGridDimensions& Dimensions) const
+{
+    return Min != Dimensions.Min || Max != Dimensions.Max;
+}
+
+FGridDimensions FGridDimensions::operator+(const FGridDimensions Bias) const
+{
+    return FGridDimensions(Min + Bias.Min, Max + Bias.Max);
+}
+
+FGridDimensions FGridDimensions::operator-(const FGridDimensions Bias) const
+{
+    return FGridDimensions(Min - Bias.Min, Max - Bias.Max);
+}

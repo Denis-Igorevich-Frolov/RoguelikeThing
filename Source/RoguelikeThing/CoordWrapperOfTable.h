@@ -50,6 +50,36 @@ public:
 	int Col;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	int Row;
+
+	FString ToString();
+
+	bool operator == (const FGridCoord& Coord) const;
+	bool operator != (const FGridCoord& Coord) const;
+
+	FGridCoord operator + (const FGridCoord Bias) const;
+	FGridCoord operator - (const FGridCoord Bias) const;
+};
+
+USTRUCT(BlueprintType)
+struct FGridDimensions
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGridCoord Min;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGridCoord Max;
+
+	FGridDimensions(FGridCoord min = FGridCoord(), FGridCoord max = FGridCoord());
+
+	FString ToString();
+	bool IsEmpty();
+
+	bool operator == (const FGridDimensions& Dimensions) const;
+	bool operator != (const FGridDimensions& Dimensions) const;
+	FGridDimensions operator + (const FGridDimensions Bias) const;
+	FGridDimensions operator - (const FGridDimensions Bias) const;
 };
 
 UCLASS(BlueprintType)

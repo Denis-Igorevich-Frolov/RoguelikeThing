@@ -4,9 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "RoguelikeThing/Map/MapMatrix.h"
-#include "RoguelikeThing/CoordWrapperOfTable.h"
-#include "Map Editor/FillingMapWithCells.h"
+#include <RoguelikeThing/MyGameInstance.h>
+#include <RoguelikeThing/CoordWrapperOfTable.h>
+#include <RoguelikeThing/Map/TileBuffer.h>
 #include "TileTablesOptimizationTools.generated.h"
 
 /**********************************************************************************************************************
@@ -46,64 +46,6 @@
 
 DECLARE_LOG_CATEGORY_EXTERN(TileTablesOptimizationTools, Log, All);
 
-//Структура координаты тайла
-USTRUCT(BlueprintType)
-struct FTileCoord
-{
-    GENERATED_BODY()
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    int32 X;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    int32 Y;
-
-	FTileCoord(int32 x = 0, int32 y = 0);
-
-	//Преобразовывание координаты в текст для вывода в логи
-	FString ToString();
-
-	bool operator == (const FTileCoord& Coord) const;
-	bool operator != (const FTileCoord& Coord) const;
-
-	FTileCoord operator + (const FTileCoord Bias) const;
-	FTileCoord operator - (const FTileCoord Bias) const;
-};
-
-//Структура габаритов области таблицы, которая включает в себя минимальную и максимальную координаты тайлов в ней
-USTRUCT(BlueprintType)
-struct FDimensionsDisplayedArea
-{
-	GENERATED_BODY()
-
-	//Самая левая нижняя координата
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FTileCoord Min;
-
-	//Самая правая верхняя координата
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FTileCoord Max;
-
-	FDimensionsDisplayedArea(FTileCoord min = FTileCoord(), FTileCoord max = FTileCoord());
-
-	//Преобразовывание габаритов в текст для вывода в логи
-	FString ToString();
-	bool IsEmpty();
-
-	bool operator == (const FDimensionsDisplayedArea& Dimensions) const;
-	bool operator != (const FDimensionsDisplayedArea& Dimensions) const;
-	FDimensionsDisplayedArea operator + (const FDimensionsDisplayedArea Bias) const;
-	FDimensionsDisplayedArea operator - (const FDimensionsDisplayedArea Bias) const;
-};
-
-//Перечисление, отображающее итог инициализации оптимизации тайловой таблицы
-UENUM(BlueprintType)
-enum class FInitializationValidity : uint8 {
-	WAS_NOT_PERFORMED	UMETA(DisplayName = "Was not performed"),
-	VALID				UMETA(DisplayName = "Valid"),
-	ERROR				UMETA(DisplayName = "Error"),
-};
-
 UCLASS(Blueprintable, BlueprintType)
 class ROGUELIKETHING_API UTileTablesOptimizationTools : public UBlueprintFunctionLibrary
 {
@@ -113,57 +55,24 @@ private:
 	//Менеджер высокого уровня для экземпляра запущенной игры
 	UMyGameInstance* GameInstance;
 
-	//Переменная, отображающая на сколько удачно была произведена инициализация оптимизации тайловой таблицы
-	FInitializationValidity InitializationValidity = FInitializationValidity::WAS_NOT_PERFORMED;
-	//Длина стороны матрицы тайла
-	int TileLen;
-	//Количество отображаемых тайлов в стоке тайловой таблицы
-	int TableTileRows;
-	//Количество отображаемых тайлов в стобце тайловой таблицы
-	int TableTileCols;
-	//Реальное полное количество тайлов в стоке тайловой таблицы
-	int RealTableTileRows;
-	//Реальное полное количество тайлов в стобце тайловой таблицы
-	int RealTableTileCols;
+	UTileBuffer* TilesBuf;
+	UCoordWrapperOfTable* TilesCoordWrapper;
 
-	//Ращмер таблицы без учёта масштабирования
-	FVector2D OriginalTableSize;
-	//Ращмер тайла без учёта масштабирования
-	FVector2D OriginalTileSize;
-	//Размер области виджета, внутрь которого помещена таблица с тайлами
-	FVector2D widgetAreaSize;
-	/* Суммарный размер тайлов, которые изначально влезают в область
-	 * виджета, внутрь которого помещена таблица с тайлами */
-	FVector2D OriginalDimensionsSize;
-	//Разница изначальных размеров таблицы и виджета, в который она помещена
-	FVector2D SizeDifference;
-	//Минимальный размер таблицы с тайлами. Если реальный размер ниже минимального, появляются отступы
-	FVector2D minContentSize;
-	//Расстояние при преодолении которого появляется первый новый тайл
-	FVector2D DistanceToAppearanceOfFirstNewTile;
-
-	//Предыдущие габариты отображаемых тайлов
-	FDimensionsDisplayedArea OldDimensions = FDimensionsDisplayedArea();
-	//Текущие габариты отображаемых тайлов
-	FDimensionsDisplayedArea CurrentDimensions = FDimensionsDisplayedArea();
-	//Габариты области, которая отображалась изначально
-	FDimensionsDisplayedArea OriginalDimensions = FDimensionsDisplayedArea();
+	bool IsInit = false;
 	
 public:
 	UTileTablesOptimizationTools();
 
-	/* Первичная инициализация таблицы тайлов таким образом, чтобы в ней видимыми
-	 * были тольо те тайлы, которые влезли в область родительского виджета */
 	UFUNCTION(BlueprintCallable)
-    FVector2D InitTableTiles(UCoordWrapperOfTable* TilesCoordWrapper, FVector2D TileSize, FVector2D WidgetAreaSize,
-		FMapDimensions MapDimensions, FNumberOfTilesThatFit NumberOfTilesThatFit, FVector2D MinContentSize = FVector2D(2000, 2000));
+	void Init(UCoordWrapperOfTable* tilesCoordWrapper, UTileBuffer* tilesBuf, FGridDimensions originalDimensions);
 
-	/* Функция, скрывающая отображаемые в данный момент тайлы, делая всю таблицу полностью
-	 * неактивной. Используется для сброса состояния таблицы перед переинициализацией */
 	UFUNCTION(BlueprintCallable)
-	void CollapsedCurrentDimension(UCoordWrapperOfTable* TilesCoordWrapper);
+	void ChangeDisplayAreaFromShift(FVector2D TileShift);
 
-	//Функция, изменяющая видимость тайлов от сдвига или масштабирования таблицы
-	UFUNCTION(BlueprintCallable)
-	void ChangingVisibilityOfTableTiles(UCoordWrapperOfTable* TilesCoordWrapper, FVector2D Bias, float ZoomMultiplier);
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGridDimensions OldDimensions = FGridDimensions();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGridDimensions CurrentDimensions = FGridDimensions();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FGridDimensions OriginalDimensions = FGridDimensions();
 };
