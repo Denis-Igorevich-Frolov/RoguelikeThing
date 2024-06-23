@@ -55,8 +55,9 @@ private:
 	//Менеджер высокого уровня для экземпляра запущенной игры
 	UMyGameInstance* GameInstance;
 
-	UTileBuffer* TilesBuf;
+	UUniformGridPanel* TilesGridPanel;
 	UCoordWrapperOfTable* TilesCoordWrapper;
+	UTileBuffer* TilesBuf;
 
 	bool IsInit = false;
 	
@@ -64,7 +65,7 @@ public:
 	UTileTablesOptimizationTools();
 
 	UFUNCTION(BlueprintCallable)
-	void Init(UCoordWrapperOfTable* tilesCoordWrapper, UTileBuffer* tilesBuf, FGridDimensions originalDimensions);
+	void Init(UUniformGridPanel* tilesGridPanel, UCoordWrapperOfTable* tilesCoordWrapper, UTileBuffer* tilesBuf, FGridDimensions originalDimensions);
 
 	UFUNCTION(BlueprintCallable)
 	void ChangeDisplayAreaFromShift(FVector2D TileShift);

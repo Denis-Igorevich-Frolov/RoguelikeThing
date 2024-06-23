@@ -21,6 +21,7 @@ private:
 	TMap<int32, UWidget*> Row;
 public:
 	UWidget* FindWidget(int Key);
+	bool RemoveWidget(int Key);
 	bool AddWidget(int Key, UWidget* Widget);
 	bool HasAnyEllements();
 	bool Contains(int Key);
@@ -100,6 +101,8 @@ public:
 	bool AddWidget(int row, int col, UWidget* Widget);
 	UFUNCTION(BlueprintCallable)
 	UWidget* FindWidget(int row, int col);
+	UFUNCTION(BlueprintCallable)
+	bool RemoveWidget(int row, int col);
 	UFUNCTION(BlueprintCallable)
 	bool HasAnyEllements();
 	UFUNCTION(BlueprintCallable)

@@ -39,4 +39,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Clear();
+
+	UFUNCTION(BlueprintCallable)
+	int BufSize();
 };

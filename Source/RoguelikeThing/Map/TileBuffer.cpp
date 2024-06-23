@@ -25,8 +25,6 @@ UUserWidget* UTileBuffer::GetTile()
             ScoreToMaximum();
     }
 
-    UE_LOG(TileBuffer, Warning, TEXT("ssssssss %d"), TileBuf.Num());
-
     return Tile;
 }
 
@@ -58,7 +56,7 @@ bool UTileBuffer::ScoreToMaximum()
             return true;
 
         UMapTile* MapTile = StaticCast<UMapTile*>(CreateWidget<UUserWidget>(TilesGridPanel, MapTileClass));
-        if (MapTile->FillingWithCells(MapTileLength, CellClass, MapEditor))
+        if (!MapTile->FillingWithCells(MapTileLength, CellClass, MapEditor))
             return false;
 
         TileBuf.Add(MapTile);
@@ -70,4 +68,9 @@ bool UTileBuffer::ScoreToMaximum()
 void UTileBuffer::Clear()
 {
     TileBuf.Empty();
+}
+
+int UTileBuffer::BufSize()
+{
+    return TileBuf.Num();
 }

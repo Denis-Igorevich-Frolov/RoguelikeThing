@@ -9,7 +9,6 @@
 #include <Kismet/GameplayStatics.h>
 
 DEFINE_LOG_CATEGORY(FillingMapWithCells);
-#pragma optimize("", off)
 
 UFillingMapWithCells::UFillingMapWithCells()
 {
@@ -252,7 +251,8 @@ FNumberOfTilesThatFit UFillingMapWithCells::FillMapEditorWithCells(FMapDimension
                 UMapTile* LastMapTile = nullptr;
 
                 TileBuf->Clear();
-                TileBuf->ScoreToMaximum();
+                if(!TileBuf->ScoreToMaximum())
+                    UE_LOG(FillingMapWithCells, Log, TEXT("fffffffffffff"));
 
                 MinOriginalVisibleTile = FGridCoord(StartingPositionRow, StartingPositionCol);
                 MaxOriginalVisibleTile = FGridCoord(StartingPositionRow + (NumberOfTilesRowsThatFitOnScreen - 1), StartingPositionCol + (NumberOfTilesColsThatFitOnScreen - 1));
@@ -439,10 +439,10 @@ FNumberOfTilesThatFit UFillingMapWithCells::FillMapEditorWithCells(FMapDimension
                 }
 
                 UMapTile* MinTile = StaticCast<UMapTile*>(CreateWidget<UUserWidget>(TilesGridPanel, MapTileClass));
-                TilesCoordWrapper->AddWidget(NumberOfMapTilesRows - 1, 0, MinTile);
+                //TilesCoordWrapper->AddWidget(NumberOfMapTilesRows - 1, 0, MinTile);
 
                 UMapTile* MaxTile = StaticCast<UMapTile*>(CreateWidget<UUserWidget>(TilesGridPanel, MapTileClass));
-                TilesCoordWrapper->AddWidget(0, NumberOfMapTilesCols - 1, MinTile);
+                //TilesCoordWrapper->AddWidget(0, NumberOfMapTilesCols - 1, MinTile);
 
                 AsyncTask(ENamedThreads::GameThread, [TilesGridPanel, MinTile, MaxTile, NumberOfMapTilesRows, NumberOfMapTilesCols, this]() {
                     TilesGridPanel->AddChildToUniformGrid(MinTile, NumberOfMapTilesRows - 1, 0);

@@ -3,9 +3,21 @@
 
 #include "CoordWrapperOfTable.h"
 
+#pragma optimize("", off)
+
 UWidget* WrapperRow::FindWidget(int Key)
 {
     return *Row.Find(Key);
+}
+
+bool WrapperRow::RemoveWidget(int Key)
+{
+    UWidget* Widget = FindWidget(Key);
+    if (!Widget)
+        return false;
+    Widget->RemoveFromParent();
+
+    return (bool)Row.Remove(Key);
 }
 
 bool WrapperRow::AddWidget(int Key, UWidget* Widget)
@@ -95,6 +107,17 @@ UWidget* UCoordWrapperOfTable::FindWidget(int row, int col)
         return nullptr;
 
     return  Row->FindWidget(row);
+}
+
+bool UCoordWrapperOfTable::RemoveWidget(int row, int col)
+{
+    if (!Col.Contains(col))
+        return false;
+    WrapperRow* Row = *Col.Find(col);
+    if (!Row->Contains(row))
+        return false;
+
+    return Row->RemoveWidget(row);
 }
 
 bool UCoordWrapperOfTable::HasAnyEllements()
