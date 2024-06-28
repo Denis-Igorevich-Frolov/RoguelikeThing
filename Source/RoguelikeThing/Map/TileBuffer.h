@@ -17,7 +17,7 @@ class ROGUELIKETHING_API UTileBuffer : public UObject
 	
 private:
 	TArray<UUserWidget*> TileBuf;
-	int MaxSize = 30;
+	int MaxSize = 100;
 
 	int MapTileLength = -1;
 	UUniformGridPanel* TilesGridPanel;

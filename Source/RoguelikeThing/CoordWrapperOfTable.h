@@ -116,4 +116,7 @@ public:
 	//ѕолучение самой правой верхней координаты
 	UFUNCTION(BlueprintCallable)
 	FGridCoord getMaxCoord();
+
+	void setMinCoord(FGridCoord minCoord);
+	void setMaxCoord(FGridCoord maxCoord);
 };

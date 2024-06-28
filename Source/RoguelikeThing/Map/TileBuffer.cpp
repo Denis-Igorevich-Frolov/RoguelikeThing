@@ -20,7 +20,7 @@ UUserWidget* UTileBuffer::GetTile()
         TileBuf.RemoveAt(TileBuf.Num() - 1);
     }
 
-    if (TileBuf.Num() < 5) {
+    if (TileBuf.Num() < 10) {
         if(MapTileClass)
             ScoreToMaximum();
     }
@@ -52,7 +52,7 @@ bool UTileBuffer::ScoreToMaximum()
     int dif = MaxSize - TileBuf.Num();
 
     for (int i = 0; i < dif; i++) {
-        if (TileBuf.Num() == 30)
+        if (TileBuf.Num() == MaxSize)
             return true;
 
         UMapTile* MapTile = StaticCast<UMapTile*>(CreateWidget<UUserWidget>(TilesGridPanel, MapTileClass));

@@ -60,6 +60,9 @@ private:
 	UTileBuffer* TilesBuf;
 
 	bool IsInit = false;
+
+	void AsynchronousAreaFilling(FGridDimensions AreaDimensions, int NumberOfMapTilesRows, FString ss);
+	void AsynchronousAreaRemoving(FGridDimensions AreaDimensions, int NumberOfMapTilesRows, FString ss);
 	
 public:
 	UTileTablesOptimizationTools();
@@ -68,7 +71,7 @@ public:
 	void Init(UUniformGridPanel* tilesGridPanel, UCoordWrapperOfTable* tilesCoordWrapper, UTileBuffer* tilesBuf, FGridDimensions originalDimensions);
 
 	UFUNCTION(BlueprintCallable)
-	void ChangeDisplayAreaFromShift(FVector2D TileShift);
+	void ChangeDisplayAreaFromShift(FVector2D TileShift, int NumberOfMapTilesRows);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGridDimensions OldDimensions = FGridDimensions();

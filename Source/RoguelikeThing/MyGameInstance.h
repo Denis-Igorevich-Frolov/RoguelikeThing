@@ -25,6 +25,8 @@ class ROGUELIKETHING_API UMyGameInstance : public UGameInstance
 
 private:
     virtual void Shutdown() override;
+    virtual void Init() override;
+    virtual void OnStart() override;
 	
 public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)

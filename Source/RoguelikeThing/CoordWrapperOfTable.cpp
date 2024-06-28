@@ -117,6 +117,9 @@ bool UCoordWrapperOfTable::RemoveWidget(int row, int col)
     if (!Row->Contains(row))
         return false;
 
+    UWidget* widget = Row->FindWidget(row);
+    widget->RemoveFromParent();
+
     return Row->RemoveWidget(row);
 }
 
@@ -166,6 +169,16 @@ void UCoordWrapperOfTable::Clear()
 FGridCoord UCoordWrapperOfTable::getMaxCoord()
 {
     return MaxCoord;
+}
+
+void UCoordWrapperOfTable::setMinCoord(FGridCoord minCoord)
+{
+    this->MinCoord = minCoord;
+}
+
+void UCoordWrapperOfTable::setMaxCoord(FGridCoord maxCoord)
+{
+    this->MaxCoord = maxCoord;
 }
 
 FGridCoord::FGridCoord() : Row(-1), Col(-1), isInit(false)

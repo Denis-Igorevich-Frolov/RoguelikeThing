@@ -6,3 +6,11 @@
 void UMyGameInstance::Shutdown()
 {
 }
+
+void UMyGameInstance::Init()
+{
+}
+
+void UMyGameInstance::OnStart()
+{
+}
