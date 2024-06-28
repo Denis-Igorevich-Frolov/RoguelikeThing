@@ -118,7 +118,13 @@ bool UCoordWrapperOfTable::RemoveWidget(int row, int col)
         return false;
 
     UWidget* widget = Row->FindWidget(row);
-    widget->RemoveFromParent();
+    if (widget) {
+        if (widget->IsRooted())
+            widget->RemoveFromRoot();
+        widget->RemoveFromParent();
+    }
+    else
+        return false;
 
     return Row->RemoveWidget(row);
 }

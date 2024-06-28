@@ -433,6 +433,7 @@ FNumberOfTilesThatFit UFillingMapWithCells::FillMapEditorWithCells(FMapDimension
                          * инвертированное значение от того, что было уже инвертировано для корректного
                          * расположения тайлов в GridPanel */
                         TilesCoordWrapper->AddWidget(NumberOfMapTilesRows - row - 1, col, MapTile);
+                        MapTile->AddToRoot();
 
                         LastMapTile = MapTile;
                     }

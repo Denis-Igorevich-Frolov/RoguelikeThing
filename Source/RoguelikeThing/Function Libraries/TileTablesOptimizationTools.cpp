@@ -22,22 +22,20 @@ void UTileTablesOptimizationTools::AsynchronousAreaFilling(FGridDimensions AreaD
             AsyncTask(ENamedThreads::GameThread, [ss, AreaDimensions, col, NumberOfMapTilesRows, this]() {
                 for (int row = AreaDimensions.Min.Row; row <= AreaDimensions.Max.Row; row++) {
                     //if (TilesCoordWrapper->FindWidget(row, col)) {
-                    //    UE_LOG(TileTablesOptimizationTools, Warning, TEXT("%s add fffffff r: %d, c: %d"), *ss, row, col);
-                    //    continue;
+                        //UE_LOG(TileTablesOptimizationTools, Warning, TEXT("%s add fffffff r: %d, c: %d"), *ss, row, col);
+                        //continue;
                     //}
                     //else
                     //    UE_LOG(TileTablesOptimizationTools, Warning, TEXT("%s add ddddddd r: %d, c: %d"), *ss, row, col);
 
                     UUserWidget* Tile = TilesBuf->GetTile();
 
-                    if (!Tile) {
-                        UE_LOG(TileTablesOptimizationTools, Warning, TEXT("AAAAAAAAAAAAA"));
+                    if (Tile) {
+                        TilesCoordWrapper->AddWidget(row, col, Tile);
+                        TilesGridPanel->AddChildToUniformGrid(Tile, (NumberOfMapTilesRows - row) - 1, col);
                     }
-
-                    TilesCoordWrapper->AddWidget(row, col, Tile);
-
-
-                    TilesGridPanel->AddChildToUniformGrid(Tile, (NumberOfMapTilesRows - row) - 1, col);
+                    else
+                        UE_LOG(TileTablesOptimizationTools, Warning, TEXT("AAAAAAAAAAAAA"));
                 }
                 });
         }
@@ -51,7 +49,7 @@ void UTileTablesOptimizationTools::AsynchronousAreaRemoving(FGridDimensions Area
             AsyncTask(ENamedThreads::GameThread, [ss, col, AreaDimensions, this]() {
                 for (int row = AreaDimensions.Min.Row; row <= AreaDimensions.Max.Row; row++) {
                     if (!TilesCoordWrapper->RemoveWidget(row, col)) {
-                        //UE_LOG(TileTablesOptimizationTools, Warning, TEXT("%s remove fffffff r: %d, c: %d"), *ss, row, col);
+                        UE_LOG(TileTablesOptimizationTools, Warning, TEXT("%s remove fffffff r: %d, c: %d"), *ss, row, col);
                     }
                     //else
                         //UE_LOG(TileTablesOptimizationTools, Warning, TEXT("%s remove ddddddd r: %d, c: %d"), *ss, row, col);

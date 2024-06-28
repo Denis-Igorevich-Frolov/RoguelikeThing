@@ -60,6 +60,7 @@ bool UTileBuffer::ScoreToMaximum()
             return false;
 
         TileBuf.Add(MapTile);
+        MapTile->AddToRoot();
     }
 
     return true;
