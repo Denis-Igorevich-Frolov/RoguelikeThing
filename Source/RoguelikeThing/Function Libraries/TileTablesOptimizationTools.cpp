@@ -21,10 +21,10 @@ void UTileTablesOptimizationTools::AsynchronousAreaFilling(FGridDimensions AreaD
         for (int col = AreaDimensions.Min.Col; col <= AreaDimensions.Max.Col; col++) {
             AsyncTask(ENamedThreads::GameThread, [ss, AreaDimensions, col, NumberOfMapTilesRows, this]() {
                 for (int row = AreaDimensions.Min.Row; row <= AreaDimensions.Max.Row; row++) {
-                    //if (TilesCoordWrapper->FindWidget(row, col)) {
-                        //UE_LOG(TileTablesOptimizationTools, Warning, TEXT("%s add fffffff r: %d, c: %d"), *ss, row, col);
-                        //continue;
-                    //}
+                    if (TilesCoordWrapper->FindWidget(row, col)) {
+                        UE_LOG(TileTablesOptimizationTools, Warning, TEXT("%s add fffffff r: %d, c: %d"), *ss, row, col);
+                        continue;
+                    }
                     //else
                     //    UE_LOG(TileTablesOptimizationTools, Warning, TEXT("%s add ddddddd r: %d, c: %d"), *ss, row, col);
 
