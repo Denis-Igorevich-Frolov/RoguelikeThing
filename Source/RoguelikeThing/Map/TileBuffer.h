@@ -16,20 +16,25 @@ class ROGUELIKETHING_API UTileBuffer : public UObject
 	GENERATED_BODY()
 	
 private:
+	UPROPERTY()
 	TArray<UUserWidget*> TileBuf;
 	int MaxSize = 100;
 
 	int MapTileLength = -1;
+	UPROPERTY()
 	UUniformGridPanel* TilesGridPanel;
+	UPROPERTY()
 	UMapEditor* MapEditor;
+	UPROPERTY()
 	UClass* MapTileClass;
+	UPROPERTY()
 	UClass* CellClass;
 
 	bool IsInit = false;
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void Init(int mapTileLength, UUniformGridPanel* tilesGridPanel, UClass* mapTileClass, UClass* cellClass, UMapEditor* mapEditor);
+	void Init(int mapTileLength, UUniformGridPanel* refTilesGridPanel, UClass* refMapTileClass, UClass* refCellClass, UMapEditor* refMapEditor);
 
 	UFUNCTION(BlueprintCallable)
 	UUserWidget* GetTile();

@@ -77,6 +77,7 @@ class ROGUELIKETHING_API UMapMatrix : public UObject
 
 private:
 	//Виджет загрузки, который проигрывается во время создания карты
+	UPROPERTY()
 	ULoadingWidget* LoadingWidget;
 	bool SuccessCreateBlankCard = false;
 
@@ -95,6 +96,7 @@ private:
 	FSQLitePreparedStatement* LoadStatement = new FSQLitePreparedStatement();
 
 	//Менеджер высокого уровня для экземпляра запущенной игры
+	UPROPERTY()
 	UMyGameInstance* GameInstance;
 
 	//Функция, возвращающая название типа фрагмента карты по перечислению MatrixType

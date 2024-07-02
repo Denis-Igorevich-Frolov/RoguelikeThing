@@ -27,7 +27,7 @@ UCoordWrapperOfTable* UMapTile::GetCellsCoordWrapper()
 bool UMapTile::FillingWithCells(int MapTileLength, UClass* CellClass, UMapEditor* MapEditor)
 {
     /* Тайл забивается ячейками по точно такому же принципу, что и карта тайлами -
-                         * первая ячейка находится слева снизу, а последняя - справа сверху */
+     * первая ячейка находится слева снизу, а последняя - справа сверху */
     for (int tileRow = MapTileLength - 1; tileRow >= 0; tileRow--) {
         for (int tileCol = 0; tileCol < MapTileLength; tileCol++) {
             UMapCell* Cell = CreateWidget<UMapCell>(this, CellClass);

@@ -59,6 +59,7 @@ class ROGUELIKETHING_API UFillingMapWithCells : public UBlueprintFunctionLibrary
 
 private:
 	//Виджет загрузки, корторый будет проигрываться во время заполнения карты
+	UPROPERTY()
 	ULoadingWidget* LoadingWidget;
 
 	//Количество ячеек в столбце карты
@@ -72,6 +73,7 @@ private:
 	FVector2D TileSize = FVector2D(0, 0);
 
 	//Менеджер высокого уровня для экземпляра запущенной игры
+	UPROPERTY()
 	UMyGameInstance* GameInstance;
 	
 public:

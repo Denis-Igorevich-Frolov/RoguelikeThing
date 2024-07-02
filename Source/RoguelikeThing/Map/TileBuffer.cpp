@@ -28,13 +28,13 @@ UUserWidget* UTileBuffer::GetTile()
     return Tile;
 }
 
-void UTileBuffer::Init(int mapTileLength, UUniformGridPanel* tilesGridPanel, UClass* mapTileClass, UClass* cellClass, UMapEditor* mapEditor)
+void UTileBuffer::Init(int mapTileLength, UUniformGridPanel* refTilesGridPanel, UClass* refMapTileClass, UClass* refCellClass, UMapEditor* refMapEditor)
 {
     this->MapTileLength = mapTileLength;
-    this->TilesGridPanel = tilesGridPanel;
-    this->MapTileClass = mapTileClass;
-    this->CellClass = cellClass;
-    this->MapEditor = mapEditor;
+    TilesGridPanel = refTilesGridPanel;
+    MapTileClass = refMapTileClass;
+    CellClass = refCellClass;
+    MapEditor = refMapEditor;
 
     IsInit = true;
 
@@ -60,7 +60,6 @@ bool UTileBuffer::ScoreToMaximum()
             return false;
 
         TileBuf.Add(MapTile);
-        MapTile->AddToRoot();
     }
 
     return true;

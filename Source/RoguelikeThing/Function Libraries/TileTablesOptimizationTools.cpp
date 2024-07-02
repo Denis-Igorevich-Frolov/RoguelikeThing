@@ -59,11 +59,11 @@ void UTileTablesOptimizationTools::AsynchronousAreaRemoving(FGridDimensions Area
     });
 }
 
-void UTileTablesOptimizationTools::Init(UUniformGridPanel* tilesGridPanel, UCoordWrapperOfTable* tilesCoordWrapper, UTileBuffer* tilesBuf, FGridDimensions originalDimensions)
+void UTileTablesOptimizationTools::Init(UUniformGridPanel* refTilesGridPanel, UCoordWrapperOfTable* refTilesCoordWrapper, UTileBuffer* refTilesBuf, FGridDimensions originalDimensions)
 {
-    this->TilesGridPanel = tilesGridPanel;
-    this->TilesCoordWrapper = tilesCoordWrapper;
-    this->TilesBuf = tilesBuf;
+    TilesGridPanel = refTilesGridPanel;
+    TilesCoordWrapper = refTilesCoordWrapper;
+    TilesBuf = refTilesBuf;
 
     this->OriginalDimensions = originalDimensions;
     OldDimensions = OriginalDimensions;

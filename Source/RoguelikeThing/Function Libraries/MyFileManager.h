@@ -23,6 +23,7 @@ private:
 	IPlatformFile& FileManager = FPlatformFileManager::Get().GetPlatformFile();
 
 	//Менеджер высокого уровня для экземпляра запущенной игры
+	UPROPERTY()
 	UMyGameInstance* GameInstance;
 	
 public:

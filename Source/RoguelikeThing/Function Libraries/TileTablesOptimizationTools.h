@@ -53,10 +53,14 @@ class ROGUELIKETHING_API UTileTablesOptimizationTools : public UBlueprintFunctio
 
 private:
 	//Менеджер высокого уровня для экземпляра запущенной игры
+	UPROPERTY()
 	UMyGameInstance* GameInstance;
 
+	UPROPERTY()
 	UUniformGridPanel* TilesGridPanel;
+	UPROPERTY()
 	UCoordWrapperOfTable* TilesCoordWrapper;
+	UPROPERTY()
 	UTileBuffer* TilesBuf;
 
 	bool IsInit = false;
@@ -68,7 +72,7 @@ public:
 	UTileTablesOptimizationTools();
 
 	UFUNCTION(BlueprintCallable)
-	void Init(UUniformGridPanel* tilesGridPanel, UCoordWrapperOfTable* tilesCoordWrapper, UTileBuffer* tilesBuf, FGridDimensions originalDimensions);
+	void Init(UUniformGridPanel* refTilesGridPanel, UCoordWrapperOfTable* refTilesCoordWrapper, UTileBuffer* refTilesBuf, FGridDimensions originalDimensions);
 
 	UFUNCTION(BlueprintCallable)
 	void ChangeDisplayAreaFromShift(FVector2D TileShift, int NumberOfMapTilesRows);

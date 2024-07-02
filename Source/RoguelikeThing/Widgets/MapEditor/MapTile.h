@@ -23,6 +23,7 @@ class ROGUELIKETHING_API UMapTile : public UUserWidget
 
 private:
 	//Менеджер высокого уровня для экземпляра запущенной игры
+	UPROPERTY()
 	UMyGameInstance* GameInstance;
 	
 public:
