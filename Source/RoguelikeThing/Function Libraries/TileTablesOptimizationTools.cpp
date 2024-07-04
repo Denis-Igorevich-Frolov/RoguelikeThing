@@ -25,8 +25,8 @@ void UTileTablesOptimizationTools::AsynchronousAreaFilling(FGridDimensions AreaD
                         UE_LOG(TileTablesOptimizationTools, Warning, TEXT("%s add fffffff r: %d, c: %d"), *ss, row, col);
                         continue;
                     }
-                    //else
-                    //    UE_LOG(TileTablesOptimizationTools, Warning, TEXT("%s add ddddddd r: %d, c: %d"), *ss, row, col);
+                    else
+                        UE_LOG(TileTablesOptimizationTools, Log, TEXT("%s add ddddddd r: %d, c: %d"), *ss, row, col);
 
                     UUserWidget* Tile = TilesBuf->GetTile();
 
@@ -51,8 +51,8 @@ void UTileTablesOptimizationTools::AsynchronousAreaRemoving(FGridDimensions Area
                     if (!TilesCoordWrapper->RemoveWidget(row, col)) {
                         UE_LOG(TileTablesOptimizationTools, Warning, TEXT("%s remove fffffff r: %d, c: %d"), *ss, row, col);
                     }
-                    //else
-                        //UE_LOG(TileTablesOptimizationTools, Warning, TEXT("%s remove ddddddd r: %d, c: %d"), *ss, row, col);
+                    else
+                        UE_LOG(TileTablesOptimizationTools, Log, TEXT("%s remove ddddddd r: %d, c: %d"), *ss, row, col);
                 }
                 });
         }
@@ -86,7 +86,7 @@ void UTileTablesOptimizationTools::ChangeDisplayAreaFromShift(FVector2D TileShif
     FGridDimensions OffsetDifference = CurrentDimensions - OldDimensions;
 
     if (OldDimensions != CurrentDimensions) {
-        //UE_LOG(TileTablesOptimizationTools, Warning, TEXT("old: %s, new %s"), *OldDimensions.ToString(), *CurrentDimensions.ToString());
+        UE_LOG(TileTablesOptimizationTools, Log, TEXT("old: %s, new %s"), *OldDimensions.ToString(), *CurrentDimensions.ToString());
 
         int MinRowCoordToFill = 0;
         int MaxRowCoordToFill = 0;
@@ -97,195 +97,200 @@ void UTileTablesOptimizationTools::ChangeDisplayAreaFromShift(FVector2D TileShif
         int MinColCoordToRemove = 0;
         int MaxColCoordToRemove = 0;
 
-        if (OffsetDifference.Max.Col > 0 && OffsetDifference.Max.Row == 0) {
-            MinRowCoordToFill = CurrentDimensions.Min.Row;
-            MaxRowCoordToFill = CurrentDimensions.Max.Row;
+        if (OldDimensions.DoTheDimensionsIntersect(CurrentDimensions)) {
+            if (OffsetDifference.Max.Col > 0 && OffsetDifference.Max.Row == 0) {
+                MinRowCoordToFill = CurrentDimensions.Min.Row;
+                MaxRowCoordToFill = CurrentDimensions.Max.Row;
 
-            MinRowCoordToRemove = CurrentDimensions.Min.Row;
-            MaxRowCoordToRemove = CurrentDimensions.Max.Row;
+                MinRowCoordToRemove = CurrentDimensions.Min.Row;
+                MaxRowCoordToRemove = CurrentDimensions.Max.Row;
 
-            MinColCoordToFill = OldDimensions.Max.Col + 1;
-            MaxColCoordToFill = CurrentDimensions.Max.Col;
+                MinColCoordToFill = OldDimensions.Max.Col + 1;
+                MaxColCoordToFill = CurrentDimensions.Max.Col;
 
-            MinColCoordToRemove = OldDimensions.Min.Col;
-            MaxColCoordToRemove = CurrentDimensions.Min.Col - 1;
+                MinColCoordToRemove = OldDimensions.Min.Col;
+                MaxColCoordToRemove = CurrentDimensions.Min.Col - 1;
 
-            AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "pravo");
-            AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "pravo");
+                AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "pravo");
+                AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "pravo");
+            }
+            else if (OffsetDifference.Max.Col < 0 && OffsetDifference.Max.Row == 0) {
+                MinRowCoordToFill = CurrentDimensions.Min.Row;
+                MaxRowCoordToFill = CurrentDimensions.Max.Row;
+
+                MinRowCoordToRemove = CurrentDimensions.Min.Row;
+                MaxRowCoordToRemove = CurrentDimensions.Max.Row;
+
+                MinColCoordToFill = CurrentDimensions.Min.Col;
+                MaxColCoordToFill = OldDimensions.Min.Col - 1;
+
+                MinColCoordToRemove = CurrentDimensions.Max.Col + 1;
+                MaxColCoordToRemove = OldDimensions.Max.Col;
+
+                AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "levo");
+                AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "levo");
+            }
+            else if (OffsetDifference.Max.Row > 0 && OffsetDifference.Max.Col == 0) {
+                MinRowCoordToFill = OldDimensions.Max.Row + 1;
+                MaxRowCoordToFill = CurrentDimensions.Max.Row;
+
+                MinRowCoordToRemove = OldDimensions.Min.Row;
+                MaxRowCoordToRemove = CurrentDimensions.Min.Row - 1;
+
+                MinColCoordToFill = CurrentDimensions.Min.Col;
+                MaxColCoordToFill = CurrentDimensions.Max.Col;
+
+                MinColCoordToRemove = CurrentDimensions.Min.Col;
+                MaxColCoordToRemove = CurrentDimensions.Max.Col;
+
+                AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "verh");
+                AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "verh");
+            }
+            else if (OffsetDifference.Max.Row < 0 && OffsetDifference.Max.Col == 0) {
+                MinRowCoordToFill = CurrentDimensions.Min.Row;
+                MaxRowCoordToFill = OldDimensions.Min.Row - 1;
+
+                MinRowCoordToRemove = CurrentDimensions.Max.Row + 1;
+                MaxRowCoordToRemove = OldDimensions.Max.Row;
+
+                MinColCoordToFill = CurrentDimensions.Min.Col;
+                MaxColCoordToFill = CurrentDimensions.Max.Col;
+
+                MinColCoordToRemove = CurrentDimensions.Min.Col;
+                MaxColCoordToRemove = CurrentDimensions.Max.Col;
+
+                AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "niz");
+                AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "niz");
+            }
+            else if (OffsetDifference.Max.Col > 0 && OffsetDifference.Max.Row > 0) {
+                MinRowCoordToFill = OldDimensions.Max.Row + 1;
+                MaxRowCoordToFill = CurrentDimensions.Max.Row;
+
+                MinRowCoordToRemove = OldDimensions.Min.Row;
+                MaxRowCoordToRemove = CurrentDimensions.Min.Row - 1;
+
+                MinColCoordToFill = CurrentDimensions.Min.Col;
+                MaxColCoordToFill = CurrentDimensions.Max.Col;
+
+                MinColCoordToRemove = OldDimensions.Min.Col;
+                MaxColCoordToRemove = OldDimensions.Max.Col;
+
+                AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "pravo verh");
+                AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "pravo verh");
+
+                MinRowCoordToFill = CurrentDimensions.Min.Row;
+                MaxRowCoordToFill = OldDimensions.Max.Row;
+
+                MinRowCoordToRemove = CurrentDimensions.Min.Row;
+                MaxRowCoordToRemove = OldDimensions.Max.Row;
+
+                MinColCoordToFill = OldDimensions.Max.Col + 1;
+                MaxColCoordToFill = CurrentDimensions.Max.Col;
+
+                MinColCoordToRemove = OldDimensions.Min.Col;
+                MaxColCoordToRemove = CurrentDimensions.Min.Col - 1;
+
+                AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "pravo verh");
+                AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "pravo verh");
+            }
+            else if (OffsetDifference.Max.Col > 0 && OffsetDifference.Max.Row < 0) {
+                MinRowCoordToFill = CurrentDimensions.Min.Row;
+                MaxRowCoordToFill = CurrentDimensions.Max.Row;
+
+                MinRowCoordToRemove = OldDimensions.Min.Row;
+                MaxRowCoordToRemove = OldDimensions.Max.Row;
+
+                MinColCoordToFill = OldDimensions.Max.Col + 1;
+                MaxColCoordToFill = CurrentDimensions.Max.Col;
+
+                MinColCoordToRemove = OldDimensions.Min.Col;
+                MaxColCoordToRemove = CurrentDimensions.Min.Col - 1;
+
+                AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "pravo niz");
+                AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "pravo niz");
+
+                MinRowCoordToFill = CurrentDimensions.Min.Row;
+                MaxRowCoordToFill = OldDimensions.Min.Row - 1;
+
+                MinRowCoordToRemove = CurrentDimensions.Max.Row + 1;
+                MaxRowCoordToRemove = OldDimensions.Max.Row;
+
+                MinColCoordToFill = CurrentDimensions.Min.Col;
+                MaxColCoordToFill = OldDimensions.Max.Col;
+
+                MinColCoordToRemove = CurrentDimensions.Min.Col;
+                MaxColCoordToRemove = OldDimensions.Max.Col;
+
+                AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "pravo niz");
+                AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "pravo niz");
+            }
+            else if (OffsetDifference.Max.Col < 0 && OffsetDifference.Max.Row > 0) {
+                MinRowCoordToFill = OldDimensions.Max.Row + 1;
+                MaxRowCoordToFill = CurrentDimensions.Max.Row;
+
+                MinRowCoordToRemove = OldDimensions.Min.Row;
+                MaxRowCoordToRemove = CurrentDimensions.Min.Row - 1;
+
+                MinColCoordToFill = CurrentDimensions.Min.Col;
+                MaxColCoordToFill = CurrentDimensions.Max.Col;
+
+                MinColCoordToRemove = OldDimensions.Min.Col;
+                MaxColCoordToRemove = OldDimensions.Max.Col;
+
+                AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "levo verh");
+                AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "levo verh");
+
+                MinRowCoordToFill = CurrentDimensions.Min.Row;
+                MaxRowCoordToFill = OldDimensions.Max.Row;
+
+                MinRowCoordToRemove = CurrentDimensions.Min.Row;
+                MaxRowCoordToRemove = OldDimensions.Max.Row;
+
+                MinColCoordToFill = CurrentDimensions.Min.Col;
+                MaxColCoordToFill = OldDimensions.Min.Col - 1;
+
+                MinColCoordToRemove = CurrentDimensions.Max.Col + 1;
+                MaxColCoordToRemove = OldDimensions.Max.Col;
+
+                AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "levo verh");
+                AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "levo verh");
+            }
+            else if (OffsetDifference.Max.Col < 0 && OffsetDifference.Max.Row < 0) {
+                MinRowCoordToFill = CurrentDimensions.Min.Row;
+                MaxRowCoordToFill = OldDimensions.Min.Row - 1;
+
+                MinRowCoordToRemove = CurrentDimensions.Max.Row + 1;
+                MaxRowCoordToRemove = OldDimensions.Max.Row;
+
+                MinColCoordToFill = CurrentDimensions.Min.Col;
+                MaxColCoordToFill = CurrentDimensions.Max.Col;
+
+                MinColCoordToRemove = OldDimensions.Min.Col;
+                MaxColCoordToRemove = OldDimensions.Max.Col;
+
+                AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "levo niz");
+                AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "levo niz");
+
+                MinRowCoordToFill = OldDimensions.Min.Row;
+                MaxRowCoordToFill = CurrentDimensions.Max.Row;
+
+                MinRowCoordToRemove = OldDimensions.Min.Row;
+                MaxRowCoordToRemove = CurrentDimensions.Max.Row;
+
+                MinColCoordToFill = CurrentDimensions.Min.Col;
+                MaxColCoordToFill = OldDimensions.Min.Col - 1;
+
+                MinColCoordToRemove = CurrentDimensions.Max.Col + 1;
+                MaxColCoordToRemove = OldDimensions.Max.Col;
+
+                AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "levo niz");
+                AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "levo niz");
+            }
         }
-        else if (OffsetDifference.Max.Col < 0 && OffsetDifference.Max.Row == 0) {
-            MinRowCoordToFill = CurrentDimensions.Min.Row;
-            MaxRowCoordToFill = CurrentDimensions.Max.Row;
-
-            MinRowCoordToRemove = CurrentDimensions.Min.Row;
-            MaxRowCoordToRemove = CurrentDimensions.Max.Row;
-
-            MinColCoordToFill = CurrentDimensions.Min.Col;
-            MaxColCoordToFill = OldDimensions.Min.Col - 1;
-
-            MinColCoordToRemove = CurrentDimensions.Max.Col + 1;
-            MaxColCoordToRemove = OldDimensions.Max.Col;
-
-            AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "levo");
-            AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "levo");
+        else {
+            AsynchronousAreaFilling(CurrentDimensions, NumberOfMapTilesRows, "all");
+            AsynchronousAreaRemoving(OldDimensions, NumberOfMapTilesRows, "all");
         }
-        else if (OffsetDifference.Max.Row > 0 && OffsetDifference.Max.Col == 0) {
-            MinRowCoordToFill = OldDimensions.Max.Row + 1;
-            MaxRowCoordToFill = CurrentDimensions.Max.Row;
-
-            MinRowCoordToRemove = OldDimensions.Min.Row;
-            MaxRowCoordToRemove = CurrentDimensions.Min.Row - 1;
-
-            MinColCoordToFill = CurrentDimensions.Min.Col;
-            MaxColCoordToFill = CurrentDimensions.Max.Col;
-
-            MinColCoordToRemove = CurrentDimensions.Min.Col;
-            MaxColCoordToRemove = CurrentDimensions.Max.Col;
-
-            AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "verh");
-            AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "verh");
-        }
-        else if (OffsetDifference.Max.Row < 0 && OffsetDifference.Max.Col == 0) {
-            MinRowCoordToFill = CurrentDimensions.Min.Row;
-            MaxRowCoordToFill = OldDimensions.Min.Row - 1;
-
-            MinRowCoordToRemove = CurrentDimensions.Max.Row + 1;
-            MaxRowCoordToRemove = OldDimensions.Max.Row;
-
-            MinColCoordToFill = CurrentDimensions.Min.Col;
-            MaxColCoordToFill = CurrentDimensions.Max.Col;
-
-            MinColCoordToRemove = CurrentDimensions.Min.Col;
-            MaxColCoordToRemove = CurrentDimensions.Max.Col;
-
-            AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "niz");
-            AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "niz");
-        }
-        else if (OffsetDifference.Max.Col > 0 && OffsetDifference.Max.Row > 0) {
-            MinRowCoordToFill = OldDimensions.Max.Row + 1;
-            MaxRowCoordToFill = CurrentDimensions.Max.Row;
-
-            MinRowCoordToRemove = OldDimensions.Min.Row;
-            MaxRowCoordToRemove = CurrentDimensions.Min.Row - 1;
-
-            MinColCoordToFill = CurrentDimensions.Min.Col;
-            MaxColCoordToFill = CurrentDimensions.Max.Col;
-
-            MinColCoordToRemove = OldDimensions.Min.Col;
-            MaxColCoordToRemove = OldDimensions.Max.Col;
-
-            AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "pravo verh");
-            AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "pravo verh");
-
-            MinRowCoordToFill = CurrentDimensions.Min.Row;
-            MaxRowCoordToFill = OldDimensions.Max.Row;
-
-            MinRowCoordToRemove = CurrentDimensions.Min.Row;
-            MaxRowCoordToRemove = OldDimensions.Max.Row;
-
-            MinColCoordToFill = OldDimensions.Max.Col + 1;
-            MaxColCoordToFill = CurrentDimensions.Max.Col;
-
-            MinColCoordToRemove = OldDimensions.Min.Col;
-            MaxColCoordToRemove = CurrentDimensions.Min.Col - 1;
-
-            AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "pravo verh");
-            AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "pravo verh");
-        }
-        else if (OffsetDifference.Max.Col > 0 && OffsetDifference.Max.Row < 0) {
-            MinRowCoordToFill = CurrentDimensions.Min.Row;
-            MaxRowCoordToFill = CurrentDimensions.Max.Row;
-
-            MinRowCoordToRemove = OldDimensions.Min.Row;
-            MaxRowCoordToRemove = OldDimensions.Max.Row;
-
-            MinColCoordToFill = OldDimensions.Max.Col + 1;
-            MaxColCoordToFill = CurrentDimensions.Max.Col;
-
-            MinColCoordToRemove = OldDimensions.Min.Col;
-            MaxColCoordToRemove = CurrentDimensions.Min.Col - 1;
-
-            AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "pravo niz");
-            AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "pravo niz");
-
-            MinRowCoordToFill = CurrentDimensions.Min.Row;
-            MaxRowCoordToFill = OldDimensions.Min.Row - 1;
-
-            MinRowCoordToRemove = CurrentDimensions.Max.Row + 1;
-            MaxRowCoordToRemove = OldDimensions.Max.Row;
-
-            MinColCoordToFill = CurrentDimensions.Min.Col;
-            MaxColCoordToFill = OldDimensions.Max.Col;
-
-            MinColCoordToRemove = CurrentDimensions.Min.Col;
-            MaxColCoordToRemove = OldDimensions.Max.Col;
-
-            AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "pravo niz");
-            AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "pravo niz");
-        }
-        else if (OffsetDifference.Max.Col < 0 && OffsetDifference.Max.Row > 0) {
-            MinRowCoordToFill = OldDimensions.Max.Row + 1;
-            MaxRowCoordToFill = CurrentDimensions.Max.Row;
-
-            MinRowCoordToRemove = OldDimensions.Min.Row;
-            MaxRowCoordToRemove = CurrentDimensions.Min.Row - 1;
-
-            MinColCoordToFill = CurrentDimensions.Min.Col;
-            MaxColCoordToFill = CurrentDimensions.Max.Col;
-
-            MinColCoordToRemove = OldDimensions.Min.Col;
-            MaxColCoordToRemove = OldDimensions.Max.Col;
-
-            AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "levo verh");
-            AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "levo verh");
-
-            MinRowCoordToFill = CurrentDimensions.Min.Row;
-            MaxRowCoordToFill = OldDimensions.Max.Row;
-
-            MinRowCoordToRemove = CurrentDimensions.Min.Row;
-            MaxRowCoordToRemove = OldDimensions.Max.Row;
-
-            MinColCoordToFill = CurrentDimensions.Min.Col;
-            MaxColCoordToFill = OldDimensions.Min.Col - 1;
-
-            MinColCoordToRemove = CurrentDimensions.Max.Col + 1;
-            MaxColCoordToRemove = OldDimensions.Max.Col;
-
-            AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "levo verh");
-            AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "levo verh");
-        }
-        else if (OffsetDifference.Max.Col < 0 && OffsetDifference.Max.Row < 0) {
-            MinRowCoordToFill = CurrentDimensions.Min.Row;
-            MaxRowCoordToFill = OldDimensions.Min.Row - 1;
-
-            MinRowCoordToRemove = CurrentDimensions.Max.Row + 1;
-            MaxRowCoordToRemove = OldDimensions.Max.Row;
-
-            MinColCoordToFill = CurrentDimensions.Min.Col;
-            MaxColCoordToFill = CurrentDimensions.Max.Col;
-
-            MinColCoordToRemove = OldDimensions.Min.Col;
-            MaxColCoordToRemove = OldDimensions.Max.Col;
-
-            AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "levo niz");
-            AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "levo niz");
-
-            MinRowCoordToFill = OldDimensions.Min.Row;
-            MaxRowCoordToFill = CurrentDimensions.Max.Row;
-
-            MinRowCoordToRemove = OldDimensions.Min.Row;
-            MaxRowCoordToRemove = CurrentDimensions.Max.Row;
-
-            MinColCoordToFill = CurrentDimensions.Min.Col;
-            MaxColCoordToFill = OldDimensions.Min.Col - 1;
-
-            MinColCoordToRemove = CurrentDimensions.Max.Col + 1;
-            MaxColCoordToRemove = OldDimensions.Max.Col;
-
-            AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "levo niz");
-            AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "levo niz");
-        }
-
         TilesCoordWrapper->setMinCoord(CurrentDimensions.Min);
         TilesCoordWrapper->setMaxCoord(CurrentDimensions.Max);
     }

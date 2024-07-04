@@ -76,6 +76,7 @@ struct FGridDimensions
 
 	FString ToString();
 	bool IsEmpty();
+	bool DoTheDimensionsIntersect(FGridDimensions OtherDimensions);
 
 	bool operator == (const FGridDimensions& Dimensions) const;
 	bool operator != (const FGridDimensions& Dimensions) const;
@@ -116,6 +117,9 @@ public:
 	//ѕолучение самой правой верхней координаты
 	UFUNCTION(BlueprintCallable)
 	FGridCoord getMaxCoord();
+
+	UFUNCTION(BlueprintCallable)
+	bool DoTheDimensionsIntersect(FGridDimensions Dimensions_1, FGridDimensions Dimensions_2);
 
 	void setMinCoord(FGridCoord minCoord);
 	void setMaxCoord(FGridCoord maxCoord);

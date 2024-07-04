@@ -111,20 +111,24 @@ UWidget* UCoordWrapperOfTable::FindWidget(int row, int col)
 
 bool UCoordWrapperOfTable::RemoveWidget(int row, int col)
 {
-    if (!Col.Contains(col))
+    if (!Col.Contains(col)) {
+        UE_LOG(LogTemp, Warning, TEXT("r1"));
         return false;
+    }
     WrapperRow* Row = *Col.Find(col);
-    if (!Row->Contains(row))
+    if (!Row->Contains(row)) {
+        UE_LOG(LogTemp, Warning, TEXT("r2"));
         return false;
+    }
 
     UWidget* widget = Row->FindWidget(row);
     if (widget) {
-        if (widget->IsRooted())
-            widget->RemoveFromRoot();
         widget->RemoveFromParent();
     }
-    else
+    else {
+        UE_LOG(LogTemp, Warning, TEXT("r3"));
         return false;
+    }
 
     return Row->RemoveWidget(row);
 }
@@ -187,6 +191,11 @@ void UCoordWrapperOfTable::setMaxCoord(FGridCoord maxCoord)
     this->MaxCoord = maxCoord;
 }
 
+bool UCoordWrapperOfTable::DoTheDimensionsIntersect(FGridDimensions Dimensions_1, FGridDimensions Dimensions_2)
+{
+    return Dimensions_1.DoTheDimensionsIntersect(Dimensions_2);
+}
+
 FGridCoord::FGridCoord() : Row(-1), Col(-1), isInit(false)
 {}
 
@@ -237,6 +246,14 @@ FString FGridDimensions::ToString()
 bool FGridDimensions::IsEmpty()
 {
     return Min.Row == 0 && Min.Col == 0 && Max.Row == 0 && Max.Col == 0;
+}
+
+bool FGridDimensions::DoTheDimensionsIntersect(FGridDimensions OtherDimensions)
+{
+    if ((OtherDimensions.Max.Col < Min.Col) || (OtherDimensions.Max.Row < Min.Row) || (OtherDimensions.Min.Col > Max.Col) || (OtherDimensions.Min.Row > Max.Row))
+        return false;
+
+    return true;
 }
 
 bool FGridDimensions::operator==(const FGridDimensions& Dimensions) const
