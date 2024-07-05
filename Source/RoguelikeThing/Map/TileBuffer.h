@@ -40,6 +40,9 @@ public:
 	UUserWidget* GetTile();
 
 	UFUNCTION(BlueprintCallable)
+	void AddTile(UUserWidget* Tile);
+
+	UFUNCTION(BlueprintCallable)
 	bool ScoreToMaximum();
 
 	UFUNCTION(BlueprintCallable)
@@ -47,4 +50,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	int BufSize();
+	
+	UFUNCTION(BlueprintCallable)
+	int GetMaxSize();
 };

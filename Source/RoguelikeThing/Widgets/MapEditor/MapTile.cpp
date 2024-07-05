@@ -47,13 +47,19 @@ bool UMapTile::FillingWithCells(int MapTileLength, UClass* CellClass, UMapEditor
                 //UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: An uninitialized cell is created with coordinates row: %d col: %d for a MapTile with coordinates row: %d col: %d"), tileRow, tileCol, row, col);
 
             //ƒобавление созданной €чейки в GridPanel производитс€ в основном потоке так как сделать это вне его невозможно
-            AsyncTask(ENamedThreads::GameThread, [Cell, tileRow, tileCol, this]() {
+            AsyncTask(ENamedThreads::GameThread, [Cell, tileRow, tileCol, MapTileLength, this]() {
                 //if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                     //UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: Launched a GameThread call from the TilesGridPanel table population thread to place a cell in a tile"));
 
                 if (GetGridPanel()) {
-                    GetGridPanel()->AddChildToUniformGrid(Cell, tileRow, tileCol);
+                    UUniformGridSlot* GridSlot = GetGridPanel()->AddChildToUniformGrid(Cell, tileRow, tileCol);
 
+                    /* —озданные €чейки забиваютс€ в координатную обЄртку. ѕри этом важен их индекс в пор€дке
+                     * создани€, чтобы, например, слева снизу была €чейка 0x0, а справа сверху - 5x5.
+                     * ƒл€ этого индекс обратного цикла по строкам разворачиваетс€, чтобы передать
+                     * инвертированное значение от того, что было уже инвертировано дл€ корректного
+                     * расположени€ €чеек в GridPanel */
+                    CellsCoordWrapper->AddWidget(MapTileLength - 1 - tileRow, tileCol, Cell, GridSlot);
                     //if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                         //UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The cell was placed in a tile located at coordinates col: %d row: %d, at position col: %d row: %d"), tileRow, tileCol, row, col);
                 }
@@ -62,6 +68,7 @@ bool UMapTile::FillingWithCells(int MapTileLength, UClass* CellClass, UMapEditor
 
                 //if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                     //UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: A thread to place a cell in a tile has been closed"));
+
                 });
 
             //“еперь пришло врем€ придать новой €чейке необходимый стиль. ƒл€ этого из Ѕƒ читаетс€ тип структуры €чейки
@@ -84,13 +91,6 @@ bool UMapTile::FillingWithCells(int MapTileLength, UClass* CellClass, UMapEditor
             default:
                 break;
             }*/
-
-            /* —озданные €чейки забиваютс€ в координатную обЄртку. ѕри этом важен их индекс в пор€дке
-             * создани€, чтобы, например, слева снизу была €чейка 0x0, а справа сверху - 5x5.
-             * ƒл€ этого индекс обратного цикла по строкам разворачиваетс€, чтобы передать
-             * инвертированное значение от того, что было уже инвертировано дл€ корректного
-             * расположени€ €чеек в GridPanel */
-            CellsCoordWrapper->AddWidget(MapTileLength - 1 - tileRow, tileCol, Cell);
         }
     }
 

@@ -415,24 +415,24 @@ FNumberOfTilesThatFit UFillingMapWithCells::FillMapEditorWithCells(FMapDimension
                         //}
 
                         //Добавление созданного тайла в GridPanel производится в основном потоке так как сделать это вне его невозможно
-                        AsyncTask(ENamedThreads::GameThread, [TilesGridPanel, MapTile, row, col, TilesCoordWrapper, this]() {
+                        AsyncTask(ENamedThreads::GameThread, [TilesGridPanel, MapTile, row, col, TilesCoordWrapper, NumberOfMapTilesRows, this]() {
                             if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                                 UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: Launched a GameThread call from the TilesGridPanel table population thread to place a tile in a TilesGridPanel table"));
 
-                            TilesGridPanel->AddChildToUniformGrid(MapTile, row, col);
+                            UUniformGridSlot* GridSlot = TilesGridPanel->AddChildToUniformGrid(MapTile, row, col);
 
                             if (GameInstance && GameInstance->LogType == ELogType::DETAILED) {
                                 UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The tile was placed in a TilesGridPanel table at position col: %d row: %d"), row, col);
                                 UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: A thread to place a tile in a TilesGridPanel table has been closed"));
                             }
-                        });
 
-                        /* Созданные тайлы забиваются в координатную обёртку. При этом важен их индекс в порядке
-                         * создания, чтобы, например, слева снизу был тайл 0x0, а справа сверху - 10x10.
-                         * Для этого индекс обратного цикла по строкам разворачивается, чтобы передать
-                         * инвертированное значение от того, что было уже инвертировано для корректного
-                         * расположения тайлов в GridPanel */
-                        TilesCoordWrapper->AddWidget(NumberOfMapTilesRows - row - 1, col, MapTile);
+                            /* Созданные тайлы забиваются в координатную обёртку. При этом важен их индекс в порядке
+                             * создания, чтобы, например, слева снизу был тайл 0x0, а справа сверху - 10x10.
+                             * Для этого индекс обратного цикла по строкам разворачивается, чтобы передать
+                             * инвертированное значение от того, что было уже инвертировано для корректного
+                             * расположения тайлов в GridPanel */
+                            TilesCoordWrapper->AddWidget(NumberOfMapTilesRows - row - 1, col, MapTile, GridSlot);
+                        });
 
                         LastMapTile = MapTile;
                     }

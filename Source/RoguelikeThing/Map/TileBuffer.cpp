@@ -28,6 +28,11 @@ UUserWidget* UTileBuffer::GetTile()
     return Tile;
 }
 
+void UTileBuffer::AddTile(UUserWidget* Tile)
+{
+    TileBuf.Add(Tile);
+}
+
 void UTileBuffer::Init(int mapTileLength, UUniformGridPanel* refTilesGridPanel, UClass* refMapTileClass, UClass* refCellClass, UMapEditor* refMapEditor)
 {
     this->MapTileLength = mapTileLength;
@@ -73,4 +78,9 @@ void UTileBuffer::Clear()
 int UTileBuffer::BufSize()
 {
     return TileBuf.Num();
+}
+
+int UTileBuffer::GetMaxSize()
+{
+    return MaxSize;
 }

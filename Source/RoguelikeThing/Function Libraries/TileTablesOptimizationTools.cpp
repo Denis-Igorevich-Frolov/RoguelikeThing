@@ -3,8 +3,6 @@
 #include "RoguelikeThing/Function Libraries/TileTablesOptimizationTools.h"
 #include <Kismet/GameplayStatics.h>
 
-#pragma optimize("", off)
-
 DEFINE_LOG_CATEGORY(TileTablesOptimizationTools);
 
 UTileTablesOptimizationTools::UTileTablesOptimizationTools()
@@ -22,8 +20,8 @@ void UTileTablesOptimizationTools::AsynchronousAreaFilling(FGridDimensions AreaD
             AsyncTask(ENamedThreads::GameThread, [ss, AreaDimensions, col, NumberOfMapTilesRows, this]() {
                 for (int row = AreaDimensions.Min.Row; row <= AreaDimensions.Max.Row; row++) {
                     //if (TilesCoordWrapper->FindWidget(row, col)) {
-                    //    UE_LOG(TileTablesOptimizationTools, Warning, TEXT("%s add fffffff r: %d, c: %d"), *ss, row, col);
-                    //    continue;
+                        //UE_LOG(TileTablesOptimizationTools, Warning, TEXT("%s add fffffff r: %d, c: %d"), *ss, row, col);
+                        //continue;
                     //}
                     //else
                     //    UE_LOG(TileTablesOptimizationTools, Log, TEXT("%s add ddddddd r: %d, c: %d"), *ss, row, col);
@@ -31,8 +29,8 @@ void UTileTablesOptimizationTools::AsynchronousAreaFilling(FGridDimensions AreaD
                     UUserWidget* Tile = TilesBuf->GetTile();
 
                     if (Tile) {
-                        TilesCoordWrapper->AddWidget(row, col, Tile);
-                        TilesGridPanel->AddChildToUniformGrid(Tile, (NumberOfMapTilesRows - row) - 1, col);
+                        UUniformGridSlot* GridSlot = TilesGridPanel->AddChildToUniformGrid(Tile, (NumberOfMapTilesRows - row) - 1, col);
+                        TilesCoordWrapper->AddWidget(row, col, Tile, GridSlot);
                     }
                     else
                         UE_LOG(TileTablesOptimizationTools, Warning, TEXT("AAAAAAAAAAAAA"));
@@ -49,11 +47,24 @@ void UTileTablesOptimizationTools::AsynchronousAreaRemoving(FGridDimensions Area
         for (int col = AreaDimensions.Min.Col; col <= AreaDimensions.Max.Col; col++) {
             AsyncTask(ENamedThreads::GameThread, [ss, col, AreaDimensions, this]() {
                 for (int row = AreaDimensions.Min.Row; row <= AreaDimensions.Max.Row; row++) {
-                    if (!TilesCoordWrapper->RemoveWidget(row, col)) {
-                        UE_LOG(TileTablesOptimizationTools, Warning, TEXT("%s remove fffffff r: %d, c: %d"), *ss, row, col);
+                    if (TilesBuf->BufSize() + 1 > TilesBuf->GetMaxSize()) {
+                        if (!TilesCoordWrapper->RemoveWidget(row, col)) {
+                            UE_LOG(TileTablesOptimizationTools, Warning, TEXT("%s remove fffffff r: %d, c: %d"), *ss, row, col);
+                        }
+                        //else
+                            //UE_LOG(TileTablesOptimizationTools, Log, TEXT("%s remove ddddddd r: %d, c: %d"), *ss, row, col);
                     }
-                    //else
-                        //UE_LOG(TileTablesOptimizationTools, Log, TEXT("%s remove ddddddd r: %d, c: %d"), *ss, row, col);
+                    else {
+                        UUniformGridSlot* GridSlot = TilesCoordWrapper->FindGridSlot(row, col);
+                        GridSlot->SetColumn(-1);
+                        GridSlot->SetRow(-1);
+
+                        UUserWidget* Tile = TilesCoordWrapper->FindWidget(row, col);
+
+                        TilesCoordWrapper->RemoveCoord(row, col);
+
+                        TilesBuf->AddTile(Tile);
+                    }
                 }
                 });
         }

@@ -4,7 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "UObject/NoExportTypes.h"
-#include "Components/Widget.h"
+#include "Blueprint/UserWidget.h"
+#include <Components/UniformGridSlot.h>
 #include "CoordWrapperOfTable.generated.h"
 
 /*******************************************************************************************************************************************
@@ -18,11 +19,14 @@
  * сделан другой массив, который из себя уже будет представлять матрицу всего контента таблицы */
 class WrapperRow {
 private:
-	TMap<int32, UWidget*> Row;
+	TMap<int32, UUserWidget*> Row;
+	TMap<int32, UUniformGridSlot*> RowGrid;
 public:
-	UWidget* FindWidget(int Key);
+	UUserWidget* FindWidget(int Key);
+	UUniformGridSlot* FindGridSlot(int Key);
 	bool RemoveWidget(int Key);
-	bool AddWidget(int Key, UWidget* Widget);
+	bool RemoveIndex(int Key);
+	bool AddWidget(int Key, UUserWidget* Widget, UUniformGridSlot* GridSlot);
 	bool HasAnyEllements();
 	bool Contains(int Key);
 };
@@ -99,9 +103,13 @@ public:
 	~UCoordWrapperOfTable();
 
 	UFUNCTION(BlueprintCallable)
-	bool AddWidget(int row, int col, UWidget* Widget);
+	bool AddWidget(int row, int col, UUserWidget* Widget, UUniformGridSlot* GridSlot);
 	UFUNCTION(BlueprintCallable)
-	UWidget* FindWidget(int row, int col);
+	UUserWidget* FindWidget(int row, int col);
+	UFUNCTION(BlueprintCallable)
+	UUniformGridSlot* FindGridSlot(int row, int col);
+	UFUNCTION(BlueprintCallable)
+	bool RemoveCoord(int row, int col);
 	UFUNCTION(BlueprintCallable)
 	bool RemoveWidget(int row, int col);
 	UFUNCTION(BlueprintCallable)

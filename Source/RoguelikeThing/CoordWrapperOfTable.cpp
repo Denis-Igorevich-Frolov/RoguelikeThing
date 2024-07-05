@@ -3,26 +3,34 @@
 
 #include "CoordWrapperOfTable.h"
 
-#pragma optimize("", off)
-
-UWidget* WrapperRow::FindWidget(int Key)
+UUserWidget* WrapperRow::FindWidget(int Key)
 {
     return *Row.Find(Key);
 }
 
+UUniformGridSlot* WrapperRow::FindGridSlot(int Key)
+{
+    return *RowGrid.Find(Key);
+}
+
 bool WrapperRow::RemoveWidget(int Key)
 {
-    UWidget* Widget = FindWidget(Key);
+    UUserWidget* Widget = FindWidget(Key);
     if (!Widget)
         return false;
     Widget->RemoveFromParent();
 
-    return (bool)Row.Remove(Key);
+    return RemoveIndex(Key);
 }
 
-bool WrapperRow::AddWidget(int Key, UWidget* Widget)
+bool WrapperRow::RemoveIndex(int Key)
 {
-    return (bool)Row.Add(Key, Widget);
+    return ((bool)Row.Remove(Key)) && ((bool)RowGrid.Remove(Key));
+}
+
+bool WrapperRow::AddWidget(int Key, UUserWidget* Widget, UUniformGridSlot* GridSlot)
+{
+    return ((bool)Row.Add(Key, Widget)) && ((bool)RowGrid.Add(Key, GridSlot));
 }
 
 bool WrapperRow::HasAnyEllements()
@@ -40,7 +48,7 @@ UCoordWrapperOfTable::~UCoordWrapperOfTable()
     Clear();
 }
 
-bool UCoordWrapperOfTable::AddWidget(int row, int col, UWidget* Widget)
+bool UCoordWrapperOfTable::AddWidget(int row, int col, UUserWidget* Widget, UUniformGridSlot* GridSlot)
 {
     bool success = false;
     if (Col.Contains(col)) {
@@ -49,7 +57,7 @@ bool UCoordWrapperOfTable::AddWidget(int row, int col, UWidget* Widget)
 
         if (Row) {
             bool WidgetNotContains = !Row->Contains(row);
-            success = (bool)Row->AddWidget(row, Widget);
+            success = (bool)Row->AddWidget(row, Widget, GridSlot);
 
             if (WidgetNotContains && success)
                 NumberOfItemsInTable++;
@@ -60,7 +68,7 @@ bool UCoordWrapperOfTable::AddWidget(int row, int col, UWidget* Widget)
         WrapperRow* newRow = new WrapperRow();
 
         if (newRow) {
-            success = newRow->AddWidget(row, Widget);
+            success = newRow->AddWidget(row, Widget, GridSlot);
             if (!success) {
                 delete newRow;
                 return false;
@@ -98,7 +106,7 @@ bool UCoordWrapperOfTable::AddWidget(int row, int col, UWidget* Widget)
     return success;
 }
 
-UWidget* UCoordWrapperOfTable::FindWidget(int row, int col)
+UUserWidget* UCoordWrapperOfTable::FindWidget(int row, int col)
 {
     if (!Col.Contains(col))
         return nullptr;
@@ -109,7 +117,18 @@ UWidget* UCoordWrapperOfTable::FindWidget(int row, int col)
     return  Row->FindWidget(row);
 }
 
-bool UCoordWrapperOfTable::RemoveWidget(int row, int col)
+UUniformGridSlot* UCoordWrapperOfTable::FindGridSlot(int row, int col)
+{
+    if (!Col.Contains(col))
+        return nullptr;
+    WrapperRow* Row = *Col.Find(col);
+    if (!Row->Contains(row))
+        return nullptr;
+
+    return  Row->FindGridSlot(row);
+}
+
+bool UCoordWrapperOfTable::RemoveCoord(int row, int col)
 {
     if (!Col.Contains(col)) {
         UE_LOG(LogTemp, Warning, TEXT("r1"));
@@ -121,12 +140,26 @@ bool UCoordWrapperOfTable::RemoveWidget(int row, int col)
         return false;
     }
 
-    UWidget* widget = Row->FindWidget(row);
-    if (widget) {
-        widget->RemoveFromParent();
+    if (!Row->RemoveIndex(row)) {
+        return false;
     }
-    else {
-        UE_LOG(LogTemp, Warning, TEXT("r3"));
+
+    if (!Row->HasAnyEllements()) {
+        Col.Remove(col);
+    }
+
+    return true;
+}
+
+bool UCoordWrapperOfTable::RemoveWidget(int row, int col)
+{
+    if (!Col.Contains(col)) {
+        UE_LOG(LogTemp, Warning, TEXT("r1"));
+        return false;
+    }
+    WrapperRow* Row = *Col.Find(col);
+    if (!Row->Contains(row)) {
+        UE_LOG(LogTemp, Warning, TEXT("r2"));
         return false;
     }
 
