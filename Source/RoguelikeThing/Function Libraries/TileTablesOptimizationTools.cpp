@@ -21,12 +21,12 @@ void UTileTablesOptimizationTools::AsynchronousAreaFilling(FGridDimensions AreaD
         for (int col = AreaDimensions.Min.Col; col <= AreaDimensions.Max.Col; col++) {
             AsyncTask(ENamedThreads::GameThread, [ss, AreaDimensions, col, NumberOfMapTilesRows, this]() {
                 for (int row = AreaDimensions.Min.Row; row <= AreaDimensions.Max.Row; row++) {
-                    if (TilesCoordWrapper->FindWidget(row, col)) {
-                        UE_LOG(TileTablesOptimizationTools, Warning, TEXT("%s add fffffff r: %d, c: %d"), *ss, row, col);
-                        continue;
-                    }
-                    else
-                        UE_LOG(TileTablesOptimizationTools, Log, TEXT("%s add ddddddd r: %d, c: %d"), *ss, row, col);
+                    //if (TilesCoordWrapper->FindWidget(row, col)) {
+                    //    UE_LOG(TileTablesOptimizationTools, Warning, TEXT("%s add fffffff r: %d, c: %d"), *ss, row, col);
+                    //    continue;
+                    //}
+                    //else
+                    //    UE_LOG(TileTablesOptimizationTools, Log, TEXT("%s add ddddddd r: %d, c: %d"), *ss, row, col);
 
                     UUserWidget* Tile = TilesBuf->GetTile();
 
@@ -45,17 +45,19 @@ void UTileTablesOptimizationTools::AsynchronousAreaFilling(FGridDimensions AreaD
 void UTileTablesOptimizationTools::AsynchronousAreaRemoving(FGridDimensions AreaDimensions, int NumberOfMapTilesRows, FString ss)
 {
     AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [ss, AreaDimensions, NumberOfMapTilesRows, this]() {
+        GetWorld()->ForceGarbageCollection(true);
         for (int col = AreaDimensions.Min.Col; col <= AreaDimensions.Max.Col; col++) {
             AsyncTask(ENamedThreads::GameThread, [ss, col, AreaDimensions, this]() {
                 for (int row = AreaDimensions.Min.Row; row <= AreaDimensions.Max.Row; row++) {
                     if (!TilesCoordWrapper->RemoveWidget(row, col)) {
                         UE_LOG(TileTablesOptimizationTools, Warning, TEXT("%s remove fffffff r: %d, c: %d"), *ss, row, col);
                     }
-                    else
-                        UE_LOG(TileTablesOptimizationTools, Log, TEXT("%s remove ddddddd r: %d, c: %d"), *ss, row, col);
+                    //else
+                        //UE_LOG(TileTablesOptimizationTools, Log, TEXT("%s remove ddddddd r: %d, c: %d"), *ss, row, col);
                 }
                 });
         }
+        GetWorld()->ForceGarbageCollection(false);
     });
 }
 
@@ -86,7 +88,7 @@ void UTileTablesOptimizationTools::ChangeDisplayAreaFromShift(FVector2D TileShif
     FGridDimensions OffsetDifference = CurrentDimensions - OldDimensions;
 
     if (OldDimensions != CurrentDimensions) {
-        UE_LOG(TileTablesOptimizationTools, Log, TEXT("old: %s, new %s"), *OldDimensions.ToString(), *CurrentDimensions.ToString());
+        //UE_LOG(TileTablesOptimizationTools, Log, TEXT("old: %s, new %s"), *OldDimensions.ToString(), *CurrentDimensions.ToString());
 
         int MinRowCoordToFill = 0;
         int MaxRowCoordToFill = 0;
