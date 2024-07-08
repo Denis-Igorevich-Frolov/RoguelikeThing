@@ -9,6 +9,7 @@ void UMyGameInstance::Shutdown()
 
 void UMyGameInstance::Init()
 {
+    Super::Init();
 }
 
 void UMyGameInstance::OnStart()

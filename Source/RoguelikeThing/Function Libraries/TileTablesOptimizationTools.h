@@ -63,6 +63,16 @@ private:
 	UPROPERTY()
 	UTileBuffer* TilesBuf;
 
+	FVector2D MaximumContentSize = FVector2D(0, 0);
+	FVector2D SizeDifference = FVector2D(0, 0);
+	FVector2D OldAreaSize = FVector2D(0, 0);
+	FVector2D DistanceToAppearanceOfFirstNewTile = FVector2D(0, 0);
+	FVector2D OriginalDimensionsSize = FVector2D(0, 0);
+	FVector2D MinContentSize = FVector2D(0, 0);
+	FVector2D TileSize = FVector2D(0, 0);
+	int NumberOfTileRowsInTable = 0;
+	int NumberOfTileColsInTable = 0;
+
 	bool IsInit = false;
 
 	void AsynchronousAreaFilling(FGridDimensions AreaDimensions, int NumberOfMapTilesRows, FString ss);
@@ -72,10 +82,18 @@ public:
 	UTileTablesOptimizationTools();
 
 	UFUNCTION(BlueprintCallable)
-	void Init(UUniformGridPanel* refTilesGridPanel, UCoordWrapperOfTable* refTilesCoordWrapper, UTileBuffer* refTilesBuf, FGridDimensions originalDimensions);
+	void Init(UUniformGridPanel* refTilesGridPanel, UCoordWrapperOfTable* refTilesCoordWrapper, UTileBuffer* refTilesBuf, FGridDimensions originalDimensions,
+		FVector2D WidgetAreaSize, FVector2D tileSize, FVector2D MinContentSize, int numberOfTileRowsInTable, int numberOfTileColsInTable);
 
 	UFUNCTION(BlueprintCallable)
 	void ChangeDisplayAreaFromShift(FVector2D TileShift, int NumberOfMapTilesRows);
+
+	UFUNCTION(BlueprintCallable)
+	void ChangeDisplayAreaFromZoom(float TileZoom, int NumberOfMapTilesRows);
+	
+	UFUNCTION(BlueprintCallable)
+	//‘ункци€, измен€юща€ видимость тайлов от сдвига или масштабировани€ таблицы
+	void ChangingVisibilityOfTableTiles(FVector2D Bias, float ZoomMultiplier, int NumberOfMapTilesRows);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGridDimensions OldDimensions = FGridDimensions();

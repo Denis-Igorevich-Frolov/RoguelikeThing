@@ -24,7 +24,7 @@ UFillingMapWithCells::UFillingMapWithCells()
  * класса UMapTile или им самим, CellClass обязательно
  * должен быть наследником класса UMapCell или им самим */
 FNumberOfTilesThatFit UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, UUniformGridPanel* TilesGridPanel, UClass* CellClass, UClass* MapTileClass,
-    UTileBuffer* TileBuf, UMapEditor* MapEditor, UCoordWrapperOfTable* TilesCoordWrapper, UMapMatrix* MapMatrix, FVector2D WidgetAreaSize, float MaxDiffSizeFromScalingToLargerSide)
+    UTileBuffer* TileBuf, UMapEditor* MapEditor, UCoordWrapperOfTable* TilesCoordWrapper, UMapMatrix* MapMatrix, FVector2D WidgetAreaSize)
 {
     //Координатная обёртка изначально должна быть полность пустой во время заполнения карты
     TilesCoordWrapper->Clear();
@@ -197,19 +197,8 @@ FNumberOfTilesThatFit UFillingMapWithCells::FillMapEditorWithCells(FMapDimension
         }
 
         //Количество чанков, влезающих на экран
-        NumberOfTilesColsThatFitOnScreen = (WidgetAreaSize.X) / TileSize.X + 1;
-        NumberOfTilesRowsThatFitOnScreen = (WidgetAreaSize.Y) / TileSize.Y + 1;
-
-        FVector2D MaxDiffSizeFromScaling(0, 0);
-        if (NumberOfTilesColsThatFitOnScreen > NumberOfTilesRowsThatFitOnScreen)
-            MaxDiffSizeFromScaling = 
-            FVector2D(MaxDiffSizeFromScalingToLargerSide, MaxDiffSizeFromScalingToLargerSide * ((float)NumberOfTilesRowsThatFitOnScreen / NumberOfTilesColsThatFitOnScreen));
-        else
-            MaxDiffSizeFromScaling = 
-            FVector2D(MaxDiffSizeFromScalingToLargerSide * ((float)NumberOfTilesColsThatFitOnScreen / NumberOfTilesRowsThatFitOnScreen), MaxDiffSizeFromScalingToLargerSide);
-
-        NumberOfTilesColsThatFitOnScreen += ceil((MaxDiffSizeFromScaling.X) / TileSize.X);
-        NumberOfTilesRowsThatFitOnScreen += ceil((MaxDiffSizeFromScaling.Y) / TileSize.Y);
+        NumberOfTilesColsThatFitOnScreen = ceil((WidgetAreaSize.X) / TileSize.X);
+        NumberOfTilesRowsThatFitOnScreen = ceil((WidgetAreaSize.Y) / TileSize.Y);
 
         //Если количество чанков, влезающих на экран, больше фактического количества чанков, то оно усекается
         if (NumberOfTilesColsThatFitOnScreen > NumberOfMapTilesCols)
