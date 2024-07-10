@@ -84,7 +84,7 @@ void UTileTablesOptimizationTools::AsynchronousAreaRemoving(FGridDimensions Area
 }
 
 void UTileTablesOptimizationTools::Init(UUniformGridPanel* refTilesGridPanel, UCoordWrapperOfTable* refTilesCoordWrapper, UTileBuffer* refTilesBuf,
-    FGridDimensions originalDimensions, FVector2D WidgetAreaSize, FVector2D tileSize, FVector2D minContentSize, int numberOfTileRowsInTable, int numberOfTileColsInTable)
+    FGridDimensions originalDimensions, FVector2D widgetAreaSize, FVector2D tileSize, FVector2D minContentSize, int numberOfTileRowsInTable, int numberOfTileColsInTable)
 {
     TilesGridPanel = refTilesGridPanel;
     TilesCoordWrapper = refTilesCoordWrapper;
@@ -95,6 +95,7 @@ void UTileTablesOptimizationTools::Init(UUniformGridPanel* refTilesGridPanel, UC
     this->MinContentSize = minContentSize;
     this->NumberOfTileRowsInTable = numberOfTileRowsInTable;
     this->NumberOfTileColsInTable = numberOfTileColsInTable;
+    this->WidgetAreaSize = widgetAreaSize;
     OldDimensions = OriginalDimensions;
     CurrentDimensions = OriginalDimensions;
 
@@ -136,6 +137,8 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
      * а как бы "сдвиг камеры" по всей площади контента вправо, поэтому координата разворачивается */
     Bias.X *= -1;
 
+    FVector2D CurrentSizeDifference = MaximumContentSize - (WidgetAreaSize / ZoomMultiplier);
+
     //Коорддинаты тайлов, отражающие сдвиг контента, которые будут прибавлены к изначальным координатам для вычисления конечной позиции контента
     FGridCoord MinBiasCoord;
     FGridCoord MaxBiasCoord;
@@ -146,7 +149,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
             UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: The visible area has moved to the right of the center"));
 
         //Если камера не уткнулась в край контента, то все изменения происходят в обычном режиме
-        if (Bias.X < SizeDifference.X / 2.0) {
+        if (Bias.X < CurrentSizeDifference.X / 2.0) {
             /* Смещение минимальной, а конкретнее левой, координаты при сдвиге камеры слева направо всегда отвечает за погашение лишних левых ячеек.
              * Расстояние до появления первого нового тайла здесь прибавляется к ширине смещения, чтобы учесть, что первый тайл можно погасить раньше
              * остальных, а именно в момент набора суммы смещения и расстояния до появления нового тайла равной ширине хотя бы 1 целого тайла. То есть
@@ -160,6 +163,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
             MaxBiasCoord.Col = (Bias.X + (TileSize.X - DistanceToAppearanceOfFirstNewTile.X)) / TileSize.X;
         }
         else {
+            GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Right"));
             /* При камере, упревшейся в границу контента, вычислять смещение координат проще - они всегда будут равны друг другу и такому
              * количеству тайлов, какое уложится в расстоянии на которое контент изначально торчал справа за пределами своей области */
             MinBiasCoord.Col = MaxBiasCoord.Col = SizeDifference.X / 2.0 / TileSize.X;
@@ -174,7 +178,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
             UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: The visible area has moved to the left of the center"));
 
         //Если камера не уткнулась в край контента, то все изменения происходят в обычном режиме
-        if (Bias.X > -(SizeDifference.X / 2.0)) {
+        if (Bias.X > -(CurrentSizeDifference.X / 2.0)) {
             /* Смещение максимальной, а конкретнее правой, координаты при сдвиге камеры спарава налево всегда отвечает за сокрытие лишних правых ячеек.
              * Расстояние до появления первого нового тайла здесь отнимается от ширины смещения, которая здесь всегда нулевая или отрицательная, чтобы
              * учесть, что первый тайл можно сокрыть раньше остальных, а именно в момент набора модуля разницы смещения и расстояния до появления нового
@@ -189,6 +193,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
             MinBiasCoord.Col = (Bias.X - (TileSize.X - DistanceToAppearanceOfFirstNewTile.X)) / TileSize.X;
         }
         else {
+            GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Left"));
             /* При камере, упревшейся в границу контента, вычислять смещение координат проще - они всегда будут равны друг другу и такому
              * количеству тайлов, какое уложится в модуле расстояния на которое контент изначально торчал слева за пределами своей области */
             MinBiasCoord.Col = MaxBiasCoord.Col = -SizeDifference.X / 2.0 / TileSize.X;
@@ -204,7 +209,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
             UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: The visible area has moved to the top of the center"));
 
         //Если камера не уткнулась в край контента, то все изменения происходят в обычном режиме
-        if (Bias.Y < SizeDifference.Y / 2.0) {
+        if (Bias.Y < CurrentSizeDifference.Y / 2.0) {
             /* Смещение минимальной, а конкретнее нижней, координаты при сдвиге камеры снизу вверх всегда отвечает за погашение лишних нижних ячеек.
              * Расстояние до появления первого нового тайла здесь прибавляется к высоте смещения, чтобы учесть, что первый тайл можно погасить раньше
              * остальных, а именно в момент набора суммы смещения и расстояния до появления нового тайла равной высоте хотя бы 1 целого тайла. То есть
@@ -218,6 +223,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
             MaxBiasCoord.Row = (Bias.Y + (TileSize.Y - DistanceToAppearanceOfFirstNewTile.Y)) / TileSize.Y;
         }
         else {
+            GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Top"));
             /* При камере, упревшейся в границу контента, вычислять смещение координат проще - они всегда будут равны друг другу и такому
              * количеству тайлов, какое уложится в расстоянии на которое контент изначально торчал сверху за пределами своей области */
             MinBiasCoord.Row = MaxBiasCoord.Row = SizeDifference.Y / 2.0 / TileSize.Y;
@@ -232,7 +238,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
             UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: The visible area has moved to the bottom of the center"));
 
         //Если камера не уткнулась в край контента, то все изменения происходят в обычном режиме
-        if (Bias.Y > -(SizeDifference.Y / 2.0)) {
+        if (Bias.Y > -(CurrentSizeDifference.Y / 2.0)) {
             /* Смещение максимальной, а конкретнее верхней, координаты при сдвиге камеры сверху вниз всегда отвечает за сокрытие лишних верхних ячеек.
              * Расстояние до появления первого нового тайла здесь отнимается от высоты смещения, которая здесь всегда нулевая или отрицательная, чтобы
              * учесть, что первый тайл можно сокрыть раньше остальных, а именно в момент набора модуля разницы смещения и расстояния до появления нового
@@ -247,6 +253,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
             MinBiasCoord.Row = (Bias.Y - (TileSize.Y - DistanceToAppearanceOfFirstNewTile.Y)) / TileSize.Y;
         }
         else {
+            GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Bottom"));
             /* При камере, упревшейся в границу контента, вычислять смещение координат проще - они всегда будут равны друг другу и такому
              * количеству тайлов, какое уложится в модуле расстояния на которое контент изначально торчал снизу за пределами своей области */
             MinBiasCoord.Row = MaxBiasCoord.Row = -SizeDifference.Y / 2.0 / TileSize.Y;
@@ -351,6 +358,8 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
         UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: ZoomMultiplier is equal to 1 - no scaling"));
 
     CurrentDimensions = CurrentDimensions + ZoomDimentions;
+
+    //////////////////////////////////////////////if(CurrentDimensions.Min.Row < 0)
 
     /* Бывают моменты, когда размер контента меньше минимального. В этом случае нужные размеры виджету контента помогает
      * держать специальная подложка, но размер меньше минимального так же говорит и о том, что все рассчёты по габаритам

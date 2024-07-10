@@ -70,6 +70,7 @@ private:
 	FVector2D OriginalDimensionsSize = FVector2D(0, 0);
 	FVector2D MinContentSize = FVector2D(0, 0);
 	FVector2D TileSize = FVector2D(0, 0);
+	FVector2D WidgetAreaSize = FVector2D(0, 0);
 	int NumberOfTileRowsInTable = 0;
 	int NumberOfTileColsInTable = 0;
 
@@ -83,7 +84,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Init(UUniformGridPanel* refTilesGridPanel, UCoordWrapperOfTable* refTilesCoordWrapper, UTileBuffer* refTilesBuf, FGridDimensions originalDimensions,
-		FVector2D WidgetAreaSize, FVector2D tileSize, FVector2D MinContentSize, int numberOfTileRowsInTable, int numberOfTileColsInTable);
+		FVector2D widgetAreaSize, FVector2D tileSize, FVector2D MinContentSize, int numberOfTileRowsInTable, int numberOfTileColsInTable);
 
 	UFUNCTION(BlueprintCallable)
 	void ChangeDisplayAreaFromShift(FVector2D TileShift, int NumberOfMapTilesRows);
