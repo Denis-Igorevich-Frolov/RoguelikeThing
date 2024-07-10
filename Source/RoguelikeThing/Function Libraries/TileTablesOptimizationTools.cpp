@@ -5,8 +5,6 @@
 
 DEFINE_LOG_CATEGORY(TileTablesOptimizationTools);
 
-#pragma optimize("", off)
-
 UTileTablesOptimizationTools::UTileTablesOptimizationTools()
 {
     //Получение GameInstance из мира
@@ -25,8 +23,8 @@ void UTileTablesOptimizationTools::AsynchronousAreaFilling(FGridDimensions AreaD
                         UE_LOG(TileTablesOptimizationTools, Warning, TEXT("%s add fffffff r: %d, c: %d"), *ss, row, col);
                         //continue;
                     }
-                    else
-                        UE_LOG(TileTablesOptimizationTools, Log, TEXT("%s add ddddddd r: %d, c: %d"), *ss, row, col);
+                    //else
+                        //UE_LOG(TileTablesOptimizationTools, Log, TEXT("%s add ddddddd r: %d, c: %d"), *ss, row, col);
 
                     UUserWidget* Tile = TilesBuf->GetTile();
 
@@ -44,7 +42,6 @@ void UTileTablesOptimizationTools::AsynchronousAreaFilling(FGridDimensions AreaD
 
 void UTileTablesOptimizationTools::AsynchronousAreaRemoving(FGridDimensions AreaDimensions, int NumberOfMapTilesRows, FString ss)
 {
-    UE_LOG(TileTablesOptimizationTools, Log, TEXT("%s begin remove %s"), *ss, *AreaDimensions.ToString());
     AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [ss, AreaDimensions, NumberOfMapTilesRows, this]() {
         GetWorld()->ForceGarbageCollection(true);
         for (int col = AreaDimensions.Min.Col; col <= AreaDimensions.Max.Col; col++) {
@@ -54,8 +51,8 @@ void UTileTablesOptimizationTools::AsynchronousAreaRemoving(FGridDimensions Area
                             if (!TilesCoordWrapper->RemoveWidget(row, col)) {
                                 UE_LOG(TileTablesOptimizationTools, Warning, TEXT("%s remove fffffff r: %d, c: %d"), *ss, row, col);
                             }
-                            else
-                                UE_LOG(TileTablesOptimizationTools, Log, TEXT("%s remove ddddddd r: %d, c: %d"), *ss, row, col);
+                            //else
+                                //UE_LOG(TileTablesOptimizationTools, Log, TEXT("%s remove ddddddd r: %d, c: %d"), *ss, row, col);
                         }
                         else {
                             UUniformGridSlot* GridSlot = TilesCoordWrapper->FindGridSlot(row, col);
@@ -71,8 +68,8 @@ void UTileTablesOptimizationTools::AsynchronousAreaRemoving(FGridDimensions Area
                             if(!TilesCoordWrapper->RemoveCoord(row, col)) {
                                 UE_LOG(TileTablesOptimizationTools, Warning, TEXT("%s remove 2 fffffff r: %d, c: %d"), *ss, row, col);
                             }
-                            else
-                                UE_LOG(TileTablesOptimizationTools, Log, TEXT("%s remove 2 ddddddd r: %d, c: %d"), *ss, row, col);
+                            //else
+                                //UE_LOG(TileTablesOptimizationTools, Log, TEXT("%s remove 2 ddddddd r: %d, c: %d"), *ss, row, col);
 
                             TilesBuf->AddTile(Tile);
                         }
@@ -83,8 +80,8 @@ void UTileTablesOptimizationTools::AsynchronousAreaRemoving(FGridDimensions Area
     });
 }
 
-void UTileTablesOptimizationTools::Init(UUniformGridPanel* refTilesGridPanel, UCoordWrapperOfTable* refTilesCoordWrapper, UTileBuffer* refTilesBuf,
-    FGridDimensions originalDimensions, FVector2D widgetAreaSize, FVector2D tileSize, FVector2D minContentSize, int numberOfTileRowsInTable, int numberOfTileColsInTable)
+void UTileTablesOptimizationTools::Init(UUniformGridPanel* refTilesGridPanel, UCoordWrapperOfTable* refTilesCoordWrapper, UTileBuffer* refTilesBuf, FGridDimensions originalDimensions,
+    FVector2D widgetAreaSize, FVector2D tileSize, FVector2D minContentSize, int numberOfTileRowsInTable, int numberOfTileColsInTable)
 {
     TilesGridPanel = refTilesGridPanel;
     TilesCoordWrapper = refTilesCoordWrapper;
@@ -163,7 +160,6 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
             MaxBiasCoord.Col = (Bias.X + (TileSize.X - DistanceToAppearanceOfFirstNewTile.X)) / TileSize.X;
         }
         else {
-            GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Right"));
             /* При камере, упревшейся в границу контента, вычислять смещение координат проще - они всегда будут равны друг другу и такому
              * количеству тайлов, какое уложится в расстоянии на которое контент изначально торчал справа за пределами своей области */
             MinBiasCoord.Col = MaxBiasCoord.Col = SizeDifference.X / 2.0 / TileSize.X;
@@ -193,7 +189,6 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
             MinBiasCoord.Col = (Bias.X - (TileSize.X - DistanceToAppearanceOfFirstNewTile.X)) / TileSize.X;
         }
         else {
-            GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Left"));
             /* При камере, упревшейся в границу контента, вычислять смещение координат проще - они всегда будут равны друг другу и такому
              * количеству тайлов, какое уложится в модуле расстояния на которое контент изначально торчал слева за пределами своей области */
             MinBiasCoord.Col = MaxBiasCoord.Col = -SizeDifference.X / 2.0 / TileSize.X;
@@ -223,7 +218,6 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
             MaxBiasCoord.Row = (Bias.Y + (TileSize.Y - DistanceToAppearanceOfFirstNewTile.Y)) / TileSize.Y;
         }
         else {
-            GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Top"));
             /* При камере, упревшейся в границу контента, вычислять смещение координат проще - они всегда будут равны друг другу и такому
              * количеству тайлов, какое уложится в расстоянии на которое контент изначально торчал сверху за пределами своей области */
             MinBiasCoord.Row = MaxBiasCoord.Row = SizeDifference.Y / 2.0 / TileSize.Y;
@@ -253,7 +247,6 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
             MinBiasCoord.Row = (Bias.Y - (TileSize.Y - DistanceToAppearanceOfFirstNewTile.Y)) / TileSize.Y;
         }
         else {
-            GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Bottom"));
             /* При камере, упревшейся в границу контента, вычислять смещение координат проще - они всегда будут равны друг другу и такому
              * количеству тайлов, какое уложится в модуле расстояния на которое контент изначально торчал снизу за пределами своей области */
             MinBiasCoord.Row = MaxBiasCoord.Row = -SizeDifference.Y / 2.0 / TileSize.Y;
@@ -359,8 +352,6 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
 
     CurrentDimensions = CurrentDimensions + ZoomDimentions;
 
-    //////////////////////////////////////////////if(CurrentDimensions.Min.Row < 0)
-
     /* Бывают моменты, когда размер контента меньше минимального. В этом случае нужные размеры виджету контента помогает
      * держать специальная подложка, но размер меньше минимального так же говорит и о том, что все рассчёты по габаритам
      * были не нужны, а настоящая рабочая область контента просто меньше размера своего виджета, так что по соответствующей
@@ -391,7 +382,8 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
 
         //Изменения производятся если габариты контента изменились
         if (OldDimensions != CurrentDimensions) {
-            UE_LOG(TileTablesOptimizationTools, Log, TEXT("old: %s, new %s"), *OldDimensions.ToString(), *CurrentDimensions.ToString());
+            //UE_LOG(TileTablesOptimizationTools, Log, TEXT("old: %s, new %s"), *OldDimensions.ToString(), *CurrentDimensions.ToString());
+
             if (OldDimensions.DoTheDimensionsIntersect(CurrentDimensions)) {
                 //Чтобы таргетировано убирать или добавлять строки и стобцы, проверяется как именно изменились габариты контента
                 bool NewTopBoundMore = (CurrentDimensions.Max.Row > OldDimensions.Max.Row);
@@ -402,9 +394,6 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
                 bool OldLeftBoundLess = CurrentDimensions.Min.Col > OldDimensions.Min.Col;
                 bool NewRightBoundMore = CurrentDimensions.Max.Col > OldDimensions.Max.Col;
                 bool OldRightBoundLess = CurrentDimensions.Max.Col < OldDimensions.Max.Col;
-
-                UE_LOG(TileTablesOptimizationTools, Log, TEXT("NewTopBoundMore: %d, OldTopBoundLess: %d, NewBottomBoundMore: %d, OldBottomBoundLess: %d, NewLeftBoundMore: %d, OldLeftBoundLess: %d, NewRightBoundMore: %d, OldRightBoundLess: %d"),
-                    NewTopBoundMore, OldTopBoundLess, NewBottomBoundMore, OldBottomBoundLess, NewLeftBoundMore, OldLeftBoundLess, NewRightBoundMore, OldRightBoundLess);
 
                 //Если размер контента по Y меньше минимального, то это означает, что все тайлы по вертикали и так всегда отображены, и нет смысла гонять эти проверки и цыклы
                 if (!CurrentYLessThanMin) {
@@ -565,256 +554,4 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
         UE_LOG(LogTemp, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: TilesCoordWrapper does not include any elements"));
 
     OldDimensions = CurrentDimensions;
-}
-
-void UTileTablesOptimizationTools::ChangeDisplayAreaFromShift(FVector2D TileShift, int NumberOfMapTilesRows)
-{
-    if (!IsInit) {
-        return;
-    }
-
-    int TileShiftRow = trunc(TileShift.Y);
-    int TileShiftCol = trunc(TileShift.X);
-
-    CurrentDimensions = OriginalDimensions + FGridDimensions(FGridCoord(TileShiftRow, TileShiftCol), FGridCoord(TileShiftRow, TileShiftCol));
-
-    FGridDimensions OffsetDifference = CurrentDimensions - OldDimensions;
-
-    if (OldDimensions != CurrentDimensions) {
-        //UE_LOG(TileTablesOptimizationTools, Log, TEXT("old: %s, new %s"), *OldDimensions.ToString(), *CurrentDimensions.ToString());
-
-        int MinRowCoordToFill = 0;
-        int MaxRowCoordToFill = 0;
-        int MinColCoordToFill = 0;
-        int MaxColCoordToFill = 0;
-        int MinRowCoordToRemove = 0;
-        int MaxRowCoordToRemove = 0;
-        int MinColCoordToRemove = 0;
-        int MaxColCoordToRemove = 0;
-
-        if (OldDimensions.DoTheDimensionsIntersect(CurrentDimensions)) {
-            if (OffsetDifference.Max.Col > 0 && OffsetDifference.Max.Row == 0) {
-                MinRowCoordToFill = CurrentDimensions.Min.Row;
-                MaxRowCoordToFill = CurrentDimensions.Max.Row;
-
-                MinRowCoordToRemove = CurrentDimensions.Min.Row;
-                MaxRowCoordToRemove = CurrentDimensions.Max.Row;
-
-                MinColCoordToFill = OldDimensions.Max.Col + 1;
-                MaxColCoordToFill = CurrentDimensions.Max.Col;
-
-                MinColCoordToRemove = OldDimensions.Min.Col;
-                MaxColCoordToRemove = CurrentDimensions.Min.Col - 1;
-
-                AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "pravo");
-                AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "pravo");
-            }
-            else if (OffsetDifference.Max.Col < 0 && OffsetDifference.Max.Row == 0) {
-                MinRowCoordToFill = CurrentDimensions.Min.Row;
-                MaxRowCoordToFill = CurrentDimensions.Max.Row;
-
-                MinRowCoordToRemove = CurrentDimensions.Min.Row;
-                MaxRowCoordToRemove = CurrentDimensions.Max.Row;
-
-                MinColCoordToFill = CurrentDimensions.Min.Col;
-                MaxColCoordToFill = OldDimensions.Min.Col - 1;
-
-                MinColCoordToRemove = CurrentDimensions.Max.Col + 1;
-                MaxColCoordToRemove = OldDimensions.Max.Col;
-
-                AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "levo");
-                AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "levo");
-            }
-            else if (OffsetDifference.Max.Row > 0 && OffsetDifference.Max.Col == 0) {
-                MinRowCoordToFill = OldDimensions.Max.Row + 1;
-                MaxRowCoordToFill = CurrentDimensions.Max.Row;
-
-                MinRowCoordToRemove = OldDimensions.Min.Row;
-                MaxRowCoordToRemove = CurrentDimensions.Min.Row - 1;
-
-                MinColCoordToFill = CurrentDimensions.Min.Col;
-                MaxColCoordToFill = CurrentDimensions.Max.Col;
-
-                MinColCoordToRemove = CurrentDimensions.Min.Col;
-                MaxColCoordToRemove = CurrentDimensions.Max.Col;
-
-                AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "verh");
-                AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "verh");
-            }
-            else if (OffsetDifference.Max.Row < 0 && OffsetDifference.Max.Col == 0) {
-                MinRowCoordToFill = CurrentDimensions.Min.Row;
-                MaxRowCoordToFill = OldDimensions.Min.Row - 1;
-
-                MinRowCoordToRemove = CurrentDimensions.Max.Row + 1;
-                MaxRowCoordToRemove = OldDimensions.Max.Row;
-
-                MinColCoordToFill = CurrentDimensions.Min.Col;
-                MaxColCoordToFill = CurrentDimensions.Max.Col;
-
-                MinColCoordToRemove = CurrentDimensions.Min.Col;
-                MaxColCoordToRemove = CurrentDimensions.Max.Col;
-
-                AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "niz");
-                AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "niz");
-            }
-            else if (OffsetDifference.Max.Col > 0 && OffsetDifference.Max.Row > 0) {
-                MinRowCoordToFill = OldDimensions.Max.Row + 1;
-                MaxRowCoordToFill = CurrentDimensions.Max.Row;
-
-                MinRowCoordToRemove = OldDimensions.Min.Row;
-                MaxRowCoordToRemove = CurrentDimensions.Min.Row - 1;
-
-                MinColCoordToFill = CurrentDimensions.Min.Col;
-                MaxColCoordToFill = CurrentDimensions.Max.Col;
-
-                MinColCoordToRemove = OldDimensions.Min.Col;
-                MaxColCoordToRemove = OldDimensions.Max.Col;
-
-                AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "pravo verh");
-                AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "pravo verh");
-
-                MinRowCoordToFill = CurrentDimensions.Min.Row;
-                MaxRowCoordToFill = OldDimensions.Max.Row;
-
-                MinRowCoordToRemove = CurrentDimensions.Min.Row;
-                MaxRowCoordToRemove = OldDimensions.Max.Row;
-
-                MinColCoordToFill = OldDimensions.Max.Col + 1;
-                MaxColCoordToFill = CurrentDimensions.Max.Col;
-
-                MinColCoordToRemove = OldDimensions.Min.Col;
-                MaxColCoordToRemove = CurrentDimensions.Min.Col - 1;
-
-                AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "pravo verh");
-                AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "pravo verh");
-            }
-            else if (OffsetDifference.Max.Col > 0 && OffsetDifference.Max.Row < 0) {
-                MinRowCoordToFill = CurrentDimensions.Min.Row;
-                MaxRowCoordToFill = CurrentDimensions.Max.Row;
-
-                MinRowCoordToRemove = OldDimensions.Min.Row;
-                MaxRowCoordToRemove = OldDimensions.Max.Row;
-
-                MinColCoordToFill = OldDimensions.Max.Col + 1;
-                MaxColCoordToFill = CurrentDimensions.Max.Col;
-
-                MinColCoordToRemove = OldDimensions.Min.Col;
-                MaxColCoordToRemove = CurrentDimensions.Min.Col - 1;
-
-                AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "pravo niz");
-                AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "pravo niz");
-
-                MinRowCoordToFill = CurrentDimensions.Min.Row;
-                MaxRowCoordToFill = OldDimensions.Min.Row - 1;
-
-                MinRowCoordToRemove = CurrentDimensions.Max.Row + 1;
-                MaxRowCoordToRemove = OldDimensions.Max.Row;
-
-                MinColCoordToFill = CurrentDimensions.Min.Col;
-                MaxColCoordToFill = OldDimensions.Max.Col;
-
-                MinColCoordToRemove = CurrentDimensions.Min.Col;
-                MaxColCoordToRemove = OldDimensions.Max.Col;
-
-                AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "pravo niz");
-                AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "pravo niz");
-            }
-            else if (OffsetDifference.Max.Col < 0 && OffsetDifference.Max.Row > 0) {
-                MinRowCoordToFill = OldDimensions.Max.Row + 1;
-                MaxRowCoordToFill = CurrentDimensions.Max.Row;
-
-                MinRowCoordToRemove = OldDimensions.Min.Row;
-                MaxRowCoordToRemove = CurrentDimensions.Min.Row - 1;
-
-                MinColCoordToFill = CurrentDimensions.Min.Col;
-                MaxColCoordToFill = CurrentDimensions.Max.Col;
-
-                MinColCoordToRemove = OldDimensions.Min.Col;
-                MaxColCoordToRemove = OldDimensions.Max.Col;
-
-                AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "levo verh");
-                AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "levo verh");
-
-                MinRowCoordToFill = CurrentDimensions.Min.Row;
-                MaxRowCoordToFill = OldDimensions.Max.Row;
-
-                MinRowCoordToRemove = CurrentDimensions.Min.Row;
-                MaxRowCoordToRemove = OldDimensions.Max.Row;
-
-                MinColCoordToFill = CurrentDimensions.Min.Col;
-                MaxColCoordToFill = OldDimensions.Min.Col - 1;
-
-                MinColCoordToRemove = CurrentDimensions.Max.Col + 1;
-                MaxColCoordToRemove = OldDimensions.Max.Col;
-
-                AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "levo verh");
-                AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "levo verh");
-            }
-            else if (OffsetDifference.Max.Col < 0 && OffsetDifference.Max.Row < 0) {
-                MinRowCoordToFill = CurrentDimensions.Min.Row;
-                MaxRowCoordToFill = OldDimensions.Min.Row - 1;
-
-                MinRowCoordToRemove = CurrentDimensions.Max.Row + 1;
-                MaxRowCoordToRemove = OldDimensions.Max.Row;
-
-                MinColCoordToFill = CurrentDimensions.Min.Col;
-                MaxColCoordToFill = CurrentDimensions.Max.Col;
-
-                MinColCoordToRemove = OldDimensions.Min.Col;
-                MaxColCoordToRemove = OldDimensions.Max.Col;
-
-                AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "levo niz");
-                AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "levo niz");
-
-                MinRowCoordToFill = OldDimensions.Min.Row;
-                MaxRowCoordToFill = CurrentDimensions.Max.Row;
-
-                MinRowCoordToRemove = OldDimensions.Min.Row;
-                MaxRowCoordToRemove = CurrentDimensions.Max.Row;
-
-                MinColCoordToFill = CurrentDimensions.Min.Col;
-                MaxColCoordToFill = OldDimensions.Min.Col - 1;
-
-                MinColCoordToRemove = CurrentDimensions.Max.Col + 1;
-                MaxColCoordToRemove = OldDimensions.Max.Col;
-
-                AsynchronousAreaFilling(FGridDimensions(FGridCoord(MinRowCoordToFill, MinColCoordToFill), FGridCoord(MaxRowCoordToFill, MaxColCoordToFill)), NumberOfMapTilesRows, "levo niz");
-                AsynchronousAreaRemoving(FGridDimensions(FGridCoord(MinRowCoordToRemove, MinColCoordToRemove), FGridCoord(MaxRowCoordToRemove, MaxColCoordToRemove)), NumberOfMapTilesRows, "levo niz");
-            }
-        }
-        else {
-            AsynchronousAreaFilling(CurrentDimensions, NumberOfMapTilesRows, "all");
-            AsynchronousAreaRemoving(OldDimensions, NumberOfMapTilesRows, "all");
-        }
-        TilesCoordWrapper->setMinCoord(CurrentDimensions.Min);
-        TilesCoordWrapper->setMaxCoord(CurrentDimensions.Max);
-    }
-
-    OldDimensions = CurrentDimensions;
-}
-
-
-void UTileTablesOptimizationTools::ChangeDisplayAreaFromZoom(float TileZoom, int NumberOfMapTilesRows) {
-    //if (!IsInit) {
-    //    return;
-    //}
-
-    //if (!TilesCoordWrapper)
-    //{
-    //    return;
-    //}
-    //
-    //if (OldAreaSize == FVector2D(0, 0))
-    //    OldAreaSize = AreaSize;
-
-    //FGridCoord MaxCoord = TilesCoordWrapper->getMaxCoord();
-    //FGridCoord MinCoord = TilesCoordWrapper->getMinCoord();
-    //FVector2D DimensionsSize = FVector2D((MaxCoord.Col - MinCoord.Col) * TileSize.X, (MaxCoord.Row - MinCoord.Row) * TileSize.Y);
-
-    //SizeDifference = OldAreaSize - DimensionsSize * TileZoom;
-
-    //int DifTilesCols = ceil((SizeDifference.X) / TileSize.X);
-    //int DifTilesRows = ceil((SizeDifference.Y) / TileSize.Y);
-
-    //GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("sss Col: %d Row: %d"), DifTilesCols, DifTilesRows));
 }

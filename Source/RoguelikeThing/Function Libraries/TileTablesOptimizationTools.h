@@ -87,12 +87,6 @@ public:
 		FVector2D widgetAreaSize, FVector2D tileSize, FVector2D MinContentSize, int numberOfTileRowsInTable, int numberOfTileColsInTable);
 
 	UFUNCTION(BlueprintCallable)
-	void ChangeDisplayAreaFromShift(FVector2D TileShift, int NumberOfMapTilesRows);
-
-	UFUNCTION(BlueprintCallable)
-	void ChangeDisplayAreaFromZoom(float TileZoom, int NumberOfMapTilesRows);
-	
-	UFUNCTION(BlueprintCallable)
 	//‘ункци€, измен€юща€ видимость тайлов от сдвига или масштабировани€ таблицы
 	void ChangingVisibilityOfTableTiles(FVector2D Bias, float ZoomMultiplier, int NumberOfMapTilesRows);
 
