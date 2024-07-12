@@ -26,9 +26,10 @@ void UTileTablesOptimizationTools::AsynchronousAreaFilling(FGridDimensions AreaD
                     //else
                         //UE_LOG(TileTablesOptimizationTools, Log, TEXT("%s add ddddddd r: %d, c: %d"), *ss, row, col);
 
-                    UUserWidget* Tile = TilesBuf->GetTile();
+                    UAbstractTile* Tile = TilesBuf->GetTile();
 
                     if (Tile) {
+                        Tile->SetMyCoord(FCellCoord((NumberOfMapTilesRows - row) - 1, col));
                         UUniformGridSlot* GridSlot = TilesGridPanel->AddChildToUniformGrid(Tile, (NumberOfMapTilesRows - row) - 1, col);
                         TilesCoordWrapper->AddWidget(row, col, Tile, GridSlot);
                     }
@@ -63,7 +64,7 @@ void UTileTablesOptimizationTools::AsynchronousAreaRemoving(FGridDimensions Area
                             else
                                 UE_LOG(TileTablesOptimizationTools, Warning, TEXT("%s remove 2 ssdsdfsdf r: %d, c: %d"), *ss, row, col);
 
-                            UUserWidget* Tile = TilesCoordWrapper->FindWidget(row, col);
+                            UAbstractTile* Tile = TilesCoordWrapper->FindWidget(row, col);
 
                             if(!TilesCoordWrapper->RemoveCoord(row, col)) {
                                 UE_LOG(TileTablesOptimizationTools, Warning, TEXT("%s remove 2 fffffff r: %d, c: %d"), *ss, row, col);

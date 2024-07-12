@@ -2,8 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
+#include "RoguelikeThing/Widgets/Abstract/AbstractTile.h"
 #include <RoguelikeThing/CoordWrapperOfTable.h>
 #include <Components/UniformGridPanel.h>
 #include <RoguelikeThing/MyGameInstance.h>
@@ -17,7 +16,7 @@
 DECLARE_LOG_CATEGORY_EXTERN(Map_Tile, Log, All);
 
 UCLASS()
-class ROGUELIKETHING_API UMapTile : public UUserWidget
+class ROGUELIKETHING_API UMapTile : public UAbstractTile
 {
 	GENERATED_BODY()
 
@@ -25,9 +24,11 @@ private:
 	//Менеджер высокого уровня для экземпляра запущенной игры
 	UPROPERTY()
 	UMyGameInstance* GameInstance;
-	
+
 public:
 	UMapTile(const FObjectInitializer& Object);
+
+	void SetMyCoord(FCellCoord myCoord) override;
 
 	//Координатная обёртка, хранящая в себе ячейки этого тайла
 	UCoordWrapperOfTable* CellsCoordWrapper;

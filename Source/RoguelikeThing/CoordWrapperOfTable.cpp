@@ -3,7 +3,7 @@
 
 #include "CoordWrapperOfTable.h"
 
-UUserWidget* WrapperRow::FindWidget(int Key)
+UAbstractTile* WrapperRow::FindWidget(int Key)
 {
     return *Row.Find(Key);
 }
@@ -15,7 +15,7 @@ UUniformGridSlot* WrapperRow::FindGridSlot(int Key)
 
 bool WrapperRow::RemoveWidget(int Key)
 {
-    UUserWidget* Widget = FindWidget(Key);
+    UAbstractTile* Widget = FindWidget(Key);
     if (!Widget)
         return false;
     Widget->RemoveFromParent();
@@ -28,7 +28,7 @@ bool WrapperRow::RemoveIndex(int Key)
     return ((bool)Row.Remove(Key)) && ((bool)RowGrid.Remove(Key));
 }
 
-bool WrapperRow::AddWidget(int Key, UUserWidget* Widget, UUniformGridSlot* GridSlot)
+bool WrapperRow::AddWidget(int Key, UAbstractTile* Widget, UUniformGridSlot* GridSlot)
 {
     return ((bool)Row.Add(Key, Widget)) && ((bool)RowGrid.Add(Key, GridSlot));
 }
@@ -48,7 +48,7 @@ UCoordWrapperOfTable::~UCoordWrapperOfTable()
     Clear();
 }
 
-bool UCoordWrapperOfTable::AddWidget(int row, int col, UUserWidget* Widget, UUniformGridSlot* GridSlot)
+bool UCoordWrapperOfTable::AddWidget(int row, int col, UAbstractTile* Widget, UUniformGridSlot* GridSlot)
 {
     bool success = false;
     if (Col.Contains(col)) {
@@ -106,7 +106,7 @@ bool UCoordWrapperOfTable::AddWidget(int row, int col, UUserWidget* Widget, UUni
     return success;
 }
 
-UUserWidget* UCoordWrapperOfTable::FindWidget(int row, int col)
+UAbstractTile* UCoordWrapperOfTable::FindWidget(int row, int col)
 {
     if (!Col.Contains(col))
         return nullptr;

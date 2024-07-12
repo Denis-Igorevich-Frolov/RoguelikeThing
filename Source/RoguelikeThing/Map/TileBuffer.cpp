@@ -6,7 +6,7 @@
 
 DEFINE_LOG_CATEGORY(TileBuffer);
 
-UUserWidget* UTileBuffer::GetTile()
+UAbstractTile* UTileBuffer::GetTile()
 {
     if (!IsInit)
         return false;
@@ -14,7 +14,7 @@ UUserWidget* UTileBuffer::GetTile()
     if(TileBuf.Num() == 0)
         return nullptr;
 
-    UUserWidget* Tile = TileBuf.Last();
+    UAbstractTile* Tile = TileBuf.Last();
 
     if (TileBuf.IsValidIndex(TileBuf.Num() - 1)) {
         TileBuf.RemoveAt(TileBuf.Num() - 1);
@@ -28,7 +28,7 @@ UUserWidget* UTileBuffer::GetTile()
     return Tile;
 }
 
-void UTileBuffer::AddTile(UUserWidget* Tile)
+void UTileBuffer::AddTile(UAbstractTile* Tile)
 {
     TileBuf.Add(Tile);
 }
@@ -60,7 +60,7 @@ bool UTileBuffer::ScoreToMaximum()
         if (TileBuf.Num() == MaxSize)
             return true;
 
-        UMapTile* MapTile = StaticCast<UMapTile*>(CreateWidget<UUserWidget>(TilesGridPanel, MapTileClass));
+        UMapTile* MapTile = StaticCast<UMapTile*>(CreateWidget<UAbstractTile>(TilesGridPanel, MapTileClass));
         if (!MapTile->FillingWithCells(MapTileLength, CellClass, MapEditor))
             return false;
 

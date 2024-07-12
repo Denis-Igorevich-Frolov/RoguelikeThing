@@ -6,6 +6,7 @@
 #include "UObject/NoExportTypes.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/UniformGridPanel.h"
+#include "RoguelikeThing/Widgets/Abstract/AbstractTile.h"
 #include "TileBuffer.generated.h"
 
 DECLARE_LOG_CATEGORY_EXTERN(TileBuffer, Log, All);
@@ -17,7 +18,7 @@ class ROGUELIKETHING_API UTileBuffer : public UObject
 	
 private:
 	UPROPERTY()
-	TArray<UUserWidget*> TileBuf;
+	TArray<UAbstractTile*> TileBuf;
 	int MaxSize = 100;
 
 	int MapTileLength = -1;
@@ -37,10 +38,10 @@ public:
 	void Init(int mapTileLength, UUniformGridPanel* refTilesGridPanel, UClass* refMapTileClass, UClass* refCellClass, UMapEditor* refMapEditor);
 
 	UFUNCTION(BlueprintCallable)
-	UUserWidget* GetTile();
+	UAbstractTile* GetTile();
 
 	UFUNCTION(BlueprintCallable)
-	void AddTile(UUserWidget* Tile);
+	void AddTile(UAbstractTile* Tile);
 
 	UFUNCTION(BlueprintCallable)
 	bool ScoreToMaximum();

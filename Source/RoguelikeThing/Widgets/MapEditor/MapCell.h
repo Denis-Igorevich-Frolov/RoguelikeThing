@@ -2,8 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Blueprint/UserWidget.h"
+#include "RoguelikeThing/Widgets/Abstract/AbstractTile.h"
 #include "RoguelikeThing/Widgets/MapEditor/MapEditor.h"
 #include "RoguelikeThing/Widgets/MapEditor/CellCoord.h"
 #include "RoguelikeThing/Structs/Widgets/MapEditor/MapCell/NeighbourhoodOfCell.h"
@@ -23,9 +22,13 @@ enum class FCellType : uint8 {
 };
 
 UCLASS()
-class ROGUELIKETHING_API UMapCell : public UUserWidget
+class ROGUELIKETHING_API UMapCell : public UAbstractTile
 {
 	GENERATED_BODY()
+
+private:
+	FCellCoord* CoordOfParentTile;
+	int MapTileLength = 0;
 
 public:
 	//”казатель на редактор карт, который управл€ет этой €чейкой
@@ -47,9 +50,10 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	FVector2D getSize();
 
-	//√лобальный пор€дковый номер €чейки
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FCellCoord MyCoord;
+	void SetCoordOfParentTile(UPARAM(ref)FCellCoord& coordOfParentTile, int mapTileLength);
+    void SetMyCoord(FCellCoord myCoord) override;
+	UFUNCTION(BlueprintCallable)
+	FCellCoord GetMyGlobalCoord();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FCellType CurrentType = FCellType::NONE;

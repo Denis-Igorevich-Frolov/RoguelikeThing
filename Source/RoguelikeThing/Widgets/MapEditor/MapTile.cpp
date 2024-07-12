@@ -9,7 +9,7 @@
 
 DEFINE_LOG_CATEGORY(Map_Tile);
 
-UMapTile::UMapTile(const FObjectInitializer& Object) : UUserWidget(Object)
+UMapTile::UMapTile(const FObjectInitializer& Object) : UAbstractTile(Object)
 {
     CellsCoordWrapper = NewObject<UCoordWrapperOfTable>();
 
@@ -17,6 +17,11 @@ UMapTile::UMapTile(const FObjectInitializer& Object) : UUserWidget(Object)
     GameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
     if (!GameInstance)
         UE_LOG(Map_Tile, Warning, TEXT("Warning in MapTile class in constructor - GameInstance was not retrieved from the world"));
+}
+
+void UMapTile::SetMyCoord(FCellCoord myCoord)
+{
+    this->MyCoord = myCoord;
 }
 
 UCoordWrapperOfTable* UMapTile::GetCellsCoordWrapper()
@@ -38,8 +43,8 @@ bool UMapTile::FillingWithCells(int MapTileLength, UClass* CellClass, UMapEditor
                 return false;
             }
 
-            //Ячейке передаётся её глобальная координата, равная её порядковому номеру по вертикали и горизонтали (точка отсчёта с 1)
-            //Cell->MyCoord = FCellCoord(row * MapTileLength + tileRow + 1, col * MapTileLength + tileCol + 1);
+            Cell->SetCoordOfParentTile(MyCoord, MapTileLength);
+            Cell->SetMyCoord(FCellCoord(tileRow, tileCol));
             //Также ей передаётся указатель на её редактор карт
             Cell->MyEditor = MapEditor;
 

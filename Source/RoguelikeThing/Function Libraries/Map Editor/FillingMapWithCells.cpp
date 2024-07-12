@@ -292,6 +292,8 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                         if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                             UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: An uninitialized MapTile is created with coordinates row: %d col: %d"), row, col);
 
+                        MapTile->SetMyCoord(FCellCoord(row, col));
+
                         if (!MapTile->FillingWithCells(MapTileLength, CellClass, MapEditor)) {
                             AsyncTask(ENamedThreads::GameThread, [MapEditor, TilesGridPanel, this]() {
                                 if (GameInstance && GameInstance->LogType != ELogType::NONE)
