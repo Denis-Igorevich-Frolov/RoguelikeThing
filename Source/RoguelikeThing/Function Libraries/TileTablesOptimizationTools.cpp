@@ -147,7 +147,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
             UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: The visible area has moved to the right of the center"));
 
         //Если камера не уткнулась в край контента, то все изменения происходят в обычном режиме
-        if (Bias.X < CurrentSizeDifference.X / 2.0) {
+        if (Bias.X < CurrentSizeDifference.X / 2.0 - TileSize.X) {
             /* Смещение минимальной, а конкретнее левой, координаты при сдвиге камеры слева направо всегда отвечает за погашение лишних левых ячеек.
              * Расстояние до появления первого нового тайла здесь прибавляется к ширине смещения, чтобы учесть, что первый тайл можно погасить раньше
              * остальных, а именно в момент набора суммы смещения и расстояния до появления нового тайла равной ширине хотя бы 1 целого тайла. То есть
@@ -175,7 +175,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
             UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: The visible area has moved to the left of the center"));
 
         //Если камера не уткнулась в край контента, то все изменения происходят в обычном режиме
-        if (Bias.X > -(CurrentSizeDifference.X / 2.0)) {
+        if (Bias.X > -(CurrentSizeDifference.X / 2.0 - TileSize.X)) {
             /* Смещение максимальной, а конкретнее правой, координаты при сдвиге камеры спарава налево всегда отвечает за сокрытие лишних правых ячеек.
              * Расстояние до появления первого нового тайла здесь отнимается от ширины смещения, которая здесь всегда нулевая или отрицательная, чтобы
              * учесть, что первый тайл можно сокрыть раньше остальных, а именно в момент набора модуля разницы смещения и расстояния до появления нового
@@ -205,7 +205,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
             UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: The visible area has moved to the top of the center"));
 
         //Если камера не уткнулась в край контента, то все изменения происходят в обычном режиме
-        if (Bias.Y < CurrentSizeDifference.Y / 2.0) {
+        if (Bias.Y < CurrentSizeDifference.Y / 2.0 - TileSize.Y) {
             /* Смещение минимальной, а конкретнее нижней, координаты при сдвиге камеры снизу вверх всегда отвечает за погашение лишних нижних ячеек.
              * Расстояние до появления первого нового тайла здесь прибавляется к высоте смещения, чтобы учесть, что первый тайл можно погасить раньше
              * остальных, а именно в момент набора суммы смещения и расстояния до появления нового тайла равной высоте хотя бы 1 целого тайла. То есть
@@ -233,7 +233,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
             UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: The visible area has moved to the bottom of the center"));
 
         //Если камера не уткнулась в край контента, то все изменения происходят в обычном режиме
-        if (Bias.Y > -(CurrentSizeDifference.Y / 2.0)) {
+        if (Bias.Y > -(CurrentSizeDifference.Y / 2.0 - TileSize.Y)) {
             /* Смещение максимальной, а конкретнее верхней, координаты при сдвиге камеры сверху вниз всегда отвечает за сокрытие лишних верхних ячеек.
              * Расстояние до появления первого нового тайла здесь отнимается от высоты смещения, которая здесь всегда нулевая или отрицательная, чтобы
              * учесть, что первый тайл можно сокрыть раньше остальных, а именно в момент набора модуля разницы смещения и расстояния до появления нового
