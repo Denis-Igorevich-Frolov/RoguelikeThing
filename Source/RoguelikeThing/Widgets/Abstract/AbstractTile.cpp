@@ -6,3 +6,15 @@
 void UAbstractTile::SetMyCoord(FCellCoord myCoord)
 {
 }
+
+void UAbstractTile::ClearFilledCells()
+{
+}
+
+void UAbstractTile::OnAddedEvent()
+{
+}
+
+void UAbstractTile::OnAddedEvent(int MapTileLength, UMapMatrix* MapMatrix)
+{
+}

@@ -7,8 +7,20 @@
       "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Function Libraries\\TileTablesOptimizationTools.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Widgets\\MapEditor\\MapCell.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Widgets\\MapEditor\\MapCell.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\TileTablesOptimizationTools.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Function Libraries\\TileTablesOptimizationTools.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Widgets\\MapEditor\\MapTile.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Widgets\\MapEditor\\MapTile.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Widgets\\Abstract\\AbstractTile.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Widgets\\Abstract\\AbstractTile.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Map\\MapMatrix.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Map\\MapMatrix.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Widgets\\MapEditor\\MapTile.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -19,48 +31,40 @@
       "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Widgets\\Abstract\\AbstractTile.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Widgets\\Abstract\\AbstractTile.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Widgets\\Abstract\\AbstractTile.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Widgets\\MapEditor\\MapCell.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Widgets\\MapEditor\\MapCell.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Widgets\\MapEditor\\MapTile.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Widgets\\MapEditor\\MapTile.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Map Editor\\FillingMapWithCells.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Function Libraries\\Map Editor\\FillingMapWithCells.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\CoordWrapperOfTable.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\CoordWrapperOfTable.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Widgets\\MapEditor\\MapEditor.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Widgets\\MapEditor\\MapEditor.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\CoordWrapperOfTable.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\CoordWrapperOfTable.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Map\\TileBuffer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Map\\TileBuffer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Map Editor\\FillingMapWithCells.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Function Libraries\\Map Editor\\FillingMapWithCells.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\TileTablesOptimizationTools.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Function Libraries\\TileTablesOptimizationTools.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\CoordWrapperOfTable.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\CoordWrapperOfTable.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Widgets\\MapEditor\\MapCell.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Widgets\\MapEditor\\MapCell.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Map\\TileBuffer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Map\\TileBuffer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Map Editor\\FillingMapWithCells.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Function Libraries\\Map Editor\\FillingMapWithCells.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Map\\TileBuffer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Map\\TileBuffer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Widgets\\MapEditor\\MapEditor.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Widgets\\MapEditor\\MapEditor.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Map Editor\\FillingMapWithCells.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Function Libraries\\Map Editor\\FillingMapWithCells.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Widgets\\MapEditor\\MapCell.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Widgets\\MapEditor\\MapCell.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Structs\\Widgets\\MapEditor\\MapCell\\NeighbourhoodOfCell.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -69,10 +73,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Map\\MapMatrix.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Map\\MapMatrix.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Map\\MapMatrix.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Map\\MapMatrix.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Structs\\Widgets\\MapEditor\\MapCell\\NeighbourhoodOfCell.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -90,33 +90,33 @@
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 6,
               "Title": "AbstractTile.h",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Widgets\\Abstract\\AbstractTile.h",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\Widgets\\Abstract\\AbstractTile.h",
               "ToolTip": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Widgets\\Abstract\\AbstractTile.h",
               "RelativeToolTip": "Source\\RoguelikeThing\\Widgets\\Abstract\\AbstractTile.h",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABoAAAAJAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2024-07-12T01:17:50.342Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 3,
               "Title": "AbstractTile.cpp",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Widgets\\Abstract\\AbstractTile.cpp",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\Widgets\\Abstract\\AbstractTile.cpp",
               "ToolTip": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Widgets\\Abstract\\AbstractTile.cpp",
               "RelativeToolTip": "Source\\RoguelikeThing\\Widgets\\Abstract\\AbstractTile.cpp",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAMAAAAAAAAA",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAABEAAAAgAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-07-12T01:17:52.453Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 15,
               "Title": "MapCell.h",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Widgets\\MapEditor\\MapCell.h",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\Widgets\\MapEditor\\MapCell.h",
@@ -129,7 +129,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 11,
               "Title": "MapCell.cpp",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Widgets\\MapEditor\\MapCell.cpp",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\Widgets\\MapEditor\\MapCell.cpp",
@@ -142,65 +142,65 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 5,
               "Title": "MapTile.h",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Widgets\\MapEditor\\MapTile.h",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\Widgets\\MapEditor\\MapTile.h",
               "ToolTip": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Widgets\\MapEditor\\MapTile.h",
               "RelativeToolTip": "Source\\RoguelikeThing\\Widgets\\MapEditor\\MapTile.h",
-              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAQAAAAAAAAA",
+              "ViewState": "AQIAABkAAAAAAAAAAAAcwDcAAABJAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2024-06-19T21:00:57.757Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 2,
               "Title": "MapTile.cpp",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Widgets\\MapEditor\\MapTile.cpp",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\Widgets\\MapEditor\\MapTile.cpp",
               "ToolTip": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Widgets\\MapEditor\\MapTile.cpp",
               "RelativeToolTip": "Source\\RoguelikeThing\\Widgets\\MapEditor\\MapTile.cpp",
-              "ViewState": "AQIAACsAAAAAAAAAAAAcwEIAAAAlAAAA",
+              "ViewState": "AQIAAHsAAAAAAAAAAAAcwFQAAAAoAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-06-19T21:02:07.803Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 8,
               "Title": "CoordWrapperOfTable.h",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\CoordWrapperOfTable.h",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\CoordWrapperOfTable.h",
               "ToolTip": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\CoordWrapperOfTable.h",
               "RelativeToolTip": "Source\\RoguelikeThing\\CoordWrapperOfTable.h",
-              "ViewState": "AQIAADwAAAAAAAAAAAAAACsAAAAAAAAA",
+              "ViewState": "AQIAAFoAAAAAAAAAAAAcwHIAAAAlAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2024-06-12T02:04:09.583Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 10,
               "Title": "CoordWrapperOfTable.cpp",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\CoordWrapperOfTable.cpp",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\CoordWrapperOfTable.cpp",
               "ToolTip": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\CoordWrapperOfTable.cpp",
               "RelativeToolTip": "Source\\RoguelikeThing\\CoordWrapperOfTable.cpp",
-              "ViewState": "AQIAAAYAAAAAAAAAAAAAAAUAAAANAAAA",
+              "ViewState": "AQIAAFgAAAAAAAAAAAAcwGwAAAANAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-06-12T00:20:30.933Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 1,
               "Title": "TileTablesOptimizationTools.h",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\TileTablesOptimizationTools.h",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\Function Libraries\\TileTablesOptimizationTools.h",
               "ToolTip": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\TileTablesOptimizationTools.h",
               "RelativeToolTip": "Source\\RoguelikeThing\\Function Libraries\\TileTablesOptimizationTools.h",
-              "ViewState": "AQIAACkAAAAAAAAAAAAcwD0AAAAoAAAA",
+              "ViewState": "AQIAAE0AAAAAAAAAAAAcwFkAAACCAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2024-04-27T00:31:37.43Z",
               "EditorCaption": ""
@@ -213,53 +213,53 @@
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\Function Libraries\\TileTablesOptimizationTools.cpp",
               "ToolTip": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\TileTablesOptimizationTools.cpp",
               "RelativeToolTip": "Source\\RoguelikeThing\\Function Libraries\\TileTablesOptimizationTools.cpp",
-              "ViewState": "AQIAAAYAAAAAAAAAAAAcwB4AAAAfAAAA",
+              "ViewState": "AQIAAEUAAAAAAAAAAAAAAGMAAAA3AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-04-27T00:36:42.205Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 9,
               "Title": "FillingMapWithCells.h",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Map Editor\\FillingMapWithCells.h",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\Function Libraries\\Map Editor\\FillingMapWithCells.h",
               "ToolTip": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Map Editor\\FillingMapWithCells.h",
               "RelativeToolTip": "Source\\RoguelikeThing\\Function Libraries\\Map Editor\\FillingMapWithCells.h",
-              "ViewState": "AQIAADkAAAAAAAAAAAAAAEUAAAADAAAA",
+              "ViewState": "AQIAAC0AAAAAAAAAAAAAAEsAAAACAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2024-04-03T16:48:10.424Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 14,
               "Title": "FillingMapWithCells.cpp",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Map Editor\\FillingMapWithCells.cpp",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\Function Libraries\\Map Editor\\FillingMapWithCells.cpp",
               "ToolTip": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Map Editor\\FillingMapWithCells.cpp",
               "RelativeToolTip": "Source\\RoguelikeThing\\Function Libraries\\Map Editor\\FillingMapWithCells.cpp",
-              "ViewState": "AQIAABsBAAAAAAAAAAAAACYBAAA6AAAA",
+              "ViewState": "AQIAABQBAAAAAAAAAAAcwCgBAABlAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-04-03T16:46:21.519Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 4,
               "Title": "MapMatrix.h",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Map\\MapMatrix.h",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\Map\\MapMatrix.h",
               "ToolTip": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Map\\MapMatrix.h",
               "RelativeToolTip": "Source\\RoguelikeThing\\Map\\MapMatrix.h",
-              "ViewState": "AQIAAEoAAAAAAAAAAAAcwF8AAAAAAAAA",
+              "ViewState": "AQIAACwAAAAAAAAAAAAcwEkAAAAjAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2024-03-24T13:13:46.918Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 17,
               "Title": "MapMatrix.cpp",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Map\\MapMatrix.cpp",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\Map\\MapMatrix.cpp",
@@ -285,7 +285,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 16,
               "Title": "NeighbourhoodOfCell.cpp",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Structs\\Widgets\\MapEditor\\MapCell\\NeighbourhoodOfCell.cpp",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\Structs\\Widgets\\MapEditor\\MapCell\\NeighbourhoodOfCell.cpp",
@@ -298,7 +298,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 7,
               "Title": "MapEditor.h",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Widgets\\MapEditor\\MapEditor.h",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\Widgets\\MapEditor\\MapEditor.h",
@@ -311,7 +311,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 13,
               "Title": "TileBuffer.h",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Map\\TileBuffer.h",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\Map\\TileBuffer.h",
@@ -330,7 +330,7 @@
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\Map\\TileBuffer.cpp",
               "ToolTip": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Map\\TileBuffer.cpp",
               "RelativeToolTip": "Source\\RoguelikeThing\\Map\\TileBuffer.cpp",
-              "ViewState": "AQIAAC0AAAAAAAAAAAAAAD4AAABMAAAA",
+              "ViewState": "AQIAACQAAAAAAAAAAAAAAD4AAABMAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2024-06-19T13:40:07.281Z",
               "EditorCaption": ""

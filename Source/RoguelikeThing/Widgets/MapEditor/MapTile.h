@@ -6,6 +6,8 @@
 #include <RoguelikeThing/CoordWrapperOfTable.h>
 #include <Components/UniformGridPanel.h>
 #include <RoguelikeThing/MyGameInstance.h>
+#include <RoguelikeThing/Map/MapMatrix.h>
+#include "MapCell.h"
 #include "MapTile.generated.h"
 
 /*****************************************************************
@@ -25,10 +27,15 @@ private:
 	UPROPERTY()
 	UMyGameInstance* GameInstance;
 
+	UPROPERTY()
+	TArray<UMapCell*> FilledCells;
+
 public:
 	UMapTile(const FObjectInitializer& Object);
 
 	void SetMyCoord(FCellCoord myCoord) override;
+	void ClearFilledCells() override;
+	void OnAddedEvent(int MapTileLength, UMapMatrix* MapMatrix) override;
 
 	//Координатная обёртка, хранящая в себе ячейки этого тайла
 	UCoordWrapperOfTable* CellsCoordWrapper;
@@ -40,5 +47,11 @@ public:
 	UUniformGridPanel* GetGridPanel();
 
 	UFUNCTION(BlueprintCallable)
-	bool FillingWithCells(int MapTileLength, UClass* CellClass, UMapEditor* MapEditor);
+	bool FillingWithCells(int MapTileLength, UClass* CellClass, UMapEditor* MapEditor, UMapMatrix* MapMatrix = nullptr);
+
+	UFUNCTION(BlueprintCallable)
+	void SetStyleFromDB(UMapCell* Cell, int row, int col, int MapTileLength, UMapMatrix* MapMatrix);
+
+	UFUNCTION(BlueprintCallable)
+	void SetStyleFromDBForAllCells(int MapTileLength, UMapMatrix* MapMatrix);
 };

@@ -294,7 +294,7 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
 
                         MapTile->SetMyCoord(FCellCoord(row, col));
 
-                        if (!MapTile->FillingWithCells(MapTileLength, CellClass, MapEditor)) {
+                        if (!MapTile->FillingWithCells(MapTileLength, CellClass, MapEditor, MapMatrix)) {
                             AsyncTask(ENamedThreads::GameThread, [MapEditor, TilesGridPanel, this]() {
                                 if (GameInstance && GameInstance->LogType != ELogType::NONE)
                                     UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: Launched a GameThread call from the TilesGridPanel table population thread to remove the loading widget"));

@@ -62,6 +62,8 @@ private:
 	UCoordWrapperOfTable* TilesCoordWrapper;
 	UPROPERTY()
 	UTileBuffer* TilesBuf;
+	UPROPERTY()
+	UMapMatrix* MapMatrix;
 
 	FVector2D MaximumContentSize = FVector2D(0, 0);
 	FVector2D SizeDifference = FVector2D(0, 0);
@@ -73,6 +75,7 @@ private:
 	FVector2D WidgetAreaSize = FVector2D(0, 0);
 	int NumberOfTileRowsInTable = 0;
 	int NumberOfTileColsInTable = 0;
+	int MapTileLength = 0;
 
 	bool IsInit = false;
 
@@ -83,7 +86,7 @@ public:
 	UTileTablesOptimizationTools();
 
 	UFUNCTION(BlueprintCallable)
-	void Init(UUniformGridPanel* refTilesGridPanel, UCoordWrapperOfTable* refTilesCoordWrapper, UTileBuffer* refTilesBuf, FGridDimensions originalDimensions,
+	void Init(UUniformGridPanel* refTilesGridPanel, UCoordWrapperOfTable* refTilesCoordWrapper, UTileBuffer* refTilesBuf, UMapMatrix* refMapMatrix, FGridDimensions originalDimensions,
 		FVector2D widgetAreaSize, FVector2D tileSize, FVector2D MinContentSize, int numberOfTileRowsInTable, int numberOfTileColsInTable);
 
 	UFUNCTION(BlueprintCallable)

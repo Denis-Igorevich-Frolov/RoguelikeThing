@@ -32,6 +32,7 @@ void UTileTablesOptimizationTools::AsynchronousAreaFilling(FGridDimensions AreaD
                         Tile->SetMyCoord(FCellCoord((NumberOfMapTilesRows - row) - 1, col));
                         UUniformGridSlot* GridSlot = TilesGridPanel->AddChildToUniformGrid(Tile, (NumberOfMapTilesRows - row) - 1, col);
                         TilesCoordWrapper->AddWidget(row, col, Tile, GridSlot);
+                        Tile->OnAddedEvent(MapTileLength, MapMatrix);
                     }
                     else
                         UE_LOG(TileTablesOptimizationTools, Warning, TEXT("AAAAAAAAAAAAA"));
@@ -65,6 +66,7 @@ void UTileTablesOptimizationTools::AsynchronousAreaRemoving(FGridDimensions Area
                                 UE_LOG(TileTablesOptimizationTools, Warning, TEXT("%s remove 2 ssdsdfsdf r: %d, c: %d"), *ss, row, col);
 
                             UAbstractTile* Tile = TilesCoordWrapper->FindWidget(row, col);
+                            Tile->ClearFilledCells();
 
                             if(!TilesCoordWrapper->RemoveCoord(row, col)) {
                                 UE_LOG(TileTablesOptimizationTools, Warning, TEXT("%s remove 2 fffffff r: %d, c: %d"), *ss, row, col);
@@ -81,12 +83,13 @@ void UTileTablesOptimizationTools::AsynchronousAreaRemoving(FGridDimensions Area
     });
 }
 
-void UTileTablesOptimizationTools::Init(UUniformGridPanel* refTilesGridPanel, UCoordWrapperOfTable* refTilesCoordWrapper, UTileBuffer* refTilesBuf, FGridDimensions originalDimensions,
-    FVector2D widgetAreaSize, FVector2D tileSize, FVector2D minContentSize, int numberOfTileRowsInTable, int numberOfTileColsInTable)
+void UTileTablesOptimizationTools::Init(UUniformGridPanel* refTilesGridPanel, UCoordWrapperOfTable* refTilesCoordWrapper, UTileBuffer* refTilesBuf, UMapMatrix* refMapMatrix,
+    FGridDimensions originalDimensions, FVector2D widgetAreaSize, FVector2D tileSize, FVector2D minContentSize, int numberOfTileRowsInTable, int numberOfTileColsInTable)
 {
     TilesGridPanel = refTilesGridPanel;
     TilesCoordWrapper = refTilesCoordWrapper;
     TilesBuf = refTilesBuf;
+    MapMatrix = refMapMatrix;
 
     this->OriginalDimensions = originalDimensions;
     this->TileSize = tileSize;
@@ -94,6 +97,7 @@ void UTileTablesOptimizationTools::Init(UUniformGridPanel* refTilesGridPanel, UC
     this->NumberOfTileRowsInTable = numberOfTileRowsInTable;
     this->NumberOfTileColsInTable = numberOfTileColsInTable;
     this->WidgetAreaSize = widgetAreaSize;
+    this->MapTileLength = MapMatrix->GetMapTileLength();
     OldDimensions = OriginalDimensions;
     CurrentDimensions = OriginalDimensions;
 
