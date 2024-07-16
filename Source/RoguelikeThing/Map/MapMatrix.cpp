@@ -69,6 +69,9 @@ void UMapMatrix::destroyLoadStatement(FString FunctionName)
 //Функция, конвертирующая глобальный индекс базы данных карты в локальный индекс отдельного фрагмента
 void UMapMatrix::convertingGlobalIndexIntoLocalOne(int32 globalCellRow, int32 globalCellCol, int32& chunkRow, int32& cellRow, int32& chunkCol, int32& cellCol)
 {
+    globalCellRow++;
+    globalCellCol++;
+
     if (globalCellRow > 0) {
         /* Для получения индекса фрагмента карты следует разделить глобальный индекс ячейки на размер таблицы.
          * Но так как переход на следующей индекс начинается не по достижении размера таблицы, а только ещё
@@ -512,7 +515,7 @@ bool UMapMatrix::CheckCorrectOfCorridorLocation(MatrixType matrixType, int32 glo
     int TotalCols = (Dimensions.MaxCol - Dimensions.MinCol + 1) * Dimensions.TableLength;
 
     //Проверка влияния нового коридора на клетку сверху. Если полученный индекс меньше 1, то это значит, что клеток выше текущей нет
-    if (globalCellRow - 1 > 0) {
+    if (globalCellRow - 1 >= 0) {
         FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow - 1, globalCellCol, false);
 
         //На всякий случай всё равно проверяется валидность индекса
@@ -559,7 +562,7 @@ bool UMapMatrix::CheckCorrectOfCorridorLocation(MatrixType matrixType, int32 glo
 
     //Ниже такая же проверка проводится с нижней, левой и правой клетками
 
-    if (globalCellRow + 1 <= TotalRows) {
+    if (globalCellRow + 1 < TotalRows) {
         FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow + 1, globalCellCol, false);
 
         if (CellType == FMapEditorBrushType::Error) {
@@ -584,7 +587,7 @@ bool UMapMatrix::CheckCorrectOfCorridorLocation(MatrixType matrixType, int32 glo
         }
     }
 
-    if (globalCellCol - 1 > 0) {
+    if (globalCellCol - 1 >= 0) {
         FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow, globalCellCol - 1, false);
 
         if (CellType == FMapEditorBrushType::Error) {
@@ -609,7 +612,7 @@ bool UMapMatrix::CheckCorrectOfCorridorLocation(MatrixType matrixType, int32 glo
         }
     }
 
-    if (globalCellCol + 1 <= TotalCols) {
+    if (globalCellCol + 1 < TotalCols) {
         FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow, globalCellCol + 1, false);
 
         if (CellType == FMapEditorBrushType::Error) {
@@ -671,7 +674,7 @@ bool UMapMatrix::CheckCorrectOfRoomLocation(MatrixType matrixType, int32 globalC
      * Для того, чтобы избегать подобных ситуаций у всех коридоров окружающих текущую комнату вызывается проверка валидности */
 
      //Проверка влияния новой комнаты на клетку сверху. Если полученный индекс меньше 1, то это значит, что клеток выше текущей нет
-    if (globalCellRow - 1 > 0) {
+    if (globalCellRow - 1 >= 0) {
         FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow - 1, globalCellCol, false);
 
         //На всякий случай всё равно проверяется валидность индекса
@@ -700,7 +703,7 @@ bool UMapMatrix::CheckCorrectOfRoomLocation(MatrixType matrixType, int32 globalC
 
     //Ниже такая же проверка проводится с нижней, левой и правой клетками
 
-    if (globalCellRow + 1 <= TotalRows) {
+    if (globalCellRow + 1 < TotalRows) {
         FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow + 1, globalCellCol, false);
 
         if (CellType == FMapEditorBrushType::Error) {
@@ -721,7 +724,7 @@ bool UMapMatrix::CheckCorrectOfRoomLocation(MatrixType matrixType, int32 globalC
         }
     }
 
-    if (globalCellCol - 1 > 0) {
+    if (globalCellCol - 1 >= 0) {
         FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow, globalCellCol - 1, false);
 
         if (CellType == FMapEditorBrushType::Error) {
@@ -742,7 +745,7 @@ bool UMapMatrix::CheckCorrectOfRoomLocation(MatrixType matrixType, int32 globalC
         }
     }
 
-    if (globalCellCol + 1 <= TotalCols) {
+    if (globalCellCol + 1 < TotalCols) {
         FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow, globalCellCol + 1, false);
 
         if (CellType == FMapEditorBrushType::Error) {
@@ -783,7 +786,7 @@ FNeighbourhoodOfCell UMapMatrix::CheckNeighbourhoodOfCell(MatrixType matrixType,
     FNeighbourhoodOfCell NeighbourhoodOfCell = FNeighbourhoodOfCell();
 
     //Просмотр стиля клетки сверху. Если полученный индекс меньше 1, то это значит, что клеток выше текущей нет
-    if (globalCellRow - 1 > 0) {
+    if (globalCellRow - 1 >= 0) {
         FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow - 1, globalCellCol, false);
 
         //На всякий случай всё равно проверяется валидность индекса
@@ -805,7 +808,7 @@ FNeighbourhoodOfCell UMapMatrix::CheckNeighbourhoodOfCell(MatrixType matrixType,
 
     //Ниже такая же проверка проводится с нижней, левой и правой клетками
 
-    if (globalCellRow + 1 <= TotalRows) {
+    if (globalCellRow + 1 < TotalRows) {
         FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow + 1, globalCellCol, false);
 
         if (CellType == FMapEditorBrushType::Error) {
@@ -822,7 +825,7 @@ FNeighbourhoodOfCell UMapMatrix::CheckNeighbourhoodOfCell(MatrixType matrixType,
         }
     }
 
-    if (globalCellCol - 1 > 0) {
+    if (globalCellCol - 1 >= 0) {
         FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow, globalCellCol - 1, false);
 
         if (CellType == FMapEditorBrushType::Error) {
@@ -839,7 +842,7 @@ FNeighbourhoodOfCell UMapMatrix::CheckNeighbourhoodOfCell(MatrixType matrixType,
         }
     }
 
-    if (globalCellCol + 1 <= TotalCols) {
+    if (globalCellCol + 1 < TotalCols) {
         FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(globalCellRow, globalCellCol + 1, false);
 
         if (CellType == FMapEditorBrushType::Error) {

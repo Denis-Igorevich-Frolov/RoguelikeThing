@@ -109,14 +109,14 @@ void UMapTile::SetStyleFromDB(UMapCell* Cell, int row, int col, int MapTileLengt
     AsyncTask(ENamedThreads::GameThread, [Cell, row, col, MapTileLength, MapMatrix, this]() {
         if (MapMatrix) {
             //Теперь пришло время придать новой ячейке необходимый стиль. Для этого из БД читается тип структуры ячейки
-            FMapEditorBrushType CellType = MapMatrix->GetValueOfMapChunkStructureCellByGlobalIndex(MyCoord.Row * MapTileLength + row + 1, MyCoord.Col * MapTileLength + col + 1, false);
+            FMapEditorBrushType CellType = MapMatrix->GetValueOfMapChunkStructureCellByGlobalIndex(MyCoord.Row * MapTileLength + row, MyCoord.Col * MapTileLength + col, false);
 
             /* И затем в соответствии с полученым типом, ячейке присваивается необходимый стиль.
              * При этом пустой стиль назначать не надо, он и так является стилем по умолчанию */
             switch (CellType)
             {
             case FMapEditorBrushType::Corridor:
-                Cell->SetCorridorStyle(MapMatrix->CheckNeighbourhoodOfCell(MatrixType::ChunkStructure, MyCoord.Row * MapTileLength + row + 1, MyCoord.Col * MapTileLength + col + 1, false));
+                Cell->SetCorridorStyle(MapMatrix->CheckNeighbourhoodOfCell(MatrixType::ChunkStructure, MyCoord.Row * MapTileLength + row, MyCoord.Col * MapTileLength + col, false));
                 //if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                     //UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: Cell Row: %d Col: %d is set to the corridor style"), row * MapTileLength + row + 1, col * MapTileLength + col + 1);
                 FilledCells.Add(Cell);
