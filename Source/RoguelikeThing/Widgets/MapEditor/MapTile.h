@@ -54,4 +54,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetStyleFromDBForAllCells(int MapTileLength, UMapMatrix* MapMatrix);
+	
+	UFUNCTION(BlueprintCallable)
+	void AddFilledCell(UMapCell* Cell);
 };

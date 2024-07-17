@@ -104,6 +104,11 @@ void UMapTile::SetStyleFromDBForAllCells(int MapTileLength, UMapMatrix* MapMatri
         });
 }
 
+void UMapTile::AddFilledCell(UMapCell* Cell)
+{
+    FilledCells.Add(Cell);
+}
+
 void UMapTile::SetStyleFromDB(UMapCell* Cell, int row, int col, int MapTileLength, UMapMatrix* MapMatrix)
 {
     AsyncTask(ENamedThreads::GameThread, [Cell, row, col, MapTileLength, MapMatrix, this]() {

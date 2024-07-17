@@ -9,6 +9,11 @@ void UMapCell::SetCoordOfParentTile(FCellCoord& coordOfParentTile, int mapTileLe
     this->MapTileLength = mapTileLength;
 }
 
+FCellCoord UMapCell::GetCoordOfParentTile()
+{
+    return *CoordOfParentTile;
+}
+
 void UMapCell::SetMyCoord(FCellCoord myCoord)
 {
     this->MyCoord = myCoord;

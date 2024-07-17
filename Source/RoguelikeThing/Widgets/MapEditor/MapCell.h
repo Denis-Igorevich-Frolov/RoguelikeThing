@@ -51,6 +51,8 @@ public:
 	FVector2D getSize();
 
 	void SetCoordOfParentTile(UPARAM(ref)FCellCoord& coordOfParentTile, int mapTileLength);
+	UFUNCTION(BlueprintCallable)
+	FCellCoord GetCoordOfParentTile();
     void SetMyCoord(FCellCoord myCoord) override;
 	UFUNCTION(BlueprintCallable)
 	FCellCoord GetMyGlobalCoord();
