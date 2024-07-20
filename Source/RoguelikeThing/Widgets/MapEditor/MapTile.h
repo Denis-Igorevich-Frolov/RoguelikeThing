@@ -30,15 +30,19 @@ private:
 	UPROPERTY()
 	TArray<UMapCell*> FilledCells;
 
+	UTerrainOfTile* MyTerrainOfTile = nullptr;
+
 public:
 	UMapTile(const FObjectInitializer& Object);
 
 	void SetMyCoord(FCellCoord myCoord) override;
 	void ClearFilledCells() override;
-	void OnAddedEvent(int MapTileLength, UMapMatrix* MapMatrix) override;
+	void OnAddedEvent(UMapMatrix* MapMatrix) override;
 
 	//Координатная обёртка, хранящая в себе ячейки этого тайла
 	UCoordWrapperOfTable* CellsCoordWrapper;
+
+	void SetMyTerrainOfTile(UTerrainOfTile* TerrainOfTile);
 
 	UFUNCTION(BlueprintCallable)
 	UCoordWrapperOfTable* GetCellsCoordWrapper();
@@ -50,11 +54,14 @@ public:
 	bool FillingWithCells(int MapTileLength, UClass* CellClass, UMapEditor* MapEditor, UMapMatrix* MapMatrix = nullptr);
 
 	UFUNCTION(BlueprintCallable)
-	void SetStyleFromDB(UMapCell* Cell, int row, int col, int MapTileLength, UMapMatrix* MapMatrix);
+	void SetStyleFromDB(UMapCell* Cell, int row, int col, int MapTileLength, UMapMatrix* MapMatrix);//!!!!!!!!!
 
-	UFUNCTION(BlueprintCallable)
-	void SetStyleFromDBForAllCells(int MapTileLength, UMapMatrix* MapMatrix);
+	//UFUNCTION(BlueprintCallable)
+	//void SetStyleFromDBForAllCells(int MapTileLength, UMapMatrix* MapMatrix);
 	
 	UFUNCTION(BlueprintCallable)
 	void AddFilledCell(UMapCell* Cell);
+	
+	UFUNCTION(BlueprintCallable)
+	bool FillCellsAccordingToTerrain(UMapMatrix* MapMatrix);
 };

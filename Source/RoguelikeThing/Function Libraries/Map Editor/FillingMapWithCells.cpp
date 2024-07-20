@@ -237,6 +237,8 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                 if (GameInstance && GameInstance->LogType != ELogType::NONE)
                     UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The TilesGridPanel table population thread has been opened"));
 
+                MapMatrix->FillTerrainOfTiles();
+
                 UMapTile* LastMapTile = nullptr;
 
                 TileBuf->Clear();
@@ -293,6 +295,7 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                             UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: An uninitialized MapTile is created with coordinates row: %d col: %d"), row, col);
 
                         MapTile->SetMyCoord(FCellCoord(row, col));
+                        MapTile->SetMyTerrainOfTile(MapMatrix->GetTerrainOfTile(FCellCoord(row, col)));
 
                         if (!MapTile->FillingWithCells(MapTileLength, CellClass, MapEditor, MapMatrix)) {
                             AsyncTask(ENamedThreads::GameThread, [MapEditor, TilesGridPanel, this]() {
@@ -369,7 +372,7 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
 
                     MapEditor->UpdateItemAreaContent();
 
-                    //После полного забивания карты ячейками TilesGridPanel возвращается сидимость
+                    //После полного забивания карты ячейками TilesGridPanel возвращается видимость
                     TilesGridPanel->SetVisibility(ESlateVisibility::Visible);
                     if (GameInstance && GameInstance->LogType != ELogType::NONE)
                         UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: A thread to configure the necessary widgets at the end of filling the TilesGridPanel table and removing the loading widget has been closed"));

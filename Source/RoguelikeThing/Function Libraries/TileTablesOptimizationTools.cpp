@@ -32,7 +32,7 @@ void UTileTablesOptimizationTools::AsynchronousAreaFilling(FGridDimensions AreaD
                         Tile->SetMyCoord(FCellCoord((NumberOfMapTilesRows - row) - 1, col));
                         UUniformGridSlot* GridSlot = TilesGridPanel->AddChildToUniformGrid(Tile, (NumberOfMapTilesRows - row) - 1, col);
                         TilesCoordWrapper->AddWidget(row, col, Tile, GridSlot);
-                        Tile->OnAddedEvent(MapTileLength, MapMatrix);
+                        Tile->OnAddedEvent(MapMatrix);
                     }
                     else
                         UE_LOG(TileTablesOptimizationTools, Warning, TEXT("AAAAAAAAAAAAA"));

@@ -1,274 +1,274 @@
 "../../../Engine/Content/EditorBlueprintResources/StandardMacros.uasset" 0
 "../../../Engine/Content/EditorBlueprintResources/StandardMacros.uexp" 1
-"E:/Unreal projects/RoguelikeThing/Content/Cinematics/FadeEffect.uasset" 2
-"E:/Unreal projects/RoguelikeThing/Content/Cinematics/FadeEffect.uexp" 3
-"E:/Unreal projects/RoguelikeThing/Content/BPGameInstance.uasset" 4
-"E:/Unreal projects/RoguelikeThing/Content/BPGameInstance.uexp" 5
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/DowerChest.uasset" 6
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/DowerChest.uexp" 7
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/DowerChest.uasset" 8
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/DowerChest.uexp" 9
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/Door.uasset" 10
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/Door.uexp" 11
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Door.uasset" 12
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Door.uexp" 13
-"../../../Engine/Content/EngineMaterials/T_Default_Material_Grid_N.uasset" 14
-"../../../Engine/Content/EngineMaterials/T_Default_Material_Grid_N.uexp" 15
-"../../../Engine/Content/EngineMaterials/T_Default_Material_Grid_N.ubulk" 16
-"../../../Engine/Content/EngineMaterials/T_Default_Material_Grid_M.uasset" 17
-"../../../Engine/Content/EngineMaterials/T_Default_Material_Grid_M.uexp" 18
-"../../../Engine/Content/EngineMaterials/T_Default_Material_Grid_M.ubulk" 19
-"../../../Engine/Content/Functions/Engine_MaterialFunctions01/Opacity/CameraDepthFade.uasset" 20
-"../../../Engine/Content/Functions/Engine_MaterialFunctions01/Opacity/CameraDepthFade.uexp" 21
-"../../../Engine/Content/EngineMaterials/WorldGridMaterial.uasset" 22
-"../../../Engine/Content/EngineMaterials/WorldGridMaterial.uexp" 23
-"../../../Engine/Content/BasicShapes/Plane.uasset" 24
-"../../../Engine/Content/BasicShapes/Plane.uexp" 25
-"../../../Engine/Plugins/2D/Paper2D/Content/PlaceholderTextures/FlatNormalMap.uasset" 26
-"../../../Engine/Plugins/2D/Paper2D/Content/PlaceholderTextures/FlatNormalMap.uexp" 27
-"../../../Engine/Plugins/2D/Paper2D/Content/PlaceholderTextures/DummySpriteTexture.uasset" 28
-"../../../Engine/Plugins/2D/Paper2D/Content/PlaceholderTextures/DummySpriteTexture.uexp" 29
-"../../../Engine/Plugins/2D/Paper2D/Content/PlaceholderTextures/DummySpriteTexture.ubulk" 30
-"../../../Engine/Plugins/2D/Paper2D/Content/DefaultLitSpriteMaterial.uasset" 31
-"../../../Engine/Plugins/2D/Paper2D/Content/DefaultLitSpriteMaterial.uexp" 32
-"../../../Engine/Content/BasicShapes/BasicShapeMaterial.uasset" 33
-"../../../Engine/Content/BasicShapes/BasicShapeMaterial.uexp" 34
-"../../../Engine/Content/EngineLightProfiles/180Degree_IES.uasset" 35
-"../../../Engine/Content/EngineLightProfiles/180Degree_IES.uexp" 36
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/TorchPictogram.uasset" 37
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/TorchPictogram.uexp" 38
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/ExpeditionWindowHeader.uasset" 39
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/ExpeditionWindowHeader.uexp" 40
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/QuestList/QuestCategory.uasset" 41
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/QuestList/QuestCategory.uexp" 42
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/QuestList/QuestList.uasset" 43
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/QuestList/QuestList.uexp" 44
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Inventory/InventorySlot.uasset" 45
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Inventory/InventorySlot.uexp" 46
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/Inventory/InventorySlot.uasset" 47
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/Inventory/InventorySlot.uexp" 48
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/Inventory/Inventory.uasset" 49
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/Inventory/Inventory.uexp" 50
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/ShiftAndZoom/ShiftArea.uasset" 51
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/ShiftAndZoom/ShiftArea.uexp" 52
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/ShiftAndZoom/ShiftAndZoomArea.uasset" 53
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/ShiftAndZoom/ShiftAndZoomArea.uexp" 54
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/EmptyTexture.uasset" 55
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/EmptyTexture.uexp" 56
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/AccuracyPictogram.uasset" 57
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/AccuracyPictogram.uexp" 58
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/Map/MiniMap.uasset" 59
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/Map/MiniMap.uexp" 60
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/QuestButton.uasset" 61
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/QuestButton.uexp" 62
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/DowerChest.uasset" 2
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/DowerChest.uexp" 3
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/DowerChest.uasset" 4
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/DowerChest.uexp" 5
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/Door.uasset" 6
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/Door.uexp" 7
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Door.uasset" 8
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Door.uexp" 9
+"../../../Engine/Content/EngineMaterials/T_Default_Material_Grid_N.uasset" 10
+"../../../Engine/Content/EngineMaterials/T_Default_Material_Grid_N.uexp" 11
+"../../../Engine/Content/EngineMaterials/T_Default_Material_Grid_N.ubulk" 12
+"../../../Engine/Content/EngineMaterials/T_Default_Material_Grid_M.uasset" 13
+"../../../Engine/Content/EngineMaterials/T_Default_Material_Grid_M.uexp" 14
+"../../../Engine/Content/EngineMaterials/T_Default_Material_Grid_M.ubulk" 15
+"../../../Engine/Content/Functions/Engine_MaterialFunctions01/Opacity/CameraDepthFade.uasset" 16
+"../../../Engine/Content/Functions/Engine_MaterialFunctions01/Opacity/CameraDepthFade.uexp" 17
+"../../../Engine/Content/EngineMaterials/WorldGridMaterial.uasset" 18
+"../../../Engine/Content/EngineMaterials/WorldGridMaterial.uexp" 19
+"../../../Engine/Content/BasicShapes/Plane.uasset" 20
+"../../../Engine/Content/BasicShapes/Plane.uexp" 21
+"../../../Engine/Plugins/2D/Paper2D/Content/PlaceholderTextures/FlatNormalMap.uasset" 22
+"../../../Engine/Plugins/2D/Paper2D/Content/PlaceholderTextures/FlatNormalMap.uexp" 23
+"../../../Engine/Plugins/2D/Paper2D/Content/PlaceholderTextures/DummySpriteTexture.uasset" 24
+"../../../Engine/Plugins/2D/Paper2D/Content/PlaceholderTextures/DummySpriteTexture.uexp" 25
+"../../../Engine/Plugins/2D/Paper2D/Content/PlaceholderTextures/DummySpriteTexture.ubulk" 26
+"../../../Engine/Plugins/2D/Paper2D/Content/DefaultLitSpriteMaterial.uasset" 27
+"../../../Engine/Plugins/2D/Paper2D/Content/DefaultLitSpriteMaterial.uexp" 28
+"../../../Engine/Content/BasicShapes/BasicShapeMaterial.uasset" 29
+"../../../Engine/Content/BasicShapes/BasicShapeMaterial.uexp" 30
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/TorchPictogram.uasset" 31
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/TorchPictogram.uexp" 32
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/ExpeditionWindowHeader.uasset" 33
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/ExpeditionWindowHeader.uexp" 34
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/StoppingRight.uasset" 35
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/StoppingRight.uexp" 36
+"../../../Engine/Content/EngineLightProfiles/180Degree_IES.uasset" 37
+"../../../Engine/Content/EngineLightProfiles/180Degree_IES.uexp" 38
+"E:/Unreal projects/RoguelikeThing/Content/BPGameInstance.uasset" 39
+"E:/Unreal projects/RoguelikeThing/Content/BPGameInstance.uexp" 40
+"E:/Unreal projects/RoguelikeThing/Content/Objects/Room.uasset" 41
+"E:/Unreal projects/RoguelikeThing/Content/Objects/Room.uexp" 42
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/QuestList/QuestCategory.uasset" 43
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/QuestList/QuestCategory.uexp" 44
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/QuestList/QuestList.uasset" 45
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/QuestList/QuestList.uexp" 46
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Inventory/InventorySlot.uasset" 47
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Inventory/InventorySlot.uexp" 48
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/Inventory/InventorySlot.uasset" 49
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/Inventory/InventorySlot.uexp" 50
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/Inventory/Inventory.uasset" 51
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/Inventory/Inventory.uexp" 52
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/EmptyTexture.uasset" 53
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/EmptyTexture.uexp" 54
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/AccuracyPictogram.uasset" 55
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/AccuracyPictogram.uexp" 56
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/Map/MiniMap.uasset" 57
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/Map/MiniMap.uexp" 58
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/ShiftAndZoom/ShiftArea.uasset" 59
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/ShiftAndZoom/ShiftArea.uexp" 60
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/ShiftAndZoom/ShiftAndZoomArea.uasset" 61
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/ShiftAndZoom/ShiftAndZoomArea.uexp" 62
 "E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/MapButton.uasset" 63
 "E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/MapButton.uexp" 64
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/InventoryButton.uasset" 65
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/InventoryButton.uexp" 66
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/ExpeditionWindowFooter/SwitchableMenu/SwitchableMenu.uasset" 67
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/ExpeditionWindowFooter/SwitchableMenu/SwitchableMenu.uexp" 68
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/ExpeditionWindowFooter/SwitchableMenu/SwitchableMenuReverse.uasset" 69
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/ExpeditionWindowFooter/SwitchableMenu/SwitchableMenuReverse.uexp" 70
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/SpeedPictogram.uasset" 71
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/SpeedPictogram.uexp" 72
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/MadnessResistance.uasset" 73
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/MadnessResistance.uexp" 74
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/InjuryResistance.uasset" 75
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/InjuryResistance.uexp" 76
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/FreezeResistance.uasset" 77
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/FreezeResistance.uexp" 78
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/EvasionPictogram.uasset" 79
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/EvasionPictogram.uexp" 80
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/ElectrificationResistance.uasset" 81
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/ElectrificationResistance.uexp" 82
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/DiseaseResistance.uasset" 83
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/DiseaseResistance.uexp" 84
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/DefenseAgainstMagic.uasset" 85
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/DefenseAgainstMagic.uexp" 86
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/DefenseAgainstLightning.uasset" 87
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/DefenseAgainstLightning.uexp" 88
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/DefenseAgainstFrost.uasset" 89
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/DefenseAgainstFrost.uexp" 90
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/DefenseAgainstFire.uasset" 91
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/DefenseAgainstFire.uexp" 92
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/DamagePictogram.uasset" 93
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/DamagePictogram.uexp" 94
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/CritPictogram.uasset" 95
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/CritPictogram.uexp" 96
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/BurnResistance.uasset" 97
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/BurnResistance.uexp" 98
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/ArmorPictogram.uasset" 99
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/ArmorPictogram.uexp" 100
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Parameters/PsychePictogram.uasset" 101
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Parameters/PsychePictogram.uexp" 102
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Parameters/ManaPictogram.uasset" 103
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Parameters/ManaPictogram.uexp" 104
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Parameters/HealthPictogram.uasset" 105
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Parameters/HealthPictogram.uexp" 106
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Parameters/EndurancePictogram.uasset" 107
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Parameters/EndurancePictogram.uexp" 108
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/WaitButton.uasset" 109
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/WaitButton.uexp" 110
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/SwapButton.uasset" 111
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/SwapButton.uexp" 112
-"../../../Engine/Content/Functions/Engine_MaterialFunctions02/Texturing/CustomRotator.uasset" 113
-"../../../Engine/Content/Functions/Engine_MaterialFunctions02/Texturing/CustomRotator.uexp" 114
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/Arrow.uasset" 115
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/Arrow.uexp" 116
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/RotateArrow.uasset" 117
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/RotateArrow.uexp" 118
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/EmptyButton.uasset" 119
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/EmptyButton.uexp" 120
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/DefendButton.uasset" 121
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/DefendButton.uexp" 122
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/Portrait.uasset" 123
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/Portrait.uexp" 124
-"E:/Unreal projects/RoguelikeThing/Content/Structs/Stat/StatStruct.uasset" 125
-"E:/Unreal projects/RoguelikeThing/Content/Structs/Stat/StatStruct.uexp" 126
-"E:/Unreal projects/RoguelikeThing/Content/Structs/CharacterStatsStruct.uasset" 127
-"E:/Unreal projects/RoguelikeThing/Content/Structs/CharacterStatsStruct.uexp" 128
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/ExpeditionWindowFooter/CharacterStats/CharacterStats.uasset" 129
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/ExpeditionWindowFooter/CharacterStats/CharacterStats.uexp" 130
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/ExpeditionWindowFooter/CharacterStats/CharacterStatsReverse.uasset" 131
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/ExpeditionWindowFooter/CharacterStats/CharacterStatsReverse.uexp" 132
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/ExpeditionWindowFooter/ExpeditionWindowFooter.uasset" 133
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/ExpeditionWindowFooter/ExpeditionWindowFooter.uexp" 134
-"E:/Unreal projects/RoguelikeThing/Content/UI/Screens/ExpeditionWindow.uasset" 135
-"E:/Unreal projects/RoguelikeThing/Content/UI/Screens/ExpeditionWindow.uexp" 136
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/WalkingRight.uasset" 137
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/WalkingRight.uexp" 138
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_1.uasset" 139
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_1.uexp" 140
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_10.uasset" 141
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_10.uexp" 142
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_11.uasset" 143
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_11.uexp" 144
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_12.uasset" 145
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_12.uexp" 146
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_13.uasset" 147
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_13.uexp" 148
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_14.uasset" 149
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_14.uexp" 150
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_15.uasset" 151
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_15.uexp" 152
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_2.uasset" 153
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_2.uexp" 154
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_3.uasset" 155
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_3.uexp" 156
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_4.uasset" 157
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_4.uexp" 158
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_5.uasset" 159
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_5.uexp" 160
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_6.uasset" 161
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_6.uexp" 162
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_7.uasset" 163
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_7.uexp" 164
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_8.uasset" 165
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_8.uexp" 166
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_9.uasset" 167
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_9.uexp" 168
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_0.uasset" 169
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_0.uexp" 170
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRightPaperFlipbook.uasset" 171
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRightPaperFlipbook.uexp" 172
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/TurnLeftFromMove.uasset" 173
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/TurnLeftFromMove.uexp" 174
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_0.uasset" 175
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_0.uexp" 176
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/QuestButton.uasset" 65
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/QuestButton.uexp" 66
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/InventoryButton.uasset" 67
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/InventoryButton.uexp" 68
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/ExpeditionWindowFooter/SwitchableMenu/SwitchableMenu.uasset" 69
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/ExpeditionWindowFooter/SwitchableMenu/SwitchableMenu.uexp" 70
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/ExpeditionWindowFooter/SwitchableMenu/SwitchableMenuReverse.uasset" 71
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/ExpeditionWindowFooter/SwitchableMenu/SwitchableMenuReverse.uexp" 72
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/SpeedPictogram.uasset" 73
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/SpeedPictogram.uexp" 74
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/MadnessResistance.uasset" 75
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/MadnessResistance.uexp" 76
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/InjuryResistance.uasset" 77
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/InjuryResistance.uexp" 78
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/FreezeResistance.uasset" 79
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/FreezeResistance.uexp" 80
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/EvasionPictogram.uasset" 81
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/EvasionPictogram.uexp" 82
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/ElectrificationResistance.uasset" 83
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/ElectrificationResistance.uexp" 84
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/DiseaseResistance.uasset" 85
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/DiseaseResistance.uexp" 86
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/DefenseAgainstMagic.uasset" 87
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/DefenseAgainstMagic.uexp" 88
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/DefenseAgainstLightning.uasset" 89
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/DefenseAgainstLightning.uexp" 90
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/DefenseAgainstFrost.uasset" 91
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/DefenseAgainstFrost.uexp" 92
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/DefenseAgainstFire.uasset" 93
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/DefenseAgainstFire.uexp" 94
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/DamagePictogram.uasset" 95
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/DamagePictogram.uexp" 96
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/CritPictogram.uasset" 97
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/CritPictogram.uexp" 98
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/BurnResistance.uasset" 99
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/BurnResistance.uexp" 100
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/ArmorPictogram.uasset" 101
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Stats/ArmorPictogram.uexp" 102
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Parameters/PsychePictogram.uasset" 103
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Parameters/PsychePictogram.uexp" 104
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Parameters/ManaPictogram.uasset" 105
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Parameters/ManaPictogram.uexp" 106
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Parameters/HealthPictogram.uasset" 107
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Parameters/HealthPictogram.uexp" 108
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Parameters/EndurancePictogram.uasset" 109
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Pictograms/Parameters/EndurancePictogram.uexp" 110
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/WaitButton.uasset" 111
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/WaitButton.uexp" 112
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/SwapButton.uasset" 113
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/SwapButton.uexp" 114
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/Portrait.uasset" 115
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/Portrait.uexp" 116
+"E:/Unreal projects/RoguelikeThing/Content/Structs/Stat/StatStruct.uasset" 117
+"E:/Unreal projects/RoguelikeThing/Content/Structs/Stat/StatStruct.uexp" 118
+"E:/Unreal projects/RoguelikeThing/Content/Structs/CharacterStatsStruct.uasset" 119
+"E:/Unreal projects/RoguelikeThing/Content/Structs/CharacterStatsStruct.uexp" 120
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/Arrow.uasset" 121
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/Arrow.uexp" 122
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/DefendButton.uasset" 123
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/DefendButton.uexp" 124
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/EmptyButton.uasset" 125
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/EmptyButton.uexp" 126
+"../../../Engine/Content/Functions/Engine_MaterialFunctions02/Texturing/CustomRotator.uasset" 127
+"../../../Engine/Content/Functions/Engine_MaterialFunctions02/Texturing/CustomRotator.uexp" 128
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/RotateArrow.uasset" 129
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/RotateArrow.uexp" 130
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/ExpeditionWindowFooter/CharacterStats/CharacterStats.uasset" 131
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/ExpeditionWindowFooter/CharacterStats/CharacterStats.uexp" 132
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/ExpeditionWindowFooter/CharacterStats/CharacterStatsReverse.uasset" 133
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/ExpeditionWindowFooter/CharacterStats/CharacterStatsReverse.uexp" 134
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/ExpeditionWindowFooter/ExpeditionWindowFooter.uasset" 135
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/ExpeditionWindowFooter/ExpeditionWindowFooter.uexp" 136
+"E:/Unreal projects/RoguelikeThing/Content/UI/Screens/ExpeditionWindow.uasset" 137
+"E:/Unreal projects/RoguelikeThing/Content/UI/Screens/ExpeditionWindow.uexp" 138
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/WalkingRight.uasset" 139
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/WalkingRight.uexp" 140
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_1.uasset" 141
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_1.uexp" 142
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_0.uasset" 143
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_0.uexp" 144
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_10.uasset" 145
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_10.uexp" 146
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_11.uasset" 147
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_11.uexp" 148
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_12.uasset" 149
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_12.uexp" 150
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_13.uasset" 151
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_13.uexp" 152
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_14.uasset" 153
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_14.uexp" 154
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_15.uasset" 155
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_15.uexp" 156
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_2.uasset" 157
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_2.uexp" 158
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_4.uasset" 159
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_4.uexp" 160
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_5.uasset" 161
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_5.uexp" 162
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_6.uasset" 163
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_6.uexp" 164
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_7.uasset" 165
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_7.uexp" 166
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_8.uasset" 167
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_8.uexp" 168
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_9.uasset" 169
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_9.uexp" 170
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_3.uasset" 171
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRight_Sprite_3.uexp" 172
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRightPaperFlipbook.uasset" 173
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/WalkingRight/WalkingRightPaperFlipbook.uexp" 174
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/TurnLeftFromMove.uasset" 175
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/TurnLeftFromMove.uexp" 176
 "E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_1.uasset" 177
 "E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_1.uexp" 178
 "E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_2.uasset" 179
 "E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_2.uexp" 180
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_4.uasset" 181
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_4.uexp" 182
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_5.uasset" 183
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_5.uexp" 184
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_6.uasset" 185
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_6.uexp" 186
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_7.uasset" 187
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_7.uexp" 188
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_8.uasset" 189
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_8.uexp" 190
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_9.uasset" 191
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_9.uexp" 192
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_3.uasset" 193
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_3.uexp" 194
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMovePaperFlipbook.uasset" 195
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMovePaperFlipbook.uexp" 196
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/OverclockingRight.uasset" 197
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/OverclockingRight.uexp" 198
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_0.uasset" 199
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_0.uexp" 200
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_1.uasset" 201
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_1.uexp" 202
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_10.uasset" 203
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_10.uexp" 204
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_11.uasset" 205
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_11.uexp" 206
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_12.uasset" 207
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_12.uexp" 208
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_13.uasset" 209
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_13.uexp" 210
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_14.uasset" 211
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_14.uexp" 212
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_2.uasset" 213
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_2.uexp" 214
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_3.uasset" 215
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_3.uexp" 216
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_4.uasset" 217
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_4.uexp" 218
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_5.uasset" 219
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_5.uexp" 220
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_8.uasset" 221
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_8.uexp" 222
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_9.uasset" 223
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_9.uexp" 224
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_3.uasset" 181
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_3.uexp" 182
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_4.uasset" 183
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_4.uexp" 184
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_5.uasset" 185
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_5.uexp" 186
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_6.uasset" 187
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_6.uexp" 188
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_7.uasset" 189
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_7.uexp" 190
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_8.uasset" 191
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_8.uexp" 192
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_9.uasset" 193
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_9.uexp" 194
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_0.uasset" 195
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMove_Sprite_0.uexp" 196
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMovePaperFlipbook.uasset" 197
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnLeftFromMovePaperFlipbook.uexp" 198
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/OverclockingRight.uasset" 199
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/OverclockingRight.uexp" 200
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_0.uasset" 201
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_0.uexp" 202
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_1.uasset" 203
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_1.uexp" 204
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_10.uasset" 205
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_10.uexp" 206
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_11.uasset" 207
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_11.uexp" 208
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_12.uasset" 209
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_12.uexp" 210
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_13.uasset" 211
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_13.uexp" 212
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_14.uasset" 213
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_14.uexp" 214
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_2.uasset" 215
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_2.uexp" 216
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_3.uasset" 217
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_3.uexp" 218
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_4.uasset" 219
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_4.uexp" 220
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_5.uasset" 221
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_5.uexp" 222
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_6.uasset" 223
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_6.uexp" 224
 "E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_7.uasset" 225
 "E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_7.uexp" 226
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_6.uasset" 227
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_6.uexp" 228
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRightPaperFlipbook.uasset" 229
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRightPaperFlipbook.uexp" 230
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/HeroChoiceBorder.uasset" 231
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/HeroChoiceBorder.uexp" 232
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/Hero/HeroChoiceBorder.uasset" 233
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/Hero/HeroChoiceBorder.uexp" 234
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/Hero/BottomHeroBar.uasset" 235
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/Hero/BottomHeroBar.uexp" 236
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnRightFromMovePaperFlipbook.uasset" 237
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnRightFromMovePaperFlipbook.uexp" 238
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/StoppingRight.uasset" 239
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/StoppingRight.uexp" 240
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_8.uasset" 227
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_8.uexp" 228
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_9.uasset" 229
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRight_Sprite_9.uexp" 230
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRightPaperFlipbook.uasset" 231
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/OverclockingRight/OverclockingRightPaperFlipbook.uexp" 232
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/HeroChoiceBorder.uasset" 233
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/HeroChoiceBorder.uexp" 234
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/Hero/HeroChoiceBorder.uasset" 235
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/Hero/HeroChoiceBorder.uexp" 236
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/Hero/BottomHeroBar.uasset" 237
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/Hero/BottomHeroBar.uexp" 238
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnRightFromMovePaperFlipbook.uasset" 239
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/TurnLeftFromMove/TurnRightFromMovePaperFlipbook.uexp" 240
 "E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/StoppingRight/StoppingRight_Sprite_3.uasset" 241
 "E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/StoppingRight/StoppingRight_Sprite_3.uexp" 242
 "E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/StoppingRight/StoppingRight.uasset" 243
 "E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/StoppingRight/StoppingRight.uexp" 244
 "E:/Unreal projects/RoguelikeThing/Content/Textures/Test/IdleRight.uasset" 245
 "E:/Unreal projects/RoguelikeThing/Content/Textures/Test/IdleRight.uexp" 246
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/IdleRight/IdleRight_Sprite_6.uasset" 247
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/IdleRight/IdleRight_Sprite_6.uexp" 248
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/IdleRight/IdleRight_Sprite_5.uasset" 249
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/IdleRight/IdleRight_Sprite_5.uexp" 250
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/IdleRight/IdleRight_Sprite_4.uasset" 251
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/IdleRight/IdleRight_Sprite_4.uexp" 252
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/IdleRight/IdleRight_Sprite_2.uasset" 247
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/IdleRight/IdleRight_Sprite_2.uexp" 248
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/IdleRight/IdleRight_Sprite_1.uasset" 249
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/IdleRight/IdleRight_Sprite_1.uexp" 250
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/IdleRight/IdleRight_Sprite_0.uasset" 251
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/IdleRight/IdleRight_Sprite_0.uexp" 252
 "E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/IdleRight/IdleRight_Sprite_3.uasset" 253
 "E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/IdleRight/IdleRight_Sprite_3.uexp" 254
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/IdleRight/IdleRight_Sprite_2.uasset" 255
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/IdleRight/IdleRight_Sprite_2.uexp" 256
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/IdleRight/IdleRight_Sprite_1.uasset" 257
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/IdleRight/IdleRight_Sprite_1.uexp" 258
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/IdleRight/IdleRight_Sprite_0.uasset" 259
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/IdleRight/IdleRight_Sprite_0.uexp" 260
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/IdleRight/IdleRight_Sprite_4.uasset" 255
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/IdleRight/IdleRight_Sprite_4.uexp" 256
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/IdleRight/IdleRight_Sprite_5.uasset" 257
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/IdleRight/IdleRight_Sprite_5.uexp" 258
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/IdleRight/IdleRight_Sprite_6.uasset" 259
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/IdleRight/IdleRight_Sprite_6.uexp" 260
 "E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/IdleRight/IdleRightPaperFlipbook.uasset" 261
 "E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/IdleRight/IdleRightPaperFlipbook.uexp" 262
 "E:/Unreal projects/RoguelikeThing/Content/Enumerations/HeroAnimationEnum.uasset" 263
 "E:/Unreal projects/RoguelikeThing/Content/Enumerations/HeroAnimationEnum.uexp" 264
 "E:/Unreal projects/RoguelikeThing/Content/Objects/Hero.uasset" 265
 "E:/Unreal projects/RoguelikeThing/Content/Objects/Hero.uexp" 266
-"E:/Unreal projects/RoguelikeThing/Content/Objects/Room.uasset" 267
-"E:/Unreal projects/RoguelikeThing/Content/Objects/Room.uexp" 268
-"E:/Unreal projects/RoguelikeThing/Content/Objects/Party.uasset" 269
-"E:/Unreal projects/RoguelikeThing/Content/Objects/Party.uexp" 270
+"E:/Unreal projects/RoguelikeThing/Content/Objects/Party.uasset" 267
+"E:/Unreal projects/RoguelikeThing/Content/Objects/Party.uexp" 268
+"E:/Unreal projects/RoguelikeThing/Content/Cinematics/FadeEffect.uasset" 269
+"E:/Unreal projects/RoguelikeThing/Content/Cinematics/FadeEffect.uexp" 270
 "E:/Unreal projects/RoguelikeThing/Content/Objects/Corridor.uasset" 271
 "E:/Unreal projects/RoguelikeThing/Content/Objects/Corridor.uexp" 272
 "E:/Unreal projects/RoguelikeThing/Content/Systemic/CorridorSpawner.uasset" 273
@@ -634,29 +634,29 @@
 "../../../Engine/Plugins/2D/Paper2D/Content/MaskedUnlitSpriteMaterial.uexp" 633
 "../../../Engine/Plugins/2D/Paper2D/Content/OpaqueUnlitSpriteMaterial.uasset" 634
 "../../../Engine/Plugins/2D/Paper2D/Content/OpaqueUnlitSpriteMaterial.uexp" 635
-"../../../Engine/Content/Functions/Engine_MaterialFunctions02/SafeNormalize.uasset" 636
-"../../../Engine/Content/Functions/Engine_MaterialFunctions02/SafeNormalize.uexp" 637
-"../../../Engine/Content/Functions/Engine_MaterialFunctions02/Utility/BreakOutFloat3Components.uasset" 638
-"../../../Engine/Content/Functions/Engine_MaterialFunctions02/Utility/BreakOutFloat3Components.uexp" 639
-"../../../Engine/Plugins/Editor/SpeedTreeImporter/Content/SpeedTree9/UnpackInteger3.uasset" 640
-"../../../Engine/Plugins/Editor/SpeedTreeImporter/Content/SpeedTree9/UnpackInteger3.uexp" 641
-"../../../Engine/Plugins/Editor/SpeedTreeImporter/Content/SpeedTree9/UnpackDirection.uasset" 642
-"../../../Engine/Plugins/Editor/SpeedTreeImporter/Content/SpeedTree9/UnpackDirection.uexp" 643
-"../../../Engine/Plugins/Editor/SpeedTreeImporter/Content/SpeedTree9/game_wind_noise.uasset" 644
-"../../../Engine/Plugins/Editor/SpeedTreeImporter/Content/SpeedTree9/game_wind_noise.uexp" 645
-"../../../Engine/Plugins/Editor/SpeedTreeImporter/Content/SpeedTree9/game_wind_noise.ubulk" 646
-"../../../Engine/Plugins/Editor/SpeedTreeImporter/Content/SpeedTree9/SpeedTreeWindMotion.uasset" 647
-"../../../Engine/Plugins/Editor/SpeedTreeImporter/Content/SpeedTree9/SpeedTreeWindMotion.uexp" 648
-"../../../Engine/Plugins/Editor/SpeedTreeImporter/Content/SpeedTree9/SpeedTreeBranchMotion.uasset" 649
-"../../../Engine/Plugins/Editor/SpeedTreeImporter/Content/SpeedTree9/SpeedTreeBranchMotion.uexp" 650
-"../../../Engine/Content/Functions/Engine_MaterialFunctions02/ObjectLocalBounds.uasset" 651
-"../../../Engine/Content/Functions/Engine_MaterialFunctions02/ObjectLocalBounds.uexp" 652
-"../../../Engine/Content/Functions/Engine_MaterialFunctions02/UVs/BoundingBoxBased_0-1_UVW.uasset" 653
-"../../../Engine/Content/Functions/Engine_MaterialFunctions02/UVs/BoundingBoxBased_0-1_UVW.uexp" 654
-"../../../Engine/Content/Functions/Engine_MaterialFunctions02/Utility/VectorLength.uasset" 655
-"../../../Engine/Content/Functions/Engine_MaterialFunctions02/Utility/VectorLength.uexp" 656
-"../../../Engine/Content/Functions/Engine_MaterialFunctions02/WorldPositionOffset/ObjectScale.uasset" 657
-"../../../Engine/Content/Functions/Engine_MaterialFunctions02/WorldPositionOffset/ObjectScale.uexp" 658
+"../../../Engine/Content/Functions/Engine_MaterialFunctions02/Utility/VectorLength.uasset" 636
+"../../../Engine/Content/Functions/Engine_MaterialFunctions02/Utility/VectorLength.uexp" 637
+"../../../Engine/Content/Functions/Engine_MaterialFunctions02/ObjectLocalBounds.uasset" 638
+"../../../Engine/Content/Functions/Engine_MaterialFunctions02/ObjectLocalBounds.uexp" 639
+"../../../Engine/Content/Functions/Engine_MaterialFunctions02/WorldPositionOffset/ObjectScale.uasset" 640
+"../../../Engine/Content/Functions/Engine_MaterialFunctions02/WorldPositionOffset/ObjectScale.uexp" 641
+"../../../Engine/Content/Functions/Engine_MaterialFunctions02/Utility/BreakOutFloat3Components.uasset" 642
+"../../../Engine/Content/Functions/Engine_MaterialFunctions02/Utility/BreakOutFloat3Components.uexp" 643
+"../../../Engine/Plugins/Editor/SpeedTreeImporter/Content/SpeedTree9/UnpackInteger3.uasset" 644
+"../../../Engine/Plugins/Editor/SpeedTreeImporter/Content/SpeedTree9/UnpackInteger3.uexp" 645
+"../../../Engine/Plugins/Editor/SpeedTreeImporter/Content/SpeedTree9/UnpackDirection.uasset" 646
+"../../../Engine/Plugins/Editor/SpeedTreeImporter/Content/SpeedTree9/UnpackDirection.uexp" 647
+"../../../Engine/Plugins/Editor/SpeedTreeImporter/Content/SpeedTree9/game_wind_noise.uasset" 648
+"../../../Engine/Plugins/Editor/SpeedTreeImporter/Content/SpeedTree9/game_wind_noise.uexp" 649
+"../../../Engine/Plugins/Editor/SpeedTreeImporter/Content/SpeedTree9/game_wind_noise.ubulk" 650
+"../../../Engine/Content/Functions/Engine_MaterialFunctions02/SafeNormalize.uasset" 651
+"../../../Engine/Content/Functions/Engine_MaterialFunctions02/SafeNormalize.uexp" 652
+"../../../Engine/Plugins/Editor/SpeedTreeImporter/Content/SpeedTree9/SpeedTreeWindMotion.uasset" 653
+"../../../Engine/Plugins/Editor/SpeedTreeImporter/Content/SpeedTree9/SpeedTreeWindMotion.uexp" 654
+"../../../Engine/Plugins/Editor/SpeedTreeImporter/Content/SpeedTree9/SpeedTreeBranchMotion.uasset" 655
+"../../../Engine/Plugins/Editor/SpeedTreeImporter/Content/SpeedTree9/SpeedTreeBranchMotion.uexp" 656
+"../../../Engine/Content/Functions/Engine_MaterialFunctions02/UVs/BoundingBoxBased_0-1_UVW.uasset" 657
+"../../../Engine/Content/Functions/Engine_MaterialFunctions02/UVs/BoundingBoxBased_0-1_UVW.uexp" 658
 "../../../Engine/Plugins/Editor/SpeedTreeImporter/Content/SpeedTree9/SpeedTreeWind.uasset" 659
 "../../../Engine/Plugins/Editor/SpeedTreeImporter/Content/SpeedTree9/SpeedTreeWind.uexp" 660
 "../../../Engine/Plugins/Editor/SpeedTreeImporter/Content/SpeedTree9/SpeedTreeBillboard.uasset" 661
@@ -677,14 +677,14 @@
 "../../../Engine/Content/ArtTools/RenderToTexture/Materials/Debug/M_Emissive_Color.uexp" 676
 "../../../Engine/Plugins/Lumin/MagicLeapPassableWorld/Content/MagicLeapARPinInfoActor.uasset" 677
 "../../../Engine/Plugins/Lumin/MagicLeapPassableWorld/Content/MagicLeapARPinInfoActor.uexp" 678
-"../../../Engine/Content/EngineResources/Black.uasset" 679
-"../../../Engine/Content/EngineResources/Black.uexp" 680
-"../../../Engine/Plugins/Runtime/OpenXR/Content/Devices/GoogleDaydream/MRTexture.uasset" 681
-"../../../Engine/Plugins/Runtime/OpenXR/Content/Devices/GoogleDaydream/MRTexture.uexp" 682
-"../../../Engine/Plugins/Runtime/OpenXR/Content/Devices/GoogleDaydream/MRTexture.ubulk" 683
-"../../../Engine/Plugins/Runtime/OpenXR/Content/Devices/GoogleDaydream/BaseTexture.uasset" 684
-"../../../Engine/Plugins/Runtime/OpenXR/Content/Devices/GoogleDaydream/BaseTexture.uexp" 685
-"../../../Engine/Plugins/Runtime/OpenXR/Content/Devices/GoogleDaydream/BaseTexture.ubulk" 686
+"../../../Engine/Plugins/Runtime/OpenXR/Content/Devices/GoogleDaydream/MRTexture.uasset" 679
+"../../../Engine/Plugins/Runtime/OpenXR/Content/Devices/GoogleDaydream/MRTexture.uexp" 680
+"../../../Engine/Plugins/Runtime/OpenXR/Content/Devices/GoogleDaydream/MRTexture.ubulk" 681
+"../../../Engine/Plugins/Runtime/OpenXR/Content/Devices/GoogleDaydream/BaseTexture.uasset" 682
+"../../../Engine/Plugins/Runtime/OpenXR/Content/Devices/GoogleDaydream/BaseTexture.uexp" 683
+"../../../Engine/Plugins/Runtime/OpenXR/Content/Devices/GoogleDaydream/BaseTexture.ubulk" 684
+"../../../Engine/Content/EngineResources/Black.uasset" 685
+"../../../Engine/Content/EngineResources/Black.uexp" 686
 "../../../Engine/Plugins/Runtime/OpenXR/Content/Devices/M_XRController.uasset" 687
 "../../../Engine/Plugins/Runtime/OpenXR/Content/Devices/M_XRController.uexp" 688
 "../../../Engine/Plugins/Runtime/OpenXR/Content/Devices/GoogleDaydream/MI_GoogleDaydream.uasset" 689
@@ -773,10 +773,10 @@
 "../../../Engine/Plugins/Runtime/OpenXR/Content/Devices/ValveIndex/Right/MI_right_ValveIndex.uexp" 772
 "../../../Engine/Plugins/Runtime/OpenXR/Content/Devices/ValveIndex/Right/right_ValveIndexController.uasset" 773
 "../../../Engine/Plugins/Runtime/OpenXR/Content/Devices/ValveIndex/Right/right_ValveIndexController.uexp" 774
-"../../../Engine/Content/Functions/Engine_MaterialFunctions02/Utility/MakeFloat3.uasset" 775
-"../../../Engine/Content/Functions/Engine_MaterialFunctions02/Utility/MakeFloat3.uexp" 776
-"../../../Engine/Content/Functions/Engine_MaterialFunctions02/Utility/BreakOutFloat4Components.uasset" 777
-"../../../Engine/Content/Functions/Engine_MaterialFunctions02/Utility/BreakOutFloat4Components.uexp" 778
+"../../../Engine/Content/Functions/Engine_MaterialFunctions02/Utility/BreakOutFloat4Components.uasset" 775
+"../../../Engine/Content/Functions/Engine_MaterialFunctions02/Utility/BreakOutFloat4Components.uexp" 776
+"../../../Engine/Content/Functions/Engine_MaterialFunctions02/Utility/MakeFloat3.uasset" 777
+"../../../Engine/Content/Functions/Engine_MaterialFunctions02/Utility/MakeFloat3.uexp" 778
 "../../../Engine/Plugins/Runtime/Oculus/OculusVR/Content/Materials/OculusMR_ChromaKey.uasset" 779
 "../../../Engine/Plugins/Runtime/Oculus/OculusVR/Content/Materials/OculusMR_ChromaKey.uexp" 780
 "../../../Engine/Plugins/Runtime/Oculus/OculusVR/Content/Materials/OculusMR_OpaqueColoredMaterial.uasset" 781
@@ -808,104 +808,104 @@
 "../../../Engine/Plugins/Runtime/Oculus/OculusVR/Content/Meshes/RightTouchForQuestRiftSController.uexp" 807
 "E:/Unreal projects/RoguelikeThing/Content/Maps/CorridorsMap_BuiltData.uasset" 808
 "E:/Unreal projects/RoguelikeThing/Content/Maps/CorridorsMap_BuiltData.uexp" 809
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/MapEditor/MapEditorMapArea/MapEditorMapTile.uasset" 810
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/MapEditor/MapEditorMapArea/MapEditorMapTile.uexp" 811
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/MapEditor/MapEditorMapArea/MapEditorMap.uasset" 812
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/MapEditor/MapEditorMapArea/MapEditorMap.uexp" 813
-"E:/Unreal projects/RoguelikeThing/Content/Textures/MapEditor/MapEditorHorizontalCorridor.uasset" 814
-"E:/Unreal projects/RoguelikeThing/Content/Textures/MapEditor/MapEditorHorizontalCorridor.uexp" 815
-"E:/Unreal projects/RoguelikeThing/Content/Textures/MapEditor/MapEditorVerticalCorridor.uasset" 816
-"E:/Unreal projects/RoguelikeThing/Content/Textures/MapEditor/MapEditorVerticalCorridor.uexp" 817
-"E:/Unreal projects/RoguelikeThing/Content/Textures/MapEditor/MapEditorRoom.uasset" 818
-"E:/Unreal projects/RoguelikeThing/Content/Textures/MapEditor/MapEditorRoom.uexp" 819
-"E:/Unreal projects/RoguelikeThing/Content/Textures/MapEditor/MapEditorCorridorAngleBR.uasset" 820
-"E:/Unreal projects/RoguelikeThing/Content/Textures/MapEditor/MapEditorCorridorAngleBR.uexp" 821
-"E:/Unreal projects/RoguelikeThing/Content/Textures/MapEditor/MapEditorCorridorAngleTR.uasset" 822
-"E:/Unreal projects/RoguelikeThing/Content/Textures/MapEditor/MapEditorCorridorAngleTR.uexp" 823
-"E:/Unreal projects/RoguelikeThing/Content/Textures/MapEditor/MapEditorCorridorAngleTL.uasset" 824
-"E:/Unreal projects/RoguelikeThing/Content/Textures/MapEditor/MapEditorCorridorAngleTL.uexp" 825
-"E:/Unreal projects/RoguelikeThing/Content/Textures/MapEditor/MapEditorCorridorAngleBL.uasset" 826
-"E:/Unreal projects/RoguelikeThing/Content/Textures/MapEditor/MapEditorCorridorAngleBL.uexp" 827
-"E:/Unreal projects/RoguelikeThing/Content/Textures/MapEditor/MapEditorCell.uasset" 828
-"E:/Unreal projects/RoguelikeThing/Content/Textures/MapEditor/MapEditorCell.uexp" 829
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/MapEditor/MapEditorMapArea/MapEditorCell.uasset" 830
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/MapEditor/MapEditorMapArea/MapEditorCell.uexp" 831
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/MapEditor/FormLoadingDatabaseFile/SaveFileListItem.uasset" 832
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/MapEditor/FormLoadingDatabaseFile/SaveFileListItem.uexp" 833
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/MessageBox.uasset" 834
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/MessageBox.uexp" 835
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/MapEditor/FormLoadingDatabaseFile/FormLoadingDatabaseFile.uasset" 836
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/MapEditor/FormLoadingDatabaseFile/FormLoadingDatabaseFile.uexp" 837
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/MapEditor/FormCreatingNewDatabaseFile.uasset" 838
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/MapEditor/FormCreatingNewDatabaseFile.uexp" 839
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/PopUpWindow.uasset" 840
-"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/PopUpWindow.uexp" 841
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/SaveButton.uasset" 842
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/SaveButton.uexp" 843
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/RoomButton.uasset" 844
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/RoomButton.uexp" 845
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/RemoveChunkTopButton.uasset" 846
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/RemoveChunkTopButton.uexp" 847
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/RemoveChunkRightButton.uasset" 848
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/RemoveChunkRightButton.uexp" 849
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/RemoveChunkLeftButton.uasset" 850
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/RemoveChunkLeftButton.uexp" 851
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/RemoveChunkBottomButton.uasset" 852
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/RemoveChunkBottomButton.uexp" 853
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/NewMapButton.uasset" 854
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/NewMapButton.uexp" 855
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/LoadButton.uasset" 856
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/LoadButton.uexp" 857
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/ExpandTableUpLeftButton.uasset" 858
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/ExpandTableUpLeftButton.uexp" 859
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/ExpandTableBottomRightButton.uasset" 860
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/ExpandTableBottomRightButton.uexp" 861
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/EraserButton.uasset" 862
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/EraserButton.uexp" 863
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/DecreaseTableUpLeftButton.uasset" 864
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/DecreaseTableUpLeftButton.uexp" 865
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/DecreaseTableBottomRightButton.uasset" 866
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/DecreaseTableBottomRightButton.uexp" 867
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/CursorButton.uasset" 868
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/CursorButton.uexp" 869
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/CorridorButton.uasset" 870
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/CorridorButton.uexp" 871
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/AddChunkBottomButton.uasset" 872
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/AddChunkBottomButton.uexp" 873
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/AddChunkLeftButton.uasset" 874
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/AddChunkLeftButton.uexp" 875
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/AddChunkRightButton.uasset" 876
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/AddChunkRightButton.uexp" 877
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/AddChunkTopButton.uasset" 878
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/AddChunkTopButton.uexp" 879
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/BrushPictogram.uasset" 880
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/BrushPictogram.uexp" 881
-"E:/Unreal projects/RoguelikeThing/Content/UI/Screens/MapEditor.uasset" 882
-"E:/Unreal projects/RoguelikeThing/Content/UI/Screens/MapEditor.uexp" 883
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/Loading.uasset" 884
-"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/Loading.uexp" 885
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_5.uasset" 886
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_5.uexp" 887
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_4.uasset" 888
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_4.uexp" 889
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_3.uasset" 890
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_3.uexp" 891
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_2.uasset" 892
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_2.uexp" 893
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_1.uasset" 894
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_1.uexp" 895
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_0.uasset" 896
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_0.uexp" 897
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_6.uasset" 898
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_6.uexp" 899
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_7.uasset" 900
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_7.uexp" 901
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_8.uasset" 902
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_8.uexp" 903
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_9.uasset" 904
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_9.uexp" 905
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/LoadingFlipbook.uasset" 906
-"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/LoadingFlipbook.uexp" 907
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/MessageBox.uasset" 810
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/MessageBox.uexp" 811
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/Loading.uasset" 812
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Test/Loading.uexp" 813
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_0.uasset" 814
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_0.uexp" 815
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_1.uasset" 816
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_1.uexp" 817
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_2.uasset" 818
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_2.uexp" 819
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_3.uasset" 820
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_3.uexp" 821
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_4.uasset" 822
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_4.uexp" 823
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_5.uasset" 824
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_5.uexp" 825
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_6.uasset" 826
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_6.uexp" 827
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_7.uasset" 828
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_7.uexp" 829
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_8.uasset" 830
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_8.uexp" 831
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_9.uasset" 832
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/Loading_Loading_9.uexp" 833
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/LoadingFlipbook.uasset" 834
+"E:/Unreal projects/RoguelikeThing/Content/Sprites/Test/Loading/LoadingFlipbook.uexp" 835
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/PopUpWindow.uasset" 836
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/PopUpWindow.uexp" 837
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/MapEditor/MapEditorMapArea/MapEditorMapTile.uasset" 838
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/MapEditor/MapEditorMapArea/MapEditorMapTile.uexp" 839
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/MapEditor/MapEditorMapArea/MapEditorMap.uasset" 840
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/MapEditor/MapEditorMapArea/MapEditorMap.uexp" 841
+"E:/Unreal projects/RoguelikeThing/Content/Textures/MapEditor/MapEditorHorizontalCorridor.uasset" 842
+"E:/Unreal projects/RoguelikeThing/Content/Textures/MapEditor/MapEditorHorizontalCorridor.uexp" 843
+"E:/Unreal projects/RoguelikeThing/Content/Textures/MapEditor/MapEditorVerticalCorridor.uasset" 844
+"E:/Unreal projects/RoguelikeThing/Content/Textures/MapEditor/MapEditorVerticalCorridor.uexp" 845
+"E:/Unreal projects/RoguelikeThing/Content/Textures/MapEditor/MapEditorRoom.uasset" 846
+"E:/Unreal projects/RoguelikeThing/Content/Textures/MapEditor/MapEditorRoom.uexp" 847
+"E:/Unreal projects/RoguelikeThing/Content/Textures/MapEditor/MapEditorCorridorAngleBR.uasset" 848
+"E:/Unreal projects/RoguelikeThing/Content/Textures/MapEditor/MapEditorCorridorAngleBR.uexp" 849
+"E:/Unreal projects/RoguelikeThing/Content/Textures/MapEditor/MapEditorCorridorAngleTR.uasset" 850
+"E:/Unreal projects/RoguelikeThing/Content/Textures/MapEditor/MapEditorCorridorAngleTR.uexp" 851
+"E:/Unreal projects/RoguelikeThing/Content/Textures/MapEditor/MapEditorCorridorAngleTL.uasset" 852
+"E:/Unreal projects/RoguelikeThing/Content/Textures/MapEditor/MapEditorCorridorAngleTL.uexp" 853
+"E:/Unreal projects/RoguelikeThing/Content/Textures/MapEditor/MapEditorCorridorAngleBL.uasset" 854
+"E:/Unreal projects/RoguelikeThing/Content/Textures/MapEditor/MapEditorCorridorAngleBL.uexp" 855
+"E:/Unreal projects/RoguelikeThing/Content/Textures/MapEditor/MapEditorCell.uasset" 856
+"E:/Unreal projects/RoguelikeThing/Content/Textures/MapEditor/MapEditorCell.uexp" 857
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/MapEditor/MapEditorMapArea/MapEditorCell.uasset" 858
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/MapEditor/MapEditorMapArea/MapEditorCell.uexp" 859
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/MapEditor/FormLoadingDatabaseFile/SaveFileListItem.uasset" 860
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/MapEditor/FormLoadingDatabaseFile/SaveFileListItem.uexp" 861
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/MapEditor/FormLoadingDatabaseFile/FormLoadingDatabaseFile.uasset" 862
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/MapEditor/FormLoadingDatabaseFile/FormLoadingDatabaseFile.uexp" 863
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/MapEditor/FormCreatingNewDatabaseFile.uasset" 864
+"E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/MapEditor/FormCreatingNewDatabaseFile.uexp" 865
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/AddChunkRightButton.uasset" 866
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/AddChunkRightButton.uexp" 867
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/AddChunkTopButton.uasset" 868
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/AddChunkTopButton.uexp" 869
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/BrushPictogram.uasset" 870
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/BrushPictogram.uexp" 871
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/CorridorButton.uasset" 872
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/CorridorButton.uexp" 873
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/CursorButton.uasset" 874
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/CursorButton.uexp" 875
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/SaveButton.uasset" 876
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/SaveButton.uexp" 877
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/DecreaseTableUpLeftButton.uasset" 878
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/DecreaseTableUpLeftButton.uexp" 879
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/ExpandTableUpLeftButton.uasset" 880
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/ExpandTableUpLeftButton.uexp" 881
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/DecreaseTableBottomRightButton.uasset" 882
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/DecreaseTableBottomRightButton.uexp" 883
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/LoadButton.uasset" 884
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/LoadButton.uexp" 885
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/NewMapButton.uasset" 886
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/NewMapButton.uexp" 887
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/RemoveChunkBottomButton.uasset" 888
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/RemoveChunkBottomButton.uexp" 889
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/RemoveChunkLeftButton.uasset" 890
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/RemoveChunkLeftButton.uexp" 891
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/RemoveChunkRightButton.uasset" 892
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/RemoveChunkRightButton.uexp" 893
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/RemoveChunkTopButton.uasset" 894
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/RemoveChunkTopButton.uexp" 895
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/RoomButton.uasset" 896
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/RoomButton.uexp" 897
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/EraserButton.uasset" 898
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/EraserButton.uexp" 899
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/ExpandTableBottomRightButton.uasset" 900
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/ExpandTableBottomRightButton.uexp" 901
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/AddChunkBottomButton.uasset" 902
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/AddChunkBottomButton.uexp" 903
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/AddChunkLeftButton.uasset" 904
+"E:/Unreal projects/RoguelikeThing/Content/Textures/Buttons/AddChunkLeftButton.uexp" 905
+"E:/Unreal projects/RoguelikeThing/Content/UI/Screens/MapEditor.uasset" 906
+"E:/Unreal projects/RoguelikeThing/Content/UI/Screens/MapEditor.uexp" 907
 "E:/Unreal projects/RoguelikeThing/Content/Systemic/ImageAnimator.uasset" 908
 "E:/Unreal projects/RoguelikeThing/Content/Systemic/ImageAnimator.uexp" 909
 "E:/Unreal projects/RoguelikeThing/Content/UI/Widgets/Loading.uasset" 910
@@ -914,16 +914,16 @@
 "E:/Unreal projects/RoguelikeThing/Content/Systemic/ExpeditionGameManager.uexp" 913
 "E:/Unreal projects/RoguelikeThing/Content/Maps/CorridorsMap.uexp" 914
 "E:/Unreal projects/RoguelikeThing/Content/Maps/CorridorsMap.umap" 915
-"E:/Unreal projects/RoguelikeThing/Content/Maps/RoomMap_BuiltData.uasset" 916
-"E:/Unreal projects/RoguelikeThing/Content/Maps/RoomMap_BuiltData.uexp" 917
-"E:/Unreal projects/RoguelikeThing/Content/Systemic/RoomSpawner.uasset" 918
-"E:/Unreal projects/RoguelikeThing/Content/Systemic/RoomSpawner.uexp" 919
-"E:/Unreal projects/RoguelikeThing/Content/Maps/RoomMap.uexp" 920
-"E:/Unreal projects/RoguelikeThing/Content/Maps/RoomMap.umap" 921
-"E:/Unreal projects/RoguelikeThing/Content/Maps/MapEditor_BuiltData.uasset" 922
-"E:/Unreal projects/RoguelikeThing/Content/Maps/MapEditor_BuiltData.uexp" 923
-"E:/Unreal projects/RoguelikeThing/Content/Maps/MapEditor.uexp" 924
-"E:/Unreal projects/RoguelikeThing/Content/Maps/MapEditor.umap" 925
+"E:/Unreal projects/RoguelikeThing/Content/Maps/MapEditor_BuiltData.uasset" 916
+"E:/Unreal projects/RoguelikeThing/Content/Maps/MapEditor_BuiltData.uexp" 917
+"E:/Unreal projects/RoguelikeThing/Content/Maps/MapEditor.uexp" 918
+"E:/Unreal projects/RoguelikeThing/Content/Maps/MapEditor.umap" 919
+"E:/Unreal projects/RoguelikeThing/Content/Maps/RoomMap_BuiltData.uasset" 920
+"E:/Unreal projects/RoguelikeThing/Content/Maps/RoomMap_BuiltData.uexp" 921
+"E:/Unreal projects/RoguelikeThing/Content/Systemic/RoomSpawner.uasset" 922
+"E:/Unreal projects/RoguelikeThing/Content/Systemic/RoomSpawner.uexp" 923
+"E:/Unreal projects/RoguelikeThing/Content/Maps/RoomMap.uexp" 924
+"E:/Unreal projects/RoguelikeThing/Content/Maps/RoomMap.umap" 925
 "../../../Engine/Content/Maps/Entry_BuiltData.uasset" 926
 "../../../Engine/Content/Maps/Entry_BuiltData.uexp" 927
 "../../../Engine/Content/Maps/Entry.uexp" 928

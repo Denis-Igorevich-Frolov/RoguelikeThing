@@ -24,5 +24,5 @@ public:
 	UFUNCTION(BlueprintCallable)
 	virtual void ClearFilledCells();
 	virtual void OnAddedEvent();
-	virtual void OnAddedEvent(int MapTileLength, UMapMatrix* MapMatrix);
+	virtual void OnAddedEvent(UMapMatrix* MapMatrix);
 };

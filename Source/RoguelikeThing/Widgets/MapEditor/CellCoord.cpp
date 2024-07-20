@@ -6,3 +6,13 @@
 FCellCoord::FCellCoord(int32 Row, int32 Col) : Row(Row), Col(Col)
 {
 }
+
+bool FCellCoord::operator==(const FCellCoord& Coord) const
+{
+    return (this->Row == Coord.Row) && (this->Col == Coord.Col);
+}
+
+bool FCellCoord::operator!=(const FCellCoord& Coord) const
+{
+    return (this->Row != Coord.Row) && (this->Col != Coord.Col);
+}

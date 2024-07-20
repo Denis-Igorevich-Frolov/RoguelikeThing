@@ -6,6 +6,7 @@
 #include "SQLiteDatabase.h"
 #include "RoguelikeThing/MyGameInstance.h"
 #include "RoguelikeThing/Structs/Widgets/MapEditor/MapCell/NeighbourhoodOfCell.h"
+#include <RoguelikeThing/Widgets/MapEditor/CellCoord.h>
 #include "MapMatrix.generated.h"
 
 /****************************************************************
@@ -25,6 +26,25 @@ DECLARE_LOG_CATEGORY_EXTERN(MapDataBase, Log, All);
 UENUM(BlueprintType)
 enum class MatrixType : uint8 {
 	ChunkStructure	UMETA(DisplayName = "ChunkStructure"), //Структура чанка карты
+};
+
+UCLASS(BlueprintType)
+class ROGUELIKETHING_API UTerrainOfTile : public UObject
+{
+	GENERATED_BODY()
+
+private:
+	TMap<int, TMap<int, FMapEditorBrushType>> TerrainOfTileRows;
+
+public:
+	UFUNCTION(BlueprintCallable)
+	void AddCellType(FCellCoord Coord, FMapEditorBrushType CellType);
+	UFUNCTION(BlueprintCallable)
+	FMapEditorBrushType GetCellType(FCellCoord Coord);
+	UFUNCTION(BlueprintCallable)
+	bool Contains(FCellCoord Coord);
+	UFUNCTION(BlueprintCallable)
+	TArray<FCellCoord> GetFilledCoord();
 };
 
 //Структура габаритов карты
@@ -81,6 +101,8 @@ private:
 	ULoadingWidget* LoadingWidget;
 	bool SuccessCreateBlankCard = false;
 
+	TMap<int, TMap<int, UTerrainOfTile*>> TerrainOfTilesRows;
+
 	//Путь до файла, в котором лежит база данных карты
 	FString FilePath = FPaths::ProjectSavedDir() + TEXT("/Save/Map.db");
 	/* Число строк и столбцов в матрице фрагмента карты. Это число всегда должно быть
@@ -132,17 +154,17 @@ public:
 	 * проверить не только не нарушает ли новый коридор правила расположения, но и не вызывает ли он такое же
 	 * нарушение у соседних клеток */
 	UFUNCTION(BlueprintCallable)
-	bool CheckCorrectOfCorridorLocation(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol, bool autoClose = true, int PassageDepthNumber = 1);
+	bool CheckCorrectOfCorridorLocation(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol, int PassageDepthNumber = 1);
 
 	/* Функция, проверяющая корректность применения к определённой ячейке стиля комнаты исходя из её окружения.
 	 * И хоть от самой комнаты развилки коридоров разрешены, но размещение новой комнаты рядом с коридором
 	 * может приводить к созданию неоднозначных путей */
 	UFUNCTION(BlueprintCallable)
-	bool CheckCorrectOfRoomLocation(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol, bool autoClose = true);
+	bool CheckCorrectOfRoomLocation(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol);
 
 	//Функция, просматривающая есть ли непустые клетки вокруг указаной
 	UFUNCTION(BlueprintCallable)
-	FNeighbourhoodOfCell CheckNeighbourhoodOfCell(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol, bool autoClose = true);
+	FNeighbourhoodOfCell CheckNeighbourhoodOfCell(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol);
 
 	/* Функция, создающая новый фрагмент карты на отснове переданного типа и индекса фрагмента.
 	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
@@ -187,4 +209,19 @@ public:
 	//Функция, запускающая в отдельном потоке создание в базе даннх матрицы из фрагментов карты указанного типа
 	UFUNCTION(BlueprintCallable)
 	void AsyncCreateBlankCard(int32 rowLen, int32 colLen, MatrixType matrixType);
+	
+	UFUNCTION(BlueprintCallable)
+    void FillTerrainOfTiles();
+	
+	UFUNCTION(BlueprintCallable)
+	bool ContainsTerrainOfTile(FCellCoord Coord);
+
+	UFUNCTION(BlueprintCallable)
+	bool ContainsCellInTerrainOfTile(FCellCoord GlobalCoordOfCell, int TileSize);
+
+	UFUNCTION(BlueprintCallable)
+	FMapEditorBrushType GetCellStyleFromTerrainOfTile(FCellCoord GlobalCoordOfCell, int TileSize);
+	
+	UFUNCTION(BlueprintCallable)
+	UTerrainOfTile* GetTerrainOfTile(FCellCoord Coord);
 };

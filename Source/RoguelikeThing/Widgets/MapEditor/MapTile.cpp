@@ -23,6 +23,11 @@ void UMapTile::SetMyCoord(FCellCoord myCoord)
     this->MyCoord = myCoord;
 }
 
+void UMapTile::SetMyTerrainOfTile(UTerrainOfTile* TerrainOfTile)
+{
+    MyTerrainOfTile = TerrainOfTile;
+}
+
 UCoordWrapperOfTable* UMapTile::GetCellsCoordWrapper()
 {
     return CellsCoordWrapper;
@@ -82,46 +87,93 @@ bool UMapTile::FillingWithCells(int MapTileLength, UClass* CellClass, UMapEditor
     return true;
 }
 
-void UMapTile::SetStyleFromDBForAllCells(int MapTileLength, UMapMatrix* MapMatrix)
-{
-    AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapTileLength, MapMatrix, this]() {
-        if (CellsCoordWrapper && CellsCoordWrapper->HasAnyEllements()) {
-            FGridCoord MinCoord = CellsCoordWrapper->getMinCoord();
-            FGridCoord MaxCoord = CellsCoordWrapper->getMaxCoord();
-
-            for (int row = MinCoord.Row; row <= MaxCoord.Row; row++) {
-                for (int col = MinCoord.Col; col <= MaxCoord.Col; col++) {
-                    UAbstractTile* AbstractCell = CellsCoordWrapper->FindWidget(row, col);
-
-                    if (dynamic_cast<UMapCell*>(AbstractCell)) {
-                        UMapCell* Cell = static_cast<UMapCell*>(AbstractCell);
-
-                        SetStyleFromDB(Cell, MapTileLength - 1 - row, col, MapTileLength, MapMatrix);
-                    }
-                }
-            }
-        }
-        });
-}
+//void UMapTile::SetStyleFromDBForAllCells(int MapTileLength, UMapMatrix* MapMatrix)
+//{
+//    AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapTileLength, MapMatrix, this]() {
+//        if (CellsCoordWrapper && CellsCoordWrapper->HasAnyEllements()) {
+//            FGridCoord MinCoord = CellsCoordWrapper->getMinCoord();
+//            FGridCoord MaxCoord = CellsCoordWrapper->getMaxCoord();
+//
+//            for (int row = MinCoord.Row; row <= MaxCoord.Row; row++) {
+//                for (int col = MinCoord.Col; col <= MaxCoord.Col; col++) {
+//                    UAbstractTile* AbstractCell = CellsCoordWrapper->FindWidget(row, col);
+//
+//                    if (dynamic_cast<UMapCell*>(AbstractCell)) {
+//                        UMapCell* Cell = static_cast<UMapCell*>(AbstractCell);
+//
+//                        SetStyleFromDB(Cell, MapTileLength - 1 - row, col, MapTileLength, MapMatrix);
+//                    }
+//                }
+//            }
+//        }
+//        });
+//}
 
 void UMapTile::AddFilledCell(UMapCell* Cell)
 {
     FilledCells.Add(Cell);
 }
 
+bool UMapTile::FillCellsAccordingToTerrain(UMapMatrix* MapMatrix)
+{
+    if (MyTerrainOfTile) {
+        TArray<FCellCoord> FilledCoord = MyTerrainOfTile->GetFilledCoord();
+        for (FCellCoord CellCoord : FilledCoord) {
+            UAbstractTile* AbstractCell = CellsCoordWrapper->FindWidget(MapMatrix->GetMapTileLength() - 1 - CellCoord.Row, CellCoord.Col);
+
+            if (AbstractCell && dynamic_cast<UMapCell*>(AbstractCell)) {
+                UMapCell* Cell = static_cast<UMapCell*>(AbstractCell);
+                
+                FMapEditorBrushType CellStyle = MyTerrainOfTile->GetCellType(CellCoord);
+
+                if (CellStyle != FMapEditorBrushType::Error) {
+                    FCellCoord CellGlobalCoord = Cell->GetMyGlobalCoord();
+                    switch (CellStyle)
+                    {
+                    case FMapEditorBrushType::Corridor:
+                        Cell->SetCorridorStyle(MapMatrix->CheckNeighbourhoodOfCell(MatrixType::ChunkStructure, CellGlobalCoord.Row, CellGlobalCoord.Col));
+                        FilledCells.Add(Cell);
+                        break;
+                    case FMapEditorBrushType::Room:
+                        Cell->SetRoomStyle();
+                        FilledCells.Add(Cell);
+                        break;
+                    default:
+                        break;
+                    }
+                }
+                else {
+                    return false;
+                }
+            }
+            else {
+                return false;
+            }
+        }
+    }
+    else {
+        return false;
+    }
+
+    return true;
+}
+
 void UMapTile::SetStyleFromDB(UMapCell* Cell, int row, int col, int MapTileLength, UMapMatrix* MapMatrix)
 {
     AsyncTask(ENamedThreads::GameThread, [Cell, row, col, MapTileLength, MapMatrix, this]() {
         if (MapMatrix) {
+            int GlobalRow = MyCoord.Row * MapTileLength + row;
+            int GlobalCol = MyCoord.Col * MapTileLength + col;
+
             //Теперь пришло время придать новой ячейке необходимый стиль. Для этого из БД читается тип структуры ячейки
-            FMapEditorBrushType CellType = MapMatrix->GetValueOfMapChunkStructureCellByGlobalIndex(MyCoord.Row * MapTileLength + row, MyCoord.Col * MapTileLength + col, false);
+            FMapEditorBrushType CellType = MapMatrix->GetCellStyleFromTerrainOfTile(FCellCoord(GlobalRow, GlobalCol), MapTileLength);
 
             /* И затем в соответствии с полученым типом, ячейке присваивается необходимый стиль.
              * При этом пустой стиль назначать не надо, он и так является стилем по умолчанию */
             switch (CellType)
             {
             case FMapEditorBrushType::Corridor:
-                Cell->SetCorridorStyle(MapMatrix->CheckNeighbourhoodOfCell(MatrixType::ChunkStructure, MyCoord.Row * MapTileLength + row, MyCoord.Col * MapTileLength + col, false));
+                Cell->SetCorridorStyle(MapMatrix->CheckNeighbourhoodOfCell(MatrixType::ChunkStructure, MyCoord.Row * MapTileLength + row, MyCoord.Col * MapTileLength + col));
                 //if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                     //UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: Cell Row: %d Col: %d is set to the corridor style"), row * MapTileLength + row + 1, col * MapTileLength + col + 1);
                 FilledCells.Add(Cell);
@@ -141,16 +193,23 @@ void UMapTile::SetStyleFromDB(UMapCell* Cell, int row, int col, int MapTileLengt
 
 void UMapTile::ClearFilledCells()
 {
-    if (FilledCells.Num() != 0) {
-        for (UMapCell* Cell : FilledCells) {
-            Cell->SetEmptinessStyle();
+    AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [this]() {
+        if (FilledCells.Num() != 0) {
+            for (UMapCell* Cell : FilledCells) {
+                AsyncTask(ENamedThreads::GameThread, [Cell]() {
+                    Cell->SetEmptinessStyle();
+                    });
+            }
+
+            FilledCells = TArray<UMapCell*>();
         }
 
-        FilledCells = TArray<UMapCell*>();
-    }
+        MyTerrainOfTile = nullptr;
+        });
 }
 
-void UMapTile::OnAddedEvent(int MapTileLength, UMapMatrix* MapMatrix)
+void UMapTile::OnAddedEvent(UMapMatrix* MapMatrix)
 {
-    SetStyleFromDBForAllCells(MapTileLength, MapMatrix);
+    SetMyTerrainOfTile(MapMatrix->GetTerrainOfTile(MyCoord));
+    FillCellsAccordingToTerrain(MapMatrix);
 }

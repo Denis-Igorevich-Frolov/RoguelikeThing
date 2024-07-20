@@ -15,6 +15,6 @@ void UAbstractTile::OnAddedEvent()
 {
 }
 
-void UAbstractTile::OnAddedEvent(int MapTileLength, UMapMatrix* MapMatrix)
+void UAbstractTile::OnAddedEvent(UMapMatrix* MapMatrix)
 {
 }
