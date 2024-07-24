@@ -78,7 +78,7 @@ bool UMapTile::FillingWithCells(int MapTileLength, UClass* CellClass, UMapEditor
                 //if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                     //UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: A thread to place a cell in a tile has been closed"));
                 
-                SetStyleFromDB(Cell, row, col, MapTileLength, MapMatrix);
+                SetStyleFromTerrainOfTile(Cell, row, col, MapTileLength, MapMatrix);
                 });
 
         }
@@ -87,31 +87,30 @@ bool UMapTile::FillingWithCells(int MapTileLength, UClass* CellClass, UMapEditor
     return true;
 }
 
-//void UMapTile::SetStyleFromDBForAllCells(int MapTileLength, UMapMatrix* MapMatrix)
-//{
-//    AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapTileLength, MapMatrix, this]() {
-//        if (CellsCoordWrapper && CellsCoordWrapper->HasAnyEllements()) {
-//            FGridCoord MinCoord = CellsCoordWrapper->getMinCoord();
-//            FGridCoord MaxCoord = CellsCoordWrapper->getMaxCoord();
-//
-//            for (int row = MinCoord.Row; row <= MaxCoord.Row; row++) {
-//                for (int col = MinCoord.Col; col <= MaxCoord.Col; col++) {
-//                    UAbstractTile* AbstractCell = CellsCoordWrapper->FindWidget(row, col);
-//
-//                    if (dynamic_cast<UMapCell*>(AbstractCell)) {
-//                        UMapCell* Cell = static_cast<UMapCell*>(AbstractCell);
-//
-//                        SetStyleFromDB(Cell, MapTileLength - 1 - row, col, MapTileLength, MapMatrix);
-//                    }
-//                }
-//            }
-//        }
-//        });
-//}
-
-void UMapTile::AddFilledCell(UMapCell* Cell)
+void UMapTile::UpdateInformationAboutCells(UMapCell* Cell, FMapEditorBrushType CellStyle)
 {
-    FilledCells.Add(Cell);
+    if ((CellStyle == FMapEditorBrushType::Corridor) || (CellStyle == FMapEditorBrushType::Room)) {
+        FilledCells.Add(Cell);
+
+        MyTerrainOfTile->AddCellType(Cell->GetMyLocalCoord(), CellStyle);
+    }
+    else {
+        if (FilledCells.Contains(Cell)) {
+            FilledCells.Remove(Cell);
+        }
+
+        if (MyTerrainOfTile) {
+            FCellCoord CellCoord = Cell->GetMyLocalCoord();
+            if (MyTerrainOfTile->Contains(CellCoord)) {
+                if (MyTerrainOfTile->RemoveCell(CellCoord)) {
+
+                }
+                else {
+
+                }
+            }
+        }
+    }
 }
 
 bool UMapTile::FillCellsAccordingToTerrain(UMapMatrix* MapMatrix)
@@ -158,7 +157,7 @@ bool UMapTile::FillCellsAccordingToTerrain(UMapMatrix* MapMatrix)
     return true;
 }
 
-void UMapTile::SetStyleFromDB(UMapCell* Cell, int row, int col, int MapTileLength, UMapMatrix* MapMatrix)
+void UMapTile::SetStyleFromTerrainOfTile(UMapCell* Cell, int row, int col, int MapTileLength, UMapMatrix* MapMatrix)
 {
     AsyncTask(ENamedThreads::GameThread, [Cell, row, col, MapTileLength, MapMatrix, this]() {
         if (MapMatrix) {

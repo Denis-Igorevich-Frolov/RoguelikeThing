@@ -45,6 +45,8 @@ public:
 	bool Contains(FCellCoord Coord);
 	UFUNCTION(BlueprintCallable)
 	TArray<FCellCoord> GetFilledCoord();
+	UFUNCTION(BlueprintCallable)
+	bool RemoveCell(FCellCoord Coord);
 };
 
 //Структура габаритов карты

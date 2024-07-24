@@ -54,13 +54,10 @@ public:
 	bool FillingWithCells(int MapTileLength, UClass* CellClass, UMapEditor* MapEditor, UMapMatrix* MapMatrix = nullptr);
 
 	UFUNCTION(BlueprintCallable)
-	void SetStyleFromDB(UMapCell* Cell, int row, int col, int MapTileLength, UMapMatrix* MapMatrix);//!!!!!!!!!
-
-	//UFUNCTION(BlueprintCallable)
-	//void SetStyleFromDBForAllCells(int MapTileLength, UMapMatrix* MapMatrix);
+	void SetStyleFromTerrainOfTile(UMapCell* Cell, int row, int col, int MapTileLength, UMapMatrix* MapMatrix);
 	
 	UFUNCTION(BlueprintCallable)
-	void AddFilledCell(UMapCell* Cell);
+	void UpdateInformationAboutCells(UMapCell* Cell, FMapEditorBrushType CellStyle);
 	
 	UFUNCTION(BlueprintCallable)
 	bool FillCellsAccordingToTerrain(UMapMatrix* MapMatrix);

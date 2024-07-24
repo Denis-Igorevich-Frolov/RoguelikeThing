@@ -51,11 +51,15 @@ public:
 	FVector2D getSize();
 
 	void SetCoordOfParentTile(UPARAM(ref)FCellCoord& coordOfParentTile, int mapTileLength);
+
 	UFUNCTION(BlueprintCallable)
 	FCellCoord GetCoordOfParentTile();
     void SetMyCoord(FCellCoord myCoord) override;
+
 	UFUNCTION(BlueprintCallable)
 	FCellCoord GetMyGlobalCoord();
+	UFUNCTION(BlueprintCallable)
+	FCellCoord GetMyLocalCoord();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FCellType CurrentType = FCellType::NONE;

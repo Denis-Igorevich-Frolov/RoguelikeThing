@@ -23,3 +23,8 @@ FCellCoord UMapCell::GetMyGlobalCoord()
 {
     return FCellCoord(CoordOfParentTile->Row * MapTileLength + MyCoord.Row, CoordOfParentTile->Col * MapTileLength + MyCoord.Col);
 }
+
+FCellCoord UMapCell::GetMyLocalCoord()
+{
+    return MyCoord;
+}

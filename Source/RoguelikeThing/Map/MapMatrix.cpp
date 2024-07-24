@@ -88,6 +88,29 @@ TArray<FCellCoord> UTerrainOfTile::GetFilledCoord()
     }
 }
 
+bool UTerrainOfTile::RemoveCell(FCellCoord Coord)
+{
+    if (TerrainOfTileRows.Contains(Coord.Row)) {
+        TMap<int, FMapEditorBrushType>* TerrainOfTileCols = TerrainOfTileRows.Find(Coord.Row);
+        if (TerrainOfTileCols) {
+            if (TerrainOfTileCols->Contains(Coord.Col)) {
+                TerrainOfTileCols->Remove(Coord.Col);
+                if (TerrainOfTileCols->Num() == 0) {
+                    TerrainOfTileRows.Remove(Coord.Row);
+                }
+
+                return true;
+            }
+            else
+                return false;
+        }
+        else
+            return false;
+    }
+    else
+        return false;
+}
+
 UMapMatrix::UMapMatrix() : UObject()
 {
     //Получение GameInstance из мира
