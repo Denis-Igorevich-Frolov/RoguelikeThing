@@ -34,6 +34,7 @@ private:
 
 public:
 	UMapTile(const FObjectInitializer& Object);
+	~UMapTile();
 
 	void SetMyCoord(FCellCoord myCoord) override;
 	void ClearFilledCells() override;

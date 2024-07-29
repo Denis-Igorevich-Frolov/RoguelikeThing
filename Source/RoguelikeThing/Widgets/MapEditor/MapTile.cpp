@@ -11,11 +11,18 @@ DEFINE_LOG_CATEGORY(Map_Tile);
 UMapTile::UMapTile(const FObjectInitializer& Object) : UAbstractTile(Object)
 {
     CellsCoordWrapper = NewObject<UCoordWrapperOfTable>();
+    CellsCoordWrapper->AddToRoot();
 
     //Получение GameInstance из мира
     GameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
     if (!GameInstance)
         UE_LOG(Map_Tile, Warning, TEXT("Warning in MapTile class in constructor - GameInstance was not retrieved from the world"));
+}
+
+UMapTile::~UMapTile()
+{
+    if(CellsCoordWrapper->IsRooted())
+        CellsCoordWrapper->RemoveFromRoot();
 }
 
 void UMapTile::SetMyCoord(FCellCoord myCoord)
@@ -56,7 +63,7 @@ bool UMapTile::FillingWithCells(int MapTileLength, UClass* CellClass, UMapEditor
                 //UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: An uninitialized cell is created with coordinates row: %d col: %d for a MapTile with coordinates row: %d col: %d"), row, col, row, col);
 
             //Добавление созданной ячейки в GridPanel производится в основном потоке так как сделать это вне его невозможно
-            AsyncTask(ENamedThreads::GameThread, [Cell, row, col, MapTileLength, MapMatrix, this]() {
+            //AsyncTask(ENamedThreads::GameThread, [Cell, row, col, MapTileLength, MapMatrix, this]() {
                 //if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                     //UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: Launched a GameThread call from the TilesGridPanel table population thread to place a cell in a tile"));
 
@@ -79,7 +86,7 @@ bool UMapTile::FillingWithCells(int MapTileLength, UClass* CellClass, UMapEditor
                     //UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: A thread to place a cell in a tile has been closed"));
                 
                 SetStyleFromTerrainOfTile(Cell, row, col, MapTileLength, MapMatrix);
-                });
+                //});
 
         }
     }
@@ -211,4 +218,11 @@ void UMapTile::OnAddedEvent(UMapMatrix* MapMatrix)
 {
     SetMyTerrainOfTile(MapMatrix->GetTerrainOfTile(MyCoord));
     FillCellsAccordingToTerrain(MapMatrix);
+
+    if (CellsCoordWrapper->getNumberOfItemsInTable() == 0) {
+        FString Name;
+        CellsCoordWrapper->GetName(Name);
+
+        UE_LOG(LogTemp, Warning, TEXT("FFF %s"), *Name);
+    }
 }
