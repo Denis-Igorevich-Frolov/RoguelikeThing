@@ -73,6 +73,14 @@ bool UTileBuffer::ScoreToMaximum()
 
 void UTileBuffer::Clear()
 {
+    for (UAbstractTile* Tile : TileBuf) {
+        if (Tile) {
+            Tile->ConditionalBeginDestroy();
+            Tile->MarkPendingKill();
+            Tile->RemoveFromParent();
+        }
+    }
+
     TileBuf.Empty();
 }
 

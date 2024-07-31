@@ -230,6 +230,10 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
         if (GameInstance && GameInstance->LogType != ELogType::NONE)
             UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: all checks have been passed, the TilesGridPanel grid is ready to be filled with cells with dimensions: rows: %d, columns: %d"), NumberOfMapTilesRows, NumberOfMapTilesCols);
 
+        TileBuf->Clear();
+        if (!TileBuf->ScoreToMaximum())
+            UE_LOG(FillingMapWithCells, Log, TEXT("fffffffffffff"));
+
         //—амо забиваение карты €чейками происходит в отдельном потоке
         AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapEditor, TableLength, TestCellWidget, MapTileLength,TilesGridPanel, TileBuf,
             CellClass, MapTileClass, TilesCoordWrapper, MapMatrix, StartingPositionRow, StartingPositionCol, NumberOfMapTilesRows, NumberOfMapTilesCols, this]() {
@@ -240,10 +244,6 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                 MapMatrix->FillTerrainOfTiles();
 
                 UMapTile* LastMapTile = nullptr;
-
-                TileBuf->Clear();
-                if(!TileBuf->ScoreToMaximum())
-                    UE_LOG(FillingMapWithCells, Log, TEXT("fffffffffffff"));
 
                 MinOriginalVisibleTile = FGridCoord(StartingPositionRow, StartingPositionCol);
                 MaxOriginalVisibleTile = FGridCoord(StartingPositionRow + (NumberOfTilesRowsThatFitOnScreen - 1), StartingPositionCol + (NumberOfTilesColsThatFitOnScreen - 1));
@@ -377,6 +377,10 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                     if (GameInstance && GameInstance->LogType != ELogType::NONE)
                         UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: A thread to configure the necessary widgets at the end of filling the TilesGridPanel table and removing the loading widget has been closed"));
                 });
+
+                AsyncTask(ENamedThreads::GameThread, [this]() {
+                    GetWorld()->ForceGarbageCollection(true);
+                    });
         });
     }
     else {

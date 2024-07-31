@@ -21,7 +21,7 @@ UMapTile::UMapTile(const FObjectInitializer& Object) : UAbstractTile(Object)
 
 UMapTile::~UMapTile()
 {
-    if(CellsCoordWrapper->IsRooted())
+    if(CellsCoordWrapper && CellsCoordWrapper->IsRooted())
         CellsCoordWrapper->RemoveFromRoot();
 }
 
