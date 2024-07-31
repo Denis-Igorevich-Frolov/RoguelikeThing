@@ -45,7 +45,6 @@ void UTileTablesOptimizationTools::AsynchronousAreaFilling(FGridDimensions AreaD
 void UTileTablesOptimizationTools::AsynchronousAreaRemoving(FGridDimensions AreaDimensions, int NumberOfMapTilesRows, FString ss)
 {
     AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [ss, AreaDimensions, NumberOfMapTilesRows, this]() {
-        GetWorld()->ForceGarbageCollection(true);
         for (int col = AreaDimensions.Min.Col; col <= AreaDimensions.Max.Col; col++) {
                 for (int row = AreaDimensions.Min.Row; row <= AreaDimensions.Max.Row; row++) {
                     AsyncTask(ENamedThreads::GameThread, [ss, col, row, AreaDimensions, this]() {
@@ -79,7 +78,7 @@ void UTileTablesOptimizationTools::AsynchronousAreaRemoving(FGridDimensions Area
                         });
                 }
         }
-        GetWorld()->ForceGarbageCollection(false);
+        GetWorld()->ForceGarbageCollection(true);
     });
 }
 

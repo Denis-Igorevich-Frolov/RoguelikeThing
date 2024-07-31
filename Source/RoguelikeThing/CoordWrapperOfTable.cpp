@@ -18,6 +18,8 @@ bool WrapperRow::RemoveWidget(int Key)
     UAbstractTile* Widget = FindWidget(Key);
     if (!Widget)
         return false;
+    Widget->ConditionalBeginDestroy();
+    Widget->MarkPendingKill();
     Widget->RemoveFromParent();
 
     return RemoveIndex(Key);
