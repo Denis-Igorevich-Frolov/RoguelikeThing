@@ -23,6 +23,7 @@ public:
 	virtual void SetMyCoord(FCellCoord myCoord);
 	UFUNCTION(BlueprintCallable)
 	virtual void ClearFilledCells();
+	virtual void RemoveAllCells();
 	virtual void OnAddedEvent();
 	virtual void OnAddedEvent(UMapMatrix* MapMatrix);
 };

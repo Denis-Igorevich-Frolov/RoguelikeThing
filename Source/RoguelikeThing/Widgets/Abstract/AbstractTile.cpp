@@ -11,6 +11,10 @@ void UAbstractTile::ClearFilledCells()
 {
 }
 
+void UAbstractTile::RemoveAllCells()
+{
+}
+
 void UAbstractTile::OnAddedEvent()
 {
 }

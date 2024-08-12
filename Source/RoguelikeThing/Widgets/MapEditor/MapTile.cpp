@@ -21,8 +21,22 @@ UMapTile::UMapTile(const FObjectInitializer& Object) : UAbstractTile(Object)
 
 UMapTile::~UMapTile()
 {
-    if(CellsCoordWrapper && CellsCoordWrapper->IsRooted())
-        CellsCoordWrapper->RemoveFromRoot();
+    RemoveAllCells();
+    FilledCells.Empty();
+}
+
+void UMapTile::RemoveAllCells()
+{
+    if (CellsCoordWrapper) {
+        if (CellsCoordWrapper->IsRooted())
+            CellsCoordWrapper->RemoveFromRoot();
+        CellsCoordWrapper->Clear();
+
+        if (CellsCoordWrapper->IsValidLowLevel()) {
+            CellsCoordWrapper->ConditionalBeginDestroy();
+            CellsCoordWrapper->MarkPendingKill();
+        }
+    }
 }
 
 void UMapTile::SetMyCoord(FCellCoord myCoord)

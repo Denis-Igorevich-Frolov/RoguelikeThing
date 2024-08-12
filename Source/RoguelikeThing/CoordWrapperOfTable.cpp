@@ -13,6 +13,7 @@ WrapperRow::~WrapperRow()
             if (Tile->IsRooted())
                 Tile->RemoveFromRoot();
 
+            Tile->RemoveAllCells();
             Tile->ConditionalBeginDestroy();
             Tile->MarkPendingKill();
         }

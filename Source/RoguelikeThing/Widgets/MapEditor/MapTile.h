@@ -36,6 +36,7 @@ public:
 	UMapTile(const FObjectInitializer& Object);
 	~UMapTile();
 
+	void RemoveAllCells() override;
 	void SetMyCoord(FCellCoord myCoord) override;
 	void ClearFilledCells() override;
 	void OnAddedEvent(UMapMatrix* MapMatrix) override;
