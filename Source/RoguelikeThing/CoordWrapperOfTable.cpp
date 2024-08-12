@@ -36,13 +36,14 @@ UUniformGridSlot* WrapperRow::FindGridSlot(int Key)
 
 bool WrapperRow::RemoveWidget(int Key)
 {
-    UAbstractTile* Widget = FindWidget(Key);
-    if (!Widget)
+    UAbstractTile* AbstractTile = FindWidget(Key);
+    if (!AbstractTile)
         return false;
 
-    Widget->ConditionalBeginDestroy();
-    Widget->MarkPendingKill();
-    Widget->RemoveFromParent();
+    AbstractTile->RemoveAllCells();
+    AbstractTile->ConditionalBeginDestroy();
+    AbstractTile->MarkPendingKill();
+    AbstractTile->RemoveFromParent();
 
     return RemoveIndex(Key);
 }
