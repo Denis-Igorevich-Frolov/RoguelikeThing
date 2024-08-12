@@ -27,7 +27,6 @@ private:
 	UPROPERTY()
 	UMyGameInstance* GameInstance;
 
-	UPROPERTY()
 	TArray<UMapCell*> FilledCells;
 
 	UTerrainOfTile* MyTerrainOfTile = nullptr;
