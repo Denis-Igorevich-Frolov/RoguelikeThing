@@ -8,11 +8,15 @@ DEFINE_LOG_CATEGORY(TileBuffer);
 
 UAbstractTile* UTileBuffer::GetTile()
 {
-    if (!IsInit)
+    if (!IsInit) {
+        UE_LOG(LogTemp, Error, TEXT("aaa1"));
         return false;
+    }
 
-    if(TileBuf.Num() == 0)
+    if (TileBuf.Num() == 0) {
+        UE_LOG(LogTemp, Error, TEXT("aaa1"));
         return nullptr;
+    }
 
     UAbstractTile* Tile = TileBuf.Last();
 

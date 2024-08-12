@@ -3,6 +3,26 @@
 
 #include "CoordWrapperOfTable.h"
 
+WrapperRow::~WrapperRow()
+{
+    TArray<UAbstractTile*> Tiles;
+    Row.GenerateValueArray(Tiles);
+
+    for (UAbstractTile* Tile : Tiles) {
+        if (Tile && Tile->IsValidLowLevel()) {
+            if (Tile->IsRooted())
+                Tile->RemoveFromRoot();
+
+            Tile->ConditionalBeginDestroy();
+            Tile->MarkPendingKill();
+        }
+    }
+
+    Tiles.Empty();
+    Row.Empty();
+    RowGrid.Empty();
+}
+
 UAbstractTile* WrapperRow::FindWidget(int Key)
 {
     return *Row.Find(Key);
@@ -18,6 +38,7 @@ bool WrapperRow::RemoveWidget(int Key)
     UAbstractTile* Widget = FindWidget(Key);
     if (!Widget)
         return false;
+
     Widget->ConditionalBeginDestroy();
     Widget->MarkPendingKill();
     Widget->RemoveFromParent();

@@ -138,6 +138,10 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
     }
     //Если проверка была пройдена, то тестовый виджет удаляется, он нужен был сугубо для проверки
     if (TestGridWidget) {
+        if (TestGridWidget->IsValidLowLevel()) {
+            TestGridWidget->ConditionalBeginDestroy();
+            TestGridWidget->MarkPendingKill();
+        }
         TestGridWidget->RemoveFromParent();
     }
 
@@ -193,6 +197,10 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
         }
         //И только сейчас удаляется тестовый виджет ячейки
         if (TestCellWidget) {
+            if (TestCellWidget->IsValidLowLevel()) {
+                TestCellWidget->ConditionalBeginDestroy();
+                TestCellWidget->MarkPendingKill();
+            }
             TestCellWidget->RemoveFromParent();
         }
 
@@ -235,8 +243,8 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
             UE_LOG(FillingMapWithCells, Log, TEXT("fffffffffffff"));
 
         //Само забиваение карты ячейками происходит в отдельном потоке
-        AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapEditor, TableLength, TestCellWidget, MapTileLength,TilesGridPanel, TileBuf,
-            CellClass, MapTileClass, TilesCoordWrapper, MapMatrix, StartingPositionRow, StartingPositionCol, NumberOfMapTilesRows, NumberOfMapTilesCols, this]() {
+        AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapEditor, TableLength, MapTileLength,TilesGridPanel, TileBuf, CellClass, MapTileClass,
+            TilesCoordWrapper, MapMatrix, StartingPositionRow, StartingPositionCol, NumberOfMapTilesRows, NumberOfMapTilesCols, this]() {
 
                 if (GameInstance && GameInstance->LogType != ELogType::NONE)
                     UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The TilesGridPanel table population thread has been opened"));
@@ -263,7 +271,7 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                 for (int row = StartingPositionRow + NumberOfTilesRowsThatFitOnScreen - 1; row >= StartingPositionRow; row--) {
                     for (int col = StartingPositionCol; col < NumberOfTilesColsThatFitOnScreen + StartingPositionCol; col++) {
                         //Карта состоит из тайлов, которые, в свою очередь, состоят из ячеек, так что сначала создаётся тайл
-                        UMapTile* MapTile = StaticCast<UMapTile*>(CreateWidget<UUserWidget>(TilesGridPanel, MapTileClass));
+                        UMapTile* MapTile = CreateWidget<UMapTile>(TilesGridPanel, MapTileClass);
 
                         if (!MapTile) {
                             UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: MapTile was created with an error"));
@@ -344,7 +352,7 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                     }
                 }
 
-                UMapTile* MaxTile = StaticCast<UMapTile*>(CreateWidget<UUserWidget>(TilesGridPanel, MapTileClass));
+                UMapTile* MaxTile = CreateWidget<UMapTile>(TilesGridPanel, MapTileClass);
 
                 AsyncTask(ENamedThreads::GameThread, [TilesGridPanel, MaxTile, NumberOfMapTilesRows, NumberOfMapTilesCols, this]() {
                     MinTileGridSlot = TilesGridPanel->AddChildToUniformGrid(MaxTile, NumberOfMapTilesRows - 1, NumberOfMapTilesCols - 1);

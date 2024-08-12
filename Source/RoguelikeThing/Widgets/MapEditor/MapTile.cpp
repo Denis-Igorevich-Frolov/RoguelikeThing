@@ -47,6 +47,7 @@ bool UMapTile::FillingWithCells(int MapTileLength, UClass* CellClass, UMapEditor
     for (int row = MapTileLength - 1; row >= 0; row--) {
         for (int col = 0; col < MapTileLength; col++) {
             UMapCell* Cell = CreateWidget<UMapCell>(this, CellClass);
+            Cell->AddToRoot();
 
             if (!Cell) {
                 UE_LOG(Map_Tile, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: Cell was created with an error"));
@@ -218,11 +219,4 @@ void UMapTile::OnAddedEvent(UMapMatrix* MapMatrix)
 {
     SetMyTerrainOfTile(MapMatrix->GetTerrainOfTile(MyCoord));
     FillCellsAccordingToTerrain(MapMatrix);
-
-    if (CellsCoordWrapper->getNumberOfItemsInTable() == 0) {
-        FString Name;
-        CellsCoordWrapper->GetName(Name);
-
-        UE_LOG(LogTemp, Warning, TEXT("FFF %s"), *Name);
-    }
 }

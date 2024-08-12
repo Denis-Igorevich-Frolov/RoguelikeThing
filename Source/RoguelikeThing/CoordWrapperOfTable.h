@@ -20,9 +20,10 @@
  * сделан другой массив, который из себя уже будет представлять матрицу всего контента таблицы */
 class WrapperRow {
 private:
-	TMap<int32, UAbstractTile*> Row;
 	TMap<int32, UUniformGridSlot*> RowGrid;
 public:
+	TMap<int32, UAbstractTile*> Row;
+	~WrapperRow();
 	UAbstractTile* FindWidget(int Key);
 	UUniformGridSlot* FindGridSlot(int Key);
 	bool RemoveWidget(int Key);
