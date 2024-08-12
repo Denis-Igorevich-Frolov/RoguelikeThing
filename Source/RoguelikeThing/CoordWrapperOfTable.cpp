@@ -17,6 +17,9 @@ WrapperRow::~WrapperRow()
             Tile->ConditionalBeginDestroy();
             Tile->MarkPendingKill();
         }
+        else {
+            UE_LOG(LogTemp, Error, TEXT("ayeay2"));
+        }
     }
 
     Tiles.Empty();

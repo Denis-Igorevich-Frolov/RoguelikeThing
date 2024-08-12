@@ -21,7 +21,6 @@ UMapTile::UMapTile(const FObjectInitializer& Object) : UAbstractTile(Object)
 
 UMapTile::~UMapTile()
 {
-    RemoveAllCells();
     FilledCells.Empty();
 }
 
@@ -35,6 +34,9 @@ void UMapTile::RemoveAllCells()
         if (CellsCoordWrapper->IsValidLowLevel()) {
             CellsCoordWrapper->ConditionalBeginDestroy();
             CellsCoordWrapper->MarkPendingKill();
+        }
+        else {
+            UE_LOG(Map_Tile, Error, TEXT("sssss"));
         }
     }
 }
