@@ -271,6 +271,7 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                 for (int row = StartingPositionRow + NumberOfTilesRowsThatFitOnScreen - 1; row >= StartingPositionRow; row--) {
                     for (int col = StartingPositionCol; col < NumberOfTilesColsThatFitOnScreen + StartingPositionCol; col++) {
                         //Карта состоит из тайлов, которые, в свою очередь, состоят из ячеек, так что сначала создаётся тайл
+                        UPROPERTY()
                         UMapTile* MapTile = CreateWidget<UMapTile>(TilesGridPanel, MapTileClass);
 
                         if (!MapTile) {
@@ -333,6 +334,7 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                             if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                                 UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: Launched a GameThread call from the TilesGridPanel table population thread to place a tile in a TilesGridPanel table"));
 
+                            UPROPERTY()
                             UUniformGridSlot* GridSlot = TilesGridPanel->AddChildToUniformGrid(MapTile, row, col);
 
                             if (GameInstance && GameInstance->LogType == ELogType::DETAILED) {
@@ -352,6 +354,7 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                     }
                 }
 
+                UPROPERTY()
                 UMapTile* MaxTile = CreateWidget<UMapTile>(TilesGridPanel, MapTileClass);
 
                 AsyncTask(ENamedThreads::GameThread, [TilesGridPanel, MaxTile, NumberOfMapTilesRows, NumberOfMapTilesCols, this]() {
@@ -386,9 +389,9 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                         UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: A thread to configure the necessary widgets at the end of filling the TilesGridPanel table and removing the loading widget has been closed"));
                 });
 
-                AsyncTask(ENamedThreads::GameThread, [this]() {
-                    GetWorld()->ForceGarbageCollection(true);
-                    });
+                //AsyncTask(ENamedThreads::GameThread, [this]() {
+                //    GetWorld()->ForceGarbageCollection(true);
+                //    });
         });
     }
     else {

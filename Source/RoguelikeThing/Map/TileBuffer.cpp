@@ -18,6 +18,7 @@ UAbstractTile* UTileBuffer::GetTile()
         return nullptr;
     }
 
+    UPROPERTY()
     UAbstractTile* Tile = TileBuf.Last();
 
     if (TileBuf.IsValidIndex(TileBuf.Num() - 1)) {
@@ -65,6 +66,7 @@ bool UTileBuffer::ScoreToMaximum()
             return true;
         }
 
+        UPROPERTY()
         UMapTile* MapTile = CreateWidget<UMapTile>(TilesGridPanel, MapTileClass);
         if (!MapTile->FillingWithCells(MapTileLength, CellClass, MapEditor))
             return false;
@@ -79,6 +81,7 @@ void UTileBuffer::Clear()
 {
     for (UAbstractTile* Tile : TileBuf) {
         if (Tile) {
+            Tile->RemoveAllCells();
             Tile->ConditionalBeginDestroy();
             Tile->MarkPendingKill();
             Tile->RemoveFromParent();

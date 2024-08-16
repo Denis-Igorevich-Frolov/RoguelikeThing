@@ -8,10 +8,11 @@
 #include "RoguelikeThing/Structs/Widgets/MapEditor/MapCell/NeighbourhoodOfCell.h"
 #include "MapCell.generated.h"
 
-/*****************************************************************
- * Данный класс является базовым классом для виджета ячейки. Он
- * нужен для правильного взаимодействия блюпринтов и c++ кода.
- *****************************************************************/
+/*****************************************************
+ * Данный класс является базовым для виджета ячейки
+ *****************************************************/
+
+DECLARE_LOG_CATEGORY_EXTERN(MapCell, Log, All);
 
 //Все возможные типы ячейки
 UENUM(BlueprintType)
@@ -27,10 +28,17 @@ class ROGUELIKETHING_API UMapCell : public UAbstractTile
 	GENERATED_BODY()
 
 private:
+	//Менеджер высокого уровня для экземпляра запущенной игры
+	UPROPERTY()
+	UMyGameInstance* GameInstance;
+
+	//Координата родительского тайла, внутри которого расположена эта ячейка
 	FCellCoord* CoordOfParentTile;
+	//Длинна стороны родительского тайла. Передаётся вместе с его координатой
 	int MapTileLength = 0;
 
 public:
+	UMapCell(const FObjectInitializer& Object);
 	//Указатель на редактор карт, который управляет этой ячейкой
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UMapEditor* MyEditor;
@@ -47,6 +55,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetEmptinessStyle();
 
+	//Функция, возвращающая размер виджета ячейки
 	UFUNCTION(BlueprintImplementableEvent)
 	FVector2D getSize();
 
@@ -56,11 +65,15 @@ public:
 	FCellCoord GetCoordOfParentTile();
     void SetMyCoord(FCellCoord myCoord) override;
 
+	/* Функция, возвращающая глобальную координату ячейки, то есть с учётом координаты родительского тайла. Так, например,
+	 * ячейка 0:1, находящаяся в тайле 0:3, при длине стороны тайла в 5, будет имень глобальную координату 0:16 */
 	UFUNCTION(BlueprintCallable)
 	FCellCoord GetMyGlobalCoord();
+	//Функция, возвращающая координату ячейки внутри своего родительского тайла
 	UFUNCTION(BlueprintCallable)
 	FCellCoord GetMyLocalCoord();
 
+	//Текущий тип (стиль) ячейки
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FCellType CurrentType = FCellType::NONE;
 

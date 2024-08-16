@@ -2,42 +2,22 @@
 
 
 #include "CoordWrapperOfTable.h"
+#include <Kismet/GameplayStatics.h>
 
-WrapperRow::~WrapperRow()
-{
-    TArray<UAbstractTile*> Tiles;
-    Row.GenerateValueArray(Tiles);
+DEFINE_LOG_CATEGORY(CoordWrapperOfTable);
 
-    for (UAbstractTile* Tile : Tiles) {
-        if (Tile && Tile->IsValidLowLevel()) {
-            if (Tile->IsRooted())
-                Tile->RemoveFromRoot();
-
-            Tile->RemoveAllCells();
-            Tile->ConditionalBeginDestroy();
-            Tile->MarkPendingKill();
-        }
-        else {
-            UE_LOG(LogTemp, Error, TEXT("ayeay2"));
-        }
-    }
-
-    Tiles.Empty();
-    Row.Empty();
-    RowGrid.Empty();
-}
-
-UAbstractTile* WrapperRow::FindWidget(int Key)
+UAbstractTile* UWrapperRow::FindWidget(int Key)
 {
     return *Row.Find(Key);
 }
 
-UUniformGridSlot* WrapperRow::FindGridSlot(int Key)
+UUniformGridSlot* UWrapperRow::FindGridSlot(int Key)
 {
     return *RowGrid.Find(Key);
 }
 
-bool WrapperRow::RemoveWidget(int Key)
+//Функция, удаляющая эллемент по переданному ключу
+bool UWrapperRow::RemoveWidget(int Key)
 {
     UAbstractTile* AbstractTile = FindWidget(Key);
     if (!AbstractTile)
@@ -51,37 +31,64 @@ bool WrapperRow::RemoveWidget(int Key)
     return RemoveIndex(Key);
 }
 
-bool WrapperRow::RemoveIndex(int Key)
+//Функция, исключающая эллемент из координатной обёртки, но не удаляющая его из мира
+bool UWrapperRow::RemoveIndex(int Key)
 {
     return ((bool)Row.Remove(Key)) && ((bool)RowGrid.Remove(Key));
 }
 
-bool WrapperRow::AddWidget(int Key, UAbstractTile* Widget, UUniformGridSlot* GridSlot)
+bool UWrapperRow::AddWidget(int Key, UAbstractTile* Widget, UUniformGridSlot* GridSlot)
 {
     return ((bool)Row.Add(Key, Widget)) && ((bool)RowGrid.Add(Key, GridSlot));
 }
 
-bool WrapperRow::HasAnyEllements()
+bool UWrapperRow::HasAnyEllements()
 {
     return Row.Num() != 0;
 }
 
-bool WrapperRow::Contains(int Key)
+bool UWrapperRow::Contains(int Key)
 {
     return Row.Contains(Key);
 }
 
-UCoordWrapperOfTable::~UCoordWrapperOfTable()
+void UWrapperRow::Clear()
 {
-    Clear();
+    TArray<UAbstractTile*> Tiles;
+    Row.GenerateValueArray(Tiles);
+
+    for (UAbstractTile* Tile : Tiles) {
+        if (Tile && Tile->IsValidLowLevel()) {
+            Tile->RemoveAllCells();
+            Tile->ConditionalBeginDestroy();
+            Tile->MarkPendingKill();
+        }
+    }
+
+    Tiles.Empty();
+    Row.Empty();
+    RowGrid.Empty();
+}
+
+UCoordWrapperOfTable::UCoordWrapperOfTable(const FObjectInitializer& Object)
+{
+    //Получение GameInstance из мира
+    GameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
+    if (!GameInstance)
+        UE_LOG(CoordWrapperOfTable, Warning, TEXT("Warning in CoordWrapperOfTable class in constructor - GameInstance was not retrieved from the world"));
 }
 
 bool UCoordWrapperOfTable::AddWidget(int row, int col, UAbstractTile* Widget, UUniformGridSlot* GridSlot)
 {
+    if (!Widget) {
+        UE_LOG(CoordWrapperOfTable, Error, TEXT("!!! An error occurred in the CoordWrapperOfTable class in the AddWidget function: Widget is not valid"));
+        return false;
+    }
+
     bool success = false;
-    if (Col.Contains(col)) {
+    if (ColArr.Contains(col)) {
         //Если строка существует в неё добавляется новый элемент
-        WrapperRow* Row = *Col.Find(col);
+        UWrapperRow* Row = *ColArr.Find(col);
 
         if (Row) {
             bool WidgetNotContains = !Row->Contains(row);
@@ -90,19 +97,24 @@ bool UCoordWrapperOfTable::AddWidget(int row, int col, UAbstractTile* Widget, UU
             if (WidgetNotContains && success)
                 NumberOfItemsInTable++;
         }
+        else {
+            UE_LOG(CoordWrapperOfTable, Error, TEXT("!!! An error occurred in the CoordWrapperOfTable class in the AddWidget function: Row is not valid"));
+        }
     }
     else {
         //Если строки не существует, она создаётся и в неё добавляется новый элемент
-        WrapperRow* newRow = new WrapperRow();
+        UPROPERTY()
+        UWrapperRow* newRow = NewObject<UWrapperRow>();
 
         if (newRow) {
             success = newRow->AddWidget(row, Widget, GridSlot);
             if (!success) {
-                delete newRow;
+                newRow->ConditionalBeginDestroy();
+                newRow->MarkPendingKill();
                 return false;
             }
 
-            success = (bool)Col.Add(col, newRow);
+            success = (bool)ColArr.Add(col, newRow);
 
             if (success)
                 NumberOfItemsInTable++;
@@ -136,9 +148,9 @@ bool UCoordWrapperOfTable::AddWidget(int row, int col, UAbstractTile* Widget, UU
 
 UAbstractTile* UCoordWrapperOfTable::FindWidget(int row, int col)
 {
-    if (!Col.Contains(col))
+    if (!ColArr.Contains(col))
         return nullptr;
-    WrapperRow* Row = *Col.Find(col);
+    UWrapperRow* Row = *ColArr.Find(col);
     if(!Row->Contains(row))
         return nullptr;
 
@@ -147,22 +159,23 @@ UAbstractTile* UCoordWrapperOfTable::FindWidget(int row, int col)
 
 UUniformGridSlot* UCoordWrapperOfTable::FindGridSlot(int row, int col)
 {
-    if (!Col.Contains(col))
+    if (!ColArr.Contains(col))
         return nullptr;
-    WrapperRow* Row = *Col.Find(col);
+    UWrapperRow* Row = *ColArr.Find(col);
     if (!Row->Contains(row))
         return nullptr;
 
     return  Row->FindGridSlot(row);
 }
 
+//Функция, исключающая эллемент из координатной обёртки, но не удаляющая его из мира
 bool UCoordWrapperOfTable::RemoveCoord(int row, int col)
 {
-    if (!Col.Contains(col)) {
+    if (!ColArr.Contains(col)) {
         UE_LOG(LogTemp, Warning, TEXT("r1"));
         return false;
     }
-    WrapperRow* Row = *Col.Find(col);
+    UWrapperRow* Row = *ColArr.Find(col);
     if (!Row->Contains(row)) {
         UE_LOG(LogTemp, Warning, TEXT("r2"));
         return false;
@@ -173,19 +186,20 @@ bool UCoordWrapperOfTable::RemoveCoord(int row, int col)
     }
 
     if (!Row->HasAnyEllements()) {
-        Col.Remove(col);
+        ColArr.Remove(col);
     }
 
     return true;
 }
 
+//Функция, удаляющая эллемент по переданной координате
 bool UCoordWrapperOfTable::RemoveWidget(int row, int col)
 {
-    if (!Col.Contains(col)) {
+    if (!ColArr.Contains(col)) {
         UE_LOG(LogTemp, Warning, TEXT("r1"));
         return false;
     }
-    WrapperRow* Row = *Col.Find(col);
+    UWrapperRow* Row = *ColArr.Find(col);
     if (!Row->Contains(row)) {
         UE_LOG(LogTemp, Warning, TEXT("r2"));
         return false;
@@ -196,15 +210,15 @@ bool UCoordWrapperOfTable::RemoveWidget(int row, int col)
 
 bool UCoordWrapperOfTable::HasAnyEllements()
 {
-    if(Col.Num() == 0)
+    if(ColArr.Num() == 0)
         return false;
     else {
         TArray<int32> Keys;
-        Col.GetKeys(Keys);
+        ColArr.GetKeys(Keys);
         for (int32 k : Keys)
         {
             //Проверяется есть ли в существующих столбцах хотя бы одна строка с хотя бы одним элементом
-            if ((*Col.Find(k))->HasAnyEllements())
+            if ((*ColArr.Find(k))->HasAnyEllements())
                 return true;
         }
 
@@ -225,11 +239,18 @@ FGridCoord UCoordWrapperOfTable::getMinCoord()
 
 void UCoordWrapperOfTable::Clear()
 {
-    for (auto& Elem : Col) {
-        if (Elem.Value)
-            delete Elem.Value;
+    TArray<UWrapperRow*> Rows;
+    ColArr.GenerateValueArray(Rows);
+
+    for (UWrapperRow* Row : Rows) {
+        if (Row && Row->IsValidLowLevel()) {
+            Row->Clear();
+            Row->ConditionalBeginDestroy();
+            Row->MarkPendingKill();
+        }
     }
-    Col.Empty();
+    Rows.Empty();
+    ColArr.Empty();
 
     MinCoord = FGridCoord();
     MaxCoord = FGridCoord();
@@ -252,6 +273,7 @@ void UCoordWrapperOfTable::setMaxCoord(FGridCoord maxCoord)
     this->MaxCoord = maxCoord;
 }
 
+//Проверка на то перересекаются ли переданные габариты. Если да, то возвращается true
 bool UCoordWrapperOfTable::DoTheDimensionsIntersect(FGridDimensions Dimensions_1, FGridDimensions Dimensions_2)
 {
     return Dimensions_1.DoTheDimensionsIntersect(Dimensions_2);
@@ -309,6 +331,7 @@ bool FGridDimensions::IsEmpty()
     return Min.Row == 0 && Min.Col == 0 && Max.Row == 0 && Max.Col == 0;
 }
 
+//Проверка на то перересекаются ли переданные габариты с текущими. Если да, то возвращается true
 bool FGridDimensions::DoTheDimensionsIntersect(FGridDimensions OtherDimensions)
 {
     if ((OtherDimensions.Max.Col < Min.Col) || (OtherDimensions.Max.Row < Min.Row) || (OtherDimensions.Min.Col > Max.Col) || (OtherDimensions.Min.Row > Max.Row))
