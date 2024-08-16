@@ -14,7 +14,7 @@
  * Данный класс является базовым классом для виджета тайла
  *****************************************************************/
 
-DECLARE_LOG_CATEGORY_EXTERN(Map_Tile, Log, All);
+DECLARE_LOG_CATEGORY_EXTERN(MapTile, Log, All);
 
 UCLASS()
 class ROGUELIKETHING_API UMapTile : public UAbstractTile
@@ -38,10 +38,13 @@ public:
 	UMapTile(const FObjectInitializer& Object);
 	~UMapTile();
 
-	//Переопределение виртуальной функции для удаления всех ячеек
+	/* Переопределение виртуальной функции для удаления всех ячеек. Функция используется при очистке перед
+	 * удалением. Она уничтожает переменную координатной обёртки CellsCoordWrapper, так что если необходимо
+	 * очистить класс без его последующего удаления, CellsCoordWrapper следует вновь проинициализировать */
 	void RemoveAllCells() override;
 	void SetMyCoord(FCellCoord myCoord) override;
-	//Переопределение виртуальной функции для сброса состояния изменённых ячеек
+	/* Переопределение виртуальной функции для сброса состояния изменённых ячеек. При вызове
+	 * функции переменная MyTerrainOfTile уничтожается и требует последующей переинициализации */
 	void ClearFilledCells() override;
 	//Переопределение виртуальной функции, вызываемой при добавлении тайла в таблицу
 	void OnAddedEvent(UMapMatrix* MapMatrix) override;
@@ -63,7 +66,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool FillingWithCells(int MapTileLength, UClass* CellClass, UMapEditor* MapEditor, UMapMatrix* MapMatrix = nullptr);
 
-	//Функция, задающая стили ячеек исходя из переменной предзагрузки MyTerrainOfTile
+	//Функция, задающая стиль ячееки по переданной координате исходя из переменной предзагрузки MyTerrainOfTile
 	UFUNCTION(BlueprintCallable)
 	void SetStyleFromTerrainOfTile(UMapCell* Cell, int row, int col, int MapTileLength, UMapMatrix* MapMatrix);
 	

@@ -272,9 +272,9 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                     for (int col = StartingPositionCol; col < NumberOfTilesColsThatFitOnScreen + StartingPositionCol; col++) {
                         //Карта состоит из тайлов, которые, в свою очередь, состоят из ячеек, так что сначала создаётся тайл
                         UPROPERTY()
-                        UMapTile* MapTile = CreateWidget<UMapTile>(TilesGridPanel, MapTileClass);
+                        UMapTile* NewTile = CreateWidget<UMapTile>(TilesGridPanel, MapTileClass);
 
-                        if (!MapTile) {
+                        if (!NewTile) {
                             UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: MapTile was created with an error"));
 
                             //Виджет загрузки удалятся в основном потоке так как сделать это вне его невозможно
@@ -303,10 +303,10 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                         if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                             UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: An uninitialized MapTile is created with coordinates row: %d col: %d"), row, col);
 
-                        MapTile->SetMyCoord(FCellCoord(row, col));
-                        MapTile->SetMyTerrainOfTile(MapMatrix->GetTerrainOfTile(FCellCoord(row, col)));
+                        NewTile->SetMyCoord(FCellCoord(row, col));
+                        NewTile->SetMyTerrainOfTile(MapMatrix->GetTerrainOfTile(FCellCoord(row, col)));
 
-                        if (!MapTile->FillingWithCells(MapTileLength, CellClass, MapEditor, MapMatrix)) {
+                        if (!NewTile->FillingWithCells(MapTileLength, CellClass, MapEditor, MapMatrix)) {
                             AsyncTask(ENamedThreads::GameThread, [MapEditor, TilesGridPanel, this]() {
                                 if (GameInstance && GameInstance->LogType != ELogType::NONE)
                                     UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: Launched a GameThread call from the TilesGridPanel table population thread to remove the loading widget"));
@@ -330,12 +330,12 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                         }
 
                         //Добавление созданного тайла в GridPanel производится в основном потоке так как сделать это вне его невозможно
-                        AsyncTask(ENamedThreads::GameThread, [TilesGridPanel, MapTile, row, col, TilesCoordWrapper, NumberOfMapTilesRows, this]() {
+                        AsyncTask(ENamedThreads::GameThread, [TilesGridPanel, NewTile, row, col, TilesCoordWrapper, NumberOfMapTilesRows, this]() {
                             if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                                 UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: Launched a GameThread call from the TilesGridPanel table population thread to place a tile in a TilesGridPanel table"));
 
                             UPROPERTY()
-                            UUniformGridSlot* GridSlot = TilesGridPanel->AddChildToUniformGrid(MapTile, row, col);
+                            UUniformGridSlot* GridSlot = TilesGridPanel->AddChildToUniformGrid(NewTile, row, col);
 
                             if (GameInstance && GameInstance->LogType == ELogType::DETAILED) {
                                 UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The tile was placed in a TilesGridPanel table at position col: %d row: %d"), row, col);
@@ -347,10 +347,10 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                              * Для этого индекс обратного цикла по строкам разворачивается, чтобы передать
                              * инвертированное значение от того, что было уже инвертировано для корректного
                              * расположения тайлов в GridPanel */
-                            TilesCoordWrapper->AddWidget(NumberOfMapTilesRows - row - 1, col, MapTile, GridSlot);
+                            TilesCoordWrapper->AddWidget(NumberOfMapTilesRows - row - 1, col, NewTile, GridSlot);
                         });
 
-                        LastMapTile = MapTile;
+                        LastMapTile = NewTile;
                     }
                 }
 
@@ -389,9 +389,9 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                         UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: A thread to configure the necessary widgets at the end of filling the TilesGridPanel table and removing the loading widget has been closed"));
                 });
 
-                //AsyncTask(ENamedThreads::GameThread, [this]() {
-                //    GetWorld()->ForceGarbageCollection(true);
-                //    });
+                AsyncTask(ENamedThreads::GameThread, [this]() {
+                    GetWorld()->ForceGarbageCollection(true);
+                    });
         });
     }
     else {

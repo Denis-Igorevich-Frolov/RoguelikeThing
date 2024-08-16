@@ -850,7 +850,7 @@ bool UMapMatrix::CheckCorrectOfRoomLocation(MatrixType matrixType, int32 globalC
 }
 
 //Функция, просматривающая есть ли непустые клетки вокруг указаной
-FNeighbourhoodOfCell UMapMatrix::CheckNeighbourhoodOfCell(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol)
+FNeighbourhoodOfCell UMapMatrix::CheckNeighbourhoodOfCell(int32 globalCellRow, int32 globalCellCol)
 {
     if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
         UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CheckNeighbourhoodOfCell function: Calling a function for cell Row: %d Col: %d"), globalCellRow, globalCellCol);

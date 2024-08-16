@@ -166,7 +166,7 @@ public:
 
 	//Функция, просматривающая есть ли непустые клетки вокруг указаной
 	UFUNCTION(BlueprintCallable)
-	FNeighbourhoodOfCell CheckNeighbourhoodOfCell(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol);
+	FNeighbourhoodOfCell CheckNeighbourhoodOfCell(int32 globalCellRow, int32 globalCellCol);
 
 	/* Функция, создающая новый фрагмент карты на отснове переданного типа и индекса фрагмента.
 	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */

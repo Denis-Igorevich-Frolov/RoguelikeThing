@@ -67,11 +67,11 @@ bool UTileBuffer::ScoreToMaximum()
         }
 
         UPROPERTY()
-        UMapTile* MapTile = CreateWidget<UMapTile>(TilesGridPanel, MapTileClass);
-        if (!MapTile->FillingWithCells(MapTileLength, CellClass, MapEditor))
+        UMapTile* NewTile = CreateWidget<UMapTile>(TilesGridPanel, MapTileClass);
+        if (!NewTile->FillingWithCells(MapTileLength, CellClass, MapEditor))
             return false;
 
-        TileBuf.Insert(MapTile, 0);
+        TileBuf.Insert(NewTile, 0);
     }
 
     return true;

@@ -6,10 +6,11 @@
 #include <RoguelikeThing/Enumerations/MapEditorBrushType.h>
 #include <Kismet/GameplayStatics.h>
 
-DEFINE_LOG_CATEGORY(Map_Tile);
+DEFINE_LOG_CATEGORY(MapTile);
 
 UMapTile::UMapTile(const FObjectInitializer& Object) : UAbstractTile(Object)
 {
+    //Имя координатной обёртки даётся с упоминанием того, к какому тайлу она принадлежит
     FString Name("CellsCoordWrapper_");
     Name.Append(GetName());
     CellsCoordWrapper = CreateDefaultSubobject<UCoordWrapperOfTable>(*Name);
@@ -17,7 +18,7 @@ UMapTile::UMapTile(const FObjectInitializer& Object) : UAbstractTile(Object)
     //Получение GameInstance из мира
     GameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
     if (!GameInstance)
-        UE_LOG(Map_Tile, Warning, TEXT("Warning in MapTile class in constructor - GameInstance was not retrieved from the world"));
+        UE_LOG(MapTile, Warning, TEXT("Warning in MapTile class in constructor - GameInstance was not retrieved from the world"));
 }
 
 UMapTile::~UMapTile()
@@ -25,11 +26,13 @@ UMapTile::~UMapTile()
     FilledCells.Empty();
 }
 
-//Переопределение виртуальной функции для удаления всех ячеек
+/* Переопределение виртуальной функции для удаления всех ячеек. Функция используется при очистке перед
+ * удалением. Она уничтожает переменную координатной обёртки CellsCoordWrapper, так что если необходимо
+ * очистить класс без его последующего удаления, CellsCoordWrapper следует вновь проинициализировать */
 void UMapTile::RemoveAllCells()
 {
     if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-        UE_LOG(Map_Tile, Log, TEXT("MapTile class in the RemoveAllCells function: Deleting all cells in the tile has begun"));
+        UE_LOG(MapTile, Log, TEXT("MapTile class in the RemoveAllCells function: Deleting all cells in the tile has begun"));
     if (CellsCoordWrapper) {
         CellsCoordWrapper->Clear();
 
@@ -38,11 +41,11 @@ void UMapTile::RemoveAllCells()
             CellsCoordWrapper->MarkPendingKill();
         }
         else {
-            UE_LOG(Map_Tile, Error, TEXT("!!! An error occurred in the MapTile class in the RemoveAllCells function: CellsCoordWrapper is not valid low level"));
+            UE_LOG(MapTile, Error, TEXT("!!! An error occurred in the MapTile class in the RemoveAllCells function: CellsCoordWrapper is not valid low level"));
         }
     }
     else {
-        UE_LOG(Map_Tile, Error, TEXT("!!! An error occurred in the MapTile class in the RemoveAllCells function: CellsCoordWrapper is not valid"));
+        UE_LOG(MapTile, Error, TEXT("!!! An error occurred in the MapTile class in the RemoveAllCells function: CellsCoordWrapper is not valid"));
     }
 }
 
@@ -53,6 +56,16 @@ void UMapTile::SetMyCoord(FCellCoord myCoord)
 
 void UMapTile::SetMyTerrainOfTile(UTerrainOfTile* TerrainOfTile)
 {
+    if (MyTerrainOfTile) {
+        if (MyTerrainOfTile->IsValidLowLevel()) {
+            MyTerrainOfTile->ConditionalBeginDestroy();
+            MyTerrainOfTile->MarkPendingKill();
+        }
+        else {
+            UE_LOG(MapTile, Warning, TEXT("!!! An error occurred in the MapTile class in the SetMyTerrainOfTile function: MyTerrainOfTile is not valid low level"));
+        }
+    }
+
     MyTerrainOfTile = TerrainOfTile;
 }
 
@@ -65,7 +78,7 @@ UCoordWrapperOfTable* UMapTile::GetCellsCoordWrapper()
 bool UMapTile::FillingWithCells(int MapTileLength, UClass* CellClass, UMapEditor* MapEditor, UMapMatrix* MapMatrix)
 {
     if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-        UE_LOG(Map_Tile, Log, TEXT("MapTile class in the FillingWithCells function: Filling of the tile col: %d row: %d with cells has begun"), MyCoord.Col, MyCoord.Row);
+        UE_LOG(MapTile, Log, TEXT("MapTile class in the FillingWithCells function: Filling of the tile col: %d row: %d with cells has begun"), MyCoord.Col, MyCoord.Row);
 
     /* Тайл забивается ячейками по точно такому же принципу, что и карта тайлами -
      * первая ячейка находится слева снизу, а последняя - справа сверху */
@@ -75,7 +88,7 @@ bool UMapTile::FillingWithCells(int MapTileLength, UClass* CellClass, UMapEditor
             UMapCell* Cell = CreateWidget<UMapCell>(this, CellClass);
 
             if (!Cell) {
-                UE_LOG(Map_Tile, Error, TEXT("!!! An error occurred in the MapTile class in the FillingWithCells function: cell Col: %d, row: %d was created with an error"), col, row);
+                UE_LOG(MapTile, Error, TEXT("!!! An error occurred in the MapTile class in the FillingWithCells function: cell Col: %d, row: %d was created with an error"), col, row);
                 return false;
             }
 
@@ -99,29 +112,31 @@ bool UMapTile::FillingWithCells(int MapTileLength, UClass* CellClass, UMapEditor
                         CellsCoordWrapper->AddWidget(MapTileLength - 1 - row, col, Cell, GridSlot);
                     }
                     else {
-                        UE_LOG(Map_Tile, Error, TEXT("!!! An error occurred in the MapTile class in the FillingWithCells function: CellsCoordWrapper is not valid"));
+                        UE_LOG(MapTile, Error, TEXT("!!! An error occurred in the MapTile class in the FillingWithCells function: CellsCoordWrapper is not valid"));
                         return false;
                     }
                 }
                 else {
-                    UE_LOG(Map_Tile, Error, TEXT("!!! An error occurred in the MapTile class in the FillingWithCells function: GridSlot of cell is not valid"));
+                    UE_LOG(MapTile, Error, TEXT("!!! An error occurred in the MapTile class in the FillingWithCells function: GridSlot of cell is not valid"));
                     return false;
                 }
             }
             else
-                UE_LOG(Map_Tile, Error, TEXT("!!! An error occurred in the MapTile class in the FillingWithCells function: Failed to get GridPanel from MapTile col: %d, row: %d"), MyCoord.Col, MyCoord.Row);
+                UE_LOG(MapTile, Error, TEXT("!!! An error occurred in the MapTile class in the FillingWithCells function: Failed to get GridPanel from MapTile col: %d, row: %d"), MyCoord.Col, MyCoord.Row);
 
-            //Ячейке задаётся стиль исходя из переменной предзагрузки MyTerrainOfTile
-            SetStyleFromTerrainOfTile(Cell, row, col, MapTileLength, MapMatrix);
+            //Ячейке задаётся стиль исходя из переменной предзагрузки MyTerrainOfTile, если MapMatrix был передан
+            if (MapMatrix) {
+                SetStyleFromTerrainOfTile(Cell, row, col, MapTileLength, MapMatrix);
+            }
 
             if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-                UE_LOG(Map_Tile, Log, TEXT("MapTile class in the FillingWithCells function: Cell col: %d row: %d is fully created"), col, row);
+                UE_LOG(MapTile, Log, TEXT("MapTile class in the FillingWithCells function: Cell col: %d row: %d is fully created"), col, row);
 
         }
     }
 
     if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-        UE_LOG(Map_Tile, Log, TEXT("MapTile class in the FillingWithCells function: The tile col: %d row: %d is completely filled with cells"), MyCoord.Col, MyCoord.Row);
+        UE_LOG(MapTile, Log, TEXT("MapTile class in the FillingWithCells function: The tile col: %d row: %d is completely filled with cells"), MyCoord.Col, MyCoord.Row);
 
     return true;
 }
@@ -130,14 +145,14 @@ bool UMapTile::FillingWithCells(int MapTileLength, UClass* CellClass, UMapEditor
 void UMapTile::UpdateInformationAboutCells(UMapCell* Cell, FMapEditorBrushType CellStyle)
 {
     if (!Cell) {
-        UE_LOG(Map_Tile, Error, TEXT("!!! An error occurred in the MapTile class in the UpdateInformationAboutCells function: Transmitted cell is not valid"));
+        UE_LOG(MapTile, Error, TEXT("!!! An error occurred in the MapTile class in the UpdateInformationAboutCells function: Transmitted cell is not valid"));
         return;
     }
 
     if (GameInstance && GameInstance->LogType == ELogType::DETAILED) {
         const UEnum* CellType = FindObject<UEnum>(ANY_PACKAGE, TEXT("FMapEditorBrushType"), true);
 
-        UE_LOG(Map_Tile, Log, TEXT("MapTile class in the UpdateInformationAboutCells function: Cell col: %d row: %d style changed to %s"), Cell->GetMyGlobalCoord().Col, Cell->GetMyGlobalCoord().Row, *(CellType ? CellType->GetEnumName((int32)CellStyle) : TEXT("<Invalid Enum>")));
+        UE_LOG(MapTile, Log, TEXT("MapTile class in the UpdateInformationAboutCells function: Cell col: %d row: %d style changed to %s"), Cell->GetMyGlobalCoord().Col, Cell->GetMyGlobalCoord().Row, *(CellType ? CellType->GetEnumName((int32)CellStyle) : TEXT("<Invalid Enum>")));
     }
 
     //Если стиль ячейки не пустой, то он записывается в массив заполненных ячеек
@@ -151,7 +166,7 @@ void UMapTile::UpdateInformationAboutCells(UMapCell* Cell, FMapEditorBrushType C
             MyTerrainOfTile->AddCellType(Cell->GetMyLocalCoord(), CellStyle);
         }
         else {
-            UE_LOG(Map_Tile, Error, TEXT("!!! An error occurred in the MapTile class in the UpdateInformationAboutCells function: MyTerrainOfTile is not valid"));
+            UE_LOG(MapTile, Error, TEXT("!!! An error occurred in the MapTile class in the UpdateInformationAboutCells function: MyTerrainOfTile is not valid"));
         }
     }
     //Иначе, если раньше стиль не был базовым, а затем вновь таковым стал, то он удаляется из массива заполненных ячеек
@@ -168,7 +183,7 @@ void UMapTile::UpdateInformationAboutCells(UMapCell* Cell, FMapEditorBrushType C
             }
         }
         else {
-            UE_LOG(Map_Tile, Error, TEXT("!!! An error occurred in the MapTile class in the UpdateInformationAboutCells function: MyTerrainOfTile is not valid"));
+            UE_LOG(MapTile, Error, TEXT("!!! An error occurred in the MapTile class in the UpdateInformationAboutCells function: MyTerrainOfTile is not valid"));
         }
     }
 }
@@ -183,6 +198,7 @@ bool UMapTile::FillCellsAccordingToTerrain(UMapMatrix* MapMatrix)
             UAbstractTile* AbstractCell = CellsCoordWrapper->FindWidget(MapMatrix->GetMapTileLength() - 1 - CellCoord.Row, CellCoord.Col);
 
             if (AbstractCell) {
+                //Содержимым этого класса тайла должны быть ячейки класса UMapCell. Если это не так, значит опредёлнно что-то пошло не так
                 if (dynamic_cast<UMapCell*>(AbstractCell)) {
                     UMapCell* Cell = static_cast<UMapCell*>(AbstractCell);
 
@@ -191,56 +207,57 @@ bool UMapTile::FillCellsAccordingToTerrain(UMapMatrix* MapMatrix)
 
                         if (CellStyle != FMapEditorBrushType::Error) {
                             FCellCoord CellGlobalCoord = Cell->GetMyGlobalCoord();
+                            //Ячейке устанавливается такой стиль, какой был закреплён за этой координатой в MyTerrainOfTile
                             switch (CellStyle)
                             {
                             case FMapEditorBrushType::Corridor:
-                                Cell->SetCorridorStyle(MapMatrix->CheckNeighbourhoodOfCell(MatrixType::ChunkStructure, CellGlobalCoord.Row, CellGlobalCoord.Col));
+                                Cell->SetCorridorStyle(MapMatrix->CheckNeighbourhoodOfCell(CellGlobalCoord.Row, CellGlobalCoord.Col));
                                 FilledCells.Add(Cell);
 
                                 if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-                                    UE_LOG(Map_Tile, Log, TEXT("Map_Tile class in the FillCellsAccordingToTerrain function: Cell row: %d col: %d is set to the corridor style"), CellGlobalCoord.Row, CellGlobalCoord.Col);
+                                    UE_LOG(MapTile, Log, TEXT("MapTile class in the FillCellsAccordingToTerrain function: Cell row: %d col: %d is set to the corridor style"), CellGlobalCoord.Row, CellGlobalCoord.Col);
                                 break;
                             case FMapEditorBrushType::Room:
                                 Cell->SetRoomStyle();
                                 FilledCells.Add(Cell);
 
                                 if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-                                    UE_LOG(Map_Tile, Log, TEXT("Map_Tile class in the FillCellsAccordingToTerrain function: Cell row: %d col: %d is set to the room style"), CellGlobalCoord.Row, CellGlobalCoord.Col);
+                                    UE_LOG(MapTile, Log, TEXT("MapTile class in the FillCellsAccordingToTerrain function: Cell row: %d col: %d is set to the room style"), CellGlobalCoord.Row, CellGlobalCoord.Col);
                                 break;
                             default:
                                 break;
                             }
                         }
                         else {
-                            UE_LOG(Map_Tile, Error, TEXT("!!! An error occurred in the MapTile class in the FillCellsAccordingToTerrain function: CellStyle equal to Error"));
+                            UE_LOG(MapTile, Error, TEXT("!!! An error occurred in the MapTile class in the FillCellsAccordingToTerrain function: CellStyle equal to Error"));
                             return false;
                         }
                     }
                     else {
-                        UE_LOG(Map_Tile, Error, TEXT("!!! An error occurred in the MapTile class in the FillCellsAccordingToTerrain function: Cell is not valid"));
+                        UE_LOG(MapTile, Error, TEXT("!!! An error occurred in the MapTile class in the FillCellsAccordingToTerrain function: Cell is not valid"));
                         return false;
                     }
                 }
                 else {
-                    UE_LOG(Map_Tile, Error, TEXT("!!! An error occurred in the MapTile class in the FillCellsAccordingToTerrain function: AbstractCell is not UMapCell"));
+                    UE_LOG(MapTile, Warning, TEXT("!!! An error occurred in the MapTile class in the FillCellsAccordingToTerrain function: AbstractCell is not UMapCell"));
                     return false;
                 }
             }
             else {
-                UE_LOG(Map_Tile, Error, TEXT("!!! An error occurred in the MapTile class in the FillCellsAccordingToTerrain function: AbstractCell is not valid"));
+                UE_LOG(MapTile, Error, TEXT("!!! An error occurred in the MapTile class in the FillCellsAccordingToTerrain function: AbstractCell is not valid"));
                 return false;
             }
         }
     }
     else {
-        UE_LOG(Map_Tile, Error, TEXT("!!! An error occurred in the MapTile class in the FillCellsAccordingToTerrain function: MyTerrainOfTile is not valid"));
+        UE_LOG(MapTile, Error, TEXT("!!! An error occurred in the MapTile class in the FillCellsAccordingToTerrain function: MyTerrainOfTile is not valid"));
         return false;
     }
 
     return true;
 }
 
-//Функция, задающая стили ячеек исходя из переменной предзагрузки MyTerrainOfTile
+//Функция, задающая стиль ячееки по переданной координате исходя из переменной предзагрузки MyTerrainOfTile
 void UMapTile::SetStyleFromTerrainOfTile(UMapCell* Cell, int row, int col, int MapTileLength, UMapMatrix* MapMatrix)
 {
     //Все стили задаются строго в GameThread, потому что в не его это сделать невозможно
@@ -249,40 +266,49 @@ void UMapTile::SetStyleFromTerrainOfTile(UMapCell* Cell, int row, int col, int M
             int GlobalRow = MyCoord.Row * MapTileLength + row;
             int GlobalCol = MyCoord.Col * MapTileLength + col;
 
-            //Теперь пришло время придать новой ячейке необходимый стиль. Для этого из БД читается тип структуры ячейки
-            FMapEditorBrushType CellType = MapMatrix->GetCellStyleFromTerrainOfTile(FCellCoord(GlobalRow, GlobalCol), MapTileLength);
+            //Ячейке устанавливается такой стиль, какой был закреплён за этой координатой в MyTerrainOfTile
+            FMapEditorBrushType CellStyle = MapMatrix->GetCellStyleFromTerrainOfTile(FCellCoord(GlobalRow, GlobalCol), MapTileLength);
 
-            /* И затем в соответствии с полученым типом, ячейке присваивается необходимый стиль.
-             * При этом пустой стиль назначать не надо, он и так является стилем по умолчанию */
-            switch (CellType)
-            {
-            case FMapEditorBrushType::Corridor:
-                Cell->SetCorridorStyle(MapMatrix->CheckNeighbourhoodOfCell(MatrixType::ChunkStructure, GlobalRow, GlobalCol));
-                if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-                    UE_LOG(Map_Tile, Log, TEXT("MapTile class in the SetStyleFromTerrainOfTile function: Cell row: %d col: %d is set to the corridor style"), GlobalRow, GlobalCol);
-                FilledCells.Add(Cell);
-                break;
-            case FMapEditorBrushType::Room:
-                Cell->SetRoomStyle();
-                if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-                    UE_LOG(Map_Tile, Log, TEXT("MapTile class in the SetStyleFromTerrainOfTile function: Cell row: %d col: %d is set to the room style"), GlobalRow, GlobalCol);
-                FilledCells.Add(Cell);
-                break;
-            default:
-                break;
+            if (CellStyle != FMapEditorBrushType::Error) {
+                switch (CellStyle)
+                {
+                case FMapEditorBrushType::Corridor:
+                    Cell->SetCorridorStyle(MapMatrix->CheckNeighbourhoodOfCell(GlobalRow, GlobalCol));
+                    if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                        UE_LOG(MapTile, Log, TEXT("MapTile class in the SetStyleFromTerrainOfTile function: Cell row: %d col: %d is set to the corridor style"), GlobalRow, GlobalCol);
+                    FilledCells.Add(Cell);
+                    break;
+                case FMapEditorBrushType::Room:
+                    Cell->SetRoomStyle();
+                    if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                        UE_LOG(MapTile, Log, TEXT("MapTile class in the SetStyleFromTerrainOfTile function: Cell row: %d col: %d is set to the room style"), GlobalRow, GlobalCol);
+                    FilledCells.Add(Cell);
+                    break;
+                default:
+                    break;
+                }
             }
+            else {
+                UE_LOG(MapTile, Error, TEXT("!!! An error occurred in the MapTile class in the SetStyleFromTerrainOfTile function: CellStyle equal to Error"));
+            }
+        }
+        else {
+            UE_LOG(MapTile, Error, TEXT("!!! An error occurred in the MapTile class in the SetStyleFromTerrainOfTile function: MapMatrix is not valid"));
         }
         });
 }
 
-//Переопределение виртуальной функции для сброса состояния изменённых ячеек
+/* Переопределение виртуальной функции для сброса состояния изменённых ячеек. При вызове
+ * функции переменная MyTerrainOfTile уничтожается и требует последующей переинициализации */
 void UMapTile::ClearFilledCells()
 {
+    //Очистка стилей производится в отдельном потоке
     AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [this]() {
         if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-            UE_LOG(Map_Tile, Log, TEXT("MapTile class in the ClearFilledCells function: A thread is started in the tile col: %d, row: %d to reset the state of all filled cells"), MyCoord.Col, MyCoord.Row);
+            UE_LOG(MapTile, Log, TEXT("MapTile class in the ClearFilledCells function: A thread is started in the tile col: %d, row: %d to reset the state of all filled cells"), MyCoord.Col, MyCoord.Row);
         
         if (FilledCells.Num() != 0) {
+            //Стиль всех заполненных ячеек изменяется на пустой
             for (UMapCell* Cell : FilledCells) {
                 //Изменить стиль виджета возможно только в основном потоке
                 AsyncTask(ENamedThreads::GameThread, [Cell]() {
@@ -296,16 +322,27 @@ void UMapTile::ClearFilledCells()
             FilledCells = TArray<UMapCell*>();
         }
 
+        //Переменная предзагрузки удаляется
+        if (MyTerrainOfTile) {
+            if (MyTerrainOfTile->IsValidLowLevel()) {
+                MyTerrainOfTile->MarkPendingKill();
+            }
+            else {
+                UE_LOG(MapTile, Warning, TEXT("!!! An error occurred in the MapTile class in the SetMyTerrainOfTile function: MyTerrainOfTile is not valid low level"));
+            }
+        }
         MyTerrainOfTile = nullptr;
 
         if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-            UE_LOG(Map_Tile, Log, TEXT("MapTile class in the ClearFilledCells function: A thread is closed in the tile col: %d, row: %d to reset the state of all filled cells"), MyCoord.Col, MyCoord.Row);
+            UE_LOG(MapTile, Log, TEXT("MapTile class in the ClearFilledCells function: A thread is closed in the tile col: %d, row: %d to reset the state of all filled cells"), MyCoord.Col, MyCoord.Row);
         });
 }
 
 //Переопределение виртуальной функции, вызываемой при добавлении тайла в таблицу
 void UMapTile::OnAddedEvent(UMapMatrix* MapMatrix)
 {
+    //Инициализируется переменная предзагрузки
     SetMyTerrainOfTile(MapMatrix->GetTerrainOfTile(MyCoord));
+    //На основе переменной предзагузки инициализируются стили ячеек
     FillCellsAccordingToTerrain(MapMatrix);
 }
