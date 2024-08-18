@@ -23,6 +23,6 @@ void UAbstractTile::OnAddedEvent()
 }
 
 //Альтернативный эвент, вызываемый при добавлении тайла в таблицу, с классом взаимодействия с БД в качестве аргумента
-void UAbstractTile::OnAddedEvent(UMapMatrix* MapMatrix)
+void UAbstractTile::OnAddedEvent(UMapMatrix* Map)
 {
 }

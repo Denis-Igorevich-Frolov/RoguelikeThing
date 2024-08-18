@@ -54,7 +54,7 @@ void UMapTile::SetMyCoord(FCellCoord myCoord)
     this->MyCoord = myCoord;
 }
 
-void UMapTile::SetMyTerrainOfTile(UTerrainOfTile* TerrainOfTile)
+void UMapTile::SetMyTerrainOfTile(UTerrainOfTile* Terrain)
 {
     if (MyTerrainOfTile) {
         if (MyTerrainOfTile->IsValidLowLevel()) {
@@ -66,7 +66,7 @@ void UMapTile::SetMyTerrainOfTile(UTerrainOfTile* TerrainOfTile)
         }
     }
 
-    MyTerrainOfTile = TerrainOfTile;
+    MyTerrainOfTile = Terrain;
 }
 
 UCoordWrapperOfTable* UMapTile::GetCellsCoordWrapper()
@@ -75,7 +75,7 @@ UCoordWrapperOfTable* UMapTile::GetCellsCoordWrapper()
 }
 
 //Функция, заполняющая тайл ячейками. Если MapMatrix будет передан, то у ячеек сразу подгрузятся все необходимые стили, иначе все ячейки будут со стилем по умолчанию
-bool UMapTile::FillingWithCells(int MapTileLength, UClass* CellClass, UMapEditor* MapEditor, UMapMatrix* MapMatrix)
+bool UMapTile::FillingWithCells(int MapTileLength, UClass* CellClass, UMapEditor* MapEditor, UMapMatrix* Map)
 {
     if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
         UE_LOG(MapTile, Log, TEXT("MapTile class in the FillingWithCells function: Filling of the tile col: %d row: %d with cells has begun"), MyCoord.Col, MyCoord.Row);
@@ -124,9 +124,9 @@ bool UMapTile::FillingWithCells(int MapTileLength, UClass* CellClass, UMapEditor
             else
                 UE_LOG(MapTile, Error, TEXT("!!! An error occurred in the MapTile class in the FillingWithCells function: Failed to get GridPanel from MapTile col: %d, row: %d"), MyCoord.Col, MyCoord.Row);
 
-            //Ячейке задаётся стиль исходя из переменной предзагрузки MyTerrainOfTile, если MapMatrix был передан
-            if (MapMatrix) {
-                SetStyleFromTerrainOfTile(Cell, row, col, MapTileLength, MapMatrix);
+            //Ячейке задаётся стиль исходя из переменной предзагрузки MyTerrainOfTile, если Map был передан
+            if (Map) {
+                SetStyleFromTerrainOfTile(Cell, row, col, MapTileLength, Map);
             }
 
             if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
@@ -189,13 +189,13 @@ void UMapTile::UpdateInformationAboutCells(UMapCell* Cell, FMapEditorBrushType C
 }
 
 //Функция, преводящая стиль ячеек в соответствие с переменной предзагрузки MyTerrainOfTile
-bool UMapTile::FillCellsAccordingToTerrain(UMapMatrix* MapMatrix)
+bool UMapTile::FillCellsAccordingToTerrain(UMapMatrix* Map)
 {
     if (MyTerrainOfTile) {
         TArray<FCellCoord> FilledCoord = MyTerrainOfTile->GetFilledCoord();
         for (FCellCoord CellCoord : FilledCoord) {
             //Получение указателя на ячейку тайла. Строки развёрнуты потому что в БД наименьшая координата находится в левом верхнем углу, а в UI - в левом нижнем
-            UAbstractTile* AbstractCell = CellsCoordWrapper->FindWidget(MapMatrix->GetMapTileLength() - 1 - CellCoord.Row, CellCoord.Col);
+            UAbstractTile* AbstractCell = CellsCoordWrapper->FindWidget(Map->GetMapTileLength() - 1 - CellCoord.Row, CellCoord.Col);
 
             if (AbstractCell) {
                 //Содержимым этого класса тайла должны быть ячейки класса UMapCell. Если это не так, значит опредёлнно что-то пошло не так
@@ -211,7 +211,7 @@ bool UMapTile::FillCellsAccordingToTerrain(UMapMatrix* MapMatrix)
                             switch (CellStyle)
                             {
                             case FMapEditorBrushType::Corridor:
-                                Cell->SetCorridorStyle(MapMatrix->CheckNeighbourhoodOfCell(CellGlobalCoord.Row, CellGlobalCoord.Col));
+                                Cell->SetCorridorStyle(Map->CheckNeighbourhoodOfCell(CellGlobalCoord.Row, CellGlobalCoord.Col));
                                 FilledCells.Add(Cell);
 
                                 if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
@@ -258,22 +258,22 @@ bool UMapTile::FillCellsAccordingToTerrain(UMapMatrix* MapMatrix)
 }
 
 //Функция, задающая стиль ячееки по переданной координате исходя из переменной предзагрузки MyTerrainOfTile
-void UMapTile::SetStyleFromTerrainOfTile(UMapCell* Cell, int row, int col, int MapTileLength, UMapMatrix* MapMatrix)
+void UMapTile::SetStyleFromTerrainOfTile(UMapCell* Cell, int row, int col, int MapTileLength, UMapMatrix* Map)
 {
     //Все стили задаются строго в GameThread, потому что в не его это сделать невозможно
-    AsyncTask(ENamedThreads::GameThread, [Cell, row, col, MapTileLength, MapMatrix, this]() {
-        if (MapMatrix) {
+    AsyncTask(ENamedThreads::GameThread, [Cell, row, col, MapTileLength, Map, this]() {
+        if (Map) {
             int GlobalRow = MyCoord.Row * MapTileLength + row;
             int GlobalCol = MyCoord.Col * MapTileLength + col;
 
             //Ячейке устанавливается такой стиль, какой был закреплён за этой координатой в MyTerrainOfTile
-            FMapEditorBrushType CellStyle = MapMatrix->GetCellStyleFromTerrainOfTile(FCellCoord(GlobalRow, GlobalCol), MapTileLength);
+            FMapEditorBrushType CellStyle = Map->GetCellStyleFromTerrainOfTile(FCellCoord(GlobalRow, GlobalCol), MapTileLength);
 
             if (CellStyle != FMapEditorBrushType::Error) {
                 switch (CellStyle)
                 {
                 case FMapEditorBrushType::Corridor:
-                    Cell->SetCorridorStyle(MapMatrix->CheckNeighbourhoodOfCell(GlobalRow, GlobalCol));
+                    Cell->SetCorridorStyle(Map->CheckNeighbourhoodOfCell(GlobalRow, GlobalCol));
                     if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                         UE_LOG(MapTile, Log, TEXT("MapTile class in the SetStyleFromTerrainOfTile function: Cell row: %d col: %d is set to the corridor style"), GlobalRow, GlobalCol);
                     FilledCells.Add(Cell);
@@ -339,10 +339,10 @@ void UMapTile::ClearFilledCells()
 }
 
 //Переопределение виртуальной функции, вызываемой при добавлении тайла в таблицу
-void UMapTile::OnAddedEvent(UMapMatrix* MapMatrix)
+void UMapTile::OnAddedEvent(UMapMatrix* Map)
 {
     //Инициализируется переменная предзагрузки
-    SetMyTerrainOfTile(MapMatrix->GetTerrainOfTile(MyCoord));
+    SetMyTerrainOfTile(Map->GetTerrainOfTile(MyCoord));
     //На основе переменной предзагузки инициализируются стили ячеек
-    FillCellsAccordingToTerrain(MapMatrix);
+    FillCellsAccordingToTerrain(Map);
 }

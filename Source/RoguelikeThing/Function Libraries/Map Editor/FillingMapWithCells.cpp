@@ -24,7 +24,7 @@ UFillingMapWithCells::UFillingMapWithCells()
  * класса UMapTile или им самим, CellClass обязательно
  * должен быть наследником класса UMapCell или им самим */
 void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, UUniformGridPanel* TilesGridPanel, UClass* CellClass, UClass* MapTileClass,
-    UTileBuffer* TileBuf, UMapEditor* MapEditor, UCoordWrapperOfTable* TilesCoordWrapper, UMapMatrix* MapMatrix, FVector2D WidgetAreaSize)
+    UTileBuffer* TileBuf, UMapEditor* MapEditor, UCoordWrapperOfTable* TilesCoordWrapper, UMapMatrix* Map, FVector2D WidgetAreaSize)
 {
     //Координатная обёртка изначально должна быть полность пустой во время заполнения карты
     TilesCoordWrapper->Clear();
@@ -95,7 +95,7 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
 
         return;
     }
-    if (!MapMatrix) {
+    if (!Map) {
         UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: MapMatrix is a null pointer"));
 
         if (LoadingWidget) {
@@ -244,12 +244,12 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
 
         //Само забиваение карты ячейками происходит в отдельном потоке
         AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapEditor, TableLength, MapTileLength,TilesGridPanel, TileBuf, CellClass, MapTileClass,
-            TilesCoordWrapper, MapMatrix, StartingPositionRow, StartingPositionCol, NumberOfMapTilesRows, NumberOfMapTilesCols, this]() {
+            TilesCoordWrapper, Map, StartingPositionRow, StartingPositionCol, NumberOfMapTilesRows, NumberOfMapTilesCols, this]() {
 
                 if (GameInstance && GameInstance->LogType != ELogType::NONE)
                     UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The TilesGridPanel table population thread has been opened"));
 
-                MapMatrix->FillTerrainOfTiles();
+                Map->FillTerrainOfTiles();
 
                 UMapTile* LastMapTile = nullptr;
 
@@ -304,9 +304,9 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                             UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: An uninitialized MapTile is created with coordinates row: %d col: %d"), row, col);
 
                         NewTile->SetMyCoord(FCellCoord(row, col));
-                        NewTile->SetMyTerrainOfTile(MapMatrix->GetTerrainOfTile(FCellCoord(row, col)));
+                        NewTile->SetMyTerrainOfTile(Map->GetTerrainOfTile(FCellCoord(row, col)));
 
-                        if (!NewTile->FillingWithCells(MapTileLength, CellClass, MapEditor, MapMatrix)) {
+                        if (!NewTile->FillingWithCells(MapTileLength, CellClass, MapEditor, Map)) {
                             AsyncTask(ENamedThreads::GameThread, [MapEditor, TilesGridPanel, this]() {
                                 if (GameInstance && GameInstance->LogType != ELogType::NONE)
                                     UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: Launched a GameThread call from the TilesGridPanel table population thread to remove the loading widget"));

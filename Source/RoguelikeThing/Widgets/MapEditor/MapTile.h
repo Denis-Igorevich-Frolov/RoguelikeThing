@@ -47,13 +47,13 @@ public:
 	 * функции переменная MyTerrainOfTile уничтожается и требует последующей переинициализации */
 	void ClearFilledCells() override;
 	//Переопределение виртуальной функции, вызываемой при добавлении тайла в таблицу
-	void OnAddedEvent(UMapMatrix* MapMatrix) override;
+	void OnAddedEvent(UMapMatrix* Map) override;
 
 	//Координатная обёртка, хранящая в себе ячейки этого тайла
 	UPROPERTY()
 	UCoordWrapperOfTable* CellsCoordWrapper;
 
-	void SetMyTerrainOfTile(UTerrainOfTile* TerrainOfTile);
+	void SetMyTerrainOfTile(UTerrainOfTile* Terrain);
 
 	UFUNCTION(BlueprintCallable)
 	UCoordWrapperOfTable* GetCellsCoordWrapper();
@@ -64,11 +64,11 @@ public:
 
 	//Функция, заполняющая тайл ячейками. Если MapMatrix будет передан, то у ячеек сразу подгрузятся все необходимые стили, иначе все ячейки будут со стилем по умолчанию
 	UFUNCTION(BlueprintCallable)
-	bool FillingWithCells(int MapTileLength, UClass* CellClass, UMapEditor* MapEditor, UMapMatrix* MapMatrix = nullptr);
+	bool FillingWithCells(int MapTileLength, UClass* CellClass, UMapEditor* MapEditor, UMapMatrix* Map = nullptr);
 
 	//Функция, задающая стиль ячееки по переданной координате исходя из переменной предзагрузки MyTerrainOfTile
 	UFUNCTION(BlueprintCallable)
-	void SetStyleFromTerrainOfTile(UMapCell* Cell, int row, int col, int MapTileLength, UMapMatrix* MapMatrix);
+	void SetStyleFromTerrainOfTile(UMapCell* Cell, int row, int col, int MapTileLength, UMapMatrix* Map);
 	
 	//Функция, обновляющая информацию о ячейках, стиль которых отличается от базового
 	UFUNCTION(BlueprintCallable)
@@ -76,5 +76,5 @@ public:
 	
 	//Функция, преводящая стиль ячеек в соответствие с переменной предзагрузки MyTerrainOfTile
 	UFUNCTION(BlueprintCallable)
-	bool FillCellsAccordingToTerrain(UMapMatrix* MapMatrix);
+	bool FillCellsAccordingToTerrain(UMapMatrix* Map);
 };

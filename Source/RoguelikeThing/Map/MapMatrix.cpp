@@ -5,22 +5,27 @@
 #include "RoguelikeThing/Widgets/LoadingWidget.h"
 #include <Kismet/GameplayStatics.h>
 
-DEFINE_LOG_CATEGORY(MapDataBase);
+DEFINE_LOG_CATEGORY(MapMatrix);
+DEFINE_LOG_CATEGORY(TerrainOfTile);
 
 void UTerrainOfTile::AddCellType(FCellCoord Coord, FMapEditorBrushType CellType)
 {
+    //Если соответствующая строка уже есть в матрице, в неё просто добавляется переданное значение
     if (TerrainOfTileRows.Contains(Coord.Row)) {
         TMap<int, FMapEditorBrushType>* TerrainOfTileCols = TerrainOfTileRows.Find(Coord.Row);
         if (TerrainOfTileCols) {
+            //Если по целевой координате уже есть какое-либо значение, его сначала следует удалить
             if (TerrainOfTileCols->Contains(Coord.Col)) {
                 TerrainOfTileCols->Remove(Coord.Col);
-                TerrainOfTileCols->Add(Coord.Col, CellType);
             }
-            else {
-                TerrainOfTileCols->Add(Coord.Col, CellType);
-            }
+
+            TerrainOfTileCols->Add(Coord.Col, CellType);
+        }
+        else {
+            UE_LOG(TerrainOfTile, Error, TEXT("!!! An error occurred in the TerrainOfTile class in the AddCellType function - TerrainOfTileCols is not valid"));
         }
     }
+    //Иначе сначала создаётся строка, и в новую строку добавляется переданное значение
     else {
         TMap<int, FMapEditorBrushType> cols;
         cols.Add(Coord.Col, CellType);
@@ -36,6 +41,9 @@ FMapEditorBrushType UTerrainOfTile::GetCellType(FCellCoord Coord)
             if (TerrainOfTileCols->Contains(Coord.Col)) {
                 return *TerrainOfTileCols->Find(Coord.Col);
             }
+        }
+        else {
+            UE_LOG(TerrainOfTile, Error, TEXT("!!! An error occurred in the TerrainOfTile class in the GetCellType function - TerrainOfTileCols is not valid"));
         }
     }
 
@@ -53,31 +61,37 @@ bool UTerrainOfTile::Contains(FCellCoord Coord)
             else
                 return false;
         }
-        else
+        else {
+            UE_LOG(TerrainOfTile, Error, TEXT("!!! An error occurred in the TerrainOfTile class in the Contains function - TerrainOfTileCols is not valid"));
             return false;
+        }
     }
     else
         return false;
 }
 
+//Получение массива всех не нулевых ячеек тайла
 TArray<FCellCoord> UTerrainOfTile::GetFilledCoord()
 {
-    TArray<FCellCoord> FilledCoord;
-
     TArray<int> TileRowsKeys;
     TerrainOfTileRows.GenerateKeyArray(TileRowsKeys);
 
     if (TileRowsKeys.Num() != 0) {
-        for (int row : TileRowsKeys) {
-            TMap<int, FMapEditorBrushType>* Cols = TerrainOfTileRows.Find(row);
+        TArray<FCellCoord> FilledCoord;
 
-            if (Cols) {
+        for (int row : TileRowsKeys) {
+            TMap<int, FMapEditorBrushType>* TerrainOfTileCols = TerrainOfTileRows.Find(row);
+
+            if (TerrainOfTileCols) {
                 TArray<int> TileColsKeys;
 
-                Cols->GenerateKeyArray(TileColsKeys);
+                TerrainOfTileCols->GenerateKeyArray(TileColsKeys);
                 for (int col : TileColsKeys) {
                     FilledCoord.Add(FCellCoord(row, col));
                 }
+            }
+            else {
+                UE_LOG(TerrainOfTile, Error, TEXT("!!! An error occurred in the TerrainOfTile class in the GetFilledCoord function - TerrainOfTileCols is not valid"));
             }
         }
 
@@ -95,6 +109,8 @@ bool UTerrainOfTile::RemoveCell(FCellCoord Coord)
         if (TerrainOfTileCols) {
             if (TerrainOfTileCols->Contains(Coord.Col)) {
                 TerrainOfTileCols->Remove(Coord.Col);
+
+                //Если в строке больше нет ни одного элемента, то она удалется
                 if (TerrainOfTileCols->Num() == 0) {
                     TerrainOfTileRows.Remove(Coord.Row);
                 }
@@ -104,8 +120,10 @@ bool UTerrainOfTile::RemoveCell(FCellCoord Coord)
             else
                 return false;
         }
-        else
+        else {
+            UE_LOG(TerrainOfTile, Error, TEXT("!!! An error occurred in the TerrainOfTile class in the RemoveCell function - TerrainOfTileCols is not valid"));
             return false;
+        }
     }
     else
         return false;
@@ -116,12 +134,12 @@ UMapMatrix::UMapMatrix() : UObject()
     //Получение GameInstance из мира
     GameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
     if (!GameInstance)
-        UE_LOG(MapDataBase, Warning, TEXT("Warning in FillingMapWithCells class in constructor - GameInstance was not retrieved from the world"));
+        UE_LOG(MapMatrix, Warning, TEXT("Warning in FillingMapWithCells class in constructor - GameInstance was not retrieved from the world"));
 
     //Длина таблицы всегда должна быть кратна длине тайлов из которых она составлена
     int32 remainder = TableLength % MapTileLength;
     if (remainder != 0) {
-        UE_LOG(MapDataBase, Warning, TEXT("Warning in MapMatrix class in constructor - TableLength is %d and not a multiple of MapTileLength equal to %d, it will be truncated to %d"), TableLength, MapTileLength, TableLength - remainder);
+        UE_LOG(MapMatrix, Warning, TEXT("Warning in MapMatrix class in constructor - TableLength is %d and not a multiple of MapTileLength equal to %d, it will be truncated to %d"), TableLength, MapTileLength, TableLength - remainder);
         //Если длина таблицы не кратна длине тайла, то она усекается до кратного
         TableLength = TableLength - remainder;
     }
@@ -165,11 +183,11 @@ FString UMapMatrix::getStringMatrixType(MatrixType matrixType)
 void UMapMatrix::destroyLoadStatement(FString FunctionName)
 {
     if (!LoadStatement->Destroy()) {
-        UE_LOG(MapDataBase, Warning, TEXT("Warning in MapMatrix class in %s function - LoadStatement was not destroyed"), *FunctionName);
+        UE_LOG(MapMatrix, Warning, TEXT("Warning in MapMatrix class in %s function - LoadStatement was not destroyed"), *FunctionName);
     }
     else
         if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the %s function: The LoadStatement object has been destroyed"), *FunctionName);
+            UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the %s function: The LoadStatement object has been destroyed"), *FunctionName);
 }
 
 //Функция, конвертирующая глобальный индекс базы данных карты в локальный индекс отдельного фрагмента
@@ -237,12 +255,12 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
      * данных не была открыта. В таком случае её следует открыть. */
     if (!mapDataBase->IsValid()) {
         if (!mapDataBase->Open(*FilePath, ESQLiteDatabaseOpenMode::ReadWriteCreate)) {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to open mapDataBase: %s"), *mapDataBase->GetLastError());
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to open mapDataBase: %s"), *mapDataBase->GetLastError());
             return false;
         }
         else
             if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: mapDataBase has been opened"));
+                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CreateMapChunk function: mapDataBase has been opened"));
     }
 
     //После открытия базы данных следует ещё раз проверить её валидность
@@ -252,7 +270,7 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
         /* Если функия getStringMatrixType вернула значение "", то это значит, что в неё
          * попали некорретные данные и последующее выполнение функции стоит прекратить */
         if (SMatrixType == "") {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function - incorrect map fragment type"));
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function - incorrect map fragment type"));
 
             if (autoClose)
                 mapDataBaseClose("CreateMapChunk");
@@ -271,14 +289,14 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
         if (!TableIsExists) {
             //Инициализация транзакции
             if (!mapDataBase->Execute(TEXT("BEGIN;"))) {
-                UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to start a mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+                UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to start a mapDataBase transaction: %s"), *mapDataBase->GetLastError());
                 if (autoClose)
                     mapDataBaseClose("CreateMapChunk");
                 return false;
             }
 
             if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: A transaction was started to create table \"%s %d:%d\""), *SMatrixType, chunkRow, chunkCol);
+                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CreateMapChunk function: A transaction was started to create table \"%s %d:%d\""), *SMatrixType, chunkRow, chunkCol);
 
             //Здесь начинает формироваться запрос на создание таблицы. Первый столбец RowNum отвечает за порядковый номер строки
             FString QueryToCreateTable = FString::Printf(TEXT(
@@ -296,13 +314,13 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
             QueryToCreateTable += FString(TEXT("); "));
 
             if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Generated query to create \"%s %d:%d\" table with %d columns"), *SMatrixType, chunkRow, chunkCol, TableLength);
+                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CreateMapChunk function: Generated query to create \"%s %d:%d\" table with %d columns"), *SMatrixType, chunkRow, chunkCol, TableLength);
 
             if (!mapDataBase->Execute(*QueryToCreateTable)) {
-                UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to create the mapDataBase table: %s"), *mapDataBase->GetLastError());
+                UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to create the mapDataBase table: %s"), *mapDataBase->GetLastError());
                 
                 if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
-                    UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+                    UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
                 }
                 
                 if (autoClose)
@@ -311,16 +329,16 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
             }
 
             if (GameInstance && GameInstance->LogType != ELogType::NONE) {
-                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Query to create table \"%s %d:%d\" completed"), *SMatrixType, chunkRow, chunkCol);
-                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The consciousness of %d rows in the table \"%s %d:%d\" is started"), TableLength, *SMatrixType, chunkRow, chunkCol);
+                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CreateMapChunk function: Query to create table \"%s %d:%d\" completed"), *SMatrixType, chunkRow, chunkCol);
+                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CreateMapChunk function: The consciousness of %d rows in the table \"%s %d:%d\" is started"), TableLength, *SMatrixType, chunkRow, chunkCol);
             }
             //После успешного создания всех столбцов, создаётся такое количество строк, какое указанно в TableLength
             for (int i = 0; i < TableLength; i++) {
                 if (!mapDataBase->Execute(*(FString::Printf(TEXT("INSERT INTO \"%s %d:%d\" DEFAULT VALUES;"), *SMatrixType, chunkRow, chunkCol)))) {
-                    UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to insert a row number %d into \"%s %d:%d\" table: %s"), i + 1, *SMatrixType, chunkRow, chunkCol, *mapDataBase->GetLastError());
+                    UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to insert a row number %d into \"%s %d:%d\" table: %s"), i + 1, *SMatrixType, chunkRow, chunkCol, *mapDataBase->GetLastError());
 
                     if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
-                        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+                        UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
                     }
 
                     if (autoClose)
@@ -330,7 +348,7 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
             }
 
             if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The creation of %d rows in the \"%s %d:%d\" table has been completed"), TableLength, *SMatrixType, chunkRow, chunkCol);
+                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CreateMapChunk function: The creation of %d rows in the \"%s %d:%d\" table has been completed"), TableLength, *SMatrixType, chunkRow, chunkCol);
 
             //Далее проверяется есть ли в файле таблица габаритов карты
             bool DimensionTableExist = LoadStatement->Create(*mapDataBase, TEXT("SELECT * FROM Dimensions;"), ESQLitePreparedStatementFlags::Persistent);
@@ -343,10 +361,10 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
                     "MaxCol INTEGER NOT NULL,"
                     "MinRow INTEGER NOT NULL,"
                     "MaxRow INTEGER NOT NULL);"))) {
-                    UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to create the Dimensions table: %s"), *mapDataBase->GetLastError());
+                    UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to create the Dimensions table: %s"), *mapDataBase->GetLastError());
 
                     if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
-                        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+                        UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
                     }
 
                     if (autoClose)
@@ -355,7 +373,7 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
                 }
 
                 if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                    UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Query to create table Dimensions completed"));
+                    UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CreateMapChunk function: Query to create table Dimensions completed"));
 
                 /* В данной таблице всегда есть только одна строка. И исходя из того,
                  * что таблица была создана только сейчас, следует то, что текущий 
@@ -363,10 +381,10 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
                  * его индексы и являются одновременно минимальными и максимальными.
                  * Так что они сразу записываются в эту строку. */
                 if (!mapDataBase->Execute(*(FString::Printf(TEXT("INSERT INTO Dimensions (MinCol, MaxCol, MinRow, MaxRow) VALUES(%d, %d, %d, %d);"), chunkRow, chunkRow, chunkCol, chunkCol)))) {
-                    UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to insert a row into Dimensions table: %s"), *mapDataBase->GetLastError());
+                    UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to insert a row into Dimensions table: %s"), *mapDataBase->GetLastError());
 
                     if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
-                        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+                        UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
                     }
 
                     if (autoClose)
@@ -375,7 +393,7 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
                 }
 
                 if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                    UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The creation of row with data row = %d, col = %d in the Dimensions table has been completed"), chunkRow, chunkCol);
+                    UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CreateMapChunk function: The creation of row with data row = %d, col = %d in the Dimensions table has been completed"), chunkRow, chunkCol);
             }
             else {
                 /* Если таблица уже существует, то начинаются проверки являются
@@ -383,7 +401,7 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
                 if (LoadStatement->IsValid() && LoadStatement->Step() == ESQLitePreparedStatementStepResult::Row) {
                     //Проверка является ли текущий индекс столбца новым наименьшим индексом всех столбцов
                     if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                        UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Started checking if chunkCol, equal to %d, is the smallest of the previously created column indexes"), chunkCol);
+                        UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CreateMapChunk function: Started checking if chunkCol, equal to %d, is the smallest of the previously created column indexes"), chunkCol);
                     int32 MinCol;
                     bool CurrentColIndexSmallest = false;
                     if (LoadStatement->GetColumnValueByName(TEXT("MinCol"), MinCol)) {
@@ -391,13 +409,13 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
                         //Если индекс действительно наименьший, то он записывается в таблицу габаритов
                         if (CurrentColIndexSmallest) {
                             if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The new column index of %d is below the previous lowest index of %d. Started writing a new value for MinCol cell in table Dimensions"), chunkCol, MinCol);
+                                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CreateMapChunk function: The new column index of %d is below the previous lowest index of %d. Started writing a new value for MinCol cell in table Dimensions"), chunkCol, MinCol);
                             if (!mapDataBase->Execute(
                                 *FString::Printf(TEXT("UPDATE Dimensions SET MinCol = %d;"), chunkCol))) {
-                                UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to set a value %d in the Dimensions table to cell MinCol: %s"), chunkCol, *mapDataBase->GetLastError());
+                                UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to set a value %d in the Dimensions table to cell MinCol: %s"), chunkCol, *mapDataBase->GetLastError());
 
                                 if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
-                                    UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+                                    UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
                                 }
 
                                 if (autoClose)
@@ -405,13 +423,13 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
                                 return false;
                             }
                             if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Writing to the MinCol cell in the Dimensions table of the value %d is complete"), chunkCol);
+                                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CreateMapChunk function: Writing to the MinCol cell in the Dimensions table of the value %d is complete"), chunkCol);
                         }else
                             if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The current chunkCol index of %d is not lower than the previous smallest index of %d"), chunkCol, MinCol);
+                                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CreateMapChunk function: The current chunkCol index of %d is not lower than the previous smallest index of %d"), chunkCol, MinCol);
                     }
                     else {
-                        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to load the value at name MinCol from table Dimensions: %s"), *mapDataBase->GetLastError());
+                        UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to load the value at name MinCol from table Dimensions: %s"), *mapDataBase->GetLastError());
 
                         destroyLoadStatement("CreateMapChunk");
                         if (autoClose)
@@ -426,19 +444,19 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
                      * Но этот вариант обрабатывается и записывается сразу при создании таблицы габаритов. */
                     if (!CurrentColIndexSmallest) {
                         if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Started checking if chunkCol, equal to %d, is the highest of the previously created column indexes"), chunkCol);
+                            UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CreateMapChunk function: Started checking if chunkCol, equal to %d, is the highest of the previously created column indexes"), chunkCol);
                         int32 MaxCol;
                         if (LoadStatement->GetColumnValueByName(TEXT("MaxCol"), MaxCol)) {
                             if (chunkCol > MaxCol) {
                                 //Если индекс действительно наибольший, то он записывается в таблицу габаритов
                                 if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                                    UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The new column index of %d is greater the previous highest index of %d. Started writing a new value for MaxCol cell in table Dimensions"), chunkCol, MaxCol);
+                                    UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CreateMapChunk function: The new column index of %d is greater the previous highest index of %d. Started writing a new value for MaxCol cell in table Dimensions"), chunkCol, MaxCol);
                                 if (!mapDataBase->Execute(
                                     *FString::Printf(TEXT("UPDATE Dimensions SET MaxCol = %d;"), chunkCol))) {
-                                    UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to set a value %d in the Dimensions table to cell MaxCol: %s"), chunkCol, *mapDataBase->GetLastError());
+                                    UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to set a value %d in the Dimensions table to cell MaxCol: %s"), chunkCol, *mapDataBase->GetLastError());
 
                                     if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
-                                        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+                                        UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
                                     }
 
                                     if (autoClose)
@@ -446,13 +464,13 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
                                     return false;
                                 }
                                 if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                                    UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Writing to the MaxCol cell in the Dimensions table of the value %d is complete"), chunkCol);
+                                    UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CreateMapChunk function: Writing to the MaxCol cell in the Dimensions table of the value %d is complete"), chunkCol);
                             }else
                                 if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                                    UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The current chunkCol index of %d is not greater than the previous highest index of %d"), chunkCol, MaxCol);
+                                    UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CreateMapChunk function: The current chunkCol index of %d is not greater than the previous highest index of %d"), chunkCol, MaxCol);
                         }
                         else {
-                            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to load the value at name MaxCol from table Dimensions: %s"), *mapDataBase->GetLastError());
+                            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to load the value at name MaxCol from table Dimensions: %s"), *mapDataBase->GetLastError());
 
                             destroyLoadStatement("CreateMapChunk");
                             if (autoClose)
@@ -463,7 +481,7 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
 
                     //Проверка является ли текущий индекс строки новым наименьшим индексом всех строк
                     if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                        UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Started checking if chunkRow, equal to %d, is the smallest of the previously created row indexes"), chunkRow);
+                        UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CreateMapChunk function: Started checking if chunkRow, equal to %d, is the smallest of the previously created row indexes"), chunkRow);
                     int32 MinRow;
                     bool CurrentRowIndexSmallest = false;
                     if (LoadStatement->GetColumnValueByName(TEXT("MinRow"), MinRow)) {
@@ -471,13 +489,13 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
                         //Если индекс действительно наименьший, то он записывается в таблицу габаритов
                         if (CurrentRowIndexSmallest) {
                             if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The new row index of %d is below the previous lowest index of %d. Started writing a new value for MinRow cell in table Dimensions"), chunkRow, MinRow);
+                                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CreateMapChunk function: The new row index of %d is below the previous lowest index of %d. Started writing a new value for MinRow cell in table Dimensions"), chunkRow, MinRow);
                             if (!mapDataBase->Execute(
                                 *FString::Printf(TEXT("UPDATE Dimensions SET MinRow = %d;"), chunkRow))) {
-                                UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to set a value %d in the Dimensions table to cell MinRow: %s"), chunkRow, *mapDataBase->GetLastError());
+                                UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to set a value %d in the Dimensions table to cell MinRow: %s"), chunkRow, *mapDataBase->GetLastError());
 
                                 if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
-                                    UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+                                    UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
                                 }
 
                                 if (autoClose)
@@ -485,13 +503,13 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
                                 return false;
                             }
                             if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Writing to the MinRow cell in the Dimensions table of the value %d is complete"), chunkRow);
+                                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CreateMapChunk function: Writing to the MinRow cell in the Dimensions table of the value %d is complete"), chunkRow);
                         }else
                             if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The current chunkRow index of %d is not lower than the previous smallest index of %d"), chunkRow, MinRow);
+                                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CreateMapChunk function: The current chunkRow index of %d is not lower than the previous smallest index of %d"), chunkRow, MinRow);
                     }
                     else {
-                        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to load the value at name MinRow from table Dimensions: %s"), *mapDataBase->GetLastError());
+                        UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to load the value at name MinRow from table Dimensions: %s"), *mapDataBase->GetLastError());
 
                         destroyLoadStatement("CreateMapChunk");
                         if (autoClose)
@@ -506,19 +524,19 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
                      * Но этот вариант обрабатывается и записывается сразу при создании таблицы габаритов. */
                     if (!CurrentRowIndexSmallest) {
                         if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Started checking if chunkRow, equal to %d, is the highest of the previously created row indexes"), chunkRow);
+                            UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CreateMapChunk function: Started checking if chunkRow, equal to %d, is the highest of the previously created row indexes"), chunkRow);
                         int32 MaxRow;
                         if (LoadStatement->GetColumnValueByName(TEXT("MaxRow"), MaxRow)) {
                             if (chunkRow > MaxRow) {
                                 //Если индекс действительно наибольший, то он записывается в таблицу габаритов
                                 if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                                    UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The new row index of %d is greater the previous highest index of %d. Started writing a new value for MaxRow cell in table Dimensions"), chunkRow, MaxRow);
+                                    UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CreateMapChunk function: The new row index of %d is greater the previous highest index of %d. Started writing a new value for MaxRow cell in table Dimensions"), chunkRow, MaxRow);
                                 if (!mapDataBase->Execute(
                                     *FString::Printf(TEXT("UPDATE Dimensions SET MaxRow = %d;"), chunkRow))) {
-                                    UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to set a value %d in the Dimensions table to cell MaxRow: %s"), chunkRow, *mapDataBase->GetLastError());
+                                    UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to set a value %d in the Dimensions table to cell MaxRow: %s"), chunkRow, *mapDataBase->GetLastError());
 
                                     if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
-                                        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+                                        UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
                                     }
 
                                     if (autoClose)
@@ -526,13 +544,13 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
                                     return false;
                                 }
                                 if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                                    UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Writing to the MaxRow cell in the Dimensions table of the value %d is complete"), chunkRow);
+                                    UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CreateMapChunk function: Writing to the MaxRow cell in the Dimensions table of the value %d is complete"), chunkRow);
                             }else
                                 if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                                    UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The current chunkRow index of %d is not greater than the previous highest index of %d"), chunkRow, MaxRow);
+                                    UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CreateMapChunk function: The current chunkRow index of %d is not greater than the previous highest index of %d"), chunkRow, MaxRow);
                         }
                         else {
-                            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to load the value at name MaxRow from table Dimensions: %s"), *mapDataBase->GetLastError());
+                            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to load the value at name MaxRow from table Dimensions: %s"), *mapDataBase->GetLastError());
 
                             destroyLoadStatement("CreateMapChunk");
                             if (autoClose)
@@ -542,7 +560,7 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
                     }
                 }
                 else {
-                    UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to execute a LoadStatement on table Dimensions: %s"), *mapDataBase->GetLastError());
+                    UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to execute a LoadStatement on table Dimensions: %s"), *mapDataBase->GetLastError());
 
                     destroyLoadStatement("CreateMapChunk");
                     if (autoClose)
@@ -555,10 +573,10 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
 
             //Закрепление транзакции
             if (!mapDataBase->Execute(TEXT("COMMIT;"))) {
-                UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to commit the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+                UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to commit the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
 
                 if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
-                    UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+                    UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
                 }
 
                 if (autoClose)
@@ -567,18 +585,18 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
             }
 
             if (GameInstance && GameInstance->LogType != ELogType::NONE) {
-                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The transaction to create the table \"%s %d:%d\" has been committed"), *SMatrixType, chunkRow, chunkCol);
-                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: The creation of the \"%s %d:%d\" table in the %s file is fully complete"), *SMatrixType, chunkRow, chunkCol, *FilePath);
+                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CreateMapChunk function: The transaction to create the table \"%s %d:%d\" has been committed"), *SMatrixType, chunkRow, chunkCol);
+                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CreateMapChunk function: The creation of the \"%s %d:%d\" table in the %s file is fully complete"), *SMatrixType, chunkRow, chunkCol, *FilePath);
             }
         }
         else
             /* Если таблица уже существует, false не возвращается. Главное чтобы после
              * выполнения этой функции указанная таблица так или иначе существовала */
                  if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-                     UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CreateMapChunk function: Table \"%s %d:%d\" already exists in file %s"), *SMatrixType, chunkRow, chunkCol, *FilePath);
+                     UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CreateMapChunk function: Table \"%s %d:%d\" already exists in file %s"), *SMatrixType, chunkRow, chunkCol, *FilePath);
     }
     else {
-        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function - mapDataBase is not valid"));
+        UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CreateMapChunk function - mapDataBase is not valid"));
         return false;
     }
 
@@ -607,12 +625,12 @@ bool UMapMatrix::CheckCorrectOfCorridorLocation(MatrixType matrixType, int32 glo
      * полностью только 1 раз */
     if (PassageDepthNumber > 2) {
         if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CheckCorrectOfCorridorLocation function: The function pass depth exceeded 2, which is the depth limit. The recursion has ended."));
+            UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CheckCorrectOfCorridorLocation function: The function pass depth exceeded 2, which is the depth limit. The recursion has ended."));
         return true;
     }
 
     if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-        UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CheckCorrectOfCorridorLocation function: Calling a function for cell Row: %d Col: %d, the current pass depth of the function is %d"), globalCellRow, globalCellCol, PassageDepthNumber);
+        UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CheckCorrectOfCorridorLocation function: Calling a function for cell Row: %d Col: %d, the current pass depth of the function is %d"), globalCellRow, globalCellCol, PassageDepthNumber);
 
     //Счётчик структур (клеток стиль которых отличин от пустого) вокруг текущей клетки
     int CounterOfSurroundingStructures = 0;
@@ -626,7 +644,7 @@ bool UMapMatrix::CheckCorrectOfCorridorLocation(MatrixType matrixType, int32 glo
 
         //На всякий случай всё равно проверяется валидность индекса
         if (CellType == FMapEditorBrushType::Error) {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CheckCorrectOfCorridorLocation function - The cell at the global index Row: %d Col: %d is not valid or its index is invalid"), globalCellRow - 1, globalCellCol);
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CheckCorrectOfCorridorLocation function - The cell at the global index Row: %d Col: %d is not valid or its index is invalid"), globalCellRow - 1, globalCellCol);
 
             return false;
         }
@@ -654,7 +672,7 @@ bool UMapMatrix::CheckCorrectOfCorridorLocation(MatrixType matrixType, int32 glo
              * раз развилки разрешены */
             if (CellType == FMapEditorBrushType::Corridor) {
                 if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-                    UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CheckCorrectOfCorridorLocation function: A corridor was detected in the neighboring cell at index Row: %d Col: %d, this function will be called recursively to check the validity of this cell, including adding the current one"), globalCellRow - 1, globalCellCol);
+                    UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CheckCorrectOfCorridorLocation function: A corridor was detected in the neighboring cell at index Row: %d Col: %d, this function will be called recursively to check the validity of this cell, including adding the current one"), globalCellRow - 1, globalCellCol);
 
                 //Если после рекурсивного вызова функции возвращается ложь, то это означает, что текущая клетка создала неоднозначный путь для верхней клетки
                 if (!CheckCorrectOfCorridorLocation(matrixType, globalCellRow - 1, globalCellCol, PassageDepthNumber + 1))
@@ -669,7 +687,7 @@ bool UMapMatrix::CheckCorrectOfCorridorLocation(MatrixType matrixType, int32 glo
         FMapEditorBrushType CellType = GetCellStyleFromTerrainOfTile(FCellCoord(globalCellRow + 1, globalCellCol), MapTileLength);
 
         if (CellType == FMapEditorBrushType::Error) {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CheckCorrectOfCorridorLocation function - The cell at the global index Row: %d Col: %d is not valid or its index is invalid"), globalCellRow + 1, globalCellCol);
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CheckCorrectOfCorridorLocation function - The cell at the global index Row: %d Col: %d is not valid or its index is invalid"), globalCellRow + 1, globalCellCol);
 
             return false;
         }
@@ -679,7 +697,7 @@ bool UMapMatrix::CheckCorrectOfCorridorLocation(MatrixType matrixType, int32 glo
 
             if (CellType == FMapEditorBrushType::Corridor) {
                 if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-                    UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CheckCorrectOfCorridorLocation function: A corridor was detected in the neighboring cell at index Row: %d Col: %d, this function will be called recursively to check the validity of this cell, including adding the current one"), globalCellRow + 1, globalCellCol);
+                    UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CheckCorrectOfCorridorLocation function: A corridor was detected in the neighboring cell at index Row: %d Col: %d, this function will be called recursively to check the validity of this cell, including adding the current one"), globalCellRow + 1, globalCellCol);
 
                 if (!CheckCorrectOfCorridorLocation(matrixType, globalCellRow + 1, globalCellCol, PassageDepthNumber + 1))
                     return false;
@@ -691,7 +709,7 @@ bool UMapMatrix::CheckCorrectOfCorridorLocation(MatrixType matrixType, int32 glo
         FMapEditorBrushType CellType = GetCellStyleFromTerrainOfTile(FCellCoord(globalCellRow, globalCellCol - 1), MapTileLength);
 
         if (CellType == FMapEditorBrushType::Error) {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CheckCorrectOfCorridorLocation function - The cell at the global index Row: %d Col: %d is not valid or its index is invalid"), globalCellRow, globalCellCol - 1);
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CheckCorrectOfCorridorLocation function - The cell at the global index Row: %d Col: %d is not valid or its index is invalid"), globalCellRow, globalCellCol - 1);
 
             return false;
         }
@@ -701,7 +719,7 @@ bool UMapMatrix::CheckCorrectOfCorridorLocation(MatrixType matrixType, int32 glo
 
             if (CellType == FMapEditorBrushType::Corridor) {
                 if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-                    UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CheckCorrectOfCorridorLocation function: A corridor was detected in the neighboring cell at index Row: %d Col: %d, this function will be called recursively to check the validity of this cell, including adding the current one"), globalCellRow, globalCellCol - 1);
+                    UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CheckCorrectOfCorridorLocation function: A corridor was detected in the neighboring cell at index Row: %d Col: %d, this function will be called recursively to check the validity of this cell, including adding the current one"), globalCellRow, globalCellCol - 1);
 
                 if (!CheckCorrectOfCorridorLocation(matrixType, globalCellRow, globalCellCol - 1, PassageDepthNumber + 1))
                     return false;
@@ -713,7 +731,7 @@ bool UMapMatrix::CheckCorrectOfCorridorLocation(MatrixType matrixType, int32 glo
         FMapEditorBrushType CellType = GetCellStyleFromTerrainOfTile(FCellCoord(globalCellRow, globalCellCol + 1), MapTileLength);
 
         if (CellType == FMapEditorBrushType::Error) {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CheckCorrectOfCorridorLocation function - The cell at the global index Row: %d Col: %d is not valid or its index is invalid"), globalCellRow, globalCellCol + 1);
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CheckCorrectOfCorridorLocation function - The cell at the global index Row: %d Col: %d is not valid or its index is invalid"), globalCellRow, globalCellCol + 1);
 
             return false;
         }
@@ -723,7 +741,7 @@ bool UMapMatrix::CheckCorrectOfCorridorLocation(MatrixType matrixType, int32 glo
 
             if (CellType == FMapEditorBrushType::Corridor) {
                 if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-                    UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CheckCorrectOfCorridorLocation function: A corridor was detected in the neighboring cell at index Row: %d Col: %d, this function will be called recursively to check the validity of this cell, including adding the current one"), globalCellRow, globalCellCol + 1);
+                    UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CheckCorrectOfCorridorLocation function: A corridor was detected in the neighboring cell at index Row: %d Col: %d, this function will be called recursively to check the validity of this cell, including adding the current one"), globalCellRow, globalCellCol + 1);
 
                 if (!CheckCorrectOfCorridorLocation(matrixType, globalCellRow, globalCellCol + 1, PassageDepthNumber + 1))
                     return false;
@@ -744,7 +762,7 @@ bool UMapMatrix::CheckCorrectOfCorridorLocation(MatrixType matrixType, int32 glo
 bool UMapMatrix::CheckCorrectOfRoomLocation(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol)
 {
     if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-        UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CheckCorrectOfRoomLocation function: Calling a function for cell Row: %d Col: %d"), globalCellRow, globalCellCol);
+        UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CheckCorrectOfRoomLocation function: Calling a function for cell Row: %d Col: %d"), globalCellRow, globalCellCol);
 
     FMapDimensions Dimensions = GetMapDimensions(false);
     int TotalRows = (Dimensions.MaxRow - Dimensions.MinRow + 1) * Dimensions.TableLength;
@@ -770,7 +788,7 @@ bool UMapMatrix::CheckCorrectOfRoomLocation(MatrixType matrixType, int32 globalC
 
         //На всякий случай всё равно проверяется валидность индекса
         if (CellType == FMapEditorBrushType::Error) {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CheckCorrectOfRoomLocation function - The cell at the global index Row: %d Col: %d is not valid or its index is invalid"), globalCellRow - 1, globalCellCol);
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CheckCorrectOfRoomLocation function - The cell at the global index Row: %d Col: %d is not valid or its index is invalid"), globalCellRow - 1, globalCellCol);
 
             return false;
         }
@@ -778,7 +796,7 @@ bool UMapMatrix::CheckCorrectOfRoomLocation(MatrixType matrixType, int32 globalC
         // Одна комната может спокойно граничить с другой в любой конфигурации, но у коридоров при расположении комнат могут возникнуть неоднозначные пути
         if (CellType == FMapEditorBrushType::Corridor) {
             if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CheckCorrectOfRoomLocation function: A corridor was detected in the neighboring cell at index Row: %d Col: %d, the CheckCorrectOfCorridorLocation function will be called to check of this cell, including adding the current one"), globalCellRow - 1, globalCellCol);
+                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CheckCorrectOfRoomLocation function: A corridor was detected in the neighboring cell at index Row: %d Col: %d, the CheckCorrectOfCorridorLocation function will be called to check of this cell, including adding the current one"), globalCellRow - 1, globalCellCol);
 
             /* Вызвается проверка валидности расположения коридоров для соседствующей клетки. При этом глубина прохода сразу
              * ставится 2, чтобы проверить валидность только для указаной клетки, без рекурсии ещё и не её соседей.
@@ -795,14 +813,14 @@ bool UMapMatrix::CheckCorrectOfRoomLocation(MatrixType matrixType, int32 globalC
         FMapEditorBrushType CellType = GetCellStyleFromTerrainOfTile(FCellCoord(globalCellRow + 1, globalCellCol), MapTileLength);
 
         if (CellType == FMapEditorBrushType::Error) {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CheckCorrectOfRoomLocation function - The cell at the global index Row: %d Col: %d is not valid or its index is invalid"), globalCellRow + 1, globalCellCol);
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CheckCorrectOfRoomLocation function - The cell at the global index Row: %d Col: %d is not valid or its index is invalid"), globalCellRow + 1, globalCellCol);
 
             return false;
         }
 
         if (CellType == FMapEditorBrushType::Corridor) {
             if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CheckCorrectOfRoomLocation function: A corridor was detected in the neighboring cell at index Row: %d Col: %d, the CheckCorrectOfCorridorLocation function will be called to check of this cell, including adding the current one"), globalCellRow + 1, globalCellCol);
+                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CheckCorrectOfRoomLocation function: A corridor was detected in the neighboring cell at index Row: %d Col: %d, the CheckCorrectOfCorridorLocation function will be called to check of this cell, including adding the current one"), globalCellRow + 1, globalCellCol);
 
             if (!CheckCorrectOfCorridorLocation(matrixType, globalCellRow + 1, globalCellCol, 2))
                 return false;
@@ -813,14 +831,14 @@ bool UMapMatrix::CheckCorrectOfRoomLocation(MatrixType matrixType, int32 globalC
         FMapEditorBrushType CellType = GetCellStyleFromTerrainOfTile(FCellCoord(globalCellRow, globalCellCol - 1), MapTileLength);
 
         if (CellType == FMapEditorBrushType::Error) {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CheckCorrectOfRoomLocation function - The cell at the global index Row: %d Col: %d is not valid or its index is invalid"), globalCellRow, globalCellCol - 1);
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CheckCorrectOfRoomLocation function - The cell at the global index Row: %d Col: %d is not valid or its index is invalid"), globalCellRow, globalCellCol - 1);
 
             return false;
         }
 
         if (CellType == FMapEditorBrushType::Corridor) {
             if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CheckCorrectOfRoomLocation function: A corridor was detected in the neighboring cell at index Row: %d Col: %d, the CheckCorrectOfCorridorLocation function will be called to check of this cell, including adding the current one"), globalCellRow, globalCellCol - 1);
+                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CheckCorrectOfRoomLocation function: A corridor was detected in the neighboring cell at index Row: %d Col: %d, the CheckCorrectOfCorridorLocation function will be called to check of this cell, including adding the current one"), globalCellRow, globalCellCol - 1);
 
             if (!CheckCorrectOfCorridorLocation(matrixType, globalCellRow, globalCellCol - 1, 2))
                 return false;
@@ -831,14 +849,14 @@ bool UMapMatrix::CheckCorrectOfRoomLocation(MatrixType matrixType, int32 globalC
         FMapEditorBrushType CellType = GetCellStyleFromTerrainOfTile(FCellCoord(globalCellRow, globalCellCol + 1), MapTileLength);
 
         if (CellType == FMapEditorBrushType::Error) {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CheckCorrectOfRoomLocation function - The cell at the global index Row: %d Col: %d is not valid or its index is invalid"), globalCellRow, globalCellCol + 1);
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CheckCorrectOfRoomLocation function - The cell at the global index Row: %d Col: %d is not valid or its index is invalid"), globalCellRow, globalCellCol + 1);
 
             return false;
         }
 
         if (CellType == FMapEditorBrushType::Corridor) {
             if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CheckCorrectOfRoomLocation function: A corridor was detected in the neighboring cell at index Row: %d Col: %d, the CheckCorrectOfCorridorLocation function will be called to check of this cell, including adding the current one"), globalCellRow, globalCellCol + 1);
+                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CheckCorrectOfRoomLocation function: A corridor was detected in the neighboring cell at index Row: %d Col: %d, the CheckCorrectOfCorridorLocation function will be called to check of this cell, including adding the current one"), globalCellRow, globalCellCol + 1);
 
             if (!CheckCorrectOfCorridorLocation(matrixType, globalCellRow, globalCellCol + 1, 2))
                 return false;
@@ -853,7 +871,7 @@ bool UMapMatrix::CheckCorrectOfRoomLocation(MatrixType matrixType, int32 globalC
 FNeighbourhoodOfCell UMapMatrix::CheckNeighbourhoodOfCell(int32 globalCellRow, int32 globalCellCol)
 {
     if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-        UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the CheckNeighbourhoodOfCell function: Calling a function for cell Row: %d Col: %d"), globalCellRow, globalCellCol);
+        UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CheckNeighbourhoodOfCell function: Calling a function for cell Row: %d Col: %d"), globalCellRow, globalCellCol);
 
     FMapDimensions Dimensions = GetMapDimensions(false);
     int TotalRows = (Dimensions.MaxRow - Dimensions.MinRow + 1) * Dimensions.TableLength;
@@ -867,7 +885,7 @@ FNeighbourhoodOfCell UMapMatrix::CheckNeighbourhoodOfCell(int32 globalCellRow, i
 
         //На всякий случай всё равно проверяется валидность индекса
         if (CellType == FMapEditorBrushType::Error) {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CheckNeighbourhoodOfCell function - The cell at the global index Row: %d Col: %d is not valid or its index is invalid"), globalCellRow - 1, globalCellCol);
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CheckNeighbourhoodOfCell function - The cell at the global index Row: %d Col: %d is not valid or its index is invalid"), globalCellRow - 1, globalCellCol);
 
             //Если индекс не валиден, то возвращается пустая непроинициализированая структура
             return FNeighbourhoodOfCell();
@@ -885,7 +903,7 @@ FNeighbourhoodOfCell UMapMatrix::CheckNeighbourhoodOfCell(int32 globalCellRow, i
         FMapEditorBrushType CellType = GetCellStyleFromTerrainOfTile(FCellCoord(globalCellRow + 1, globalCellCol), MapTileLength);
 
         if (CellType == FMapEditorBrushType::Error) {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CheckNeighbourhoodOfCell function - The cell at the global index Row: %d Col: %d is not valid or its index is invalid"), globalCellRow + 1, globalCellCol);
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CheckNeighbourhoodOfCell function - The cell at the global index Row: %d Col: %d is not valid or its index is invalid"), globalCellRow + 1, globalCellCol);
 
             return FNeighbourhoodOfCell();
         }
@@ -899,7 +917,7 @@ FNeighbourhoodOfCell UMapMatrix::CheckNeighbourhoodOfCell(int32 globalCellRow, i
         FMapEditorBrushType CellType = GetCellStyleFromTerrainOfTile(FCellCoord(globalCellRow, globalCellCol - 1), MapTileLength);
 
         if (CellType == FMapEditorBrushType::Error) {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CheckNeighbourhoodOfCell function - The cell at the global index Row: %d Col: %d is not valid or its index is invalid"), globalCellRow, globalCellCol - 1);
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CheckNeighbourhoodOfCell function - The cell at the global index Row: %d Col: %d is not valid or its index is invalid"), globalCellRow, globalCellCol - 1);
 
             return FNeighbourhoodOfCell();
         }
@@ -913,7 +931,7 @@ FNeighbourhoodOfCell UMapMatrix::CheckNeighbourhoodOfCell(int32 globalCellRow, i
         FMapEditorBrushType CellType = GetCellStyleFromTerrainOfTile(FCellCoord(globalCellRow, globalCellCol + 1), MapTileLength);
 
         if (CellType == FMapEditorBrushType::Error) {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the CheckNeighbourhoodOfCell function - The cell at the global index Row: %d Col: %d is not valid or its index is invalid"), globalCellRow, globalCellCol + 1);
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CheckNeighbourhoodOfCell function - The cell at the global index Row: %d Col: %d is not valid or its index is invalid"), globalCellRow, globalCellCol + 1);
 
             return FNeighbourhoodOfCell();
         }
@@ -937,12 +955,12 @@ bool UMapMatrix::DeleteMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
      * данных не была открыта. В таком случае её следует открыть. */
     if (!mapDataBase->IsValid()) {
         if (!mapDataBase->Open(*FilePath, ESQLiteDatabaseOpenMode::ReadWriteCreate)) {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the DeleteMapChunk function when trying to open mapDataBase: %s"), *mapDataBase->GetLastError());
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the DeleteMapChunk function when trying to open mapDataBase: %s"), *mapDataBase->GetLastError());
             return false;
         }
         else
             if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the DeleteMapChunk function: mapDataBase has been opened"));
+                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the DeleteMapChunk function: mapDataBase has been opened"));
     }
 
     //После открытия базы данных следует ещё раз проверить её валидность
@@ -952,7 +970,7 @@ bool UMapMatrix::DeleteMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
         /* Если функия getStringMatrixType вернула значение "", то это значит, что в неё
          * попали некорретные данные и последующее выполнение функции стоит прекратить */
         if (SMatrixType == "") {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the DeleteMapChunk function - incorrect map fragment type"));
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the DeleteMapChunk function - incorrect map fragment type"));
 
             if (autoClose)
                 mapDataBaseClose("DeleteMapChunk");
@@ -961,20 +979,20 @@ bool UMapMatrix::DeleteMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
 
         //Инициализация транзакции
         if (!mapDataBase->Execute(TEXT("BEGIN;"))) {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the DeleteMapChunk function when trying to start a mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the DeleteMapChunk function when trying to start a mapDataBase transaction: %s"), *mapDataBase->GetLastError());
             if (autoClose)
                 mapDataBaseClose("DeleteMapChunk");
             return false;
         }
 
         if (GameInstance && GameInstance->LogType != ELogType::NONE)
-            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the DeleteMapChunk function: A transaction was started to delete table \"%s %d:%d\""), *SMatrixType, chunkRow, chunkCol);
+            UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the DeleteMapChunk function: A transaction was started to delete table \"%s %d:%d\""), *SMatrixType, chunkRow, chunkCol);
 
         if (!mapDataBase->Execute(*(FString::Printf(TEXT("DROP TABLE \"%s %d:%d\";"), *SMatrixType, chunkRow, chunkCol)))) {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the DeleteMapChunk function when trying to delete the mapDataBase table: %s"), *mapDataBase->GetLastError());
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the DeleteMapChunk function when trying to delete the mapDataBase table: %s"), *mapDataBase->GetLastError());
 
             if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
-                UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the DeleteMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+                UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the DeleteMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
             }
 
             if (autoClose)
@@ -983,14 +1001,14 @@ bool UMapMatrix::DeleteMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
         }
 
         if (GameInstance && GameInstance->LogType != ELogType::NONE)
-            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the DeleteMapChunk function: Query to delete table \"%s %d:%d\" completed"), *SMatrixType, chunkRow, chunkCol);
+            UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the DeleteMapChunk function: Query to delete table \"%s %d:%d\" completed"), *SMatrixType, chunkRow, chunkCol);
 
         //Закрепление транзакции
         if (!mapDataBase->Execute(TEXT("COMMIT;"))) {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the DeleteMapChunk function when trying to commit the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the DeleteMapChunk function when trying to commit the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
 
             if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
-                UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the DeleteMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+                UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the DeleteMapChunk function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
             }
 
             if (autoClose)
@@ -999,12 +1017,12 @@ bool UMapMatrix::DeleteMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
         }
 
         if (GameInstance && GameInstance->LogType != ELogType::NONE) {
-            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the DeleteMapChunk function: The transaction to delete the table \"%s %d:%d\" has been committed"), *SMatrixType, chunkRow, chunkCol);
-            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the DeleteMapChunk function: The deleting of the \"%s %d:%d\" table in the %s file is fully complete"), *SMatrixType, chunkRow, chunkCol, *FilePath);
+            UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the DeleteMapChunk function: The transaction to delete the table \"%s %d:%d\" has been committed"), *SMatrixType, chunkRow, chunkCol);
+            UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the DeleteMapChunk function: The deleting of the \"%s %d:%d\" table in the %s file is fully complete"), *SMatrixType, chunkRow, chunkCol, *FilePath);
         }
     }
     else {
-        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the DeleteMapChunk function - mapDataBase is not valid"));
+        UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the DeleteMapChunk function - mapDataBase is not valid"));
         return false;
     }
 
@@ -1021,19 +1039,19 @@ bool UMapMatrix::SetValueOfMapChunkCell(MatrixType matrixType, int32 chunkRow, i
     int32 Value = (int32)value;
     //Все переданные индексы ячейки должны находиться в диапазоне от 1 до TableLength включительно
     if (cellRow < 1) {
-        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the UMapMatrix class in the SetValueOfMapChunkCell function - cellRow value (%d) is less than 1"), cellRow);
+        UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the UMapMatrix class in the SetValueOfMapChunkCell function - cellRow value (%d) is less than 1"), cellRow);
         return false;
     }
     if (cellRow > TableLength) {
-        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the UMapMatrix class in the SetValueOfMapChunkCell function - cellRow value (%d) is greater than TableLength (%d)"), cellRow , TableLength);
+        UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the UMapMatrix class in the SetValueOfMapChunkCell function - cellRow value (%d) is greater than TableLength (%d)"), cellRow , TableLength);
         return false;
     }
     if (cellCol < 1) {
-        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the UMapMatrix class in the SetValueOfMapChunkCell function - cellCol value (%d) is less than 1"), cellCol);
+        UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the UMapMatrix class in the SetValueOfMapChunkCell function - cellCol value (%d) is less than 1"), cellCol);
         return false;
     }
     if (cellCol > TableLength) {
-        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the UMapMatrix class in the SetValueOfMapChunkCell function - cellCol value (%d) is greater than TableLength (%d)"), cellCol , TableLength);
+        UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the UMapMatrix class in the SetValueOfMapChunkCell function - cellCol value (%d) is greater than TableLength (%d)"), cellCol , TableLength);
         return false;
     }
 
@@ -1041,12 +1059,12 @@ bool UMapMatrix::SetValueOfMapChunkCell(MatrixType matrixType, int32 chunkRow, i
      * данных не была открыта. В таком случае её следует открыть. */
     if (!mapDataBase->IsValid()) {
         if (!mapDataBase->Open(*FilePath, ESQLiteDatabaseOpenMode::ReadWrite)) {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkCell function when trying to open mapDataBase: %s"), *mapDataBase->GetLastError());
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkCell function when trying to open mapDataBase: %s"), *mapDataBase->GetLastError());
             return false;
         }
         else
             if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCell function: mapDataBase has been opened"));
+                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCell function: mapDataBase has been opened"));
     }
 
     //После открытия базы данных следует ещё раз проверить её валидность
@@ -1056,7 +1074,7 @@ bool UMapMatrix::SetValueOfMapChunkCell(MatrixType matrixType, int32 chunkRow, i
         /* Если функия getStringMatrixType вернула значение "", то это значит, что в неё
          * попали некорретные данные и последующее выполнение функции стоит прекратить */
         if (SMatrixType == "") {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkCell function - incorrect map fragment type"));
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkCell function - incorrect map fragment type"));
 
             if (autoClose)
                 mapDataBaseClose("SetValueOfMapChunkCell");
@@ -1065,7 +1083,7 @@ bool UMapMatrix::SetValueOfMapChunkCell(MatrixType matrixType, int32 chunkRow, i
 
         //Инициализация транзакции
         if (!mapDataBase->Execute(TEXT("BEGIN;"))) {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the UMapMatrix class in the SetValueOfMapChunkCell function when trying to start a mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the UMapMatrix class in the SetValueOfMapChunkCell function when trying to start a mapDataBase transaction: %s"), *mapDataBase->GetLastError());
 
             if (autoClose)
                 mapDataBaseClose("SetValueOfMapChunkCell");
@@ -1073,7 +1091,7 @@ bool UMapMatrix::SetValueOfMapChunkCell(MatrixType matrixType, int32 chunkRow, i
         }
 
         if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCell function: A transaction to write data to table \"%s %d:%d\" has begun"), *SMatrixType, chunkRow, chunkCol);
+            UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCell function: A transaction to write data to table \"%s %d:%d\" has begun"), *SMatrixType, chunkRow, chunkCol);
 
         //Формирование запроса на запись данных в ячейку
         FString QueryToSetCellValue;
@@ -1084,10 +1102,10 @@ bool UMapMatrix::SetValueOfMapChunkCell(MatrixType matrixType, int32 chunkRow, i
             QueryToSetCellValue = FString::Printf(TEXT("UPDATE \"%s %d:%d\" SET \"Col %d\" = %d WHERE RowNum = %d;"), *SMatrixType, chunkRow, chunkCol, cellCol, Value, cellRow);
 
         if (!mapDataBase->Execute(*QueryToSetCellValue)) {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkCell function when trying to set a value %d in the \"%s %d:%d\" table to cell %d:%d: %s"), Value, *SMatrixType, chunkRow, chunkCol, cellRow, cellCol, *mapDataBase->GetLastError());
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkCell function when trying to set a value %d in the \"%s %d:%d\" table to cell %d:%d: %s"), Value, *SMatrixType, chunkRow, chunkCol, cellRow, cellCol, *mapDataBase->GetLastError());
 
             if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
-                UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkCell function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+                UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkCell function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
             }
 
             if (autoClose)
@@ -1096,18 +1114,18 @@ bool UMapMatrix::SetValueOfMapChunkCell(MatrixType matrixType, int32 chunkRow, i
         }
 
         if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCell function: The request to write data to table \"%s %d:%d\" has been completed"), *SMatrixType, chunkRow, chunkCol);
+            UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCell function: The request to write data to table \"%s %d:%d\" has been completed"), *SMatrixType, chunkRow, chunkCol);
 
         //Закрепление транзакции
         if (!mapDataBase->Execute(TEXT("COMMIT;"))) {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkCell function when trying to commit the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkCell function when trying to commit the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
             
             if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
-                UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkCell function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+                UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkCell function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
             }
 
             if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCell function: The transaction to write data to table \"%s %d:%d\" was rolled back"), *SMatrixType, chunkRow, chunkCol);
+                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCell function: The transaction to write data to table \"%s %d:%d\" was rolled back"), *SMatrixType, chunkRow, chunkCol);
 
             if (autoClose)
                 mapDataBaseClose("SetValueOfMapChunkCell");
@@ -1115,12 +1133,12 @@ bool UMapMatrix::SetValueOfMapChunkCell(MatrixType matrixType, int32 chunkRow, i
         }
 
         if (GameInstance && GameInstance->LogType == ELogType::DETAILED) {
-            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCell function: The transaction to write data to table \"%s %d:%d\" was committed"), *SMatrixType, chunkRow, chunkCol);
-            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCell function: The number %d is fully set to cell %d:%d in the \"%s %d:%d\" table"), Value, cellRow, cellCol, *SMatrixType, chunkRow, chunkCol);
+            UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCell function: The transaction to write data to table \"%s %d:%d\" was committed"), *SMatrixType, chunkRow, chunkCol);
+            UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCell function: The number %d is fully set to cell %d:%d in the \"%s %d:%d\" table"), Value, cellRow, cellCol, *SMatrixType, chunkRow, chunkCol);
         }
     }
     else {
-        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkCell function - mapDataBase is not valid"));
+        UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkCell function - mapDataBase is not valid"));
         return false;
     }
 
@@ -1135,19 +1153,19 @@ FMapEditorBrushType UMapMatrix::GetValueOfMapChunkStructureCell(int32 chunkRow, 
 {
     //Все переданные индексы ячейки должны находиться в диапазоне от 1 до TableLength включительно
     if (cellRow < 1) {
-        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the UMapMatrix class in the GetValueOfMapChunkStructureCell function - cellRow value (%d) is less than 1"), cellRow);
+        UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the UMapMatrix class in the GetValueOfMapChunkStructureCell function - cellRow value (%d) is less than 1"), cellRow);
         return FMapEditorBrushType::Error;
     }
     if (cellRow > TableLength) {
-        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the UMapMatrix class in the GetValueOfMapChunkStructureCell function - cellRow value (%d) is greater than TableLength (%d)"), cellRow, TableLength);
+        UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the UMapMatrix class in the GetValueOfMapChunkStructureCell function - cellRow value (%d) is greater than TableLength (%d)"), cellRow, TableLength);
         return FMapEditorBrushType::Error;
     }
     if (cellCol < 1) {
-        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the UMapMatrix class in the GetValueOfMapChunkStructureCell function - cellCol value (%d) is less than 1"), cellCol);
+        UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the UMapMatrix class in the GetValueOfMapChunkStructureCell function - cellCol value (%d) is less than 1"), cellCol);
         return FMapEditorBrushType::Error;
     }
     if (cellCol > TableLength) {
-        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the UMapMatrix class in the GetValueOfMapChunkStructureCell function - cellCol value (%d) is greater than TableLength (%d)"), cellCol, TableLength);
+        UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the UMapMatrix class in the GetValueOfMapChunkStructureCell function - cellCol value (%d) is greater than TableLength (%d)"), cellCol, TableLength);
         return FMapEditorBrushType::Error;
     }
 
@@ -1155,12 +1173,12 @@ FMapEditorBrushType UMapMatrix::GetValueOfMapChunkStructureCell(int32 chunkRow, 
      * данных не была открыта. В таком случае её следует открыть. */
     if (!mapDataBase->IsValid()) {
         if (!mapDataBase->Open(*FilePath, ESQLiteDatabaseOpenMode::ReadOnly)) {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetValueOfMapChunkStructureCell function when trying to open mapDataBase: %s"), *mapDataBase->GetLastError());
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetValueOfMapChunkStructureCell function when trying to open mapDataBase: %s"), *mapDataBase->GetLastError());
             return FMapEditorBrushType::Error;
         }
         else
             if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the GetValueOfMapChunkStructureCell function: mapDataBase has been opened"));
+                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the GetValueOfMapChunkStructureCell function: mapDataBase has been opened"));
     }
 
     //После открытия базы данных следует ещё раз проверить её валидность
@@ -1168,7 +1186,7 @@ FMapEditorBrushType UMapMatrix::GetValueOfMapChunkStructureCell(int32 chunkRow, 
         //Инициализация LoadStatement строкой с указанным индексом
         if (!LoadStatement->Create(*mapDataBase, *FString::Printf(TEXT("SELECT * FROM \"Structure %d:%d\" WHERE RowNum IS %d;"), chunkRow, chunkCol, cellRow),
             ESQLitePreparedStatementFlags::Persistent) || !LoadStatement->IsValid()) {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetValueOfMapChunkStructureCell function when trying to initialize LoadStatement with table \"Structure %d:%d\": %s"), chunkRow, chunkCol, *mapDataBase->GetLastError());
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetValueOfMapChunkStructureCell function when trying to initialize LoadStatement with table \"Structure %d:%d\": %s"), chunkRow, chunkCol, *mapDataBase->GetLastError());
 
             if (autoClose)
                 mapDataBaseClose("GetValueOfMapChunkStructureCell");
@@ -1176,7 +1194,7 @@ FMapEditorBrushType UMapMatrix::GetValueOfMapChunkStructureCell(int32 chunkRow, 
         }
 
         if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the GetValueOfMapChunkStructureCell function: A transaction to read data from the table \"Structure %d:%d\" has begun"), chunkRow, chunkCol);
+            UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the GetValueOfMapChunkStructureCell function: A transaction to read data from the table \"Structure %d:%d\" has begun"), chunkRow, chunkCol);
 
         if (LoadStatement->IsValid() && LoadStatement->Step() == ESQLitePreparedStatementStepResult::Row) {
             uint8 result;
@@ -1186,26 +1204,26 @@ FMapEditorBrushType UMapMatrix::GetValueOfMapChunkStructureCell(int32 chunkRow, 
             if (LoadStatement->GetColumnValueByIndex(cellCol, result)) {
 
                 if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-                    UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the GetValueOfMapChunkStructureCell function: The value %d was obtained at index %d:%d from the \"Structure %d:%d\" table"), result, cellRow, cellCol, chunkRow, chunkCol);
+                    UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the GetValueOfMapChunkStructureCell function: The value %d was obtained at index %d:%d from the \"Structure %d:%d\" table"), result, cellRow, cellCol, chunkRow, chunkCol);
 
                 //Проверка является ли полученное значение допустимым для преобразования в перечисление FMapEditorBrushType
                 if (result >=0 && result < CellType->GetMaxEnumValue()) {
                     FMapEditorBrushType enumResult = (FMapEditorBrushType)result;
 
                     if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-                        UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the GetValueOfMapChunkStructureCell function: The value %d received at index %d:%d from the  table is valid for conversion to an enumeration"), result, cellRow, cellCol, chunkRow, chunkCol);
+                        UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the GetValueOfMapChunkStructureCell function: The value %d received at index %d:%d from the  table is valid for conversion to an enumeration"), result, cellRow, cellCol, chunkRow, chunkCol);
 
                     destroyLoadStatement("GetValueOfMapChunkStructureCell");
                     if (autoClose)
                         mapDataBaseClose("GetValueOfMapChunkStructureCell");
 
                     if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-                        UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the GetValueOfMapChunkStructureCell function: The value %d in the table \"Structure %d:%d\" at index %d:%d is fully loaded"), result, chunkRow, chunkCol, cellRow, cellCol);
+                        UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the GetValueOfMapChunkStructureCell function: The value %d in the table \"Structure %d:%d\" at index %d:%d is fully loaded"), result, chunkRow, chunkCol, cellRow, cellCol);
 
                     return enumResult;
                 }
                 else {
-                    UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetValueOfMapChunkStructureCell function when trying to cast the value %d to the FMapEditorBrushType data type obtained at index %d:%d from the \"Structure %d:%d\" table - this number is not valid for casting to FMapEditorBrushType"), result, cellRow, cellCol, chunkRow, chunkCol);
+                    UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetValueOfMapChunkStructureCell function when trying to cast the value %d to the FMapEditorBrushType data type obtained at index %d:%d from the \"Structure %d:%d\" table - this number is not valid for casting to FMapEditorBrushType"), result, cellRow, cellCol, chunkRow, chunkCol);
 
                     destroyLoadStatement("GetValueOfMapChunkStructureCell");
                     if (autoClose)
@@ -1214,7 +1232,7 @@ FMapEditorBrushType UMapMatrix::GetValueOfMapChunkStructureCell(int32 chunkRow, 
                 }
             }
             else {
-                UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetValueOfMapChunkStructureCell function when trying to load the value at index %d:%d from table \"Structure %d:%d\": %s"), cellRow, cellCol, chunkRow, chunkCol, *mapDataBase->GetLastError());
+                UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetValueOfMapChunkStructureCell function when trying to load the value at index %d:%d from table \"Structure %d:%d\": %s"), cellRow, cellCol, chunkRow, chunkCol, *mapDataBase->GetLastError());
 
                 destroyLoadStatement("GetValueOfMapChunkStructureCell");
                 if (autoClose)
@@ -1223,7 +1241,7 @@ FMapEditorBrushType UMapMatrix::GetValueOfMapChunkStructureCell(int32 chunkRow, 
             }
         }
         else {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetValueOfMapChunkStructureCell function when trying to execute a LoadStatement on table \"Structure %d:%d\": %s"), chunkRow, chunkCol, *mapDataBase->GetLastError());
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetValueOfMapChunkStructureCell function when trying to execute a LoadStatement on table \"Structure %d:%d\": %s"), chunkRow, chunkCol, *mapDataBase->GetLastError());
 
             destroyLoadStatement("GetValueOfMapChunkStructureCell");
             if (autoClose)
@@ -1234,7 +1252,7 @@ FMapEditorBrushType UMapMatrix::GetValueOfMapChunkStructureCell(int32 chunkRow, 
         destroyLoadStatement("GetValueOfMapChunkStructureCell");
     }
     else {
-        UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetValueOfMapChunkStructureCell function - mapDataBase is not valid"));
+        UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetValueOfMapChunkStructureCell function - mapDataBase is not valid"));
         return FMapEditorBrushType::Error;
     }
 }
@@ -1244,15 +1262,15 @@ void UMapMatrix::mapDataBaseClose(FString FunctionName)
 {
     if (mapDataBase->IsValid()) {
         if (!mapDataBase->Close()) {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the %s function when trying to close mapDataBase: %s"), *FunctionName, *mapDataBase->GetLastError());
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the %s function when trying to close mapDataBase: %s"), *FunctionName, *mapDataBase->GetLastError());
             return;
         }
 
         if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the %s function: mapDataBase has been closed"), *FunctionName);
+            UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the %s function: mapDataBase has been closed"), *FunctionName);
     }
     else {
-        UE_LOG(MapDataBase, Warning, TEXT("Warning in MapMatrix class in %s function - An attempt was made to close mapDataBase, but this database was not open"), *FunctionName);
+        UE_LOG(MapMatrix, Warning, TEXT("Warning in MapMatrix class in %s function - An attempt was made to close mapDataBase, but this database was not open"), *FunctionName);
     }
 }
 
@@ -1268,18 +1286,18 @@ bool UMapMatrix::SetValueOfMapChunkCellByGlobalIndex(MatrixType matrixType, int3
     convertingGlobalIndexIntoLocalOne(globalCellRow, globalCellCol, chunkRow, cellRow, chunkCol, cellCol);
 
     if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-        UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCellByGlobalIndex function: Global index %d:%d translated into tables \"%s %d:%d\" cell %d:%d"), globalCellRow, globalCellCol, *getStringMatrixType(matrixType), chunkRow, chunkCol, cellRow, cellCol);
+        UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCellByGlobalIndex function: Global index %d:%d translated into tables \"%s %d:%d\" cell %d:%d"), globalCellRow, globalCellCol, *getStringMatrixType(matrixType), chunkRow, chunkCol, cellRow, cellCol);
 
     /* Если автозакрытие отключено, то база данных открывается здесь с модификатором ReadWriteCreate,
      * который подойдёт и для создания таблиц, и для записи данных в ячейки */
     if (!autoClose && !mapDataBase->IsValid()) {
         if (!mapDataBase->Open(*FilePath, ESQLiteDatabaseOpenMode::ReadWriteCreate)) {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkCellByGlobalIndex function when trying to open mapDataBase: %s"), *mapDataBase->GetLastError());
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the SetValueOfMapChunkCellByGlobalIndex function when trying to open mapDataBase: %s"), *mapDataBase->GetLastError());
             return false;
         }
         else
             if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCellByGlobalIndex function: mapDataBase has been opened"));
+                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the SetValueOfMapChunkCellByGlobalIndex function: mapDataBase has been opened"));
     }
 
     /* Всегда перед попыткой записать данные в ячейку идёт попытка создать необходимую таблицу.
@@ -1302,7 +1320,7 @@ FMapEditorBrushType UMapMatrix::GetValueOfMapChunkStructureCellByGlobalIndex(int
     convertingGlobalIndexIntoLocalOne(globalCellRow, globalCellCol, chunkRow, cellRow, chunkCol, cellCol);
 
     if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-        UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the GetValueOfMapChunkStructureCellByGlobalIndex function: Global index %d:%d translated into tables \"%s %d:%d\" cell %d:%d"), globalCellRow, globalCellCol, *getStringMatrixType(MatrixType::ChunkStructure), chunkRow, chunkCol, cellRow, cellCol);
+        UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the GetValueOfMapChunkStructureCellByGlobalIndex function: Global index %d:%d translated into tables \"%s %d:%d\" cell %d:%d"), globalCellRow, globalCellCol, *getStringMatrixType(MatrixType::ChunkStructure), chunkRow, chunkCol, cellRow, cellCol);
 
     return GetValueOfMapChunkStructureCell(chunkRow, chunkCol, cellRow, cellCol, autoClose);
 }
@@ -1314,7 +1332,7 @@ void UMapMatrix::SetFileName(FString fileName, bool WithExtension)
     if (!WithExtension)
         FilePath += TEXT(".db");
     if (GameInstance && GameInstance->LogType != ELogType::NONE)
-        UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetFileName function: The name of the database file is set to %s, the path to the file is %s"), *fileName, *FilePath);
+        UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the SetFileName function: The name of the database file is set to %s, the path to the file is %s"), *fileName, *FilePath);
 }
 
 //Функция, устанавливающая путь до файла с базой данных
@@ -1322,31 +1340,31 @@ void UMapMatrix::SetFilePath(FString filePath)
 {
     FilePath = filePath;
     if (GameInstance && GameInstance->LogType != ELogType::NONE)
-        UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the SetFilePath function: The path to the database file is set as %s"), *FilePath);
+        UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the SetFilePath function: The path to the database file is set as %s"), *FilePath);
 }
 
 //Функция, запускающая в отдельном потоке создание в базе даннх матрицы из фрагментов карты указанного типа
 void UMapMatrix::AsyncCreateBlankCard(int32 rowLen, int32 colLen, MatrixType matrixType) {
     if (GameInstance && GameInstance->LogType != ELogType::NONE)
-        UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: Started asynchronous creation of %d rows by %d columns of map fragments with fragment type %s"), rowLen+1, colLen+1, *getStringMatrixType(matrixType));
+        UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: Started asynchronous creation of %d rows by %d columns of map fragments with fragment type %s"), rowLen+1, colLen+1, *getStringMatrixType(matrixType));
     SuccessCreateBlankCard = false;
 
     //Запуск асинхронного потока
     AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [rowLen, colLen, matrixType, this]() {
         if (GameInstance && GameInstance->LogType != ELogType::NONE)
-            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: A thread to creating map fragments has been opened"));
+            UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: A thread to creating map fragments has been opened"));
         for (int row = 0; row <= rowLen; row++) {
             for (int col = 0; col <= colLen; col++) {
                 if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-                    UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: The creation of the fragment \"%s %d:%d\" has begun"), *getStringMatrixType(matrixType), row, col);
+                    UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: The creation of the fragment \"%s %d:%d\" has begun"), *getStringMatrixType(matrixType), row, col);
                 SuccessCreateBlankCard = CreateMapChunk(matrixType, row, col, false);
                 //Если хотябы одна таблица не создалась, то дальнейшее создание таблиц прекращается
                 if (!SuccessCreateBlankCard){
-                    UE_LOG(MapDataBase, Error, TEXT("MapMatrix class in the AsyncCreateBlankCard function: Fragment \"%s %d:%d\" was not created"), *getStringMatrixType(matrixType), row, col);
+                    UE_LOG(MapMatrix, Error, TEXT("MapMatrix class in the AsyncCreateBlankCard function: Fragment \"%s %d:%d\" was not created"), *getStringMatrixType(matrixType), row, col);
                     break;
                 }else
                     if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-                        UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: Fragment \"%s %d:%d\" has been created"), *getStringMatrixType(matrixType), row, col);
+                        UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: Fragment \"%s %d:%d\" has been created"), *getStringMatrixType(matrixType), row, col);
             }
             if (!SuccessCreateBlankCard)
                 break;
@@ -1355,12 +1373,12 @@ void UMapMatrix::AsyncCreateBlankCard(int32 rowLen, int32 colLen, MatrixType mat
         mapDataBaseClose("AsyncCreateBlankCard");
 
         if (GameInstance && GameInstance->LogType != ELogType::NONE)
-            UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: The creation of all map fragments has been completed"));
+            UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: The creation of all map fragments has been completed"));
 
         //Следующие функции запускаются в основном потоке так как могут быть выполнены только в нём
         AsyncTask(ENamedThreads::GameThread, [this]() {
             if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: Launched a GameThread call from the map fragments creation thread to switch widgets"));
+                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: Launched a GameThread call from the map fragments creation thread to switch widgets"));
             
             //Если все таблицы не были успешно созданы, то файл с ними удаляется
             if (!SuccessCreateBlankCard && !FilePath.IsEmpty()) {
@@ -1378,15 +1396,17 @@ void UMapMatrix::AsyncCreateBlankCard(int32 rowLen, int32 colLen, MatrixType mat
             }
 
             if (GameInstance && GameInstance->LogType != ELogType::NONE) {
-                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: Widget switching done"));
-                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: A thread to creating map fragments has been closed"));
+                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: Widget switching done"));
+                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: A thread to creating map fragments has been closed"));
             }
             });
         });
 }
 
+//Функция заполняющая переменную предзагрузки TerrainOfTile для всех тайлов в таблице
 void UMapMatrix::FillTerrainOfTiles()
 {
+    //Сначала очищается матрица переменных предзагрузки от всех старых значений
     TerrainOfTilesRows.Empty();
 
     FMapDimensions MapDimensions = GetMapDimensions(false);
@@ -1394,39 +1414,56 @@ void UMapMatrix::FillTerrainOfTiles()
         for (int row = MapDimensions.MinRow * TableLength; row < (MapDimensions.MaxRow + 1) * TableLength; row++) {
             int CurrentTileRow = (int)(row / MapTileLength);
 
+            //Локальная координата ячейки равна остатку от деления глобальной координаты на длинну стороны тайла
             int CellRow = row % MapTileLength;
-            int GlobalCellRow = CurrentTileRow * MapTileLength + CellRow;
 
+            //Если целевого столбца нет, он создаётся
             if (!TerrainOfTilesRows.Contains(CurrentTileRow)) {
                 TerrainOfTilesRows.Add(CurrentTileRow, TMap<int, UTerrainOfTile*>{});
             }
 
             TMap<int, UTerrainOfTile*>* TerrainOfTilesCols = TerrainOfTilesRows.Find(CurrentTileRow);
 
-            for (int col = MapDimensions.MinCol * TableLength; col < (MapDimensions.MaxCol + 1) * TableLength; col++) {
-                int CurrentTileCol = (int)(col / MapTileLength);
+            if (TerrainOfTilesCols) {
+                for (int col = MapDimensions.MinCol * TableLength; col < (MapDimensions.MaxCol + 1) * TableLength; col++) {
+                    int CurrentTileCol = (int)(col / MapTileLength);
 
-                if (!TerrainOfTilesCols->Contains(CurrentTileCol)) {
-                    TerrainOfTilesCols->Add(CurrentTileCol, NewObject<UTerrainOfTile>());
-                }
+                    //Если целевой строки нет, она создаётся
+                    if (!TerrainOfTilesCols->Contains(CurrentTileCol)) {
+                        TerrainOfTilesCols->Add(CurrentTileCol, NewObject<UTerrainOfTile>());
+                    }
 
-                UTerrainOfTile* TerrainOfTile = *TerrainOfTilesCols->Find(CurrentTileCol);
+                    UTerrainOfTile* Terrain = *TerrainOfTilesCols->Find(CurrentTileCol);
 
-                if (TerrainOfTile) {
-                    int CellCol = col % MapTileLength;
-                    int GlobalCellCol = CurrentTileCol * MapTileLength + CellCol;
+                    if (Terrain) {
+                        //Локальная координата ячейки равна остатку от деления глобальной координаты на длинну стороны тайла
+                        int CellCol = col % MapTileLength;
 
-                    FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(GlobalCellRow, GlobalCellCol, false);
+                        FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(row, col, false);
 
-                    if (CellType == FMapEditorBrushType::Corridor || CellType == FMapEditorBrushType::Room) {
-                        TerrainOfTile->AddCellType(FCellCoord(CellRow, CellCol), CellType);
+                        if (CellType == FMapEditorBrushType::Corridor || CellType == FMapEditorBrushType::Room) {
+                            Terrain->AddCellType(FCellCoord(CellRow, CellCol), CellType);
+                        }
+                        else if (CellType == FMapEditorBrushType::Error) {
+                            UE_LOG(TerrainOfTile, Error, TEXT("!!! An error occurred in the MapMatrix class in the FillTerrainOfTiles function - CellType is of type Error"));
+                        }
+                    }
+                    else {
+                        UE_LOG(TerrainOfTile, Error, TEXT("!!! An error occurred in the MapMatrix class in the FillTerrainOfTiles function - Terrain is not valid"));
                     }
                 }
             }
+            else {
+                UE_LOG(TerrainOfTile, Error, TEXT("!!! An error occurred in the MapMatrix class in the FillTerrainOfTiles function - TerrainOfTilesCols is not valid"));
+            }
         }
+    }
+    else {
+        UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the FillTerrainOfTiles function - MapDimensions is not valid"));
     }
 }
 
+//Проверка наличия переменной предзагрузки по переданной координате
 bool UMapMatrix::ContainsTerrainOfTile(FCellCoord Coord)
 {
     if (TerrainOfTilesRows.Contains(Coord.Row)) {
@@ -1438,24 +1475,28 @@ bool UMapMatrix::ContainsTerrainOfTile(FCellCoord Coord)
             else
                 return false;
         }
-        else
+        else {
+            UE_LOG(TerrainOfTile, Error, TEXT("!!! An error occurred in the MapMatrix class in the ContainsTerrainOfTile function - TerrainOfTilesCols is not valid"));
             return false;
+        }
     }
     else
         return false;
 }
 
+//Проверка наличия не пустой ячейки в матрице переменных предзагрузки по глобальному индексу ячейки
 bool UMapMatrix::ContainsCellInTerrainOfTile(FCellCoord GlobalCoordOfCell, int TileSize)
 {
     FCellCoord TileCoord = FCellCoord((int)(GlobalCoordOfCell.Row / TileSize), (int)(GlobalCoordOfCell.Col / TileSize));
     FCellCoord LocalCelCoord = FCellCoord(GlobalCoordOfCell.Row % TileSize, GlobalCoordOfCell.Col % TileSize);
 
     if (ContainsTerrainOfTile(TileCoord)) {
-        UTerrainOfTile* TerrainOfTile = GetTerrainOfTile(TileCoord);
-        if (TerrainOfTile) {
-            return TerrainOfTile->Contains(LocalCelCoord);
+        UTerrainOfTile* Terrain = GetTerrainOfTile(TileCoord);
+        if (Terrain) {
+            return Terrain->Contains(LocalCelCoord);
         }
         else {
+            UE_LOG(TerrainOfTile, Error, TEXT("!!! An error occurred in the MapMatrix class in the ContainsTerrainOfTile function - Terrain is not valid"));
             return false;
         }
     }
@@ -1464,16 +1505,18 @@ bool UMapMatrix::ContainsCellInTerrainOfTile(FCellCoord GlobalCoordOfCell, int T
     }
 }
 
+//Получение стиля ячейки из матрицы переменных предзагрузки по глобальному индексу ячейки
 FMapEditorBrushType UMapMatrix::GetCellStyleFromTerrainOfTile(FCellCoord GlobalCoordOfCell, int TileSize)
 {
     if (ContainsCellInTerrainOfTile(GlobalCoordOfCell, TileSize)) {
         FCellCoord TileCoord = FCellCoord((int)(GlobalCoordOfCell.Row / TileSize), (int)(GlobalCoordOfCell.Col / TileSize));
         FCellCoord LocalCelCoord = FCellCoord(GlobalCoordOfCell.Row % TileSize, GlobalCoordOfCell.Col % TileSize);
 
-        UTerrainOfTile* TerrainOfTile = GetTerrainOfTile(TileCoord);
-        return TerrainOfTile->GetCellType(LocalCelCoord);
+        UTerrainOfTile* Terrain = GetTerrainOfTile(TileCoord);
+        return Terrain->GetCellType(LocalCelCoord);
     }
     else {
+        //Если ячейки нет в матрице переменных предзагрузки, значит она пустая
         return FMapEditorBrushType::Emptiness;
     }
 }
@@ -1485,19 +1528,22 @@ UTerrainOfTile* UMapMatrix::GetTerrainOfTile(FCellCoord Coord)
         if (TerrainOfTilesCols) {
             UTerrainOfTile** TerrainOfTileRef = TerrainOfTilesCols->Find(Coord.Col);
             if (TerrainOfTileRef) {
-                UTerrainOfTile* TerrainOfTile = *TerrainOfTileRef;
-                if (TerrainOfTile) {
-                    return TerrainOfTile;
+                UTerrainOfTile* Terrain = *TerrainOfTileRef;
+                if (Terrain) {
+                    return Terrain;
                 }
                 else {
+                    UE_LOG(TerrainOfTile, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetTerrainOfTile function - Terrain is not valid"));
                     return nullptr;
                 }
             }
             else {
+                UE_LOG(TerrainOfTile, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetTerrainOfTile function - TerrainOfTileRef is not valid"));
                 return nullptr;
             }
         }
         else {
+            UE_LOG(TerrainOfTile, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetTerrainOfTile function - TerrainOfTilesCols is not valid"));
             return nullptr;
         }
     }
@@ -1512,12 +1558,12 @@ FMapDimensions UMapMatrix::GetMapDimensions(bool autoClose)
      * данных не была открыта. В таком случае её следует открыть. */
     if (!mapDataBase->IsValid()) {
         if (!mapDataBase->Open(*FilePath, ESQLiteDatabaseOpenMode::ReadOnly)) {
-            UE_LOG(MapDataBase, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetMapDimensions function when trying to open mapDataBase: %s"), *mapDataBase->GetLastError());
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetMapDimensions function when trying to open mapDataBase: %s"), *mapDataBase->GetLastError());
             return FMapDimensions();
         }
         else
             if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
-                UE_LOG(MapDataBase, Log, TEXT("MapMatrix class in the GetMapDimensions function: mapDataBase has been opened"));
+                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the GetMapDimensions function: mapDataBase has been opened"));
     }
 
     //После открытия базы данных следует ещё раз проверить её валидность
@@ -1566,6 +1612,9 @@ FMapDimensions UMapMatrix::GetMapDimensions(bool autoClose)
         }
         else
             return FMapDimensions();
+    }
+    else {
+        UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetMapDimensions function - mapDataBase is not valid"));
     }
 
     return FMapDimensions();

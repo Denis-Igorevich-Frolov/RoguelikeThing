@@ -20,7 +20,8 @@
  * запертых дверей и т.д.
  ****************************************************************/
 
-DECLARE_LOG_CATEGORY_EXTERN(MapDataBase, Log, All);
+DECLARE_LOG_CATEGORY_EXTERN(MapMatrix, Log, All);
+DECLARE_LOG_CATEGORY_EXTERN(TerrainOfTile, Log, All);
 
 //Данное перечисление включает в себя все возможные типы фрагментов карты
 UENUM(BlueprintType)
@@ -28,6 +29,7 @@ enum class MatrixType : uint8 {
 	ChunkStructure	UMETA(DisplayName = "ChunkStructure"), //Структура чанка карты
 };
 
+//Класс предзагрузки структуры тайла. Хранит в себе все не нулевые ячейки тайла
 UCLASS(BlueprintType)
 class ROGUELIKETHING_API UTerrainOfTile : public UObject
 {
@@ -43,6 +45,7 @@ public:
 	FMapEditorBrushType GetCellType(FCellCoord Coord);
 	UFUNCTION(BlueprintCallable)
 	bool Contains(FCellCoord Coord);
+	//Получение массива всех не нулевых ячеек тайла
 	UFUNCTION(BlueprintCallable)
 	TArray<FCellCoord> GetFilledCoord();
 	UFUNCTION(BlueprintCallable)
@@ -103,6 +106,7 @@ private:
 	ULoadingWidget* LoadingWidget;
 	bool SuccessCreateBlankCard = false;
 
+	//Матрица переменных предзагрузки для всех тайлов текущей таблицы
 	TMap<int, TMap<int, UTerrainOfTile*>> TerrainOfTilesRows;
 
 	//Путь до файла, в котором лежит база данных карты
@@ -212,15 +216,19 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AsyncCreateBlankCard(int32 rowLen, int32 colLen, MatrixType matrixType);
 	
+	//Функция заполняющая переменную предзагрузки TerrainOfTile для всех тайлов в таблице
 	UFUNCTION(BlueprintCallable)
     void FillTerrainOfTiles();
 	
+	//Проверка наличия переменной предзагрузки по переданной координате
 	UFUNCTION(BlueprintCallable)
 	bool ContainsTerrainOfTile(FCellCoord Coord);
 
+	//Проверка наличия не пустой ячейки в матрице переменных предзагрузки по глобальному индексу ячейки
 	UFUNCTION(BlueprintCallable)
 	bool ContainsCellInTerrainOfTile(FCellCoord GlobalCoordOfCell, int TileSize);
 
+	//Получение стиля ячейки из матрицы переменных предзагрузки по глобальному индексу ячейки
 	UFUNCTION(BlueprintCallable)
 	FMapEditorBrushType GetCellStyleFromTerrainOfTile(FCellCoord GlobalCoordOfCell, int TileSize);
 	
