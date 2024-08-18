@@ -1,4 +1,4 @@
-// Denis Igorevich Frolov did all this. Once there. All things reserved.
+п»ї// Denis Igorevich Frolov did all this. Once there. All things reserved.
 
 
 #include "RoguelikeThing/Widgets/MapEditor/MapTile.h"
@@ -10,12 +10,12 @@ DEFINE_LOG_CATEGORY(MapTile);
 
 UMapTile::UMapTile(const FObjectInitializer& Object) : UAbstractTile(Object)
 {
-    //Имя координатной обёртки даётся с упоминанием того, к какому тайлу она принадлежит
+    //РРјСЏ РєРѕРѕСЂРґРёРЅР°С‚РЅРѕР№ РѕР±С‘СЂС‚РєРё РґР°С‘С‚СЃСЏ СЃ СѓРїРѕРјРёРЅР°РЅРёРµРј С‚РѕРіРѕ, Рє РєР°РєРѕРјСѓ С‚Р°Р№Р»Сѓ РѕРЅР° РїСЂРёРЅР°РґР»РµР¶РёС‚
     FString Name("CellsCoordWrapper_");
     Name.Append(GetName());
     CellsCoordWrapper = CreateDefaultSubobject<UCoordWrapperOfTable>(*Name);
 
-    //Получение GameInstance из мира
+    //РџРѕР»СѓС‡РµРЅРёРµ GameInstance РёР· РјРёСЂР°
     GameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
     if (!GameInstance)
         UE_LOG(MapTile, Warning, TEXT("Warning in MapTile class in constructor - GameInstance was not retrieved from the world"));
@@ -26,9 +26,9 @@ UMapTile::~UMapTile()
     FilledCells.Empty();
 }
 
-/* Переопределение виртуальной функции для удаления всех ячеек. Функция используется при очистке перед
- * удалением. Она уничтожает переменную координатной обёртки CellsCoordWrapper, так что если необходимо
- * очистить класс без его последующего удаления, CellsCoordWrapper следует вновь проинициализировать */
+/* РџРµСЂРµРѕРїСЂРµРґРµР»РµРЅРёРµ РІРёСЂС‚СѓР°Р»СЊРЅРѕР№ С„СѓРЅРєС†РёРё РґР»СЏ СѓРґР°Р»РµРЅРёСЏ РІСЃРµС… СЏС‡РµРµРє. Р¤СѓРЅРєС†РёСЏ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РїСЂРё РѕС‡РёСЃС‚РєРµ РїРµСЂРµРґ
+ * СѓРґР°Р»РµРЅРёРµРј. РћРЅР° СѓРЅРёС‡С‚РѕР¶Р°РµС‚ РїРµСЂРµРјРµРЅРЅСѓСЋ РєРѕРѕСЂРґРёРЅР°С‚РЅРѕР№ РѕР±С‘СЂС‚РєРё CellsCoordWrapper, С‚Р°Рє С‡С‚Рѕ РµСЃР»Рё РЅРµРѕР±С…РѕРґРёРјРѕ
+ * РѕС‡РёСЃС‚РёС‚СЊ РєР»Р°СЃСЃ Р±РµР· РµРіРѕ РїРѕСЃР»РµРґСѓСЋС‰РµРіРѕ СѓРґР°Р»РµРЅРёСЏ, CellsCoordWrapper СЃР»РµРґСѓРµС‚ РІРЅРѕРІСЊ РїСЂРѕРёРЅРёС†РёР°Р»РёР·РёСЂРѕРІР°С‚СЊ */
 void UMapTile::RemoveAllCells()
 {
     if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
@@ -74,14 +74,14 @@ UCoordWrapperOfTable* UMapTile::GetCellsCoordWrapper()
     return CellsCoordWrapper;
 }
 
-//Функция, заполняющая тайл ячейками. Если MapMatrix будет передан, то у ячеек сразу подгрузятся все необходимые стили, иначе все ячейки будут со стилем по умолчанию
+//Р¤СѓРЅРєС†РёСЏ, Р·Р°РїРѕР»РЅСЏСЋС‰Р°СЏ С‚Р°Р№Р» СЏС‡РµР№РєР°РјРё. Р•СЃР»Рё MapMatrix Р±СѓРґРµС‚ РїРµСЂРµРґР°РЅ, С‚Рѕ Сѓ СЏС‡РµРµРє СЃСЂР°Р·Сѓ РїРѕРґРіСЂСѓР·СЏС‚СЃСЏ РІСЃРµ РЅРµРѕР±С…РѕРґРёРјС‹Рµ СЃС‚РёР»Рё, РёРЅР°С‡Рµ РІСЃРµ СЏС‡РµР№РєРё Р±СѓРґСѓС‚ СЃРѕ СЃС‚РёР»РµРј РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ
 bool UMapTile::FillingWithCells(int MapTileLength, UClass* CellClass, UMapEditor* MapEditor, UMapMatrix* MapMatrix)
 {
     if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
         UE_LOG(MapTile, Log, TEXT("MapTile class in the FillingWithCells function: Filling of the tile col: %d row: %d with cells has begun"), MyCoord.Col, MyCoord.Row);
 
-    /* Тайл забивается ячейками по точно такому же принципу, что и карта тайлами -
-     * первая ячейка находится слева снизу, а последняя - справа сверху */
+    /* РўР°Р№Р» Р·Р°Р±РёРІР°РµС‚СЃСЏ СЏС‡РµР№РєР°РјРё РїРѕ С‚РѕС‡РЅРѕ С‚Р°РєРѕРјСѓ Р¶Рµ РїСЂРёРЅС†РёРїСѓ, С‡С‚Рѕ Рё РєР°СЂС‚Р° С‚Р°Р№Р»Р°РјРё -
+     * РїРµСЂРІР°СЏ СЏС‡РµР№РєР° РЅР°С…РѕРґРёС‚СЃСЏ СЃР»РµРІР° СЃРЅРёР·Сѓ, Р° РїРѕСЃР»РµРґРЅСЏСЏ - СЃРїСЂР°РІР° СЃРІРµСЂС…Сѓ */
     for (int row = MapTileLength - 1; row >= 0; row--) {
         for (int col = 0; col < MapTileLength; col++) {
             UPROPERTY()
@@ -92,23 +92,23 @@ bool UMapTile::FillingWithCells(int MapTileLength, UClass* CellClass, UMapEditor
                 return false;
             }
 
-            //Ячейке передаётся координата тайла и её собственная координата
+            //РЇС‡РµР№РєРµ РїРµСЂРµРґР°С‘С‚СЃСЏ РєРѕРѕСЂРґРёРЅР°С‚Р° С‚Р°Р№Р»Р° Рё РµС‘ СЃРѕР±СЃС‚РІРµРЅРЅР°СЏ РєРѕРѕСЂРґРёРЅР°С‚Р°
             Cell->SetCoordOfParentTile(MyCoord, MapTileLength);
             Cell->SetMyCoord(FCellCoord(row, col));
-            //Также ей передаётся указатель на её редактор карт
+            //РўР°РєР¶Рµ РµР№ РїРµСЂРµРґР°С‘С‚СЃСЏ СѓРєР°Р·Р°С‚РµР»СЊ РЅР° РµС‘ СЂРµРґР°РєС‚РѕСЂ РєР°СЂС‚
             Cell->MyEditor = MapEditor;
 
             if (GetGridPanel()) {
-                //Запоминается слот ячейки для того, чтобы он был передан в координатную обёртку
+                //Р—Р°РїРѕРјРёРЅР°РµС‚СЃСЏ СЃР»РѕС‚ СЏС‡РµР№РєРё РґР»СЏ С‚РѕРіРѕ, С‡С‚РѕР±С‹ РѕРЅ Р±С‹Р» РїРµСЂРµРґР°РЅ РІ РєРѕРѕСЂРґРёРЅР°С‚РЅСѓСЋ РѕР±С‘СЂС‚РєСѓ
                 UUniformGridSlot* GridSlot = GetGridPanel()->AddChildToUniformGrid(Cell, row, col);
 
                 if (GridSlot) {
                     if (CellsCoordWrapper) {
-                        /* Созданные ячейки забиваются в координатную обёртку. При этом важен их индекс в порядке
-                         * создания, чтобы, например, слева снизу была ячейка 0x0, а справа сверху - 5x5.
-                         * Для этого индекс обратного цикла по строкам (того что сейчас выполняется с row--)
-                         * разворачивается, чтобы передать инвертированное значение от того, что было уже
-                         * инвертировано ранее для корректного расположения ячеек в GridPanel */
+                        /* РЎРѕР·РґР°РЅРЅС‹Рµ СЏС‡РµР№РєРё Р·Р°Р±РёРІР°СЋС‚СЃСЏ РІ РєРѕРѕСЂРґРёРЅР°С‚РЅСѓСЋ РѕР±С‘СЂС‚РєСѓ. РџСЂРё СЌС‚РѕРј РІР°Р¶РµРЅ РёС… РёРЅРґРµРєСЃ РІ РїРѕСЂСЏРґРєРµ
+                         * СЃРѕР·РґР°РЅРёСЏ, С‡С‚РѕР±С‹, РЅР°РїСЂРёРјРµСЂ, СЃР»РµРІР° СЃРЅРёР·Сѓ Р±С‹Р»Р° СЏС‡РµР№РєР° 0x0, Р° СЃРїСЂР°РІР° СЃРІРµСЂС…Сѓ - 5x5.
+                         * Р”Р»СЏ СЌС‚РѕРіРѕ РёРЅРґРµРєСЃ РѕР±СЂР°С‚РЅРѕРіРѕ С†РёРєР»Р° РїРѕ СЃС‚СЂРѕРєР°Рј (С‚РѕРіРѕ С‡С‚Рѕ СЃРµР№С‡Р°СЃ РІС‹РїРѕР»РЅСЏРµС‚СЃСЏ СЃ row--)
+                         * СЂР°Р·РІРѕСЂР°С‡РёРІР°РµС‚СЃСЏ, С‡С‚РѕР±С‹ РїРµСЂРµРґР°С‚СЊ РёРЅРІРµСЂС‚РёСЂРѕРІР°РЅРЅРѕРµ Р·РЅР°С‡РµРЅРёРµ РѕС‚ С‚РѕРіРѕ, С‡С‚Рѕ Р±С‹Р»Рѕ СѓР¶Рµ
+                         * РёРЅРІРµСЂС‚РёСЂРѕРІР°РЅРѕ СЂР°РЅРµРµ РґР»СЏ РєРѕСЂСЂРµРєС‚РЅРѕРіРѕ СЂР°СЃРїРѕР»РѕР¶РµРЅРёСЏ СЏС‡РµРµРє РІ GridPanel */
                         CellsCoordWrapper->AddWidget(MapTileLength - 1 - row, col, Cell, GridSlot);
                     }
                     else {
@@ -124,7 +124,7 @@ bool UMapTile::FillingWithCells(int MapTileLength, UClass* CellClass, UMapEditor
             else
                 UE_LOG(MapTile, Error, TEXT("!!! An error occurred in the MapTile class in the FillingWithCells function: Failed to get GridPanel from MapTile col: %d, row: %d"), MyCoord.Col, MyCoord.Row);
 
-            //Ячейке задаётся стиль исходя из переменной предзагрузки MyTerrainOfTile, если MapMatrix был передан
+            //РЇС‡РµР№РєРµ Р·Р°РґР°С‘С‚СЃСЏ СЃС‚РёР»СЊ РёСЃС…РѕРґСЏ РёР· РїРµСЂРµРјРµРЅРЅРѕР№ РїСЂРµРґР·Р°РіСЂСѓР·РєРё MyTerrainOfTile, РµСЃР»Рё MapMatrix Р±С‹Р» РїРµСЂРµРґР°РЅ
             if (MapMatrix) {
                 SetStyleFromTerrainOfTile(Cell, row, col, MapTileLength, MapMatrix);
             }
@@ -141,7 +141,7 @@ bool UMapTile::FillingWithCells(int MapTileLength, UClass* CellClass, UMapEditor
     return true;
 }
 
-//Функция, обновляющая информацию о ячейках, стиль которых отличается от базового
+//Р¤СѓРЅРєС†РёСЏ, РѕР±РЅРѕРІР»СЏСЋС‰Р°СЏ РёРЅС„РѕСЂРјР°С†РёСЋ Рѕ СЏС‡РµР№РєР°С…, СЃС‚РёР»СЊ РєРѕС‚РѕСЂС‹С… РѕС‚Р»РёС‡Р°РµС‚СЃСЏ РѕС‚ Р±Р°Р·РѕРІРѕРіРѕ
 void UMapTile::UpdateInformationAboutCells(UMapCell* Cell, FMapEditorBrushType CellStyle)
 {
     if (!Cell) {
@@ -155,28 +155,28 @@ void UMapTile::UpdateInformationAboutCells(UMapCell* Cell, FMapEditorBrushType C
         UE_LOG(MapTile, Log, TEXT("MapTile class in the UpdateInformationAboutCells function: Cell col: %d row: %d style changed to %s"), Cell->GetMyGlobalCoord().Col, Cell->GetMyGlobalCoord().Row, *(CellType ? CellType->GetEnumName((int32)CellStyle) : TEXT("<Invalid Enum>")));
     }
 
-    //Если стиль ячейки не пустой, то он записывается в массив заполненных ячеек
+    //Р•СЃР»Рё СЃС‚РёР»СЊ СЏС‡РµР№РєРё РЅРµ РїСѓСЃС‚РѕР№, С‚Рѕ РѕРЅ Р·Р°РїРёСЃС‹РІР°РµС‚СЃСЏ РІ РјР°СЃСЃРёРІ Р·Р°РїРѕР»РЅРµРЅРЅС‹С… СЏС‡РµРµРє
     if ((CellStyle == FMapEditorBrushType::Corridor) || (CellStyle == FMapEditorBrushType::Room)) {
         if (!FilledCells.Contains(Cell)) {
             FilledCells.Add(Cell);
         }
 
         if (MyTerrainOfTile) {
-            //В переменную предзагрузки также вносятся изменения структуры тайла
+            //Р’ РїРµСЂРµРјРµРЅРЅСѓСЋ РїСЂРµРґР·Р°РіСЂСѓР·РєРё С‚Р°РєР¶Рµ РІРЅРѕСЃСЏС‚СЃСЏ РёР·РјРµРЅРµРЅРёСЏ СЃС‚СЂСѓРєС‚СѓСЂС‹ С‚Р°Р№Р»Р°
             MyTerrainOfTile->AddCellType(Cell->GetMyLocalCoord(), CellStyle);
         }
         else {
             UE_LOG(MapTile, Error, TEXT("!!! An error occurred in the MapTile class in the UpdateInformationAboutCells function: MyTerrainOfTile is not valid"));
         }
     }
-    //Иначе, если раньше стиль не был базовым, а затем вновь таковым стал, то он удаляется из массива заполненных ячеек
+    //РРЅР°С‡Рµ, РµСЃР»Рё СЂР°РЅСЊС€Рµ СЃС‚РёР»СЊ РЅРµ Р±С‹Р» Р±Р°Р·РѕРІС‹Рј, Р° Р·Р°С‚РµРј РІРЅРѕРІСЊ С‚Р°РєРѕРІС‹Рј СЃС‚Р°Р», С‚Рѕ РѕРЅ СѓРґР°Р»СЏРµС‚СЃСЏ РёР· РјР°СЃСЃРёРІР° Р·Р°РїРѕР»РЅРµРЅРЅС‹С… СЏС‡РµРµРє
     else {
         if (FilledCells.Contains(Cell)) {
             FilledCells.Remove(Cell);
         }
 
         if (MyTerrainOfTile) {
-            //В переменную предзагрузки также вносятся изменения структуры тайла
+            //Р’ РїРµСЂРµРјРµРЅРЅСѓСЋ РїСЂРµРґР·Р°РіСЂСѓР·РєРё С‚Р°РєР¶Рµ РІРЅРѕСЃСЏС‚СЃСЏ РёР·РјРµРЅРµРЅРёСЏ СЃС‚СЂСѓРєС‚СѓСЂС‹ С‚Р°Р№Р»Р°
             FCellCoord CellCoord = Cell->GetMyLocalCoord();
             if (MyTerrainOfTile->Contains(CellCoord)) {
                 MyTerrainOfTile->RemoveCell(CellCoord);
@@ -188,17 +188,17 @@ void UMapTile::UpdateInformationAboutCells(UMapCell* Cell, FMapEditorBrushType C
     }
 }
 
-//Функция, преводящая стиль ячеек в соответствие с переменной предзагрузки MyTerrainOfTile
+//Р¤СѓРЅРєС†РёСЏ, РїСЂРµРІРѕРґСЏС‰Р°СЏ СЃС‚РёР»СЊ СЏС‡РµРµРє РІ СЃРѕРѕС‚РІРµС‚СЃС‚РІРёРµ СЃ РїРµСЂРµРјРµРЅРЅРѕР№ РїСЂРµРґР·Р°РіСЂСѓР·РєРё MyTerrainOfTile
 bool UMapTile::FillCellsAccordingToTerrain(UMapMatrix* MapMatrix)
 {
     if (MyTerrainOfTile) {
         TArray<FCellCoord> FilledCoord = MyTerrainOfTile->GetFilledCoord();
         for (FCellCoord CellCoord : FilledCoord) {
-            //Получение указателя на ячейку тайла. Строки развёрнуты потому что в БД наименьшая координата находится в левом верхнем углу, а в UI - в левом нижнем
+            //РџРѕР»СѓС‡РµРЅРёРµ СѓРєР°Р·Р°С‚РµР»СЏ РЅР° СЏС‡РµР№РєСѓ С‚Р°Р№Р»Р°. РЎС‚СЂРѕРєРё СЂР°Р·РІС‘СЂРЅСѓС‚С‹ РїРѕС‚РѕРјСѓ С‡С‚Рѕ РІ Р‘Р” РЅР°РёРјРµРЅСЊС€Р°СЏ РєРѕРѕСЂРґРёРЅР°С‚Р° РЅР°С…РѕРґРёС‚СЃСЏ РІ Р»РµРІРѕРј РІРµСЂС…РЅРµРј СѓРіР»Сѓ, Р° РІ UI - РІ Р»РµРІРѕРј РЅРёР¶РЅРµРј
             UAbstractTile* AbstractCell = CellsCoordWrapper->FindWidget(MapMatrix->GetMapTileLength() - 1 - CellCoord.Row, CellCoord.Col);
 
             if (AbstractCell) {
-                //Содержимым этого класса тайла должны быть ячейки класса UMapCell. Если это не так, значит опредёлнно что-то пошло не так
+                //РЎРѕРґРµСЂР¶РёРјС‹Рј СЌС‚РѕРіРѕ РєР»Р°СЃСЃР° С‚Р°Р№Р»Р° РґРѕР»Р¶РЅС‹ Р±С‹С‚СЊ СЏС‡РµР№РєРё РєР»Р°СЃСЃР° UMapCell. Р•СЃР»Рё СЌС‚Рѕ РЅРµ С‚Р°Рє, Р·РЅР°С‡РёС‚ РѕРїСЂРµРґС‘Р»РЅРЅРѕ С‡С‚Рѕ-С‚Рѕ РїРѕС€Р»Рѕ РЅРµ С‚Р°Рє
                 if (dynamic_cast<UMapCell*>(AbstractCell)) {
                     UMapCell* Cell = static_cast<UMapCell*>(AbstractCell);
 
@@ -207,7 +207,7 @@ bool UMapTile::FillCellsAccordingToTerrain(UMapMatrix* MapMatrix)
 
                         if (CellStyle != FMapEditorBrushType::Error) {
                             FCellCoord CellGlobalCoord = Cell->GetMyGlobalCoord();
-                            //Ячейке устанавливается такой стиль, какой был закреплён за этой координатой в MyTerrainOfTile
+                            //РЇС‡РµР№РєРµ СѓСЃС‚Р°РЅР°РІР»РёРІР°РµС‚СЃСЏ С‚Р°РєРѕР№ СЃС‚РёР»СЊ, РєР°РєРѕР№ Р±С‹Р» Р·Р°РєСЂРµРїР»С‘РЅ Р·Р° СЌС‚РѕР№ РєРѕРѕСЂРґРёРЅР°С‚РѕР№ РІ MyTerrainOfTile
                             switch (CellStyle)
                             {
                             case FMapEditorBrushType::Corridor:
@@ -257,16 +257,16 @@ bool UMapTile::FillCellsAccordingToTerrain(UMapMatrix* MapMatrix)
     return true;
 }
 
-//Функция, задающая стиль ячееки по переданной координате исходя из переменной предзагрузки MyTerrainOfTile
+//Р¤СѓРЅРєС†РёСЏ, Р·Р°РґР°СЋС‰Р°СЏ СЃС‚РёР»СЊ СЏС‡РµРµРєРё РїРѕ РїРµСЂРµРґР°РЅРЅРѕР№ РєРѕРѕСЂРґРёРЅР°С‚Рµ РёСЃС…РѕРґСЏ РёР· РїРµСЂРµРјРµРЅРЅРѕР№ РїСЂРµРґР·Р°РіСЂСѓР·РєРё MyTerrainOfTile
 void UMapTile::SetStyleFromTerrainOfTile(UMapCell* Cell, int row, int col, int MapTileLength, UMapMatrix* MapMatrix)
 {
-    //Все стили задаются строго в GameThread, потому что в не его это сделать невозможно
+    //Р’СЃРµ СЃС‚РёР»Рё Р·Р°РґР°СЋС‚СЃСЏ СЃС‚СЂРѕРіРѕ РІ GameThread, РїРѕС‚РѕРјСѓ С‡С‚Рѕ РІ РЅРµ РµРіРѕ СЌС‚Рѕ СЃРґРµР»Р°С‚СЊ РЅРµРІРѕР·РјРѕР¶РЅРѕ
     AsyncTask(ENamedThreads::GameThread, [Cell, row, col, MapTileLength, MapMatrix, this]() {
         if (MapMatrix) {
             int GlobalRow = MyCoord.Row * MapTileLength + row;
             int GlobalCol = MyCoord.Col * MapTileLength + col;
 
-            //Ячейке устанавливается такой стиль, какой был закреплён за этой координатой в MyTerrainOfTile
+            //РЇС‡РµР№РєРµ СѓСЃС‚Р°РЅР°РІР»РёРІР°РµС‚СЃСЏ С‚Р°РєРѕР№ СЃС‚РёР»СЊ, РєР°РєРѕР№ Р±С‹Р» Р·Р°РєСЂРµРїР»С‘РЅ Р·Р° СЌС‚РѕР№ РєРѕРѕСЂРґРёРЅР°С‚РѕР№ РІ MyTerrainOfTile
             FMapEditorBrushType CellStyle = MapMatrix->GetCellStyleFromTerrainOfTile(FCellCoord(GlobalRow, GlobalCol), MapTileLength);
 
             if (CellStyle != FMapEditorBrushType::Error) {
@@ -298,31 +298,31 @@ void UMapTile::SetStyleFromTerrainOfTile(UMapCell* Cell, int row, int col, int M
         });
 }
 
-/* Переопределение виртуальной функции для сброса состояния изменённых ячеек. При вызове
- * функции переменная MyTerrainOfTile уничтожается и требует последующей переинициализации */
+/* РџРµСЂРµРѕРїСЂРµРґРµР»РµРЅРёРµ РІРёСЂС‚СѓР°Р»СЊРЅРѕР№ С„СѓРЅРєС†РёРё РґР»СЏ СЃР±СЂРѕСЃР° СЃРѕСЃС‚РѕСЏРЅРёСЏ РёР·РјРµРЅС‘РЅРЅС‹С… СЏС‡РµРµРє. РџСЂРё РІС‹Р·РѕРІРµ
+ * С„СѓРЅРєС†РёРё РїРµСЂРµРјРµРЅРЅР°СЏ MyTerrainOfTile СѓРЅРёС‡С‚РѕР¶Р°РµС‚СЃСЏ Рё С‚СЂРµР±СѓРµС‚ РїРѕСЃР»РµРґСѓСЋС‰РµР№ РїРµСЂРµРёРЅРёС†РёР°Р»РёР·Р°С†РёРё */
 void UMapTile::ClearFilledCells()
 {
-    //Очистка стилей производится в отдельном потоке
+    //РћС‡РёСЃС‚РєР° СЃС‚РёР»РµР№ РїСЂРѕРёР·РІРѕРґРёС‚СЃСЏ РІ РѕС‚РґРµР»СЊРЅРѕРј РїРѕС‚РѕРєРµ
     AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [this]() {
         if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
             UE_LOG(MapTile, Log, TEXT("MapTile class in the ClearFilledCells function: A thread is started in the tile col: %d, row: %d to reset the state of all filled cells"), MyCoord.Col, MyCoord.Row);
         
         if (FilledCells.Num() != 0) {
-            //Стиль всех заполненных ячеек изменяется на пустой
+            //РЎС‚РёР»СЊ РІСЃРµС… Р·Р°РїРѕР»РЅРµРЅРЅС‹С… СЏС‡РµРµРє РёР·РјРµРЅСЏРµС‚СЃСЏ РЅР° РїСѓСЃС‚РѕР№
             for (UMapCell* Cell : FilledCells) {
-                //Изменить стиль виджета возможно только в основном потоке
+                //РР·РјРµРЅРёС‚СЊ СЃС‚РёР»СЊ РІРёРґР¶РµС‚Р° РІРѕР·РјРѕР¶РЅРѕ С‚РѕР»СЊРєРѕ РІ РѕСЃРЅРѕРІРЅРѕРј РїРѕС‚РѕРєРµ
                 AsyncTask(ENamedThreads::GameThread, [Cell]() {
                     Cell->SetEmptinessStyle();
                     });
             }
 
-            /* При обычной очистке массива могут начать вызываться деструкторы входящих элементов.
-             * А так как это просто массив указателей на ячейки, собранные для управления их стилями,
-             * а не для хранения, то следует избегать их случайного удаления при очистке массива */
+            /* РџСЂРё РѕР±С‹С‡РЅРѕР№ РѕС‡РёСЃС‚РєРµ РјР°СЃСЃРёРІР° РјРѕРіСѓС‚ РЅР°С‡Р°С‚СЊ РІС‹Р·С‹РІР°С‚СЊСЃСЏ РґРµСЃС‚СЂСѓРєС‚РѕСЂС‹ РІС…РѕРґСЏС‰РёС… СЌР»РµРјРµРЅС‚РѕРІ.
+             * Рђ С‚Р°Рє РєР°Рє СЌС‚Рѕ РїСЂРѕСЃС‚Рѕ РјР°СЃСЃРёРІ СѓРєР°Р·Р°С‚РµР»РµР№ РЅР° СЏС‡РµР№РєРё, СЃРѕР±СЂР°РЅРЅС‹Рµ РґР»СЏ СѓРїСЂР°РІР»РµРЅРёСЏ РёС… СЃС‚РёР»СЏРјРё,
+             * Р° РЅРµ РґР»СЏ С…СЂР°РЅРµРЅРёСЏ, С‚Рѕ СЃР»РµРґСѓРµС‚ РёР·Р±РµРіР°С‚СЊ РёС… СЃР»СѓС‡Р°Р№РЅРѕРіРѕ СѓРґР°Р»РµРЅРёСЏ РїСЂРё РѕС‡РёСЃС‚РєРµ РјР°СЃСЃРёРІР° */
             FilledCells = TArray<UMapCell*>();
         }
 
-        //Переменная предзагрузки удаляется
+        //РџРµСЂРµРјРµРЅРЅР°СЏ РїСЂРµРґР·Р°РіСЂСѓР·РєРё СѓРґР°Р»СЏРµС‚СЃСЏ
         if (MyTerrainOfTile) {
             if (MyTerrainOfTile->IsValidLowLevel()) {
                 MyTerrainOfTile->MarkPendingKill();
@@ -338,11 +338,11 @@ void UMapTile::ClearFilledCells()
         });
 }
 
-//Переопределение виртуальной функции, вызываемой при добавлении тайла в таблицу
+//РџРµСЂРµРѕРїСЂРµРґРµР»РµРЅРёРµ РІРёСЂС‚СѓР°Р»СЊРЅРѕР№ С„СѓРЅРєС†РёРё, РІС‹Р·С‹РІР°РµРјРѕР№ РїСЂРё РґРѕР±Р°РІР»РµРЅРёРё С‚Р°Р№Р»Р° РІ С‚Р°Р±Р»РёС†Сѓ
 void UMapTile::OnAddedEvent(UMapMatrix* MapMatrix)
 {
-    //Инициализируется переменная предзагрузки
+    //РРЅРёС†РёР°Р»РёР·РёСЂСѓРµС‚СЃСЏ РїРµСЂРµРјРµРЅРЅР°СЏ РїСЂРµРґР·Р°РіСЂСѓР·РєРё
     SetMyTerrainOfTile(MapMatrix->GetTerrainOfTile(MyCoord));
-    //На основе переменной предзагузки инициализируются стили ячеек
+    //РќР° РѕСЃРЅРѕРІРµ РїРµСЂРµРјРµРЅРЅРѕР№ РїСЂРµРґР·Р°РіСѓР·РєРё РёРЅРёС†РёР°Р»РёР·РёСЂСѓСЋС‚СЃСЏ СЃС‚РёР»Рё СЏС‡РµРµРє
     FillCellsAccordingToTerrain(MapMatrix);
 }

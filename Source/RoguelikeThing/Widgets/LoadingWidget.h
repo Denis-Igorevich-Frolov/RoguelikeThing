@@ -1,4 +1,4 @@
-// Denis Igorevich Frolov did all this. Once there. All things reserved.
+п»ї// Denis Igorevich Frolov did all this. Once there. All things reserved.
 
 #pragma once
 
@@ -7,7 +7,7 @@
 #include "LoadingWidget.generated.h"
 
 /********************************************************
- * Данный класс является базовым бдя виджета загрузки
+ * Р”Р°РЅРЅС‹Р№ РєР»Р°СЃСЃ СЏРІР»СЏРµС‚СЃСЏ Р±Р°Р·РѕРІС‹Рј Р±РґСЏ РІРёРґР¶РµС‚Р° Р·Р°РіСЂСѓР·РєРё
  ********************************************************/
 UCLASS()
 class ROGUELIKETHING_API ULoadingWidget : public UUserWidget

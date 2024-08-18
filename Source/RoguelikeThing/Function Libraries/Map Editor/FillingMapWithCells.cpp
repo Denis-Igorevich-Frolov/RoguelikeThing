@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+п»ї// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "RoguelikeThing/Function Libraries/Map Editor/FillingMapWithCells.h"
@@ -12,24 +12,24 @@ DEFINE_LOG_CATEGORY(FillingMapWithCells);
 
 UFillingMapWithCells::UFillingMapWithCells()
 {
-    //Получение GameInstance из мира
+    //РџРѕР»СѓС‡РµРЅРёРµ GameInstance РёР· РјРёСЂР°
     GameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
     if (!GameInstance)
         UE_LOG(FillingMapWithCells, Warning, TEXT("Warning in FillingMapWithCells class in constructor - GameInstance was not retrieved from the world"));
 }
 
-/* Функция, заполняющая карту ячейками на основе БД.
+/* Р¤СѓРЅРєС†РёСЏ, Р·Р°РїРѕР»РЅСЏСЋС‰Р°СЏ РєР°СЂС‚Сѓ СЏС‡РµР№РєР°РјРё РЅР° РѕСЃРЅРѕРІРµ Р‘Р”.
  *
- * MapTileClass обязательно должен быть наследником
- * класса UMapTile или им самим, CellClass обязательно
- * должен быть наследником класса UMapCell или им самим */
+ * MapTileClass РѕР±СЏР·Р°С‚РµР»СЊРЅРѕ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РЅР°СЃР»РµРґРЅРёРєРѕРј
+ * РєР»Р°СЃСЃР° UMapTile РёР»Рё РёРј СЃР°РјРёРј, CellClass РѕР±СЏР·Р°С‚РµР»СЊРЅРѕ
+ * РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РЅР°СЃР»РµРґРЅРёРєРѕРј РєР»Р°СЃСЃР° UMapCell РёР»Рё РёРј СЃР°РјРёРј */
 void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, UUniformGridPanel* TilesGridPanel, UClass* CellClass, UClass* MapTileClass,
     UTileBuffer* TileBuf, UMapEditor* MapEditor, UCoordWrapperOfTable* TilesCoordWrapper, UMapMatrix* MapMatrix, FVector2D WidgetAreaSize)
 {
-    //Координатная обёртка изначально должна быть полность пустой во время заполнения карты
+    //РљРѕРѕСЂРґРёРЅР°С‚РЅР°СЏ РѕР±С‘СЂС‚РєР° РёР·РЅР°С‡Р°Р»СЊРЅРѕ РґРѕР»Р¶РЅР° Р±С‹С‚СЊ РїРѕР»РЅРѕСЃС‚СЊ РїСѓСЃС‚РѕР№ РІРѕ РІСЂРµРјСЏ Р·Р°РїРѕР»РЅРµРЅРёСЏ РєР°СЂС‚С‹
     TilesCoordWrapper->Clear();
 
-    //Проверка корректности указателей
+    //РџСЂРѕРІРµСЂРєР° РєРѕСЂСЂРµРєС‚РЅРѕСЃС‚Рё СѓРєР°Р·Р°С‚РµР»РµР№
     if (!TilesGridPanel) {
         UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: TilesGridPanel is a null pointer"));
 
@@ -109,19 +109,19 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
         return;
     }
 
-    /* Здесь проверяется корректность переданного класса, по которому будут делаться тайлы.
-     * Переданный MapTileClass имеет тип данных UClass*, но для корректной работы кода
-     * этот класс обязательно должен наследоваться от UMapTile. Мне не известны
-     * инструменты проверки этого на уровне аргумента функции, так что эта проверка
-     * будет выполняться здесь.
+    /* Р—РґРµСЃСЊ РїСЂРѕРІРµСЂСЏРµС‚СЃСЏ РєРѕСЂСЂРµРєС‚РЅРѕСЃС‚СЊ РїРµСЂРµРґР°РЅРЅРѕРіРѕ РєР»Р°СЃСЃР°, РїРѕ РєРѕС‚РѕСЂРѕРјСѓ Р±СѓРґСѓС‚ РґРµР»Р°С‚СЊСЃСЏ С‚Р°Р№Р»С‹.
+     * РџРµСЂРµРґР°РЅРЅС‹Р№ MapTileClass РёРјРµРµС‚ С‚РёРї РґР°РЅРЅС‹С… UClass*, РЅРѕ РґР»СЏ РєРѕСЂСЂРµРєС‚РЅРѕР№ СЂР°Р±РѕС‚С‹ РєРѕРґР°
+     * СЌС‚РѕС‚ РєР»Р°СЃСЃ РѕР±СЏР·Р°С‚РµР»СЊРЅРѕ РґРѕР»Р¶РµРЅ РЅР°СЃР»РµРґРѕРІР°С‚СЊСЃСЏ РѕС‚ UMapTile. РњРЅРµ РЅРµ РёР·РІРµСЃС‚РЅС‹
+     * РёРЅСЃС‚СЂСѓРјРµРЅС‚С‹ РїСЂРѕРІРµСЂРєРё СЌС‚РѕРіРѕ РЅР° СѓСЂРѕРІРЅРµ Р°СЂРіСѓРјРµРЅС‚Р° С„СѓРЅРєС†РёРё, С‚Р°Рє С‡С‚Рѕ СЌС‚Р° РїСЂРѕРІРµСЂРєР°
+     * Р±СѓРґРµС‚ РІС‹РїРѕР»РЅСЏС‚СЊСЃСЏ Р·РґРµСЃСЊ.
      *
-     * Для данной проверки создаётся один тестовый виджет, который после будет удалён.
-     * С помощью dynamic_cast выясняется есть ли в древе наследовании переданного класса UMapTile */
+     * Р”Р»СЏ РґР°РЅРЅРѕР№ РїСЂРѕРІРµСЂРєРё СЃРѕР·РґР°С‘С‚СЃСЏ РѕРґРёРЅ С‚РµСЃС‚РѕРІС‹Р№ РІРёРґР¶РµС‚, РєРѕС‚РѕСЂС‹Р№ РїРѕСЃР»Рµ Р±СѓРґРµС‚ СѓРґР°Р»С‘РЅ.
+     * РЎ РїРѕРјРѕС‰СЊСЋ dynamic_cast РІС‹СЏСЃРЅСЏРµС‚СЃСЏ РµСЃС‚СЊ Р»Рё РІ РґСЂРµРІРµ РЅР°СЃР»РµРґРѕРІР°РЅРёРё РїРµСЂРµРґР°РЅРЅРѕРіРѕ РєР»Р°СЃСЃР° UMapTile */
     UUserWidget* TestGridWidget = CreateWidget<UUserWidget>(TilesGridPanel, MapTileClass);
     if (!dynamic_cast<UMapTile*>(TestGridWidget)) {
         UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: MapFragmentClass was expected to inherit from UMapTile, but its class is %s"), *MapTileClass->GetName());
 
-        //Если класс был некорректен, то тестовый виджет всё равно удаляется
+        //Р•СЃР»Рё РєР»Р°СЃСЃ Р±С‹Р» РЅРµРєРѕСЂСЂРµРєС‚РµРЅ, С‚Рѕ С‚РµСЃС‚РѕРІС‹Р№ РІРёРґР¶РµС‚ РІСЃС‘ СЂР°РІРЅРѕ СѓРґР°Р»СЏРµС‚СЃСЏ
         if (TestGridWidget) {
             TestGridWidget->RemoveFromParent();
         }
@@ -136,7 +136,7 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
 
         return;
     }
-    //Если проверка была пройдена, то тестовый виджет удаляется, он нужен был сугубо для проверки
+    //Р•СЃР»Рё РїСЂРѕРІРµСЂРєР° Р±С‹Р»Р° РїСЂРѕР№РґРµРЅР°, С‚Рѕ С‚РµСЃС‚РѕРІС‹Р№ РІРёРґР¶РµС‚ СѓРґР°Р»СЏРµС‚СЃСЏ, РѕРЅ РЅСѓР¶РµРЅ Р±С‹Р» СЃСѓРіСѓР±Рѕ РґР»СЏ РїСЂРѕРІРµСЂРєРё
     if (TestGridWidget) {
         if (TestGridWidget->IsValidLowLevel()) {
             TestGridWidget->ConditionalBeginDestroy();
@@ -145,19 +145,19 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
         TestGridWidget->RemoveFromParent();
     }
 
-    /* Здесь проверяется корректность переданного класса, по которому будут делаться ячейки.
-     * Переданный CellClass имеет тип данных UClass*, но для корректной работы кода
-     * этот класс обязательно должен наследоваться от UMapCell. Мне не известны
-     * инструменты проверки этого на уровне аргумента функции, так что эта проверка
-     * будет выполняться здесь.
+    /* Р—РґРµСЃСЊ РїСЂРѕРІРµСЂСЏРµС‚СЃСЏ РєРѕСЂСЂРµРєС‚РЅРѕСЃС‚СЊ РїРµСЂРµРґР°РЅРЅРѕРіРѕ РєР»Р°СЃСЃР°, РїРѕ РєРѕС‚РѕСЂРѕРјСѓ Р±СѓРґСѓС‚ РґРµР»Р°С‚СЊСЃСЏ СЏС‡РµР№РєРё.
+     * РџРµСЂРµРґР°РЅРЅС‹Р№ CellClass РёРјРµРµС‚ С‚РёРї РґР°РЅРЅС‹С… UClass*, РЅРѕ РґР»СЏ РєРѕСЂСЂРµРєС‚РЅРѕР№ СЂР°Р±РѕС‚С‹ РєРѕРґР°
+     * СЌС‚РѕС‚ РєР»Р°СЃСЃ РѕР±СЏР·Р°С‚РµР»СЊРЅРѕ РґРѕР»Р¶РµРЅ РЅР°СЃР»РµРґРѕРІР°С‚СЊСЃСЏ РѕС‚ UMapCell. РњРЅРµ РЅРµ РёР·РІРµСЃС‚РЅС‹
+     * РёРЅСЃС‚СЂСѓРјРµРЅС‚С‹ РїСЂРѕРІРµСЂРєРё СЌС‚РѕРіРѕ РЅР° СѓСЂРѕРІРЅРµ Р°СЂРіСѓРјРµРЅС‚Р° С„СѓРЅРєС†РёРё, С‚Р°Рє С‡С‚Рѕ СЌС‚Р° РїСЂРѕРІРµСЂРєР°
+     * Р±СѓРґРµС‚ РІС‹РїРѕР»РЅСЏС‚СЊСЃСЏ Р·РґРµСЃСЊ.
      *
-     * Для данной проверки создаётся один тестовый виджет, который после будет удалён.
-     * С помощью dynamic_cast выясняется есть ли в древе наследовании переданного класса UMapCell */
+     * Р”Р»СЏ РґР°РЅРЅРѕР№ РїСЂРѕРІРµСЂРєРё СЃРѕР·РґР°С‘С‚СЃСЏ РѕРґРёРЅ С‚РµСЃС‚РѕРІС‹Р№ РІРёРґР¶РµС‚, РєРѕС‚РѕСЂС‹Р№ РїРѕСЃР»Рµ Р±СѓРґРµС‚ СѓРґР°Р»С‘РЅ.
+     * РЎ РїРѕРјРѕС‰СЊСЋ dynamic_cast РІС‹СЏСЃРЅСЏРµС‚СЃСЏ РµСЃС‚СЊ Р»Рё РІ РґСЂРµРІРµ РЅР°СЃР»РµРґРѕРІР°РЅРёРё РїРµСЂРµРґР°РЅРЅРѕРіРѕ РєР»Р°СЃСЃР° UMapCell */
     UUserWidget* TestCellWidget = CreateWidget<UUserWidget>(TilesGridPanel, CellClass);
     if (!StaticCast<UMapCell*>(TestCellWidget)) {
         UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: CellClass was expected to inherit from UMapCell, but its class is %s"), *CellClass->GetName());
 
-        //Если класс был некорректен, то тестовый виджет всё равно удаляется
+        //Р•СЃР»Рё РєР»Р°СЃСЃ Р±С‹Р» РЅРµРєРѕСЂСЂРµРєС‚РµРЅ, С‚Рѕ С‚РµСЃС‚РѕРІС‹Р№ РІРёРґР¶РµС‚ РІСЃС‘ СЂР°РІРЅРѕ СѓРґР°Р»СЏРµС‚СЃСЏ
         if (TestCellWidget) {
             TestCellWidget->RemoveFromParent();
         }
@@ -172,19 +172,19 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
 
         return;
     }
-    /* Тестовый виджет ячейки пока не удаляется, он ещё пригодится для вычисления размеров тайла. Вычислять будем именно с тестовой
-     * ячейки потому что здесь уже проведена точная и недвусмысленная проверка, что ячейка - это ячейка и она определённо существует,
-     * в то время как ячейки, созданные в процессе заполнения карты могут быть не настолько корректными, например может быть загружена
-     * полностью пустая карта вовсе без ячеек, да и банально до их указателя добираться дольше и сложнее через несколько StaticCast'ов. */
+    /* РўРµСЃС‚РѕРІС‹Р№ РІРёРґР¶РµС‚ СЏС‡РµР№РєРё РїРѕРєР° РЅРµ СѓРґР°Р»СЏРµС‚СЃСЏ, РѕРЅ РµС‰С‘ РїСЂРёРіРѕРґРёС‚СЃСЏ РґР»СЏ РІС‹С‡РёСЃР»РµРЅРёСЏ СЂР°Р·РјРµСЂРѕРІ С‚Р°Р№Р»Р°. Р’С‹С‡РёСЃР»СЏС‚СЊ Р±СѓРґРµРј РёРјРµРЅРЅРѕ СЃ С‚РµСЃС‚РѕРІРѕР№
+     * СЏС‡РµР№РєРё РїРѕС‚РѕРјСѓ С‡С‚Рѕ Р·РґРµСЃСЊ СѓР¶Рµ РїСЂРѕРІРµРґРµРЅР° С‚РѕС‡РЅР°СЏ Рё РЅРµРґРІСѓСЃРјС‹СЃР»РµРЅРЅР°СЏ РїСЂРѕРІРµСЂРєР°, С‡С‚Рѕ СЏС‡РµР№РєР° - СЌС‚Рѕ СЏС‡РµР№РєР° Рё РѕРЅР° РѕРїСЂРµРґРµР»С‘РЅРЅРѕ СЃСѓС‰РµСЃС‚РІСѓРµС‚,
+     * РІ С‚Рѕ РІСЂРµРјСЏ РєР°Рє СЏС‡РµР№РєРё, СЃРѕР·РґР°РЅРЅС‹Рµ РІ РїСЂРѕС†РµСЃСЃРµ Р·Р°РїРѕР»РЅРµРЅРёСЏ РєР°СЂС‚С‹ РјРѕРіСѓС‚ Р±С‹С‚СЊ РЅРµ РЅР°СЃС‚РѕР»СЊРєРѕ РєРѕСЂСЂРµРєС‚РЅС‹РјРё, РЅР°РїСЂРёРјРµСЂ РјРѕР¶РµС‚ Р±С‹С‚СЊ Р·Р°РіСЂСѓР¶РµРЅР°
+     * РїРѕР»РЅРѕСЃС‚СЊСЋ РїСѓСЃС‚Р°СЏ РєР°СЂС‚Р° РІРѕРІСЃРµ Р±РµР· СЏС‡РµРµРє, РґР° Рё Р±Р°РЅР°Р»СЊРЅРѕ РґРѕ РёС… СѓРєР°Р·Р°С‚РµР»СЏ РґРѕР±РёСЂР°С‚СЊСЃСЏ РґРѕР»СЊС€Рµ Рё СЃР»РѕР¶РЅРµРµ С‡РµСЂРµР· РЅРµСЃРєРѕР»СЊРєРѕ StaticCast'РѕРІ. */
 
     if (MapDimensions.isValid) {
-        //Чтобы не дёргать отрисовку лишний раз во время всего процесса забивания ячейками карты, следует сделать TilesGridPanel колапсированной
+        //Р§С‚РѕР±С‹ РЅРµ РґС‘СЂРіР°С‚СЊ РѕС‚СЂРёСЃРѕРІРєСѓ Р»РёС€РЅРёР№ СЂР°Р· РІРѕ РІСЂРµРјСЏ РІСЃРµРіРѕ РїСЂРѕС†РµСЃСЃР° Р·Р°Р±РёРІР°РЅРёСЏ СЏС‡РµР№РєР°РјРё РєР°СЂС‚С‹, СЃР»РµРґСѓРµС‚ СЃРґРµР»Р°С‚СЊ TilesGridPanel РєРѕР»Р°РїСЃРёСЂРѕРІР°РЅРЅРѕР№
         TilesGridPanel->SetVisibility(ESlateVisibility::Collapsed);
 
         int TableLength = MapDimensions.TableLength;
         int MapTileLength = MapDimensions.MapTileLength;
 
-        //Реальный размер полученной карты (в фрагментах)
+        //Р РµР°Р»СЊРЅС‹Р№ СЂР°Р·РјРµСЂ РїРѕР»СѓС‡РµРЅРЅРѕР№ РєР°СЂС‚С‹ (РІ С„СЂР°РіРјРµРЅС‚Р°С…)
         ColsNum = MapDimensions.MaxCol - MapDimensions.MinCol + 1;
         RowsNum = MapDimensions.MaxRow - MapDimensions.MinRow + 1;
 
@@ -195,7 +195,7 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
             FVector2D CellSize = static_cast<UMapCell*>(TestCellWidget)->getSize();
             TileSize = CellSize * MapTileLength;
         }
-        //И только сейчас удаляется тестовый виджет ячейки
+        //Р С‚РѕР»СЊРєРѕ СЃРµР№С‡Р°СЃ СѓРґР°Р»СЏРµС‚СЃСЏ С‚РµСЃС‚РѕРІС‹Р№ РІРёРґР¶РµС‚ СЏС‡РµР№РєРё
         if (TestCellWidget) {
             if (TestCellWidget->IsValidLowLevel()) {
                 TestCellWidget->ConditionalBeginDestroy();
@@ -204,29 +204,29 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
             TestCellWidget->RemoveFromParent();
         }
 
-        //Количество чанков, влезающих на экран
+        //РљРѕР»РёС‡РµСЃС‚РІРѕ С‡Р°РЅРєРѕРІ, РІР»РµР·Р°СЋС‰РёС… РЅР° СЌРєСЂР°РЅ
         NumberOfTilesColsThatFitOnScreen = ceil((WidgetAreaSize.X) / TileSize.X);
         NumberOfTilesRowsThatFitOnScreen = ceil((WidgetAreaSize.Y) / TileSize.Y);
 
-        //Если количество чанков, влезающих на экран, больше фактического количества чанков, то оно усекается
+        //Р•СЃР»Рё РєРѕР»РёС‡РµСЃС‚РІРѕ С‡Р°РЅРєРѕРІ, РІР»РµР·Р°СЋС‰РёС… РЅР° СЌРєСЂР°РЅ, Р±РѕР»СЊС€Рµ С„Р°РєС‚РёС‡РµСЃРєРѕРіРѕ РєРѕР»РёС‡РµСЃС‚РІР° С‡Р°РЅРєРѕРІ, С‚Рѕ РѕРЅРѕ СѓСЃРµРєР°РµС‚СЃСЏ
         if (NumberOfTilesColsThatFitOnScreen > NumberOfMapTilesCols)
             NumberOfTilesColsThatFitOnScreen = NumberOfMapTilesCols;
         if (NumberOfTilesRowsThatFitOnScreen > NumberOfMapTilesRows)
             NumberOfTilesRowsThatFitOnScreen = NumberOfMapTilesRows;
 
-        //Переманные, отражающие чётность фактического количества чанков
+        //РџРµСЂРµРјР°РЅРЅС‹Рµ, РѕС‚СЂР°Р¶Р°СЋС‰РёРµ С‡С‘С‚РЅРѕСЃС‚СЊ С„Р°РєС‚РёС‡РµСЃРєРѕРіРѕ РєРѕР»РёС‡РµСЃС‚РІР° С‡Р°РЅРєРѕРІ
         bool IsNumberOfTilesColsEven = (NumberOfMapTilesCols % 2) == 0;
         bool IsNumberOfTilesRowsEven = (NumberOfMapTilesRows % 2) == 0;
 
-        //Переменные, отражающие чётность влезающего на экран количества чанков
+        //РџРµСЂРµРјРµРЅРЅС‹Рµ, РѕС‚СЂР°Р¶Р°СЋС‰РёРµ С‡С‘С‚РЅРѕСЃС‚СЊ РІР»РµР·Р°СЋС‰РµРіРѕ РЅР° СЌРєСЂР°РЅ РєРѕР»РёС‡РµСЃС‚РІР° С‡Р°РЅРєРѕРІ
         bool IsNumberOfFittingTilesColsEven = (NumberOfTilesColsThatFitOnScreen % 2) == 0;
         bool IsNumberOfFittingTilesRowsEven = (NumberOfTilesRowsThatFitOnScreen % 2) == 0;
 
-        /* Чётность фактического и влезающего на экран количества чанков всегда должна совпадать для нормальной
-         * центровки таблицы. При расхождении чётности, количество влезающих на кран ячеек увеличивается на 1.
-         * Так как выше уже была проведена усекающая проверка, не дающая влезающему количеству ячеек превысить
-         * фактическое, а быть равными эти количества при расходящейся чётности также не могут, то при увеличении
-         * влезающего количества ячеек на 1, превышение фактического количества никогда не произоёдёт. */
+        /* Р§С‘С‚РЅРѕСЃС‚СЊ С„Р°РєС‚РёС‡РµСЃРєРѕРіРѕ Рё РІР»РµР·Р°СЋС‰РµРіРѕ РЅР° СЌРєСЂР°РЅ РєРѕР»РёС‡РµСЃС‚РІР° С‡Р°РЅРєРѕРІ РІСЃРµРіРґР° РґРѕР»Р¶РЅР° СЃРѕРІРїР°РґР°С‚СЊ РґР»СЏ РЅРѕСЂРјР°Р»СЊРЅРѕР№
+         * С†РµРЅС‚СЂРѕРІРєРё С‚Р°Р±Р»РёС†С‹. РџСЂРё СЂР°СЃС…РѕР¶РґРµРЅРёРё С‡С‘С‚РЅРѕСЃС‚Рё, РєРѕР»РёС‡РµСЃС‚РІРѕ РІР»РµР·Р°СЋС‰РёС… РЅР° РєСЂР°РЅ СЏС‡РµРµРє СѓРІРµР»РёС‡РёРІР°РµС‚СЃСЏ РЅР° 1.
+         * РўР°Рє РєР°Рє РІС‹С€Рµ СѓР¶Рµ Р±С‹Р»Р° РїСЂРѕРІРµРґРµРЅР° СѓСЃРµРєР°СЋС‰Р°СЏ РїСЂРѕРІРµСЂРєР°, РЅРµ РґР°СЋС‰Р°СЏ РІР»РµР·Р°СЋС‰РµРјСѓ РєРѕР»РёС‡РµСЃС‚РІСѓ СЏС‡РµРµРє РїСЂРµРІС‹СЃРёС‚СЊ
+         * С„Р°РєС‚РёС‡РµСЃРєРѕРµ, Р° Р±С‹С‚СЊ СЂР°РІРЅС‹РјРё СЌС‚Рё РєРѕР»РёС‡РµСЃС‚РІР° РїСЂРё СЂР°СЃС…РѕРґСЏС‰РµР№СЃСЏ С‡С‘С‚РЅРѕСЃС‚Рё С‚Р°РєР¶Рµ РЅРµ РјРѕРіСѓС‚, С‚Рѕ РїСЂРё СѓРІРµР»РёС‡РµРЅРёРё
+         * РІР»РµР·Р°СЋС‰РµРіРѕ РєРѕР»РёС‡РµСЃС‚РІР° СЏС‡РµРµРє РЅР° 1, РїСЂРµРІС‹С€РµРЅРёРµ С„Р°РєС‚РёС‡РµСЃРєРѕРіРѕ РєРѕР»РёС‡РµСЃС‚РІР° РЅРёРєРѕРіРґР° РЅРµ РїСЂРѕРёР·РѕС‘РґС‘С‚. */
         if (IsNumberOfTilesColsEven != IsNumberOfFittingTilesColsEven)
             NumberOfTilesColsThatFitOnScreen++;
         if (IsNumberOfTilesRowsEven != IsNumberOfFittingTilesRowsEven)
@@ -242,7 +242,7 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
         if (!TileBuf->ScoreToMaximum())
             UE_LOG(FillingMapWithCells, Log, TEXT("fffffffffffff"));
 
-        //Само забиваение карты ячейками происходит в отдельном потоке
+        //РЎР°РјРѕ Р·Р°Р±РёРІР°РµРЅРёРµ РєР°СЂС‚С‹ СЏС‡РµР№РєР°РјРё РїСЂРѕРёСЃС…РѕРґРёС‚ РІ РѕС‚РґРµР»СЊРЅРѕРј РїРѕС‚РѕРєРµ
         AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapEditor, TableLength, MapTileLength,TilesGridPanel, TileBuf, CellClass, MapTileClass,
             TilesCoordWrapper, MapMatrix, StartingPositionRow, StartingPositionCol, NumberOfMapTilesRows, NumberOfMapTilesCols, this]() {
 
@@ -256,28 +256,28 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                 MinOriginalVisibleTile = FGridCoord(StartingPositionRow, StartingPositionCol);
                 MaxOriginalVisibleTile = FGridCoord(StartingPositionRow + (NumberOfTilesRowsThatFitOnScreen - 1), StartingPositionCol + (NumberOfTilesColsThatFitOnScreen - 1));
 
-                /* Данный цикл и вложенный в него создают тайлы. При этом
-                 * это происходит таким образом, чтобы самый первый тайл
-                 * с наименьшим индексом был слева снизу, а последний с
-                 * наибольшим - справа сверху.
+                /* Р”Р°РЅРЅС‹Р№ С†РёРєР» Рё РІР»РѕР¶РµРЅРЅС‹Р№ РІ РЅРµРіРѕ СЃРѕР·РґР°СЋС‚ С‚Р°Р№Р»С‹. РџСЂРё СЌС‚РѕРј
+                 * СЌС‚Рѕ РїСЂРѕРёСЃС…РѕРґРёС‚ С‚Р°РєРёРј РѕР±СЂР°Р·РѕРј, С‡С‚РѕР±С‹ СЃР°РјС‹Р№ РїРµСЂРІС‹Р№ С‚Р°Р№Р»
+                 * СЃ РЅР°РёРјРµРЅСЊС€РёРј РёРЅРґРµРєСЃРѕРј Р±С‹Р» СЃР»РµРІР° СЃРЅРёР·Сѓ, Р° РїРѕСЃР»РµРґРЅРёР№ СЃ
+                 * РЅР°РёР±РѕР»СЊС€РёРј - СЃРїСЂР°РІР° СЃРІРµСЂС…Сѓ.
                  * 
-                 * Для этого строки перебираются обратным циклом - 
-                 * от их количества (это число сразу переведено 
-                 * в индекс вычитанием единицы) до нуля.
-                 * Для столбцов же перебор обычный от нуля до их
-                 * количества, при этом, из-за того, что здесь <,
-                 * а не <=, преведение к индексу не требуется, так
-                 * как последнее число всё равно усекается */
+                 * Р”Р»СЏ СЌС‚РѕРіРѕ СЃС‚СЂРѕРєРё РїРµСЂРµР±РёСЂР°СЋС‚СЃСЏ РѕР±СЂР°С‚РЅС‹Рј С†РёРєР»РѕРј - 
+                 * РѕС‚ РёС… РєРѕР»РёС‡РµСЃС‚РІР° (СЌС‚Рѕ С‡РёСЃР»Рѕ СЃСЂР°Р·Сѓ РїРµСЂРµРІРµРґРµРЅРѕ 
+                 * РІ РёРЅРґРµРєСЃ РІС‹С‡РёС‚Р°РЅРёРµРј РµРґРёРЅРёС†С‹) РґРѕ РЅСѓР»СЏ.
+                 * Р”Р»СЏ СЃС‚РѕР»Р±С†РѕРІ Р¶Рµ РїРµСЂРµР±РѕСЂ РѕР±С‹С‡РЅС‹Р№ РѕС‚ РЅСѓР»СЏ РґРѕ РёС…
+                 * РєРѕР»РёС‡РµСЃС‚РІР°, РїСЂРё СЌС‚РѕРј, РёР·-Р·Р° С‚РѕРіРѕ, С‡С‚Рѕ Р·РґРµСЃСЊ <,
+                 * Р° РЅРµ <=, РїСЂРµРІРµРґРµРЅРёРµ Рє РёРЅРґРµРєСЃСѓ РЅРµ С‚СЂРµР±СѓРµС‚СЃСЏ, С‚Р°Рє
+                 * РєР°Рє РїРѕСЃР»РµРґРЅРµРµ С‡РёСЃР»Рѕ РІСЃС‘ СЂР°РІРЅРѕ СѓСЃРµРєР°РµС‚СЃСЏ */
                 for (int row = StartingPositionRow + NumberOfTilesRowsThatFitOnScreen - 1; row >= StartingPositionRow; row--) {
                     for (int col = StartingPositionCol; col < NumberOfTilesColsThatFitOnScreen + StartingPositionCol; col++) {
-                        //Карта состоит из тайлов, которые, в свою очередь, состоят из ячеек, так что сначала создаётся тайл
+                        //РљР°СЂС‚Р° СЃРѕСЃС‚РѕРёС‚ РёР· С‚Р°Р№Р»РѕРІ, РєРѕС‚РѕСЂС‹Рµ, РІ СЃРІРѕСЋ РѕС‡РµСЂРµРґСЊ, СЃРѕСЃС‚РѕСЏС‚ РёР· СЏС‡РµРµРє, С‚Р°Рє С‡С‚Рѕ СЃРЅР°С‡Р°Р»Р° СЃРѕР·РґР°С‘С‚СЃСЏ С‚Р°Р№Р»
                         UPROPERTY()
                         UMapTile* NewTile = CreateWidget<UMapTile>(TilesGridPanel, MapTileClass);
 
                         if (!NewTile) {
                             UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: MapTile was created with an error"));
 
-                            //Виджет загрузки удалятся в основном потоке так как сделать это вне его невозможно
+                            //Р’РёРґР¶РµС‚ Р·Р°РіСЂСѓР·РєРё СѓРґР°Р»СЏС‚СЃСЏ РІ РѕСЃРЅРѕРІРЅРѕРј РїРѕС‚РѕРєРµ С‚Р°Рє РєР°Рє СЃРґРµР»Р°С‚СЊ СЌС‚Рѕ РІРЅРµ РµРіРѕ РЅРµРІРѕР·РјРѕР¶РЅРѕ
                             AsyncTask(ENamedThreads::GameThread, [MapEditor, TilesGridPanel, this]() {
                                 if (GameInstance && GameInstance->LogType != ELogType::NONE)
                                     UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: Launched a GameThread call from the TilesGridPanel table population thread to remove the loading widget"));
@@ -329,7 +329,7 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                                 });
                         }
 
-                        //Добавление созданного тайла в GridPanel производится в основном потоке так как сделать это вне его невозможно
+                        //Р”РѕР±Р°РІР»РµРЅРёРµ СЃРѕР·РґР°РЅРЅРѕРіРѕ С‚Р°Р№Р»Р° РІ GridPanel РїСЂРѕРёР·РІРѕРґРёС‚СЃСЏ РІ РѕСЃРЅРѕРІРЅРѕРј РїРѕС‚РѕРєРµ С‚Р°Рє РєР°Рє СЃРґРµР»Р°С‚СЊ СЌС‚Рѕ РІРЅРµ РµРіРѕ РЅРµРІРѕР·РјРѕР¶РЅРѕ
                         AsyncTask(ENamedThreads::GameThread, [TilesGridPanel, NewTile, row, col, TilesCoordWrapper, NumberOfMapTilesRows, this]() {
                             if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                                 UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: Launched a GameThread call from the TilesGridPanel table population thread to place a tile in a TilesGridPanel table"));
@@ -342,11 +342,11 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                                 UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: A thread to place a tile in a TilesGridPanel table has been closed"));
                             }
 
-                            /* Созданные тайлы забиваются в координатную обёртку. При этом важен их индекс в порядке
-                             * создания, чтобы, например, слева снизу был тайл 0x0, а справа сверху - 10x10.
-                             * Для этого индекс обратного цикла по строкам разворачивается, чтобы передать
-                             * инвертированное значение от того, что было уже инвертировано для корректного
-                             * расположения тайлов в GridPanel */
+                            /* РЎРѕР·РґР°РЅРЅС‹Рµ С‚Р°Р№Р»С‹ Р·Р°Р±РёРІР°СЋС‚СЃСЏ РІ РєРѕРѕСЂРґРёРЅР°С‚РЅСѓСЋ РѕР±С‘СЂС‚РєСѓ. РџСЂРё СЌС‚РѕРј РІР°Р¶РµРЅ РёС… РёРЅРґРµРєСЃ РІ РїРѕСЂСЏРґРєРµ
+                             * СЃРѕР·РґР°РЅРёСЏ, С‡С‚РѕР±С‹, РЅР°РїСЂРёРјРµСЂ, СЃР»РµРІР° СЃРЅРёР·Сѓ Р±С‹Р» С‚Р°Р№Р» 0x0, Р° СЃРїСЂР°РІР° СЃРІРµСЂС…Сѓ - 10x10.
+                             * Р”Р»СЏ СЌС‚РѕРіРѕ РёРЅРґРµРєСЃ РѕР±СЂР°С‚РЅРѕРіРѕ С†РёРєР»Р° РїРѕ СЃС‚СЂРѕРєР°Рј СЂР°Р·РІРѕСЂР°С‡РёРІР°РµС‚СЃСЏ, С‡С‚РѕР±С‹ РїРµСЂРµРґР°С‚СЊ
+                             * РёРЅРІРµСЂС‚РёСЂРѕРІР°РЅРЅРѕРµ Р·РЅР°С‡РµРЅРёРµ РѕС‚ С‚РѕРіРѕ, С‡С‚Рѕ Р±С‹Р»Рѕ СѓР¶Рµ РёРЅРІРµСЂС‚РёСЂРѕРІР°РЅРѕ РґР»СЏ РєРѕСЂСЂРµРєС‚РЅРѕРіРѕ
+                             * СЂР°СЃРїРѕР»РѕР¶РµРЅРёСЏ С‚Р°Р№Р»РѕРІ РІ GridPanel */
                             TilesCoordWrapper->AddWidget(NumberOfMapTilesRows - row - 1, col, NewTile, GridSlot);
                         });
 
@@ -361,11 +361,11 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                     MinTileGridSlot = TilesGridPanel->AddChildToUniformGrid(MaxTile, NumberOfMapTilesRows - 1, NumberOfMapTilesCols - 1);
                 });
 
-                //Чтобы таблицу не сжимало устанавливается минимальный размер слота
+                //Р§С‚РѕР±С‹ С‚Р°Р±Р»РёС†Сѓ РЅРµ СЃР¶РёРјР°Р»Рѕ СѓСЃС‚Р°РЅР°РІР»РёРІР°РµС‚СЃСЏ РјРёРЅРёРјР°Р»СЊРЅС‹Р№ СЂР°Р·РјРµСЂ СЃР»РѕС‚Р°
                 TilesGridPanel->SetMinDesiredSlotWidth(TileSize.X);
                 TilesGridPanel->SetMinDesiredSlotHeight(TileSize.Y);
 
-                //Все взаимодействия, связанные с изменением состояний виджетов выполняются в основном потоке
+                //Р’СЃРµ РІР·Р°РёРјРѕРґРµР№СЃС‚РІРёСЏ, СЃРІСЏР·Р°РЅРЅС‹Рµ СЃ РёР·РјРµРЅРµРЅРёРµРј СЃРѕСЃС‚РѕСЏРЅРёР№ РІРёРґР¶РµС‚РѕРІ РІС‹РїРѕР»РЅСЏСЋС‚СЃСЏ РІ РѕСЃРЅРѕРІРЅРѕРј РїРѕС‚РѕРєРµ
                 AsyncTask(ENamedThreads::GameThread, [MapEditor, TilesGridPanel, this]() {
                     if (GameInstance && GameInstance->LogType != ELogType::NONE)
                         UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: Launched a GameThread call from the TilesGridPanel table population thread to configure the necessary widgets at the end of filling the TilesGridPanel table and removing the loading widget"));
@@ -383,7 +383,7 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
 
                     MapEditor->UpdateItemAreaContent();
 
-                    //После полного забивания карты ячейками TilesGridPanel возвращается видимость
+                    //РџРѕСЃР»Рµ РїРѕР»РЅРѕРіРѕ Р·Р°Р±РёРІР°РЅРёСЏ РєР°СЂС‚С‹ СЏС‡РµР№РєР°РјРё TilesGridPanel РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ РІРёРґРёРјРѕСЃС‚СЊ
                     TilesGridPanel->SetVisibility(ESlateVisibility::Visible);
                     if (GameInstance && GameInstance->LogType != ELogType::NONE)
                         UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: A thread to configure the necessary widgets at the end of filling the TilesGridPanel table and removing the loading widget has been closed"));
@@ -409,7 +409,7 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
     }
 }
 
-//Если не передать виджет загрузки, то загрузка будет будет без индикации
+//Р•СЃР»Рё РЅРµ РїРµСЂРµРґР°С‚СЊ РІРёРґР¶РµС‚ Р·Р°РіСЂСѓР·РєРё, С‚Рѕ Р·Р°РіСЂСѓР·РєР° Р±СѓРґРµС‚ Р±СѓРґРµС‚ Р±РµР· РёРЅРґРёРєР°С†РёРё
 void UFillingMapWithCells::setLoadWidget(ULoadingWidget* newLoadingWidget)
 {
     this->LoadingWidget = newLoadingWidget;
@@ -418,13 +418,13 @@ void UFillingMapWithCells::setLoadWidget(ULoadingWidget* newLoadingWidget)
         UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the setLoadWidget function: The download widget has been set"));
 }
 
-//Геттер количества фрагментов по горизонтали
+//Р“РµС‚С‚РµСЂ РєРѕР»РёС‡РµСЃС‚РІР° С„СЂР°РіРјРµРЅС‚РѕРІ РїРѕ РіРѕСЂРёР·РѕРЅС‚Р°Р»Рё
 int32 UFillingMapWithCells::GetColNum()
 {
     return ColsNum;
 }
 
-//Геттер количества фрагментов по вертикали
+//Р“РµС‚С‚РµСЂ РєРѕР»РёС‡РµСЃС‚РІР° С„СЂР°РіРјРµРЅС‚РѕРІ РїРѕ РІРµСЂС‚РёРєР°Р»Рё
 int32 UFillingMapWithCells::GetRowNum()
 {
     return RowsNum;

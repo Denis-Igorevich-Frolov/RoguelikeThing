@@ -1,4 +1,4 @@
-// Denis Igorevich Frolov did all this. Once there. All things reserved.
+п»ї// Denis Igorevich Frolov did all this. Once there. All things reserved.
 
 #pragma once
 
@@ -6,7 +6,7 @@
 #include "CellCoord.generated.h"
 
 /***********************************************************************
- * Данная структура является труктурой глобальной координаты клетки
+ * Р”Р°РЅРЅР°СЏ СЃС‚СЂСѓРєС‚СѓСЂР° СЏРІР»СЏРµС‚СЃСЏ С‚СЂСѓРєС‚СѓСЂРѕР№ РіР»РѕР±Р°Р»СЊРЅРѕР№ РєРѕРѕСЂРґРёРЅР°С‚С‹ РєР»РµС‚РєРё
  ***********************************************************************/
 USTRUCT(BlueprintType)
 struct FCellCoord

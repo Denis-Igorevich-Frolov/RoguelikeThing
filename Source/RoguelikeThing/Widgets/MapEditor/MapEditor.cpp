@@ -1,11 +1,11 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+ï»¿// Fill out your copyright notice in the Description page of Project Settings.
 
 
 #include "RoguelikeThing/Widgets/MapEditor/MapEditor.h"
 
 void UMapEditor::ResizeEvent(FViewport* ViewPort, uint32 val)
 {
-    //Ýâåíò èçìåíåíèÿ ðàçìåðà ýêðàíà âûçûâàåòñÿ òîëüêî åñëè ðàçìåð îêíà äåéñòâèòåëüíî èìçìåíèëñÿ
+    //Ð­Ð²ÐµÐ½Ñ‚ Ð¸Ð·Ð¼ÐµÐ½ÐµÐ½Ð¸Ñ Ñ€Ð°Ð·Ð¼ÐµÑ€Ð° ÑÐºÑ€Ð°Ð½Ð° Ð²Ñ‹Ð·Ñ‹Ð²Ð°ÐµÑ‚ÑÑ Ñ‚Ð¾Ð»ÑŒÐºÐ¾ ÐµÑÐ»Ð¸ Ñ€Ð°Ð·Ð¼ÐµÑ€ Ð¾ÐºÐ½Ð° Ð´ÐµÐ¹ÑÑ‚Ð²Ð¸Ñ‚ÐµÐ»ÑŒÐ½Ð¾ Ð¸Ð¼Ð·Ð¼ÐµÐ½Ð¸Ð»ÑÑ
     if (OldViewPortSize != ViewPort->GetSizeXY()) {
         OldViewPortSize = ViewPort->GetSizeXY();
 
@@ -15,6 +15,6 @@ void UMapEditor::ResizeEvent(FViewport* ViewPort, uint32 val)
 
 UMapEditor::UMapEditor(const FObjectInitializer& ObjectInitializer) : UUserWidget(ObjectInitializer)
 {
-    //Ïðè ñîçäàíèè ðåäàêòîðà êàðòû ñâÿçûâàåòñÿ âñòðîåíûé ViewportResizedEvent è êàñòîìíûé ResizeEvent, äîñòóïíûé äëÿ áëþïðèíòîâ
+    //ÐŸÑ€Ð¸ ÑÐ¾Ð·Ð´Ð°Ð½Ð¸Ð¸ Ñ€ÐµÐ´Ð°ÐºÑ‚Ð¾Ñ€Ð° ÐºÐ°Ñ€Ñ‚Ñ‹ ÑÐ²ÑÐ·Ñ‹Ð²Ð°ÐµÑ‚ÑÑ Ð²ÑÑ‚Ñ€Ð¾ÐµÐ½Ñ‹Ð¹ ViewportResizedEvent Ð¸ ÐºÐ°ÑÑ‚Ð¾Ð¼Ð½Ñ‹Ð¹ ResizeEvent, Ð´Ð¾ÑÑ‚ÑƒÐ¿Ð½Ñ‹Ð¹ Ð´Ð»Ñ Ð±Ð»ÑŽÐ¿Ñ€Ð¸Ð½Ñ‚Ð¾Ð²
     GEngine->GameViewport->Viewport->ViewportResizedEvent.AddUObject(this, &UMapEditor::ResizeEvent);
 }

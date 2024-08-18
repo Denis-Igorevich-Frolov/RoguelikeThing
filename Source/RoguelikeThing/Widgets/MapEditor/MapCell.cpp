@@ -1,4 +1,4 @@
-// Denis Igorevich Frolov did all this. Once there. All things reserved.
+п»ї// Denis Igorevich Frolov did all this. Once there. All things reserved.
 
 
 #include "RoguelikeThing/Widgets/MapEditor/MapCell.h"
@@ -8,7 +8,7 @@ DEFINE_LOG_CATEGORY(MapCell);
 
 UMapCell::UMapCell(const FObjectInitializer& Object) : UAbstractTile(Object)
 {
-    //Получение GameInstance из мира
+    //РџРѕР»СѓС‡РµРЅРёРµ GameInstance РёР· РјРёСЂР°
     GameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
     if (!GameInstance)
         UE_LOG(MapCell, Warning, TEXT("Warning in MapCell class in constructor - GameInstance was not retrieved from the world"));
@@ -30,14 +30,14 @@ void UMapCell::SetMyCoord(FCellCoord myCoord)
     this->MyCoord = myCoord;
 }
 
-/* Функция, возвращающая глобальную координату ячейки, то есть с учётом координаты родительского тайла. Так, например,
- * ячейка 0:1, находящаяся в тайле 0:3, при длине стороны тайла в 5, будет имень глобальную координату 0:16 */
+/* Р¤СѓРЅРєС†РёСЏ, РІРѕР·РІСЂР°С‰Р°СЋС‰Р°СЏ РіР»РѕР±Р°Р»СЊРЅСѓСЋ РєРѕРѕСЂРґРёРЅР°С‚Сѓ СЏС‡РµР№РєРё, С‚Рѕ РµСЃС‚СЊ СЃ СѓС‡С‘С‚РѕРј РєРѕРѕСЂРґРёРЅР°С‚С‹ СЂРѕРґРёС‚РµР»СЊСЃРєРѕРіРѕ С‚Р°Р№Р»Р°. РўР°Рє, РЅР°РїСЂРёРјРµСЂ,
+ * СЏС‡РµР№РєР° 0:1, РЅР°С…РѕРґСЏС‰Р°СЏСЃСЏ РІ С‚Р°Р№Р»Рµ 0:3, РїСЂРё РґР»РёРЅРµ СЃС‚РѕСЂРѕРЅС‹ С‚Р°Р№Р»Р° РІ 5, Р±СѓРґРµС‚ РёРјРµРЅСЊ РіР»РѕР±Р°Р»СЊРЅСѓСЋ РєРѕРѕСЂРґРёРЅР°С‚Сѓ 0:16 */
 FCellCoord UMapCell::GetMyGlobalCoord()
 {
     return FCellCoord(CoordOfParentTile->Row * MapTileLength + MyCoord.Row, CoordOfParentTile->Col * MapTileLength + MyCoord.Col);
 }
 
-//Функция, возвращающая координату ячейки внутри своего родительского тайла
+//Р¤СѓРЅРєС†РёСЏ, РІРѕР·РІСЂР°С‰Р°СЋС‰Р°СЏ РєРѕРѕСЂРґРёРЅР°С‚Сѓ СЏС‡РµР№РєРё РІРЅСѓС‚СЂРё СЃРІРѕРµРіРѕ СЂРѕРґРёС‚РµР»СЊСЃРєРѕРіРѕ С‚Р°Р№Р»Р°
 FCellCoord UMapCell::GetMyLocalCoord()
 {
     return MyCoord;

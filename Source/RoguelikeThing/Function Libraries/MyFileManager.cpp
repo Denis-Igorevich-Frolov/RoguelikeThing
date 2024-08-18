@@ -1,4 +1,4 @@
-// Denis Igorevich Frolov did all this. Once there. All things reserved.
+п»ї// Denis Igorevich Frolov did all this. Once there. All things reserved.
 
 
 #include "RoguelikeThing/Function Libraries/MyFileManager.h"
@@ -8,16 +8,16 @@ DEFINE_LOG_CATEGORY(MyFileManager);
 
 UMyFileManager::UMyFileManager()
 {
-    //Получение GameInstance из мира
+    //РџРѕР»СѓС‡РµРЅРёРµ GameInstance РёР· РјРёСЂР°
     GameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
     if (!GameInstance)
         UE_LOG(MyFileManager, Warning, TEXT("Warning in MyFileManager class in constructor - GameInstance was not retrieved from the world"));
 }
 
-//Функция, перемещающая указанный файл в указанную директорию внутри временной папки
+//Р¤СѓРЅРєС†РёСЏ, РїРµСЂРµРјРµС‰Р°СЋС‰Р°СЏ СѓРєР°Р·Р°РЅРЅС‹Р№ С„Р°Р№Р» РІ СѓРєР°Р·Р°РЅРЅСѓСЋ РґРёСЂРµРєС‚РѕСЂРёСЋ РІРЅСѓС‚СЂРё РІСЂРµРјРµРЅРЅРѕР№ РїР°РїРєРё
 bool UMyFileManager::CopyFileToTemporaryDirectory(FString PathToOriginalFile, FString PathToDirectoryInsideTempFolder, FString TemporaryFileName)
 {
-    //Сначала проверяется существует ли оригинальный файл
+    //РЎРЅР°С‡Р°Р»Р° РїСЂРѕРІРµСЂСЏРµС‚СЃСЏ СЃСѓС‰РµСЃС‚РІСѓРµС‚ Р»Рё РѕСЂРёРіРёРЅР°Р»СЊРЅС‹Р№ С„Р°Р№Р»
     if (!FileManager.FileExists(*PathToOriginalFile)) {
         UE_LOG(MyFileManager, Error, TEXT("!!! An error occurred in the MyFileManager class in the CopyFileToTemporaryDirectory function - File %s does not exist"), *PathToOriginalFile);
         return false;
@@ -25,7 +25,7 @@ bool UMyFileManager::CopyFileToTemporaryDirectory(FString PathToOriginalFile, FS
 
     FString pathToTempDirectory = FPaths::ProjectDir() + TEXT("Temp/") + PathToDirectoryInsideTempFolder;
 
-    //Если целевая временная директория уже существует, то она удаляется для очистки всего её содержимого
+    //Р•СЃР»Рё С†РµР»РµРІР°СЏ РІСЂРµРјРµРЅРЅР°СЏ РґРёСЂРµРєС‚РѕСЂРёСЏ СѓР¶Рµ СЃСѓС‰РµСЃС‚РІСѓРµС‚, С‚Рѕ РѕРЅР° СѓРґР°Р»СЏРµС‚СЃСЏ РґР»СЏ РѕС‡РёСЃС‚РєРё РІСЃРµРіРѕ РµС‘ СЃРѕРґРµСЂР¶РёРјРѕРіРѕ
     if (FileManager.DirectoryExists(*pathToTempDirectory)) {
         if (!FileManager.DeleteDirectoryRecursively(*pathToTempDirectory)) {
             UE_LOG(MyFileManager, Error, TEXT("!!! An error occurred in the MyFileManager class in the CopyFileToTemporaryDirectory function - An error occurred while trying to delete the temporary directory along the path %s"), *pathToTempDirectory);
@@ -35,7 +35,7 @@ bool UMyFileManager::CopyFileToTemporaryDirectory(FString PathToOriginalFile, FS
             UE_LOG(MyFileManager, Log, TEXT("MyFileManager class in the CopyFileToTemporaryDirectory function: The temporary directory %s was removed to clean it up"), *pathToTempDirectory);
     }
 
-    //Затем временная директория вновь создаётся уже пустой
+    //Р—Р°С‚РµРј РІСЂРµРјРµРЅРЅР°СЏ РґРёСЂРµРєС‚РѕСЂРёСЏ РІРЅРѕРІСЊ СЃРѕР·РґР°С‘С‚СЃСЏ СѓР¶Рµ РїСѓСЃС‚РѕР№
     if (!FileManager.CreateDirectoryTree(*pathToTempDirectory)) {
         UE_LOG(MyFileManager, Error, TEXT("!!! An error occurred in the MyFileManager class in the CopyFileToTemporaryDirectory function - An error occurred while trying to create the temporary directory along the path %s"), *pathToTempDirectory);
         return false;
@@ -45,7 +45,7 @@ bool UMyFileManager::CopyFileToTemporaryDirectory(FString PathToOriginalFile, FS
 
     FString pathToNewFile = pathToTempDirectory + TEXT("/") + TemporaryFileName;
 
-    //Оригинальный файл перемещается под новым именем во временную директорию
+    //РћСЂРёРіРёРЅР°Р»СЊРЅС‹Р№ С„Р°Р№Р» РїРµСЂРµРјРµС‰Р°РµС‚СЃСЏ РїРѕРґ РЅРѕРІС‹Рј РёРјРµРЅРµРј РІРѕ РІСЂРµРјРµРЅРЅСѓСЋ РґРёСЂРµРєС‚РѕСЂРёСЋ
     if (!FileManager.CopyFile(*pathToNewFile, *PathToOriginalFile)) {
         UE_LOG(MyFileManager, Error, TEXT("!!! An error occurred in the MyFileManager class in the CopyFileToTemporaryDirectory function - An error occurred while trying to copy the file %s to %s"), *PathToOriginalFile, *pathToNewFile);
         return false;
@@ -56,22 +56,22 @@ bool UMyFileManager::CopyFileToTemporaryDirectory(FString PathToOriginalFile, FS
     return true;
 }
 
-/* Функция, сохраняющая временный файл в другую директорию. При необходимости заменяет файл
-     * на место которого сохраняется, старый файл при этом сохраняется в директорию бекапа */
+/* Р¤СѓРЅРєС†РёСЏ, СЃРѕС…СЂР°РЅСЏСЋС‰Р°СЏ РІСЂРµРјРµРЅРЅС‹Р№ С„Р°Р№Р» РІ РґСЂСѓРіСѓСЋ РґРёСЂРµРєС‚РѕСЂРёСЋ. РџСЂРё РЅРµРѕР±С…РѕРґРёРјРѕСЃС‚Рё Р·Р°РјРµРЅСЏРµС‚ С„Р°Р№Р»
+     * РЅР° РјРµСЃС‚Рѕ РєРѕС‚РѕСЂРѕРіРѕ СЃРѕС…СЂР°РЅСЏРµС‚СЃСЏ, СЃС‚Р°СЂС‹Р№ С„Р°Р№Р» РїСЂРё СЌС‚РѕРј СЃРѕС…СЂР°РЅСЏРµС‚СЃСЏ РІ РґРёСЂРµРєС‚РѕСЂРёСЋ Р±РµРєР°РїР° */
 bool UMyFileManager::SaveTempFileToOriginalDirectory(FString PathToOriginalFile, FString PathToTempFile, FString PathToBackUp)
 {
-    //Сначала проверяетсясуществует ли временный файл, которой необходимо сохранить
+    //РЎРЅР°С‡Р°Р»Р° РїСЂРѕРІРµСЂСЏРµС‚СЃСЏСЃСѓС‰РµСЃС‚РІСѓРµС‚ Р»Рё РІСЂРµРјРµРЅРЅС‹Р№ С„Р°Р№Р», РєРѕС‚РѕСЂРѕР№ РЅРµРѕР±С…РѕРґРёРјРѕ СЃРѕС…СЂР°РЅРёС‚СЊ
     if (!FileManager.FileExists(*PathToTempFile)) {
         UE_LOG(MyFileManager, Error, TEXT("!!! An error occurred in the MyFileManager class in the SaveTempFileToOriginalDirectory function - File %s does not exist"), *PathToTempFile);
         return false;
     }
 
     FString PathToBackUpFile;
-    //Файл, указанный по пути PathToOriginalFile может и не существовать, но если он есть, то от него надо избавиться
+    //Р¤Р°Р№Р», СѓРєР°Р·Р°РЅРЅС‹Р№ РїРѕ РїСѓС‚Рё PathToOriginalFile РјРѕР¶РµС‚ Рё РЅРµ СЃСѓС‰РµСЃС‚РІРѕРІР°С‚СЊ, РЅРѕ РµСЃР»Рё РѕРЅ РµСЃС‚СЊ, С‚Рѕ РѕС‚ РЅРµРіРѕ РЅР°РґРѕ РёР·Р±Р°РІРёС‚СЊСЃСЏ
     if (FileManager.FileExists(*PathToOriginalFile)) {
-        //Просто удалять файл неразумно, его следует переместить в директорию бекапа
+        //РџСЂРѕСЃС‚Рѕ СѓРґР°Р»СЏС‚СЊ С„Р°Р№Р» РЅРµСЂР°Р·СѓРјРЅРѕ, РµРіРѕ СЃР»РµРґСѓРµС‚ РїРµСЂРµРјРµСЃС‚РёС‚СЊ РІ РґРёСЂРµРєС‚РѕСЂРёСЋ Р±РµРєР°РїР°
 
-        //Сначала создаётся директория бекапов карт, если таковой не было
+        //РЎРЅР°С‡Р°Р»Р° СЃРѕР·РґР°С‘С‚СЃСЏ РґРёСЂРµРєС‚РѕСЂРёСЏ Р±РµРєР°РїРѕРІ РєР°СЂС‚, РµСЃР»Рё С‚Р°РєРѕРІРѕР№ РЅРµ Р±С‹Р»Рѕ
         if (!FileManager.DirectoryExists(*PathToBackUp)) {
             if (!FileManager.CreateDirectoryTree(*PathToBackUp)) {
                 UE_LOG(MyFileManager, Error, TEXT("!!! An error occurred in the MyFileManager class in the SaveTempFileToOriginalDirectory function - An error occurred while trying to create the directory %s"), *PathToBackUp);
@@ -81,16 +81,16 @@ bool UMyFileManager::SaveTempFileToOriginalDirectory(FString PathToOriginalFile,
                 UE_LOG(MyFileManager, Log, TEXT("MyFileManager class in the SaveTempFileToOriginalDirectory function: The backup directory %s has been created"), *PathToBackUp);
         }
 
-        //Затем из пути оригинального файла выделяется одно только название, чтобы присвоить такое же файлу бекапа
+        //Р—Р°С‚РµРј РёР· РїСѓС‚Рё РѕСЂРёРіРёРЅР°Р»СЊРЅРѕРіРѕ С„Р°Р№Р»Р° РІС‹РґРµР»СЏРµС‚СЃСЏ РѕРґРЅРѕ С‚РѕР»СЊРєРѕ РЅР°Р·РІР°РЅРёРµ, С‡С‚РѕР±С‹ РїСЂРёСЃРІРѕРёС‚СЊ С‚Р°РєРѕРµ Р¶Рµ С„Р°Р№Р»Сѓ Р±РµРєР°РїР°
 
-        //Находится индекс первого с конца слеша, соответственно всё что будет правее его - название файла
+        //РќР°С…РѕРґРёС‚СЃСЏ РёРЅРґРµРєСЃ РїРµСЂРІРѕРіРѕ СЃ РєРѕРЅС†Р° СЃР»РµС€Р°, СЃРѕРѕС‚РІРµС‚СЃС‚РІРµРЅРЅРѕ РІСЃС‘ С‡С‚Рѕ Р±СѓРґРµС‚ РїСЂР°РІРµРµ РµРіРѕ - РЅР°Р·РІР°РЅРёРµ С„Р°Р№Р»Р°
         int LastSlashIndex = PathToOriginalFile.Find("/", ESearchCase::IgnoreCase, ESearchDir::FromEnd);
-        //Строка пути до оригинального файла обрезается до индекса слеша включительно, сохраняя только название оригинального файла
+        //РЎС‚СЂРѕРєР° РїСѓС‚Рё РґРѕ РѕСЂРёРіРёРЅР°Р»СЊРЅРѕРіРѕ С„Р°Р№Р»Р° РѕР±СЂРµР·Р°РµС‚СЃСЏ РґРѕ РёРЅРґРµРєСЃР° СЃР»РµС€Р° РІРєР»СЋС‡РёС‚РµР»СЊРЅРѕ, СЃРѕС…СЂР°РЅСЏСЏ С‚РѕР»СЊРєРѕ РЅР°Р·РІР°РЅРёРµ РѕСЂРёРіРёРЅР°Р»СЊРЅРѕРіРѕ С„Р°Р№Р»Р°
         FString OriginalFileName = PathToOriginalFile.RightChop(LastSlashIndex + 1);
-        //Используя это название создаётся путь до файла бекапа
+        //РСЃРїРѕР»СЊР·СѓСЏ СЌС‚Рѕ РЅР°Р·РІР°РЅРёРµ СЃРѕР·РґР°С‘С‚СЃСЏ РїСѓС‚СЊ РґРѕ С„Р°Р№Р»Р° Р±РµРєР°РїР°
         PathToBackUpFile = PathToBackUp + "/" + OriginalFileName;
 
-        //Если данный файл уже сохранялся в бекап, его старая версия удаляется
+        //Р•СЃР»Рё РґР°РЅРЅС‹Р№ С„Р°Р№Р» СѓР¶Рµ СЃРѕС…СЂР°РЅСЏР»СЃСЏ РІ Р±РµРєР°Рї, РµРіРѕ СЃС‚Р°СЂР°СЏ РІРµСЂСЃРёСЏ СѓРґР°Р»СЏРµС‚СЃСЏ
         if (FileManager.FileExists(*PathToBackUpFile)) {
             if (!FileManager.DeleteFile(*PathToBackUpFile)) {
                 UE_LOG(MyFileManager, Error, TEXT("!!! An error occurred in the MyFileManager class in the SaveTempFileToOriginalDirectory function - An error occurred when trying to delete the backup file %s"), *PathToBackUpFile);
@@ -100,7 +100,7 @@ bool UMyFileManager::SaveTempFileToOriginalDirectory(FString PathToOriginalFile,
                 UE_LOG(MyFileManager, Log, TEXT("MyFileManager class in the SaveTempFileToOriginalDirectory function: The old version of the backup file %s has been deleted"), *PathToBackUpFile);
         }
 
-        //Затем оригинальный файл переносится в директорию бекапа
+        //Р—Р°С‚РµРј РѕСЂРёРіРёРЅР°Р»СЊРЅС‹Р№ С„Р°Р№Р» РїРµСЂРµРЅРѕСЃРёС‚СЃСЏ РІ РґРёСЂРµРєС‚РѕСЂРёСЋ Р±РµРєР°РїР°
         if (!FileManager.MoveFile(*PathToBackUpFile, *PathToOriginalFile)) {
             UE_LOG(MyFileManager, Error, TEXT("!!! An error occurred in the MyFileManager class in the SaveTempFileToOriginalDirectory function - An error occurred when trying to transfer the file %s to the backup directory %s"), * PathToOriginalFile , *PathToBackUpFile);
             return false;
@@ -109,11 +109,11 @@ bool UMyFileManager::SaveTempFileToOriginalDirectory(FString PathToOriginalFile,
             UE_LOG(MyFileManager, Log, TEXT("MyFileManager class in the SaveTempFileToOriginalDirectory function: The file %s was moved to the backup directory %s"), *PathToOriginalFile, *PathToBackUpFile);
     }
 
-    //И в конце временный файл переносится на место оригинального
+    //Р РІ РєРѕРЅС†Рµ РІСЂРµРјРµРЅРЅС‹Р№ С„Р°Р№Р» РїРµСЂРµРЅРѕСЃРёС‚СЃСЏ РЅР° РјРµСЃС‚Рѕ РѕСЂРёРіРёРЅР°Р»СЊРЅРѕРіРѕ
     if (!FileManager.CopyFile(*PathToOriginalFile, *PathToTempFile)) {
         UE_LOG(MyFileManager, Error, TEXT("!!! An error occurred in the MyFileManager class in the SaveTempFileToOriginalDirectory function - An error occurred when trying to move the temporary file %s to the place of the original file %s. The original file will be restored."), *PathToTempFile, *PathToOriginalFile);
 
-        //Если файл перенести не удалось, старый файл восстанавливается из файла бекапа
+        //Р•СЃР»Рё С„Р°Р№Р» РїРµСЂРµРЅРµСЃС‚Рё РЅРµ СѓРґР°Р»РѕСЃСЊ, СЃС‚Р°СЂС‹Р№ С„Р°Р№Р» РІРѕСЃСЃС‚Р°РЅР°РІР»РёРІР°РµС‚СЃСЏ РёР· С„Р°Р№Р»Р° Р±РµРєР°РїР°
         if (FileManager.FileExists(*PathToBackUpFile)) {
             if (FileManager.MoveFile(*PathToOriginalFile, *PathToBackUpFile)) {
                 if (GameInstance && GameInstance->LogType != ELogType::NONE)

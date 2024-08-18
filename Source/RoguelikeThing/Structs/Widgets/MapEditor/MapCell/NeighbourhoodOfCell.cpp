@@ -1,10 +1,10 @@
-// Denis Igorevich Frolov did all this. Once there. All things reserved.
+п»ї// Denis Igorevich Frolov did all this. Once there. All things reserved.
 
 
 #include "RoguelikeThing/Structs/Widgets/MapEditor/MapCell/NeighbourhoodOfCell.h"
 
-/* Конструктор по умолчанию делает экземпляры, у кторых IsInit равна false. Такие структуры будут считаться
- * невалидными, их следует заполнить и после этого установить переменной IsInit значение true вручную */
+/* РљРѕРЅСЃС‚СЂСѓРєС‚РѕСЂ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РґРµР»Р°РµС‚ СЌРєР·РµРјРїР»СЏСЂС‹, Сѓ РєС‚РѕСЂС‹С… IsInit СЂР°РІРЅР° false. РўР°РєРёРµ СЃС‚СЂСѓРєС‚СѓСЂС‹ Р±СѓРґСѓС‚ СЃС‡РёС‚Р°С‚СЊСЃСЏ
+ * РЅРµРІР°Р»РёРґРЅС‹РјРё, РёС… СЃР»РµРґСѓРµС‚ Р·Р°РїРѕР»РЅРёС‚СЊ Рё РїРѕСЃР»Рµ СЌС‚РѕРіРѕ СѓСЃС‚Р°РЅРѕРІРёС‚СЊ РїРµСЂРµРјРµРЅРЅРѕР№ IsInit Р·РЅР°С‡РµРЅРёРµ true РІСЂСѓС‡РЅСѓСЋ */
 FNeighbourhoodOfCell::FNeighbourhoodOfCell() : IsInit(false)
 {
 }

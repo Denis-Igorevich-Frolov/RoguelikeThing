@@ -1,4 +1,4 @@
-// Fill out your copyright notice in the Description page of Project Settings.
+п»ї// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
@@ -8,8 +8,8 @@
 #include "MapEditor.generated.h"
 
 /************************************************************************
- * Данный класс является базовым классом для экрана редактора карты.
- * Он нужен для правильного взаимодействия блюпринтов и c++ кода.
+ * Р”Р°РЅРЅС‹Р№ РєР»Р°СЃСЃ СЏРІР»СЏРµС‚СЃСЏ Р±Р°Р·РѕРІС‹Рј РєР»Р°СЃСЃРѕРј РґР»СЏ СЌРєСЂР°РЅР° СЂРµРґР°РєС‚РѕСЂР° РєР°СЂС‚С‹.
+ * РћРЅ РЅСѓР¶РµРЅ РґР»СЏ РїСЂР°РІРёР»СЊРЅРѕРіРѕ РІР·Р°РёРјРѕРґРµР№СЃС‚РІРёСЏ Р±Р»СЋРїСЂРёРЅС‚РѕРІ Рё c++ РєРѕРґР°.
  ************************************************************************/
 UCLASS()
 class ROGUELIKETHING_API UMapEditor : public UUserWidget
@@ -17,17 +17,17 @@ class ROGUELIKETHING_API UMapEditor : public UUserWidget
 	GENERATED_BODY()
 private:
 	void ResizeEvent(FViewport* ViewPort, uint32 val);
-	//Предыдущий размер окна приложения
+	//РџСЂРµРґС‹РґСѓС‰РёР№ СЂР°Р·РјРµСЂ РѕРєРЅР° РїСЂРёР»РѕР¶РµРЅРёСЏ
 	FIntPoint OldViewPortSize{0, 0};
 	
 public:
 	UMapEditor(const FObjectInitializer& ObjectInitializer);
 
-	//Эвент, вызываемой ячейкой, который определяет какой стиль к ней стоит применить
+	//Р­РІРµРЅС‚, РІС‹Р·С‹РІР°РµРјРѕР№ СЏС‡РµР№РєРѕР№, РєРѕС‚РѕСЂС‹Р№ РѕРїСЂРµРґРµР»СЏРµС‚ РєР°РєРѕР№ СЃС‚РёР»СЊ Рє РЅРµР№ СЃС‚РѕРёС‚ РїСЂРёРјРµРЅРёС‚СЊ
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void SetDBCellValue(FCellCoord CellCoord, UMapCell* CallingCell);
 
-	//Эвент, при котором следует пересчитать какие тайлы стоит отобразить, а какие скрыть
+	//Р­РІРµРЅС‚, РїСЂРё РєРѕС‚РѕСЂРѕРј СЃР»РµРґСѓРµС‚ РїРµСЂРµСЃС‡РёС‚Р°С‚СЊ РєР°РєРёРµ С‚Р°Р№Р»С‹ СЃС‚РѕРёС‚ РѕС‚РѕР±СЂР°Р·РёС‚СЊ, Р° РєР°РєРёРµ СЃРєСЂС‹С‚СЊ
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void UpdateItemAreaContent();
 

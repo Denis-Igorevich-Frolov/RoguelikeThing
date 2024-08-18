@@ -1,4 +1,4 @@
-// Denis Igorevich Frolov did all this. Once there. All things reserved.
+п»ї// Denis Igorevich Frolov did all this. Once there. All things reserved.
 
 
 #include "CoordWrapperOfTable.h"
@@ -16,7 +16,7 @@ UUniformGridSlot* UWrapperRow::FindGridSlot(int Key)
     return *RowGrid.Find(Key);
 }
 
-//Функция, удаляющая эллемент по переданному ключу
+//Р¤СѓРЅРєС†РёСЏ, СѓРґР°Р»СЏСЋС‰Р°СЏ СЌР»Р»РµРјРµРЅС‚ РїРѕ РїРµСЂРµРґР°РЅРЅРѕРјСѓ РєР»СЋС‡Сѓ
 bool UWrapperRow::RemoveWidget(int Key)
 {
     UAbstractTile* AbstractTile = FindWidget(Key);
@@ -35,7 +35,7 @@ bool UWrapperRow::RemoveWidget(int Key)
     return RemoveIndex(Key);
 }
 
-//Функция, исключающая эллемент из координатной обёртки, но не удаляющая его из мира
+//Р¤СѓРЅРєС†РёСЏ, РёСЃРєР»СЋС‡Р°СЋС‰Р°СЏ СЌР»Р»РµРјРµРЅС‚ РёР· РєРѕРѕСЂРґРёРЅР°С‚РЅРѕР№ РѕР±С‘СЂС‚РєРё, РЅРѕ РЅРµ СѓРґР°Р»СЏСЋС‰Р°СЏ РµРіРѕ РёР· РјРёСЂР°
 bool UWrapperRow::RemoveIndex(int Key)
 {
     return ((bool)Row.Remove(Key)) && ((bool)RowGrid.Remove(Key));
@@ -76,7 +76,7 @@ void UWrapperRow::Clear()
 
 UCoordWrapperOfTable::UCoordWrapperOfTable(const FObjectInitializer& Object)
 {
-    //Получение GameInstance из мира
+    //РџРѕР»СѓС‡РµРЅРёРµ GameInstance РёР· РјРёСЂР°
     GameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
     if (!GameInstance)
         UE_LOG(CoordWrapperOfTable, Warning, TEXT("Warning in CoordWrapperOfTable class in constructor - GameInstance was not retrieved from the world"));
@@ -91,14 +91,14 @@ bool UCoordWrapperOfTable::AddWidget(int row, int col, UAbstractTile* Widget, UU
 
     bool success = false;
     if (ColArr.Contains(col)) {
-        //Если строка существует в неё добавляется новый элемент
+        //Р•СЃР»Рё СЃС‚СЂРѕРєР° СЃСѓС‰РµСЃС‚РІСѓРµС‚ РІ РЅРµС‘ РґРѕР±Р°РІР»СЏРµС‚СЃСЏ РЅРѕРІС‹Р№ СЌР»РµРјРµРЅС‚
         UWrapperRow* Row = *ColArr.Find(col);
 
         if (Row) {
             bool WidgetNotContains = !Row->Contains(row);
             success = (bool)Row->AddWidget(row, Widget, GridSlot);
 
-            //Новый итем в координатной обёртке защитывается, только если добавление в строку прошло успешно, и если этого итема в ней не было ранее
+            //РќРѕРІС‹Р№ РёС‚РµРј РІ РєРѕРѕСЂРґРёРЅР°С‚РЅРѕР№ РѕР±С‘СЂС‚РєРµ Р·Р°С‰РёС‚С‹РІР°РµС‚СЃСЏ, С‚РѕР»СЊРєРѕ РµСЃР»Рё РґРѕР±Р°РІР»РµРЅРёРµ РІ СЃС‚СЂРѕРєСѓ РїСЂРѕС€Р»Рѕ СѓСЃРїРµС€РЅРѕ, Рё РµСЃР»Рё СЌС‚РѕРіРѕ РёС‚РµРјР° РІ РЅРµР№ РЅРµ Р±С‹Р»Рѕ СЂР°РЅРµРµ
             if (WidgetNotContains && success)
                 NumberOfItemsInTable++;
         }
@@ -107,7 +107,7 @@ bool UCoordWrapperOfTable::AddWidget(int row, int col, UAbstractTile* Widget, UU
         }
     }
     else {
-        //Если строки не существует, она создаётся и в неё добавляется новый элемент
+        //Р•СЃР»Рё СЃС‚СЂРѕРєРё РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚, РѕРЅР° СЃРѕР·РґР°С‘С‚СЃСЏ Рё РІ РЅРµС‘ РґРѕР±Р°РІР»СЏРµС‚СЃСЏ РЅРѕРІС‹Р№ СЌР»РµРјРµРЅС‚
         UPROPERTY()
         UWrapperRow* newRow = NewObject<UWrapperRow>();
 
@@ -126,9 +126,9 @@ bool UCoordWrapperOfTable::AddWidget(int row, int col, UAbstractTile* Widget, UU
         }
     }
 
-    //Если новый итем был успешно добавлен, то задаются минимальные и максимальные координаты
+    //Р•СЃР»Рё РЅРѕРІС‹Р№ РёС‚РµРј Р±С‹Р» СѓСЃРїРµС€РЅРѕ РґРѕР±Р°РІР»РµРЅ, С‚Рѕ Р·Р°РґР°СЋС‚СЃСЏ РјРёРЅРёРјР°Р»СЊРЅС‹Рµ Рё РјР°РєСЃРёРјР°Р»СЊРЅС‹Рµ РєРѕРѕСЂРґРёРЅР°С‚С‹
     if (success) {
-        //Если минимальная координата не существует, значит матрица была пуста, и текущий элемент единственный и минимальный
+        //Р•СЃР»Рё РјРёРЅРёРјР°Р»СЊРЅР°СЏ РєРѕРѕСЂРґРёРЅР°С‚Р° РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚, Р·РЅР°С‡РёС‚ РјР°С‚СЂРёС†Р° Р±С‹Р»Р° РїСѓСЃС‚Р°, Рё С‚РµРєСѓС‰РёР№ СЌР»РµРјРµРЅС‚ РµРґРёРЅСЃС‚РІРµРЅРЅС‹Р№ Рё РјРёРЅРёРјР°Р»СЊРЅС‹Р№
         if (!MinCoord.getIsInit())
             MinCoord = FGridCoord(row, col);
         else {
@@ -138,7 +138,7 @@ bool UCoordWrapperOfTable::AddWidget(int row, int col, UAbstractTile* Widget, UU
                 MinCoord.Row = row;
         }
 
-        //Если максимальная координата не существует, значит матрица была пуста, и текущий элемент единственный и максимальный
+        //Р•СЃР»Рё РјР°РєСЃРёРјР°Р»СЊРЅР°СЏ РєРѕРѕСЂРґРёРЅР°С‚Р° РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚, Р·РЅР°С‡РёС‚ РјР°С‚СЂРёС†Р° Р±С‹Р»Р° РїСѓСЃС‚Р°, Рё С‚РµРєСѓС‰РёР№ СЌР»РµРјРµРЅС‚ РµРґРёРЅСЃС‚РІРµРЅРЅС‹Р№ Рё РјР°РєСЃРёРјР°Р»СЊРЅС‹Р№
         if (!MaxCoord.getIsInit())
             MaxCoord = FGridCoord(row, col);
         else {
@@ -163,7 +163,7 @@ UAbstractTile* UCoordWrapperOfTable::FindWidget(int row, int col)
     return Row->FindWidget(row);
 }
 
-//Поиск слота таблицы, который соотносится с итемом координатной обёртки
+//РџРѕРёСЃРє СЃР»РѕС‚Р° С‚Р°Р±Р»РёС†С‹, РєРѕС‚РѕСЂС‹Р№ СЃРѕРѕС‚РЅРѕСЃРёС‚СЃСЏ СЃ РёС‚РµРјРѕРј РєРѕРѕСЂРґРёРЅР°С‚РЅРѕР№ РѕР±С‘СЂС‚РєРё
 UUniformGridSlot* UCoordWrapperOfTable::FindGridSlot(int row, int col)
 {
     if (!ColArr.Contains(col))
@@ -175,7 +175,7 @@ UUniformGridSlot* UCoordWrapperOfTable::FindGridSlot(int row, int col)
     return Row->FindGridSlot(row);
 }
 
-//Функция, исключающая эллемент из координатной обёртки, но не удаляющая его из мира
+//Р¤СѓРЅРєС†РёСЏ, РёСЃРєР»СЋС‡Р°СЋС‰Р°СЏ СЌР»Р»РµРјРµРЅС‚ РёР· РєРѕРѕСЂРґРёРЅР°С‚РЅРѕР№ РѕР±С‘СЂС‚РєРё, РЅРѕ РЅРµ СѓРґР°Р»СЏСЋС‰Р°СЏ РµРіРѕ РёР· РјРёСЂР°
 bool UCoordWrapperOfTable::RemoveCoord(int row, int col)
 {
     if (!ColArr.Contains(col)) {
@@ -197,7 +197,7 @@ bool UCoordWrapperOfTable::RemoveCoord(int row, int col)
     return true;
 }
 
-//Функция, удаляющая эллемент по переданной координате
+//Р¤СѓРЅРєС†РёСЏ, СѓРґР°Р»СЏСЋС‰Р°СЏ СЌР»Р»РµРјРµРЅС‚ РїРѕ РїРµСЂРµРґР°РЅРЅРѕР№ РєРѕРѕСЂРґРёРЅР°С‚Рµ
 bool UCoordWrapperOfTable::RemoveWidget(int row, int col)
 {
     if (!ColArr.Contains(col)) {
@@ -228,7 +228,7 @@ bool UCoordWrapperOfTable::HasAnyEllements()
         ColArr.GetKeys(Keys);
         for (int32 k : Keys)
         {
-            //Проверяется есть ли в существующих столбцах хотя бы одна строка с хотя бы одним элементом
+            //РџСЂРѕРІРµСЂСЏРµС‚СЃСЏ РµСЃС‚СЊ Р»Рё РІ СЃСѓС‰РµСЃС‚РІСѓСЋС‰РёС… СЃС‚РѕР»Р±С†Р°С… С…РѕС‚СЏ Р±С‹ РѕРґРЅР° СЃС‚СЂРѕРєР° СЃ С…РѕС‚СЏ Р±С‹ РѕРґРЅРёРј СЌР»РµРјРµРЅС‚РѕРј
             if ((*ColArr.Find(k))->HasAnyEllements())
                 return true;
         }
@@ -242,13 +242,13 @@ const int UCoordWrapperOfTable::getNumberOfItemsInTable()
     return NumberOfItemsInTable;
 }
 
-//Получение самой левой нижней координаты
+//РџРѕР»СѓС‡РµРЅРёРµ СЃР°РјРѕР№ Р»РµРІРѕР№ РЅРёР¶РЅРµР№ РєРѕРѕСЂРґРёРЅР°С‚С‹
 FGridCoord UCoordWrapperOfTable::getMinCoord()
 {
     return MinCoord;
 }
 
-//Получение самой правой верхней координаты
+//РџРѕР»СѓС‡РµРЅРёРµ СЃР°РјРѕР№ РїСЂР°РІРѕР№ РІРµСЂС…РЅРµР№ РєРѕРѕСЂРґРёРЅР°С‚С‹
 FGridCoord UCoordWrapperOfTable::getMaxCoord()
 {
     return MaxCoord;
@@ -284,7 +284,7 @@ void UCoordWrapperOfTable::setMaxCoord(FGridCoord maxCoord)
     this->MaxCoord = maxCoord;
 }
 
-//Проверка на то перересекаются ли переданные габариты. Если да, то возвращается true
+//РџСЂРѕРІРµСЂРєР° РЅР° С‚Рѕ РїРµСЂРµСЂРµСЃРµРєР°СЋС‚СЃСЏ Р»Рё РїРµСЂРµРґР°РЅРЅС‹Рµ РіР°Р±Р°СЂРёС‚С‹. Р•СЃР»Рё РґР°, С‚Рѕ РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ true
 bool UCoordWrapperOfTable::DoTheDimensionsIntersect(FGridDimensions Dimensions_1, FGridDimensions Dimensions_2)
 {
     return Dimensions_1.DoTheDimensionsIntersect(Dimensions_2);
@@ -296,7 +296,7 @@ FGridCoord::FGridCoord() : Row(-1), Col(-1), isInit(false)
 FGridCoord::FGridCoord(int row, int col) : Row(row), Col(col), isInit(true)
 {}
 
-//Проверка проинициализированности координаты
+//РџСЂРѕРІРµСЂРєР° РїСЂРѕРёРЅРёС†РёР°Р»РёР·РёСЂРѕРІР°РЅРЅРѕСЃС‚Рё РєРѕРѕСЂРґРёРЅР°С‚С‹
 bool FGridCoord::getIsInit()
 {
     return isInit;
@@ -341,7 +341,7 @@ bool FGridDimensions::IsEmpty()
     return Min.Row == 0 && Min.Col == 0 && Max.Row == 0 && Max.Col == 0;
 }
 
-//Проверка на то перересекаются ли переданные габариты с текущими. Если да, то возвращается true
+//РџСЂРѕРІРµСЂРєР° РЅР° С‚Рѕ РїРµСЂРµСЂРµСЃРµРєР°СЋС‚СЃСЏ Р»Рё РїРµСЂРµРґР°РЅРЅС‹Рµ РіР°Р±Р°СЂРёС‚С‹ СЃ С‚РµРєСѓС‰РёРјРё. Р•СЃР»Рё РґР°, С‚Рѕ РІРѕР·РІСЂР°С‰Р°РµС‚СЃСЏ true
 bool FGridDimensions::DoTheDimensionsIntersect(FGridDimensions OtherDimensions)
 {
     if ((OtherDimensions.Max.Col < Min.Col) || (OtherDimensions.Max.Row < Min.Row) || (OtherDimensions.Min.Col > Max.Col) || (OtherDimensions.Min.Row > Max.Row))
