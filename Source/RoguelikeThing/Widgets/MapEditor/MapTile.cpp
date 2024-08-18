@@ -62,7 +62,7 @@ void UMapTile::SetMyTerrainOfTile(UTerrainOfTile* TerrainOfTile)
             MyTerrainOfTile->MarkPendingKill();
         }
         else {
-            UE_LOG(MapTile, Warning, TEXT("!!! An error occurred in the MapTile class in the SetMyTerrainOfTile function: MyTerrainOfTile is not valid low level"));
+            UE_LOG(MapTile, Warning, TEXT("Warning in the MapTile class in the SetMyTerrainOfTile function - MyTerrainOfTile is not valid low level"));
         }
     }
 
@@ -239,7 +239,7 @@ bool UMapTile::FillCellsAccordingToTerrain(UMapMatrix* MapMatrix)
                     }
                 }
                 else {
-                    UE_LOG(MapTile, Warning, TEXT("!!! An error occurred in the MapTile class in the FillCellsAccordingToTerrain function: AbstractCell is not UMapCell"));
+                    UE_LOG(MapTile, Warning, TEXT("Warning in the MapTile class in the FillCellsAccordingToTerrain function - AbstractCell is not UMapCell"));
                     return false;
                 }
             }
@@ -328,7 +328,7 @@ void UMapTile::ClearFilledCells()
                 MyTerrainOfTile->MarkPendingKill();
             }
             else {
-                UE_LOG(MapTile, Warning, TEXT("!!! An error occurred in the MapTile class in the SetMyTerrainOfTile function: MyTerrainOfTile is not valid low level"));
+                UE_LOG(MapTile, Warning, TEXT("Warning in the MapTile class in the SetMyTerrainOfTile function - MyTerrainOfTile is not valid low level"));
             }
         }
         MyTerrainOfTile = nullptr;
