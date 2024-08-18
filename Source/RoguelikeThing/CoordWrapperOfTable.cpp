@@ -20,13 +20,17 @@ UUniformGridSlot* UWrapperRow::FindGridSlot(int Key)
 bool UWrapperRow::RemoveWidget(int Key)
 {
     UAbstractTile* AbstractTile = FindWidget(Key);
-    if (!AbstractTile)
-        return false;
 
-    AbstractTile->RemoveAllCells();
-    AbstractTile->ConditionalBeginDestroy();
-    AbstractTile->MarkPendingKill();
-    AbstractTile->RemoveFromParent();
+    if (AbstractTile) {
+        AbstractTile->RemoveAllCells();
+        AbstractTile->ConditionalBeginDestroy();
+        AbstractTile->MarkPendingKill();
+        AbstractTile->RemoveFromParent();
+    }
+    else {
+        UE_LOG(CoordWrapperOfTable, Error, TEXT("!!! An error occurred in the CoordWrapperOfTable class in the RemoveWidget function: AbstractTile is not valid"));
+        return false;
+    }
 
     return RemoveIndex(Key);
 }
@@ -94,6 +98,7 @@ bool UCoordWrapperOfTable::AddWidget(int row, int col, UAbstractTile* Widget, UU
             bool WidgetNotContains = !Row->Contains(row);
             success = (bool)Row->AddWidget(row, Widget, GridSlot);
 
+            //Ќовый итем в координатной обЄртке защитываетс€, только если добавление в строку прошло успешно, и если этого итема в ней не было ранее
             if (WidgetNotContains && success)
                 NumberOfItemsInTable++;
         }
@@ -121,6 +126,7 @@ bool UCoordWrapperOfTable::AddWidget(int row, int col, UAbstractTile* Widget, UU
         }
     }
 
+    //≈сли новый итем был успешно добавлен, то задаютс€ минимальные и максимальные координаты
     if (success) {
         //≈сли минимальна€ координата не существует, значит матрица была пуста, и текущий элемент единственный и минимальный
         if (!MinCoord.getIsInit())
@@ -154,9 +160,10 @@ UAbstractTile* UCoordWrapperOfTable::FindWidget(int row, int col)
     if(!Row->Contains(row))
         return nullptr;
 
-    return  Row->FindWidget(row);
+    return Row->FindWidget(row);
 }
 
+//ѕоиск слота таблицы, который соотноситс€ с итемом координатной обЄртки
 UUniformGridSlot* UCoordWrapperOfTable::FindGridSlot(int row, int col)
 {
     if (!ColArr.Contains(col))
@@ -165,19 +172,17 @@ UUniformGridSlot* UCoordWrapperOfTable::FindGridSlot(int row, int col)
     if (!Row->Contains(row))
         return nullptr;
 
-    return  Row->FindGridSlot(row);
+    return Row->FindGridSlot(row);
 }
 
 //‘ункци€, исключающа€ эллемент из координатной обЄртки, но не удал€юща€ его из мира
 bool UCoordWrapperOfTable::RemoveCoord(int row, int col)
 {
     if (!ColArr.Contains(col)) {
-        UE_LOG(LogTemp, Warning, TEXT("r1"));
         return false;
     }
     UWrapperRow* Row = *ColArr.Find(col);
     if (!Row->Contains(row)) {
-        UE_LOG(LogTemp, Warning, TEXT("r2"));
         return false;
     }
 
@@ -196,16 +201,22 @@ bool UCoordWrapperOfTable::RemoveCoord(int row, int col)
 bool UCoordWrapperOfTable::RemoveWidget(int row, int col)
 {
     if (!ColArr.Contains(col)) {
-        UE_LOG(LogTemp, Warning, TEXT("r1"));
         return false;
     }
     UWrapperRow* Row = *ColArr.Find(col);
     if (!Row->Contains(row)) {
-        UE_LOG(LogTemp, Warning, TEXT("r2"));
         return false;
     }
 
-    return Row->RemoveWidget(row);
+    if (!Row->RemoveWidget(row)) {
+        return false;
+    }
+
+    if (!Row->HasAnyEllements()) {
+        ColArr.Remove(col);
+    }
+
+    return true;
 }
 
 bool UCoordWrapperOfTable::HasAnyEllements()
@@ -237,6 +248,12 @@ FGridCoord UCoordWrapperOfTable::getMinCoord()
     return MinCoord;
 }
 
+//ѕолучение самой правой верхней координаты
+FGridCoord UCoordWrapperOfTable::getMaxCoord()
+{
+    return MaxCoord;
+}
+
 void UCoordWrapperOfTable::Clear()
 {
     TArray<UWrapperRow*> Rows;
@@ -255,12 +272,6 @@ void UCoordWrapperOfTable::Clear()
     MinCoord = FGridCoord();
     MaxCoord = FGridCoord();
     NumberOfItemsInTable = 0;
-}
-
-//ѕолучение самой правой верхней координаты
-FGridCoord UCoordWrapperOfTable::getMaxCoord()
-{
-    return MaxCoord;
 }
 
 void UCoordWrapperOfTable::setMinCoord(FGridCoord minCoord)
@@ -290,7 +301,6 @@ bool FGridCoord::getIsInit()
 {
     return isInit;
 }
-
 
 FString FGridCoord::ToString()
 {

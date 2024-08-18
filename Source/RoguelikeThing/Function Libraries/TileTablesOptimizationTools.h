@@ -21,9 +21,10 @@
  * Задача оптимизатора скрывать те тайлы, что в данный момент не видны и отображать
  * те, что видны.
  * 
- * В метод оптимизации необходимо помещать тайловую таблицу, все элементы которой уже
- * схлопнуты (Collapsed). Перед началом работы метода оптимизации обязательно следует
- * вызвать функцию InitTableTiles для первичной инициализации.
+ * В метод оптимизации необходимо помещать тайловую таблицу, в которой уже отображены
+ * только те тайлы, которые влезают на экран, а оптимизацтор будет сдвигать эту область
+ * отображения. Перед началом работы метода оптимизации обязательно следует вызвать
+ * функцию Init для первичной инициализации.
  * 
  **********************************************************************************************************************
  *
@@ -60,27 +61,36 @@ private:
 	UUniformGridPanel* TilesGridPanel;
 	UPROPERTY()
 	UCoordWrapperOfTable* TilesCoordWrapper;
+	//Буфер от куда берутся тайлы
 	UPROPERTY()
 	UTileBuffer* TilesBuf;
 	UPROPERTY()
 	UMapMatrix* MapMatrix;
 
+	//Суммарный размер всех тайлов переданного контента
 	FVector2D MaximumContentSize = FVector2D(0, 0);
+	//Разница в размерах между размером родительского виджета Shift&ZoomArea и максимальным размером
 	FVector2D SizeDifference = FVector2D(0, 0);
-	FVector2D OldAreaSize = FVector2D(0, 0);
+	//Расстояние, при преодолении которого появляется первый новый тайл
 	FVector2D DistanceToAppearanceOfFirstNewTile = FVector2D(0, 0);
+	//Изначальный размер области с отображёнными тайлами
 	FVector2D OriginalDimensionsSize = FVector2D(0, 0);
+	//Размер спейсера у контента, который оставляет возможность немного посдвигать этот контент дальше его фактической границы, если он меньше спейсера
 	FVector2D MinContentSize = FVector2D(0, 0);
+	//Размер тайла
 	FVector2D TileSize = FVector2D(0, 0);
+	//Размер родительского виджета Shift&ZoomArea
 	FVector2D WidgetAreaSize = FVector2D(0, 0);
+	//Количество тайлов в строке и столбце всей карты
 	int NumberOfTileRowsInTable = 0;
 	int NumberOfTileColsInTable = 0;
-	int MapTileLength = 0;
 
 	bool IsInit = false;
 
-	void AsynchronousAreaFilling(FGridDimensions AreaDimensions, int NumberOfMapTilesRows, FString ss);
-	void AsynchronousAreaRemoving(FGridDimensions AreaDimensions, int NumberOfMapTilesRows, FString ss);
+	//Функция асинхронного заполнения новых тайлов
+	void AsynchronousAreaFilling(FGridDimensions AreaDimensions, int NumberOfMapTilesRows);
+	//Функция асинхронного удаления старых тайлов
+	void AsynchronousAreaRemoving(FGridDimensions AreaDimensions, int NumberOfMapTilesRows);
 	
 public:
 	UTileTablesOptimizationTools();
@@ -90,13 +100,16 @@ public:
 		FVector2D widgetAreaSize, FVector2D tileSize, FVector2D MinContentSize, int numberOfTileRowsInTable, int numberOfTileColsInTable);
 
 	UFUNCTION(BlueprintCallable)
-	//Функция, изменяющая видимость тайлов от сдвига или масштабирования таблицы
+	//Функция, изменяющая количество отображаемых тайлов от сдвига или масштабирования таблицы
 	void ChangingVisibilityOfTableTiles(FVector2D Bias, float ZoomMultiplier, int NumberOfMapTilesRows);
 
+	//Габариты карты, которые были при предыдущем изменении
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGridDimensions OldDimensions = FGridDimensions();
+	//Текущие габариты карты
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGridDimensions CurrentDimensions = FGridDimensions();
+	//Габариты карты, которые были изначально при инициализации
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGridDimensions OriginalDimensions = FGridDimensions();
 };

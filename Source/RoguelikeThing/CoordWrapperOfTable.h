@@ -125,6 +125,7 @@ public:
 	bool AddWidget(int row, int col, UAbstractTile* Widget, UUniformGridSlot* GridSlot);
 	UFUNCTION(BlueprintCallable)
 	UAbstractTile* FindWidget(int row, int col);
+	//Поиск слота таблицы, который соотносится с итемом координатной обёртки
 	UFUNCTION(BlueprintCallable)
 	UUniformGridSlot* FindGridSlot(int row, int col);
 	//Функция, удаляющая эллемент по переданной координате

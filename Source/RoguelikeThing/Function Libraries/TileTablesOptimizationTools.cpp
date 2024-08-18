@@ -13,72 +13,110 @@ UTileTablesOptimizationTools::UTileTablesOptimizationTools()
         UE_LOG(TileTablesOptimizationTools, Warning, TEXT("Warning in TileTablesOptimizationTools class in constructor - GameInstance was not retrieved from the world"));
 }
 
-void UTileTablesOptimizationTools::AsynchronousAreaFilling(FGridDimensions AreaDimensions, int NumberOfMapTilesRows, FString ss)
+//Функция асинхронного заполнения новых тайлов
+void UTileTablesOptimizationTools::AsynchronousAreaFilling(FGridDimensions AreaDimensions, int NumberOfMapTilesRows)
 {
-    AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [ss, AreaDimensions, NumberOfMapTilesRows, this]() {
-        for (int col = AreaDimensions.Min.Col; col <= AreaDimensions.Max.Col; col++) {
-            for (int row = AreaDimensions.Min.Row; row <= AreaDimensions.Max.Row; row++) {
-                AsyncTask(ENamedThreads::GameThread, [ss, AreaDimensions, col, row, NumberOfMapTilesRows, this]() {
-                    if (TilesCoordWrapper->FindWidget(row, col)) {
-                        UE_LOG(TileTablesOptimizationTools, Warning, TEXT("%s add fffffff r: %d, c: %d"), *ss, row, col);
-                        //continue;
-                    }
-                    //else
-                        //UE_LOG(TileTablesOptimizationTools, Log, TEXT("%s add ddddddd r: %d, c: %d"), *ss, row, col);
+    FString Dimensions = AreaDimensions.ToString();
+    AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [AreaDimensions, NumberOfMapTilesRows, Dimensions, this]() {
+        if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+            UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the AsynchronousAreaFilling function: An asynchronous thread for adding new tiles when the dimensions change has been started. Dimensions of new tiles: %s"), *Dimensions);
 
-                    UAbstractTile* Tile = TilesBuf->GetTile();
+        if (TilesBuf) {
+            for (int col = AreaDimensions.Min.Col; col <= AreaDimensions.Max.Col; col++) {
+                for (int row = AreaDimensions.Min.Row; row <= AreaDimensions.Max.Row; row++) {
+                    //Изменение состояния виджетов доступно только в основном потоке
+                    AsyncTask(ENamedThreads::GameThread, [AreaDimensions, col, row, NumberOfMapTilesRows, this]() {
+                        //Новый тайл берётся из буфера тайлов
+                        UPROPERTY()
+                        UAbstractTile* Tile = TilesBuf->GetTile();
 
-                    if (Tile) {
-                        Tile->SetMyCoord(FCellCoord((NumberOfMapTilesRows - row) - 1, col));
-                        UUniformGridSlot* GridSlot = TilesGridPanel->AddChildToUniformGrid(Tile, (NumberOfMapTilesRows - row) - 1, col);
-                        TilesCoordWrapper->AddWidget(row, col, Tile, GridSlot);
-                        Tile->OnAddedEvent(MapMatrix);
-                    }
-                    else
-                        UE_LOG(TileTablesOptimizationTools, Warning, TEXT("AAAAAAAAAAAAA"));
-                    });
+                        if (Tile) {
+                            //Строки разворачиваются потому что координаты карты отсчитываются снизу вверх, а не сверху вниз, как в стандартной таблице UniformGrid
+                            Tile->SetMyCoord(FCellCoord((NumberOfMapTilesRows - row) - 1, col));
+                            UUniformGridSlot* GridSlot = TilesGridPanel->AddChildToUniformGrid(Tile, (NumberOfMapTilesRows - row) - 1, col);
+                            TilesCoordWrapper->AddWidget(row, col, Tile, GridSlot);
+                            //При появлении нового тайла на карте, вызывается соответствующий эвент для инициализации этого тайла
+                            Tile->OnAddedEvent(MapMatrix);
+
+                            if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                                UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the AsynchronousAreaFilling function: Tile Col: %d, Row: %d has been added"), col, row);
+                        }
+                        else
+                            UE_LOG(CoordWrapperOfTable, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the AsynchronousAreaFilling function: Tile from TilesBuf is not valid"));
+                        });
+                }
             }
         }
+        else {
+            UE_LOG(CoordWrapperOfTable, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the AsynchronousAreaFilling function: TilesBuf is not valid"));
+        }
+
+        if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+            UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the AsynchronousAreaFilling function: An asynchronous thread for adding new tiles when the dimensions change was terminated. Dimensions of new tiles: %s"), *Dimensions);
     });
 }
 
-void UTileTablesOptimizationTools::AsynchronousAreaRemoving(FGridDimensions AreaDimensions, int NumberOfMapTilesRows, FString ss)
+//Функция асинхронного удаления старых тайлов
+void UTileTablesOptimizationTools::AsynchronousAreaRemoving(FGridDimensions AreaDimensions, int NumberOfMapTilesRows)
 {
-    AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [ss, AreaDimensions, NumberOfMapTilesRows, this]() {
-        for (int col = AreaDimensions.Min.Col; col <= AreaDimensions.Max.Col; col++) {
+    FString Dimensions = AreaDimensions.ToString();
+    AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [AreaDimensions, NumberOfMapTilesRows, Dimensions, this]() {
+        if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+            UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the AsynchronousAreaRemoving function: An asynchronous thread for removing old tiles when the dimensions change has been started. Dimensions of removing tiles: %s"), *Dimensions);
+
+        if (TilesBuf) {
+            for (int col = AreaDimensions.Min.Col; col <= AreaDimensions.Max.Col; col++) {
                 for (int row = AreaDimensions.Min.Row; row <= AreaDimensions.Max.Row; row++) {
-                    AsyncTask(ENamedThreads::GameThread, [ss, col, row, AreaDimensions, this]() {
+                    //Изменение состояния виджетов доступно только в основном потоке
+                    AsyncTask(ENamedThreads::GameThread, [col, row, AreaDimensions, this]() {
+                        //Если буфер тайлов полностью заплнен, виджет росто удаляется
                         if (TilesBuf->BufSize() + 1 > TilesBuf->GetMaxSize()) {
                             if (!TilesCoordWrapper->RemoveWidget(row, col)) {
-                                UE_LOG(TileTablesOptimizationTools, Warning, TEXT("%s remove fffffff r: %d, c: %d"), *ss, row, col);
+                                UE_LOG(CoordWrapperOfTable, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the AsynchronousAreaRemoving function: Failed to remove tile Col: %d, Row: %d from TilesCoordWrapper"), col, row);
                             }
-                            //else
-                                //UE_LOG(TileTablesOptimizationTools, Log, TEXT("%s remove ddddddd r: %d, c: %d"), *ss, row, col);
+
+                            //Так как произошло удаление виджета, следует форсировать сборку мусора
+                            GetWorld()->ForceGarbageCollection(true);
                         }
+                        //Иначе он отправляется в буфер тайлов
                         else {
                             UUniformGridSlot* GridSlot = TilesCoordWrapper->FindGridSlot(row, col);
                             if (GridSlot) {
+                                //Сам тайл из таблицы не убирается, просто отправляется за пределы видимости в ячейку с отрицательным значением
                                 GridSlot->SetColumn(-1);
                                 GridSlot->SetRow(-1);
+
+                                UAbstractTile* Tile = TilesCoordWrapper->FindWidget(row, col);
+                                if (Tile) {
+                                    //Состояния заполненных ячеек тайла сбрасываются
+                                    Tile->ClearFilledCells();
+
+                                    //Из координатной обёртки удаляется координата тайла
+                                    if (!TilesCoordWrapper->RemoveCoord(row, col)) {
+                                        UE_LOG(CoordWrapperOfTable, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the AsynchronousAreaRemoving function: Failed to remove tile coordinate Col: %d, Row: %d from TilesCoordWrapper"), col, row);
+                                    }
+
+                                    //И затем этот тайл добавляется в буфер
+                                    TilesBuf->AddTile(Tile);
+                                }
+                                else {
+                                    UE_LOG(CoordWrapperOfTable, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the AsynchronousAreaRemoving function: Tile is not valid"));
+                                }
                             }
-                            else
-                                UE_LOG(TileTablesOptimizationTools, Warning, TEXT("%s remove 2 ssdsdfsdf r: %d, c: %d"), *ss, row, col);
-
-                            UAbstractTile* Tile = TilesCoordWrapper->FindWidget(row, col);
-                            Tile->ClearFilledCells();
-
-                            if(!TilesCoordWrapper->RemoveCoord(row, col)) {
-                                UE_LOG(TileTablesOptimizationTools, Warning, TEXT("%s remove 2 fffffff r: %d, c: %d"), *ss, row, col);
+                            else {
+                                UE_LOG(CoordWrapperOfTable, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the AsynchronousAreaRemoving function: GridSlot of tile is not valid"));
                             }
-                            //else
-                                //UE_LOG(TileTablesOptimizationTools, Log, TEXT("%s remove 2 ddddddd r: %d, c: %d"), *ss, row, col);
-
-                            TilesBuf->AddTile(Tile);
                         }
                         });
                 }
+            }
         }
-        GetWorld()->ForceGarbageCollection(true);
+        else {
+            UE_LOG(CoordWrapperOfTable, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the AsynchronousAreaRemoving function: TilesBuf is not valid"));
+        }
+
+        if(GameInstance && GameInstance->LogType == ELogType::DETAILED)
+            UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the AsynchronousAreaRemoving function: An asynchronous thread for removing old tiles when the dimensions change was terminated. Dimensions of removing tiles: %s"), *Dimensions);
     });
 }
 
@@ -96,7 +134,6 @@ void UTileTablesOptimizationTools::Init(UUniformGridPanel* refTilesGridPanel, UC
     this->NumberOfTileRowsInTable = numberOfTileRowsInTable;
     this->NumberOfTileColsInTable = numberOfTileColsInTable;
     this->WidgetAreaSize = widgetAreaSize;
-    this->MapTileLength = MapMatrix->GetMapTileLength();
     OldDimensions = OriginalDimensions;
     CurrentDimensions = OriginalDimensions;
 
@@ -107,6 +144,7 @@ void UTileTablesOptimizationTools::Init(UUniformGridPanel* refTilesGridPanel, UC
     MaximumContentSize = FVector2D(NumberOfTileColsInTable * TileSize.X, NumberOfTileRowsInTable * TileSize.Y);
     SizeDifference = MaximumContentSize - WidgetAreaSize;
 
+    //Если размер контента меньше, чем минимальный, то разница в размере обнуляется и оптимизироваться эта сторона не будет - она и так вся видна единовременно
     if (MaximumContentSize.X < MinContentSize.X)
         SizeDifference.X = 0;
     if (MaximumContentSize.Y < MinContentSize.Y)
@@ -120,10 +158,11 @@ void UTileTablesOptimizationTools::Init(UUniformGridPanel* refTilesGridPanel, UC
     IsInit = true;
 }
 
-//Функция, изменяющая видимость тайлов от сдвига или масштабирования таблицы
+//Функция, изменяющая количество отображаемых тайлов от сдвига или масштабирования таблицы
 void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias, float ZoomMultiplier, int NumberOfMapTilesRows)
 {
     if (!IsInit) {
+        UE_LOG(CoordWrapperOfTable, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: The instance is not initialized"));
         return;
     }
 
@@ -138,6 +177,11 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
      * а как бы "сдвиг камеры" по всей площади контента вправо, поэтому координата разворачивается */
     Bias.X *= -1;
 
+    //ZoomMultiplier не может быть равен 0, если это так, то он сбрасывается до единицы
+    if (ZoomMultiplier == 0)
+        ZoomMultiplier = 1;
+
+    //Высчитывается текущая разница в размерах с учётом зума
     FVector2D CurrentSizeDifference = MaximumContentSize - (WidgetAreaSize / ZoomMultiplier);
 
     //Коорддинаты тайлов, отражающие сдвиг контента, которые будут прибавлены к изначальным координатам для вычисления конечной позиции контента
@@ -291,7 +335,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
             UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: Size difference between original and current content size on each side is %s"), *SizeDifferenceBetweenOriginalAndCurrentContentSize.ToString());
 
         /* Задача оптимизатора забить тайлами разницу в размерах между изначальным размером контента и текущим, то есть забить SizeDifferenceBetweenOriginalAndCurrentContentSize.
-         * Но прежду чем начать это делать следует решить пару проблем. Во-первых совпадение размеров контента и его области стопроцентным не будет. Практически всегда контент
+         * Но прежде чем начать это делать следует решить пару проблем. Во-первых совпадение размеров контента и его области стопроцентным не будет. Практически всегда контент
          * будет торчать за границами своей области, а так как торчащую часть и так не видно, то и забивать её смысла нет. Чтобы узнать на сколько в данный момент контент торчит
          * из-за пределов своих границ следует умножить изначальный размер DistanceToAppearanceOfFirstNewTile на множитель зума. Это будет не очень точно, но погрешность небольшая
          * и всегда в меньшую сторону, так что не сильно страшно. Полученное расстояние вычетается из изначальной разницы в размерах. Вторая проблема заключается в том, что конент
@@ -388,6 +432,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
         if (OldDimensions != CurrentDimensions) {
             //UE_LOG(TileTablesOptimizationTools, Log, TEXT("old: %s, new %s"), *OldDimensions.ToString(), *CurrentDimensions.ToString());
 
+            //Если старая и текущая область пересекают друг друга, то оптимизация идёт по стандартному алгоритму
             if (OldDimensions.DoTheDimensionsIntersect(CurrentDimensions)) {
                 //Чтобы таргетировано убирать или добавлять строки и стобцы, проверяется как именно изменились габариты контента
                 bool NewTopBoundMore = (CurrentDimensions.Max.Row > OldDimensions.Max.Row);
@@ -409,17 +454,17 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
                             /* Так как известно, что новая область выше предыдущей, цикл стартует со строки на 1 выше, чем предыдущая верхняя
                              * граница, чтобы затронуть только неотображённые тайлы, и проходит до новой верхней границы включительно */
                             AsynchronousAreaFilling(FGridDimensions(FGridCoord(OldDimensions.Max.Row + 1, CurrentDimensions.Min.Col),
-                                FGridCoord(CurrentDimensions.Max.Row, CurrentDimensions.Max.Col)), NumberOfMapTilesRows, "1");
+                                FGridCoord(CurrentDimensions.Max.Row, CurrentDimensions.Max.Col)), NumberOfMapTilesRows);
                         }
                         else {
                             if (NewLeftBoundMore) {
                                 AsynchronousAreaFilling(FGridDimensions(FGridCoord(OldDimensions.Max.Row + 1, OldDimensions.Min.Col),
-                                    FGridCoord(CurrentDimensions.Max.Row, CurrentDimensions.Max.Col)), NumberOfMapTilesRows, "1.1");
+                                    FGridCoord(CurrentDimensions.Max.Row, CurrentDimensions.Max.Col)), NumberOfMapTilesRows);
                             }
 
                             if (NewRightBoundMore) {
                                 AsynchronousAreaFilling(FGridDimensions(FGridCoord(OldDimensions.Max.Row + 1, CurrentDimensions.Min.Col),
-                                    FGridCoord(CurrentDimensions.Max.Row, OldDimensions.Max.Col)), NumberOfMapTilesRows, "1.2");
+                                    FGridCoord(CurrentDimensions.Max.Row, OldDimensions.Max.Col)), NumberOfMapTilesRows);
                             }
                         }
                     }
@@ -433,17 +478,17 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
                             /* Так как известно, что новая область ниже предыдущей, цикл стартует со строки на 1 выше, чем текущая верхняя
                              * граница, чтобы затронуть только отображённые тайлы, и проходит до старой верхней границы включительно */
                             AsynchronousAreaRemoving(FGridDimensions(FGridCoord(CurrentDimensions.Max.Row + 1, OldDimensions.Min.Col),
-                                FGridCoord(OldDimensions.Max.Row, OldDimensions.Max.Col)), NumberOfMapTilesRows, "1");
+                                FGridCoord(OldDimensions.Max.Row, OldDimensions.Max.Col)), NumberOfMapTilesRows);
                         }
                         else {
                             if (OldLeftBoundLess) {
                                 AsynchronousAreaRemoving(FGridDimensions(FGridCoord(CurrentDimensions.Max.Row + 1, CurrentDimensions.Min.Col),
-                                    FGridCoord(OldDimensions.Max.Row, OldDimensions.Max.Col)), NumberOfMapTilesRows, "1.1");
+                                    FGridCoord(OldDimensions.Max.Row, OldDimensions.Max.Col)), NumberOfMapTilesRows);
                             }
 
                             if (OldRightBoundLess) {
                                 AsynchronousAreaRemoving(FGridDimensions(FGridCoord(CurrentDimensions.Max.Row + 1, OldDimensions.Min.Col),
-                                    FGridCoord(OldDimensions.Max.Row, CurrentDimensions.Max.Col)), NumberOfMapTilesRows, "1.2");
+                                    FGridCoord(OldDimensions.Max.Row, CurrentDimensions.Max.Col)), NumberOfMapTilesRows);
                             }
                         }
                     }
@@ -457,17 +502,17 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
                             /* Так как известно, что новая область ниже предыдущей, цикл стартует со строки равной текущей нижней границе, и проходит
                              * до строки, расположенной на 1 ниже, чем старая нижняя граница, чтобы затронуть только неотображённые тайлы */
                             AsynchronousAreaFilling(FGridDimensions(FGridCoord(CurrentDimensions.Min.Row, CurrentDimensions.Min.Col),
-                                FGridCoord(OldDimensions.Min.Row - 1, CurrentDimensions.Max.Col)), NumberOfMapTilesRows, "2");
+                                FGridCoord(OldDimensions.Min.Row - 1, CurrentDimensions.Max.Col)), NumberOfMapTilesRows);
                         }
                         else {
                             if (NewLeftBoundMore) {
                                 AsynchronousAreaFilling(FGridDimensions(FGridCoord(CurrentDimensions.Min.Row, OldDimensions.Min.Col),
-                                    FGridCoord(OldDimensions.Min.Row - 1, CurrentDimensions.Max.Col)), NumberOfMapTilesRows, "2.1");
+                                    FGridCoord(OldDimensions.Min.Row - 1, CurrentDimensions.Max.Col)), NumberOfMapTilesRows);
                             }
 
                             if (NewRightBoundMore) {
                                 AsynchronousAreaFilling(FGridDimensions(FGridCoord(CurrentDimensions.Min.Row, CurrentDimensions.Min.Col),
-                                    FGridCoord(OldDimensions.Min.Row - 1, OldDimensions.Max.Col)), NumberOfMapTilesRows, "2.2");
+                                    FGridCoord(OldDimensions.Min.Row - 1, OldDimensions.Max.Col)), NumberOfMapTilesRows);
                             }
                         }
                     }
@@ -481,16 +526,16 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
                             /* Так как известно, что новая область выше предыдущей, цикл стартует со строки равной старой нижней границе, и
                              * проходит до строки, расположенной на 1 ниже, чем текущая нижняя граница, чтобы затронуть только отображённые тайлы */
                             AsynchronousAreaRemoving(FGridDimensions(FGridCoord(OldDimensions.Min.Row, OldDimensions.Min.Col),
-                                FGridCoord(CurrentDimensions.Min.Row - 1, OldDimensions.Max.Col)), NumberOfMapTilesRows, "2");
+                                FGridCoord(CurrentDimensions.Min.Row - 1, OldDimensions.Max.Col)), NumberOfMapTilesRows);
                         }
                         else {
                             if (OldLeftBoundLess) {
                                 AsynchronousAreaRemoving(FGridDimensions(FGridCoord(OldDimensions.Min.Row, CurrentDimensions.Min.Col),
-                                    FGridCoord(CurrentDimensions.Min.Row - 1, OldDimensions.Max.Col)), NumberOfMapTilesRows, "2.1");
+                                    FGridCoord(CurrentDimensions.Min.Row - 1, OldDimensions.Max.Col)), NumberOfMapTilesRows);
                             }
                             if (OldRightBoundLess) {
                                 AsynchronousAreaRemoving(FGridDimensions(FGridCoord(OldDimensions.Min.Row, OldDimensions.Min.Col),
-                                    FGridCoord(CurrentDimensions.Min.Row - 1, CurrentDimensions.Max.Col)), NumberOfMapTilesRows, "2.2");
+                                    FGridCoord(CurrentDimensions.Min.Row - 1, CurrentDimensions.Max.Col)), NumberOfMapTilesRows);
                             }
                         }
                     }
@@ -504,7 +549,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
                             UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: The current area is to the left of the left border of the previous area"));
 
                         AsynchronousAreaFilling(FGridDimensions(FGridCoord(CurrentDimensions.Min.Row, CurrentDimensions.Min.Col),
-                            FGridCoord(CurrentDimensions.Max.Row, OldDimensions.Min.Col - 1)), NumberOfMapTilesRows, "3");
+                            FGridCoord(CurrentDimensions.Max.Row, OldDimensions.Min.Col - 1)), NumberOfMapTilesRows);
                     }
 
                     //Если было зарегистрировано, что новая текущая область правее левой границы предыдущей области, то все необходимые старые столбцы становятся сколлапсированными
@@ -515,7 +560,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
                         /* Так как известно, что новая область правее предыдущей, цикл стартует со столбца равного старой левой границе, и
                          * проходит до столбца, расположенного на 1 левее, чем текущая левая граница, чтобы затронуть только отображённые тайлы */
                         AsynchronousAreaRemoving(FGridDimensions(FGridCoord(OldDimensions.Min.Row, OldDimensions.Min.Col),
-                            FGridCoord(OldDimensions.Max.Row, CurrentDimensions.Min.Col - 1)), NumberOfMapTilesRows, "3");
+                            FGridCoord(OldDimensions.Max.Row, CurrentDimensions.Min.Col - 1)), NumberOfMapTilesRows);
                     }
 
                     //Если было зарегистрировано, что новая текущая область правее правой границы предыдущей области, то все необходимые новые столбцы становятся видимыми
@@ -526,7 +571,7 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
                         /* Так как известно, что новая область правее предыдущей, цикл стартует со столбца на 1 правее, чем предыдущая правая
                          * граница, чтобы затронуть только неотображённые тайлы, и проходит до новой правой границы включительно */
                         AsynchronousAreaFilling(FGridDimensions(FGridCoord(CurrentDimensions.Min.Row, OldDimensions.Max.Col + 1),
-                            FGridCoord(CurrentDimensions.Max.Row, CurrentDimensions.Max.Col)), NumberOfMapTilesRows, "4");
+                            FGridCoord(CurrentDimensions.Max.Row, CurrentDimensions.Max.Col)), NumberOfMapTilesRows);
                     }
 
                     //Если было зарегистрировано, что новая текущая область левее правой границы предыдущей области, то все необходимые старые столбцы становятся сколлапсированными
@@ -537,15 +582,17 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
                         /* Так как известно, что новая область левее предыдущей, цикл стартует со столбца на 1 правее, чем текущая правая
                          * граница, чтобы затронуть только отображённые тайлы, и проходит до старой правой границы включительно */
                         AsynchronousAreaRemoving(FGridDimensions(FGridCoord(OldDimensions.Min.Row, CurrentDimensions.Max.Col + 1),
-                            FGridCoord(OldDimensions.Max.Row, OldDimensions.Max.Col)), NumberOfMapTilesRows, "3");
+                            FGridCoord(OldDimensions.Max.Row, OldDimensions.Max.Col)), NumberOfMapTilesRows);
                     }
                 }
             }
+            //Иначе вся старая область стирается, а вся новая область отрисовывается с нуля
             else {
-                AsynchronousAreaFilling(CurrentDimensions, NumberOfMapTilesRows, "all");
-                AsynchronousAreaRemoving(OldDimensions, NumberOfMapTilesRows, "all");
+                AsynchronousAreaFilling(CurrentDimensions, NumberOfMapTilesRows);
+                AsynchronousAreaRemoving(OldDimensions, NumberOfMapTilesRows);
             }
 
+            //Координатной обёртке задаются её новые максимальные и минимальные координаты
             TilesCoordWrapper->setMinCoord(CurrentDimensions.Min);
             TilesCoordWrapper->setMaxCoord(CurrentDimensions.Max);
         }
