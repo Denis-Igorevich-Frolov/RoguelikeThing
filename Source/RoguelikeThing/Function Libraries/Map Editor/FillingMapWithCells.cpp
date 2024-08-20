@@ -108,6 +108,19 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
 
         return;
     }
+    if (!TileBuf) {
+        UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: TileBuf is a null pointer"));
+
+        if (LoadingWidget) {
+            LoadingWidget->LoadingComplete(false);
+            LoadingWidget->RemoveFromParent();
+
+            if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
+        }
+
+        return;
+    }
 
     /* Здесь проверяется корректность переданного класса, по которому будут делаться тайлы.
      * Переданный MapTileClass имеет тип данных UClass*, но для корректной работы кода
@@ -238,23 +251,30 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
         if (GameInstance && GameInstance->LogType != ELogType::NONE)
             UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: all checks have been passed, the TilesGridPanel grid is ready to be filled with cells with dimensions: rows: %d, columns: %d"), NumberOfMapTilesRows, NumberOfMapTilesCols);
 
+        //Все старые значения очищаются из буфера тайлов и заполняются новыми
         TileBuf->Clear();
-        if (!TileBuf->ScoreToMaximum())
-            UE_LOG(FillingMapWithCells, Log, TEXT("fffffffffffff"));
+        if (!TileBuf->FillToMaximum()) {
+            UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: MapMatrix is a null pointer"));
+            if (LoadingWidget) {
+                LoadingWidget->LoadingComplete(false);
+                LoadingWidget->RemoveFromParent();
+
+                if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                    UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
+            }
+
+            return;
+        }
 
         //Само забиваение карты ячейками происходит в отдельном потоке
-        AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapEditor, TableLength, MapTileLength,TilesGridPanel, TileBuf, CellClass, MapTileClass,
+        AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapEditor, TableLength, MapTileLength,TilesGridPanel, CellClass, MapTileClass,
             TilesCoordWrapper, Map, StartingPositionRow, StartingPositionCol, NumberOfMapTilesRows, NumberOfMapTilesCols, this]() {
 
                 if (GameInstance && GameInstance->LogType != ELogType::NONE)
                     UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The TilesGridPanel table population thread has been opened"));
 
+                //Все непустые ячейки предзагружаются из БД
                 Map->FillTerrainOfTiles();
-
-                UMapTile* LastMapTile = nullptr;
-
-                MinOriginalVisibleTile = FGridCoord(StartingPositionRow, StartingPositionCol);
-                MaxOriginalVisibleTile = FGridCoord(StartingPositionRow + (NumberOfTilesRowsThatFitOnScreen - 1), StartingPositionCol + (NumberOfTilesColsThatFitOnScreen - 1));
 
                 /* Данный цикл и вложенный в него создают тайлы. При этом
                  * это происходит таким образом, чтобы самый первый тайл
@@ -304,8 +324,10 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                             UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: An uninitialized MapTile is created with coordinates row: %d col: %d"), row, col);
 
                         NewTile->SetMyCoord(FCellCoord(row, col));
+                        //Из матрицы карты берётся предзагруженный ландшафт тайла
                         NewTile->SetMyTerrainOfTile(Map->GetTerrainOfTile(FCellCoord(row, col)));
 
+                        //Тайл заполнаяется ячейками по переданному классу
                         if (!NewTile->FillingWithCells(MapTileLength, CellClass, MapEditor, Map)) {
                             AsyncTask(ENamedThreads::GameThread, [MapEditor, TilesGridPanel, this]() {
                                 if (GameInstance && GameInstance->LogType != ELogType::NONE)
@@ -349,16 +371,15 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                              * расположения тайлов в GridPanel */
                             TilesCoordWrapper->AddWidget(NumberOfMapTilesRows - row - 1, col, NewTile, GridSlot);
                         });
-
-                        LastMapTile = NewTile;
                     }
                 }
 
+                /* Создаётся пустой тайл, который помещается в наибольший слот таблицы карты, растягивая её до
+                 * таких габаритов, которые были бы, если все тайлы карты единовременно находились бы на ней */
                 UPROPERTY()
-                UMapTile* MaxTile = CreateWidget<UMapTile>(TilesGridPanel, MapTileClass);
-
-                AsyncTask(ENamedThreads::GameThread, [TilesGridPanel, MaxTile, NumberOfMapTilesRows, NumberOfMapTilesCols, this]() {
-                    MinTileGridSlot = TilesGridPanel->AddChildToUniformGrid(MaxTile, NumberOfMapTilesRows - 1, NumberOfMapTilesCols - 1);
+                UMapTile* StretcherTile = CreateWidget<UMapTile>(TilesGridPanel, MapTileClass);
+                AsyncTask(ENamedThreads::GameThread, [TilesGridPanel, StretcherTile, NumberOfMapTilesRows, NumberOfMapTilesCols, this]() {
+                    TilesGridPanel->AddChildToUniformGrid(StretcherTile, NumberOfMapTilesRows - 1, NumberOfMapTilesCols - 1);
                 });
 
                 //Чтобы таблицу не сжимало устанавливается минимальный размер слота
@@ -381,6 +402,7 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                         if (GameInstance && GameInstance->LogType != ELogType::NONE)
                             UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: There was no download widget"));
 
+                    //Вызывается эвент редактора карт, говорящий о том, что её контент обновился
                     MapEditor->UpdateItemAreaContent();
 
                     //После полного забивания карты ячейками TilesGridPanel возвращается видимость
@@ -389,6 +411,7 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                         UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: A thread to configure the necessary widgets at the end of filling the TilesGridPanel table and removing the loading widget has been closed"));
                 });
 
+                //Так как старая карта, при условии что она была, удалялась, то следует форсировать сборку мусора
                 AsyncTask(ENamedThreads::GameThread, [this]() {
                     GetWorld()->ForceGarbageCollection(true);
                     });

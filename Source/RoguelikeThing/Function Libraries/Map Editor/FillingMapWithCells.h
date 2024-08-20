@@ -52,14 +52,12 @@ private:
 	//Количество ячеек в строке карты
 	int RowsNum;
 
+	//Количество тайлов, которые изначально влезают в видимую область контента
 	int NumberOfTilesColsThatFitOnScreen = 0;
 	int NumberOfTilesRowsThatFitOnScreen = 0;
 
 	FVector2D TileSize = FVector2D(0, 0);
 	
-	UPROPERTY()
-	UUniformGridSlot* MinTileGridSlot;
-
 	//Менеджер высокого уровня для экземпляра запущенной игры
 	UPROPERTY()
 	UMyGameInstance* GameInstance;
@@ -86,6 +84,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	int32 GetRowNum();
 
+	//Координаты минимального и максимального тайла, которые влезали изначально в область видимости
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGridCoord MinOriginalVisibleTile = FGridCoord();
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

@@ -27,7 +27,7 @@ UAbstractTile* UTileBuffer::GetTile()
 
     if (TileBuf.Num() < 10) {
         if(MapTileClass)
-            if (!ScoreToMaximum()) {
+            if (!FillToMaximum()) {
                 UE_LOG(LogTemp, Error, TEXT("AHA"));
             }
     }
@@ -51,7 +51,7 @@ void UTileBuffer::Init(int mapTileLength, UUniformGridPanel* refTilesGridPanel, 
     IsInit = true;
 }
 
-bool UTileBuffer::ScoreToMaximum()
+bool UTileBuffer::FillToMaximum()
 {
     if (!IsInit)
         return false;

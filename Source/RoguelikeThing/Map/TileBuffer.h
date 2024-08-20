@@ -44,7 +44,7 @@ public:
 	void AddTile(UAbstractTile* Tile);
 
 	UFUNCTION(BlueprintCallable)
-	bool ScoreToMaximum();
+	bool FillToMaximum();
 
 	UFUNCTION(BlueprintCallable)
 	void Clear();
