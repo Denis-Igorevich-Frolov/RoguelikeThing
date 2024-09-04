@@ -36,7 +36,7 @@ void UTileTablesOptimizationTools::AsynchronousAreaFilling(FGridDimensions AreaD
 
                             if (Tile) {
                                 //Строки разворачиваются потому что координаты карты отсчитываются снизу вверх, а не сверху вниз, как в стандартной таблице UniformGrid
-                                Tile->SetMyCoord(FCellCoord((NumberOfMapTilesRows - row) - 1, col));
+                                Tile->SetMyCoord(FCellCoord((NumberOfMapTilesRows - (row + FullMapDimensions.MinRow * NumOfTilesInChunk)) - 1, col + FullMapDimensions.MinCol * NumOfTilesInChunk));
                                 UUniformGridSlot* GridSlot = TilesGridPanel->AddChildToUniformGrid(Tile, (NumberOfMapTilesRows - (row - FullMapDimensions.MinRow * NumOfTilesInChunk)) - 1, col - FullMapDimensions.MinCol * NumOfTilesInChunk);
                                 TilesCoordWrapper->AddWidget(row, col, Tile, GridSlot);
                                 //При появлении нового тайла на карте, вызывается соответствующий эвент для инициализации этого тайла

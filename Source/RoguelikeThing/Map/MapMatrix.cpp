@@ -1690,12 +1690,12 @@ bool UMapMatrix::ContainsTerrainOfTile(FCellCoord Coord)
 bool UMapMatrix::ContainsCellInTerrainOfTile(FCellCoord GlobalCoordOfCell, int TileSize)
 {
     FCellCoord TileCoord = FCellCoord((int)(GlobalCoordOfCell.Row / TileSize), (int)(GlobalCoordOfCell.Col / TileSize));
-    FCellCoord LocalCelCoord = FCellCoord(GlobalCoordOfCell.Row % TileSize, GlobalCoordOfCell.Col % TileSize);
+    FCellCoord LocalCellCoord = FCellCoord(GlobalCoordOfCell.Row % TileSize, GlobalCoordOfCell.Col % TileSize);
 
     if (ContainsTerrainOfTile(TileCoord)) {
         UTerrainOfTile* Terrain = GetTerrainOfTile(TileCoord);
         if (Terrain) {
-            return Terrain->Contains(LocalCelCoord);
+            return Terrain->Contains(LocalCellCoord);
         }
         else {
             UE_LOG(TerrainOfTile, Error, TEXT("!!! An error occurred in the MapMatrix class in the ContainsTerrainOfTile function - Terrain is not valid"));
