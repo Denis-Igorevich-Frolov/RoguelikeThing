@@ -30,6 +30,11 @@ void UMapCell::SetMyCoord(FCellCoord myCoord)
     this->MyCoord = myCoord;
 }
 
+const FCellCoord UMapCell::GetMyCoord()
+{
+    return MyCoord;
+}
+
 /* Функция, возвращающая глобальную координату ячейки, то есть с учётом координаты родительского тайла. Так, например,
  * ячейка 0:1, находящаяся в тайле 0:3, при длине стороны тайла в 5, будет имень глобальную координату 0:16 */
 FCellCoord UMapCell::GetMyGlobalCoord()

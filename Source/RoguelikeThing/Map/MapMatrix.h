@@ -7,6 +7,7 @@
 #include "RoguelikeThing/MyGameInstance.h"
 #include "RoguelikeThing/Structs/Widgets/MapEditor/MapCell/NeighbourhoodOfCell.h"
 #include <RoguelikeThing/Widgets/MapEditor/CellCoord.h>
+#include <RoguelikeThing/Widgets/MapEditor/MapEditor.h>
 #include "MapMatrix.generated.h"
 
 /****************************************************************
@@ -172,11 +173,11 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FNeighbourhoodOfCell CheckNeighbourhoodOfCell(int32 globalCellRow, int32 globalCellCol);
 
-	/* Функция, создающая новый фрагмент карты на отснове переданного типа и индекса фрагмента.
+	/* Функция, создающая новый фрагмент карты на основе переданного типа и индекса фрагмента.
 	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
 	bool CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chunkCol, bool autoClose = true);
 
-	/* Функция, удаляющая фрагмент карты на отснове переданного типа и индекса фрагмента.
+	/* Функция, удаляющая фрагмент карты на основе переданного типа и индекса фрагмента.
 	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
 	bool DeleteMapChunk(MatrixType matrixType, int32 chunkRow, int32 chunkCol, bool autoClose = true);
 	
@@ -211,6 +212,14 @@ public:
 	//Функция, устанавливающая путь до файла с базой данных
 	UFUNCTION(BlueprintCallable)
 	void SetFilePath(FString filePath);
+
+	UFUNCTION(BlueprintCallable)
+	void AsyncChangeMatrixSize(UMapEditor* MapEditor, int right, int left, int top, int bottom);
+
+	bool CreateNewRightCol(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose = true);
+	bool CreateNewLeftCol(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose = true);
+	bool CreateNewTopRow(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose = true);
+	bool CreateNewBottomRow(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose = true);
 
 	//Функция, запускающая в отдельном потоке создание в базе даннх матрицы из фрагментов карты указанного типа
 	UFUNCTION(BlueprintCallable)

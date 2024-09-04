@@ -37,7 +37,7 @@ void UTileTablesOptimizationTools::AsynchronousAreaFilling(FGridDimensions AreaD
                             if (Tile) {
                                 //Строки разворачиваются потому что координаты карты отсчитываются снизу вверх, а не сверху вниз, как в стандартной таблице UniformGrid
                                 Tile->SetMyCoord(FCellCoord((NumberOfMapTilesRows - row) - 1, col));
-                                UUniformGridSlot* GridSlot = TilesGridPanel->AddChildToUniformGrid(Tile, (NumberOfMapTilesRows - row) - 1, col);
+                                UUniformGridSlot* GridSlot = TilesGridPanel->AddChildToUniformGrid(Tile, (NumberOfMapTilesRows - (row - FullMapDimensions.MinRow * NumOfTilesInChunk)) - 1, col - FullMapDimensions.MinCol * NumOfTilesInChunk);
                                 TilesCoordWrapper->AddWidget(row, col, Tile, GridSlot);
                                 //При появлении нового тайла на карте, вызывается соответствующий эвент для инициализации этого тайла
                                 Tile->OnAddedEvent(MapMatrix);
@@ -126,7 +126,7 @@ void UTileTablesOptimizationTools::AsynchronousAreaRemoving(FGridDimensions Area
 }
 
 void UTileTablesOptimizationTools::Init(UUniformGridPanel* refTilesGridPanel, UCoordWrapperOfTable* refTilesCoordWrapper, UTileBuffer* refTilesBuf, UMapMatrix* refMapMatrix,
-    FGridDimensions originalDimensions, FVector2D widgetAreaSize, FVector2D tileSize, FVector2D minContentSize, int numberOfTileRowsInTable, int numberOfTileColsInTable)
+    FGridDimensions originalDimensions, FMapDimensions fullMapDimensions, FVector2D widgetAreaSize, FVector2D tileSize, FVector2D minContentSize, int numberOfTileRowsInTable, int numberOfTileColsInTable)
 {
     TilesGridPanel = refTilesGridPanel;
     TilesCoordWrapper = refTilesCoordWrapper;
@@ -134,6 +134,7 @@ void UTileTablesOptimizationTools::Init(UUniformGridPanel* refTilesGridPanel, UC
     MapMatrix = refMapMatrix;
 
     this->OriginalDimensions = originalDimensions;
+    this->FullMapDimensions = fullMapDimensions;
     this->TileSize = tileSize;
     this->MinContentSize = minContentSize;
     this->NumberOfTileRowsInTable = numberOfTileRowsInTable;
@@ -141,6 +142,8 @@ void UTileTablesOptimizationTools::Init(UUniformGridPanel* refTilesGridPanel, UC
     this->WidgetAreaSize = widgetAreaSize;
     OldDimensions = OriginalDimensions;
     CurrentDimensions = OriginalDimensions;
+    
+    NumOfTilesInChunk = fullMapDimensions.TableLength / fullMapDimensions.MapTileLength;
 
     FGridCoord MaxCoord = OriginalDimensions.Max;
     FGridCoord MinCoord = OriginalDimensions.Min;

@@ -84,6 +84,7 @@ private:
 	//Количество тайлов в строке и столбце всей карты
 	int NumberOfTileRowsInTable = 0;
 	int NumberOfTileColsInTable = 0;
+	int NumOfTilesInChunk = 0;
 
 	bool IsInit = false;
 
@@ -97,7 +98,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void Init(UUniformGridPanel* refTilesGridPanel, UCoordWrapperOfTable* refTilesCoordWrapper, UTileBuffer* refTilesBuf, UMapMatrix* refMapMatrix, FGridDimensions originalDimensions,
-		FVector2D widgetAreaSize, FVector2D tileSize, FVector2D MinContentSize, int numberOfTileRowsInTable, int numberOfTileColsInTable);
+		FMapDimensions fullMapDimensions, FVector2D widgetAreaSize, FVector2D tileSize, FVector2D MinContentSize, int numberOfTileRowsInTable, int numberOfTileColsInTable);
 
 	UFUNCTION(BlueprintCallable)
 	//Функция, изменяющая количество отображаемых тайлов от сдвига или масштабирования таблицы
@@ -112,4 +113,6 @@ public:
 	//Габариты карты, которые были изначально при инициализации
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGridDimensions OriginalDimensions = FGridDimensions();
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	FMapDimensions FullMapDimensions = FMapDimensions();
 };

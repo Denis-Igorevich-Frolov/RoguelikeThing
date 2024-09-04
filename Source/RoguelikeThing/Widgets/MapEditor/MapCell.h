@@ -64,6 +64,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FCellCoord GetCoordOfParentTile();
     void SetMyCoord(FCellCoord myCoord) override;
+	const FCellCoord GetMyCoord() override;
 
 	/* Функция, возвращающая глобальную координату ячейки, то есть с учётом координаты родительского тайла. Так, например,
 	 * ячейка 0:1, находящаяся в тайле 0:3, при длине стороны тайла в 5, будет имень глобальную координату 0:16 */

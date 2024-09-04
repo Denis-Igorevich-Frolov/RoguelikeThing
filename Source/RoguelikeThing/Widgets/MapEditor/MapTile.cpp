@@ -346,3 +346,8 @@ void UMapTile::OnAddedEvent(UMapMatrix* Map)
     //На основе переменной предзагузки инициализируются стили ячеек
     FillCellsAccordingToTerrain(Map);
 }
+
+const FCellCoord UMapTile::GetMyCoord()
+{
+    return MyCoord;
+}

@@ -609,6 +609,110 @@ bool UMapMatrix::CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chu
 void UMapMatrix::setLoadWidget(ULoadingWidget* newLoadingWidget)
 {
     this->LoadingWidget = newLoadingWidget;
+
+    if (GameInstance && GameInstance->LogType != ELogType::NONE)
+        UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the setLoadWidget function: The download widget has been set"));
+}
+
+void UMapMatrix::AsyncChangeMatrixSize(UMapEditor* MapEditor, int right, int left, int top, int bottom)
+{
+    AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapEditor, right, left, top, bottom, this]() {
+            FMapDimensions Dimensions = GetMapDimensions(false);
+
+            if (right > 0) {
+                for (int i = 0; i < right; i++) {
+                    AsyncTask(ENamedThreads::GameThread, [Dimensions, this]() {
+                        if (!CreateNewRightCol(MatrixType::ChunkStructure, Dimensions, false)) {
+                            if (LoadingWidget) {
+                                LoadingWidget->LoadingComplete(false);
+                                LoadingWidget->RemoveFromParent();
+
+                                if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                                    UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncChangeMatrixSize function: The download widget has been removed"));
+                            }
+
+                            mapDataBaseClose("AsyncChangeMatrixSize");
+
+                            return;
+                        }
+                        });
+                }
+            }
+
+            if (left > 0) {
+                for (int i = 0; i < left; i++) {
+                    AsyncTask(ENamedThreads::GameThread, [Dimensions, this]() {
+                        if (!CreateNewLeftCol(MatrixType::ChunkStructure, Dimensions, false)) {
+                            if (LoadingWidget) {
+                                LoadingWidget->LoadingComplete(false);
+                                LoadingWidget->RemoveFromParent();
+
+                                if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                                    UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncChangeMatrixSize function: The download widget has been removed"));
+                            }
+
+                            mapDataBaseClose("AsyncChangeMatrixSize");
+
+                            return;
+                        }
+                        });
+                }
+            }
+
+            if (top > 0) {
+                for (int i = 0; i < top; i++) {
+                    AsyncTask(ENamedThreads::GameThread, [Dimensions, this]() {
+                        if (!CreateNewTopRow(MatrixType::ChunkStructure, Dimensions, false)) {
+                            if (LoadingWidget) {
+                                LoadingWidget->LoadingComplete(false);
+                                LoadingWidget->RemoveFromParent();
+
+                                if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                                    UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncChangeMatrixSize function: The download widget has been removed"));
+                            }
+
+                            mapDataBaseClose("AsyncChangeMatrixSize");
+
+                            return;
+                        }
+                        });
+                }
+            }
+
+            if (bottom > 0) {
+                for (int i = 0; i < bottom; i++) {
+                    AsyncTask(ENamedThreads::GameThread, [Dimensions, this]() {
+                        if (!CreateNewBottomRow(MatrixType::ChunkStructure, Dimensions, false)) {
+                            if (LoadingWidget) {
+                                LoadingWidget->LoadingComplete(false);
+                                LoadingWidget->RemoveFromParent();
+
+                                if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                                    UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncChangeMatrixSize function: The download widget has been removed"));
+                            }
+
+                            mapDataBaseClose("AsyncChangeMatrixSize");
+
+                            return;
+                        }
+                        });
+                }
+            }
+
+            AsyncTask(ENamedThreads::GameThread, [MapEditor, this]() {
+                if (LoadingWidget) {
+                    LoadingWidget->LoadingComplete(true);
+                    LoadingWidget->RemoveFromParent();
+
+                    if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                        UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncChangeMatrixSize function: The download widget has been removed"));
+                }
+
+                mapDataBaseClose("AsyncChangeMatrixSize");
+
+                MapEditor->FillMapEditor();
+                });
+        });
 }
 
 /* Функция, проверяющая корректность применения к определённой ячейке стиля корридора исходя из её окружения.
@@ -1343,6 +1447,82 @@ void UMapMatrix::SetFilePath(FString filePath)
         UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the SetFilePath function: The path to the database file is set as %s"), *FilePath);
 }
 
+bool UMapMatrix::CreateNewRightCol(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose)
+{
+    if (Dimensions.isValid) {
+        for (int row = Dimensions.MinRow; row <= Dimensions.MaxRow; row++) {
+            if (!CreateMapChunk(matrixType, row, Dimensions.MaxCol + 1, false)) {
+                return false;
+            }
+        }
+    }
+    else {
+        return false;
+    }
+
+    if (autoClose)
+        mapDataBaseClose("CreateNewRightCol");
+
+    return true;
+}
+
+bool UMapMatrix::CreateNewLeftCol(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose)
+{
+    if (Dimensions.isValid) {
+        for (int row = Dimensions.MinRow; row <= Dimensions.MaxRow; row++) {
+            if (!CreateMapChunk(matrixType, row, Dimensions.MinCol - 1, false)) {
+                return false;
+            }
+        }
+    }
+    else {
+        return false;
+    }
+
+    if (autoClose)
+        mapDataBaseClose("CreateNewLeftCol");
+
+    return true;
+}
+
+bool UMapMatrix::CreateNewTopRow(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose)
+{
+    if (Dimensions.isValid) {
+        for (int col = Dimensions.MinCol; col <= Dimensions.MaxCol; col++) {
+            if (!CreateMapChunk(matrixType, Dimensions.MinRow - 1, col, false)) {
+                return false;
+            }
+        }
+    }
+    else {
+        return false;
+    }
+
+    if (autoClose)
+        mapDataBaseClose("CreateNewTopRow");
+
+    return true;
+}
+
+bool UMapMatrix::CreateNewBottomRow(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose)
+{
+    if (Dimensions.isValid) {
+        for (int col = Dimensions.MinCol; col <= Dimensions.MaxCol; col++) {
+            if (!CreateMapChunk(matrixType, Dimensions.MaxRow + 1, col, false)) {
+                return false;
+            }
+        }
+    }
+    else {
+        return false;
+    }
+
+    if (autoClose)
+        mapDataBaseClose("CreateNewBottomRow");
+
+    return true;
+}
+
 //Функция, запускающая в отдельном потоке создание в базе даннх матрицы из фрагментов карты указанного типа
 void UMapMatrix::AsyncCreateBlankCard(int32 rowLen, int32 colLen, MatrixType matrixType) {
     if (GameInstance && GameInstance->LogType != ELogType::NONE)
@@ -1391,8 +1571,8 @@ void UMapMatrix::AsyncCreateBlankCard(int32 rowLen, int32 colLen, MatrixType mat
 
             //Виджет загрузки удаляется с экрана, и посылается сигнал окончания создания таблицы
             if (this->LoadingWidget) {
-                this->LoadingWidget->RemoveFromParent();
                 LoadingWidget->LoadingComplete(SuccessCreateBlankCard);
+                this->LoadingWidget->RemoveFromParent();
             }
 
             if (GameInstance && GameInstance->LogType != ELogType::NONE) {
@@ -1410,12 +1590,23 @@ void UMapMatrix::FillTerrainOfTiles()
     TerrainOfTilesRows.Empty();
 
     FMapDimensions MapDimensions = GetMapDimensions(false);
+    int minRow = MapDimensions.MinRow * TableLength;
+    if (minRow < 0)
+        minRow++;
     if (MapDimensions.isValid) {
-        for (int row = MapDimensions.MinRow * TableLength; row < (MapDimensions.MaxRow + 1) * TableLength; row++) {
-            int CurrentTileRow = (int)(row / MapTileLength);
+        for (int row = minRow; row < (MapDimensions.MaxRow + 1) * TableLength; row++) {
+            int CurrentTileRow = -1;
+            if (row >= 0)
+                CurrentTileRow = (int)(row / MapTileLength);
+            else
+                CurrentTileRow = (int)((row - MapTileLength) / MapTileLength);
 
             //Локальная координата ячейки равна остатку от деления глобальной координаты на длинну стороны тайла
-            int CellRow = row % MapTileLength;
+            int CellRow = -1;
+            if (row >= 0)
+                CellRow = row % MapTileLength;
+            else
+                CellRow = MapTileLength - abs(row % MapTileLength) - 1;
 
             //Если целевого столбца нет, он создаётся
             if (!TerrainOfTilesRows.Contains(CurrentTileRow)) {
@@ -1425,8 +1616,15 @@ void UMapMatrix::FillTerrainOfTiles()
             TMap<int, UTerrainOfTile*>* TerrainOfTilesCols = TerrainOfTilesRows.Find(CurrentTileRow);
 
             if (TerrainOfTilesCols) {
-                for (int col = MapDimensions.MinCol * TableLength; col < (MapDimensions.MaxCol + 1) * TableLength; col++) {
-                    int CurrentTileCol = (int)(col / MapTileLength);
+                int minCol = MapDimensions.MinCol * TableLength;
+                if (minCol < 0)
+                    minCol++;
+                for (int col = minCol; col < (MapDimensions.MaxCol + 1) * TableLength; col++) {
+                    int CurrentTileCol = -1;
+                    if (col >= 0)
+                        CurrentTileCol = (int)(col / MapTileLength);
+                    else
+                        CurrentTileCol = (int)((col - MapTileLength) / MapTileLength);
 
                     //Если целевой строки нет, она создаётся
                     if (!TerrainOfTilesCols->Contains(CurrentTileCol)) {
@@ -1437,7 +1635,11 @@ void UMapMatrix::FillTerrainOfTiles()
 
                     if (Terrain) {
                         //Локальная координата ячейки равна остатку от деления глобальной координаты на длинну стороны тайла
-                        int CellCol = col % MapTileLength;
+                        int CellCol = -1;
+                        if (col >= 0)
+                            CellCol = col % MapTileLength;
+                        else
+                            CellCol = MapTileLength - abs(col % MapTileLength) - 1;
 
                         FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(row, col, false);
 

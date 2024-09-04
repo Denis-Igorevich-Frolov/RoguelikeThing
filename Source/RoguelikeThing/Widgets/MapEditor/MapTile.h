@@ -43,6 +43,7 @@ public:
 	 * очистить класс без его последующего удаления, CellsCoordWrapper следует вновь проинициализировать */
 	void RemoveAllCells() override;
 	void SetMyCoord(FCellCoord myCoord) override;
+	const FCellCoord GetMyCoord() override;
 	/* Переопределение виртуальной функции для сброса состояния изменённых ячеек. При вызове
 	 * функции переменная MyTerrainOfTile уничтожается и требует последующей переинициализации */
 	void ClearFilledCells() override;

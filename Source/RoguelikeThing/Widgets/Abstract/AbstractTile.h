@@ -23,6 +23,7 @@ protected:
 
 public:
 	virtual void SetMyCoord(FCellCoord myCoord);
+	virtual const FCellCoord GetMyCoord();
 	//Виртуальная функция для сброса состояния изменённых дочерних виджетов (если таковые имеются)
 	UFUNCTION(BlueprintCallable)
 	virtual void ClearFilledCells();

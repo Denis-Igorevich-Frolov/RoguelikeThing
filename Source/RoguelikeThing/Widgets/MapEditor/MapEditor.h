@@ -29,7 +29,10 @@ public:
 
 	//Эвент, при котором следует пересчитать какие тайлы стоит отобразить, а какие скрыть
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void UpdateItemAreaContent();
+	void UpdateItemAreaContent();	
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void FillMapEditor();
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void OnResize(FIntPoint Size);

@@ -7,6 +7,11 @@ void UAbstractTile::SetMyCoord(FCellCoord myCoord)
 {
 }
 
+const FCellCoord UAbstractTile::GetMyCoord()
+{
+    return FCellCoord();
+}
+
 //Виртуальная функция для сброса состояния изменённых дочерних виджетов (если таковые имеются)
 void UAbstractTile::ClearFilledCells()
 {

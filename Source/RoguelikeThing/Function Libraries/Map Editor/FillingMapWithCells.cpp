@@ -201,8 +201,10 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
         ColsNum = MapDimensions.MaxCol - MapDimensions.MinCol + 1;
         RowsNum = MapDimensions.MaxRow - MapDimensions.MinRow + 1;
 
-        int NumberOfMapTilesCols = ColsNum * (TableLength / MapTileLength);
-        int NumberOfMapTilesRows = RowsNum * (TableLength / MapTileLength);
+        int NumberOfTilesInChunc = TableLength / MapTileLength;
+
+        int NumberOfMapTilesCols = ColsNum * NumberOfTilesInChunc;
+        int NumberOfMapTilesRows = RowsNum * NumberOfTilesInChunc;
 
         if (TestCellWidget) {
             FVector2D CellSize = static_cast<UMapCell*>(TestCellWidget)->getSize();
@@ -267,8 +269,8 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
         }
 
         //Само забиваение карты ячейками происходит в отдельном потоке
-        AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapEditor, TableLength, MapTileLength,TilesGridPanel, CellClass, MapTileClass,
-            TilesCoordWrapper, Map, StartingPositionRow, StartingPositionCol, NumberOfMapTilesRows, NumberOfMapTilesCols, this]() {
+        AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapEditor, TableLength, MapTileLength,TilesGridPanel, CellClass, MapTileClass, TilesCoordWrapper,
+            Map, StartingPositionRow, StartingPositionCol, NumberOfMapTilesRows, NumberOfMapTilesCols, MapDimensions, NumberOfTilesInChunc, this]() {
 
                 if (GameInstance && GameInstance->LogType != ELogType::NONE)
                     UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The TilesGridPanel table population thread has been opened"));
@@ -323,9 +325,9 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                         if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                             UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: An uninitialized MapTile is created with coordinates row: %d col: %d"), row, col);
 
-                        NewTile->SetMyCoord(FCellCoord(row, col));
+                        NewTile->SetMyCoord(FCellCoord((MapDimensions.MinRow * NumberOfTilesInChunc) + row, (MapDimensions.MinCol * NumberOfTilesInChunc) + col));
                         //Из матрицы карты берётся предзагруженный ландшафт тайла
-                        NewTile->SetMyTerrainOfTile(Map->GetTerrainOfTile(FCellCoord(row, col)));
+                        NewTile->SetMyTerrainOfTile(Map->GetTerrainOfTile(NewTile->GetMyCoord()));
 
                         //Тайл заполнаяется ячейками по переданному классу
                         if (!NewTile->FillingWithCells(MapTileLength, CellClass, MapEditor, Map)) {
@@ -369,7 +371,7 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                              * Для этого индекс обратного цикла по строкам разворачивается, чтобы передать
                              * инвертированное значение от того, что было уже инвертировано для корректного
                              * расположения тайлов в GridPanel */
-                            TilesCoordWrapper->AddWidget(NumberOfMapTilesRows - row - 1, col, NewTile, GridSlot);
+                            TilesCoordWrapper->AddWidget(NumberOfMapTilesRows - NewTile->GetMyCoord().Row - 1, NewTile->GetMyCoord().Col, NewTile, GridSlot);
                         });
                     }
                 }
