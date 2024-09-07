@@ -744,7 +744,7 @@ bool UMapMatrix::CheckCorrectOfCorridorLocation(MatrixType matrixType, int32 glo
 
     //Проверка влияния нового коридора на клетку сверху. Если полученный индекс меньше 1, то это значит, что клеток выше текущей нет
     if (globalCellRow - 1 >= 0) {
-        FMapEditorBrushType CellType = GetCellStyleFromTerrainOfTile(FCellCoord(globalCellRow - 1, globalCellCol), MapTileLength);
+        FMapEditorBrushType CellType = GetCellStyleFromTerrainOfTile(FCellCoord(globalCellRow - 1, globalCellCol));
 
         //На всякий случай всё равно проверяется валидность индекса
         if (CellType == FMapEditorBrushType::Error) {
@@ -788,7 +788,7 @@ bool UMapMatrix::CheckCorrectOfCorridorLocation(MatrixType matrixType, int32 glo
     //Ниже такая же проверка проводится с нижней, левой и правой клетками
 
     if (globalCellRow + 1 < TotalRows) {
-        FMapEditorBrushType CellType = GetCellStyleFromTerrainOfTile(FCellCoord(globalCellRow + 1, globalCellCol), MapTileLength);
+        FMapEditorBrushType CellType = GetCellStyleFromTerrainOfTile(FCellCoord(globalCellRow + 1, globalCellCol));
 
         if (CellType == FMapEditorBrushType::Error) {
             UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CheckCorrectOfCorridorLocation function - The cell at the global index Row: %d Col: %d is not valid or its index is invalid"), globalCellRow + 1, globalCellCol);
@@ -810,7 +810,7 @@ bool UMapMatrix::CheckCorrectOfCorridorLocation(MatrixType matrixType, int32 glo
     }
 
     if (globalCellCol - 1 >= 0) {
-        FMapEditorBrushType CellType = GetCellStyleFromTerrainOfTile(FCellCoord(globalCellRow, globalCellCol - 1), MapTileLength);
+        FMapEditorBrushType CellType = GetCellStyleFromTerrainOfTile(FCellCoord(globalCellRow, globalCellCol - 1));
 
         if (CellType == FMapEditorBrushType::Error) {
             UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CheckCorrectOfCorridorLocation function - The cell at the global index Row: %d Col: %d is not valid or its index is invalid"), globalCellRow, globalCellCol - 1);
@@ -832,7 +832,7 @@ bool UMapMatrix::CheckCorrectOfCorridorLocation(MatrixType matrixType, int32 glo
     }
 
     if (globalCellCol + 1 < TotalCols) {
-        FMapEditorBrushType CellType = GetCellStyleFromTerrainOfTile(FCellCoord(globalCellRow, globalCellCol + 1), MapTileLength);
+        FMapEditorBrushType CellType = GetCellStyleFromTerrainOfTile(FCellCoord(globalCellRow, globalCellCol + 1));
 
         if (CellType == FMapEditorBrushType::Error) {
             UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CheckCorrectOfCorridorLocation function - The cell at the global index Row: %d Col: %d is not valid or its index is invalid"), globalCellRow, globalCellCol + 1);
@@ -888,7 +888,7 @@ bool UMapMatrix::CheckCorrectOfRoomLocation(MatrixType matrixType, int32 globalC
 
      //Проверка влияния новой комнаты на клетку сверху. Если полученный индекс меньше 1, то это значит, что клеток выше текущей нет
     if (globalCellRow - 1 >= 0) {
-        FMapEditorBrushType CellType = GetCellStyleFromTerrainOfTile(FCellCoord(globalCellRow - 1, globalCellCol), MapTileLength);
+        FMapEditorBrushType CellType = GetCellStyleFromTerrainOfTile(FCellCoord(globalCellRow - 1, globalCellCol));
 
         //На всякий случай всё равно проверяется валидность индекса
         if (CellType == FMapEditorBrushType::Error) {
@@ -914,7 +914,7 @@ bool UMapMatrix::CheckCorrectOfRoomLocation(MatrixType matrixType, int32 globalC
     //Ниже такая же проверка проводится с нижней, левой и правой клетками
 
     if (globalCellRow + 1 < TotalRows) {
-        FMapEditorBrushType CellType = GetCellStyleFromTerrainOfTile(FCellCoord(globalCellRow + 1, globalCellCol), MapTileLength);
+        FMapEditorBrushType CellType = GetCellStyleFromTerrainOfTile(FCellCoord(globalCellRow + 1, globalCellCol));
 
         if (CellType == FMapEditorBrushType::Error) {
             UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CheckCorrectOfRoomLocation function - The cell at the global index Row: %d Col: %d is not valid or its index is invalid"), globalCellRow + 1, globalCellCol);
@@ -932,7 +932,7 @@ bool UMapMatrix::CheckCorrectOfRoomLocation(MatrixType matrixType, int32 globalC
     }
 
     if (globalCellCol - 1 >= 0) {
-        FMapEditorBrushType CellType = GetCellStyleFromTerrainOfTile(FCellCoord(globalCellRow, globalCellCol - 1), MapTileLength);
+        FMapEditorBrushType CellType = GetCellStyleFromTerrainOfTile(FCellCoord(globalCellRow, globalCellCol - 1));
 
         if (CellType == FMapEditorBrushType::Error) {
             UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CheckCorrectOfRoomLocation function - The cell at the global index Row: %d Col: %d is not valid or its index is invalid"), globalCellRow, globalCellCol - 1);
@@ -950,7 +950,7 @@ bool UMapMatrix::CheckCorrectOfRoomLocation(MatrixType matrixType, int32 globalC
     }
 
     if (globalCellCol + 1 < TotalCols) {
-        FMapEditorBrushType CellType = GetCellStyleFromTerrainOfTile(FCellCoord(globalCellRow, globalCellCol + 1), MapTileLength);
+        FMapEditorBrushType CellType = GetCellStyleFromTerrainOfTile(FCellCoord(globalCellRow, globalCellCol + 1));
 
         if (CellType == FMapEditorBrushType::Error) {
             UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CheckCorrectOfRoomLocation function - The cell at the global index Row: %d Col: %d is not valid or its index is invalid"), globalCellRow, globalCellCol + 1);
@@ -985,7 +985,7 @@ FNeighbourhoodOfCell UMapMatrix::CheckNeighbourhoodOfCell(int32 globalCellRow, i
 
     //Просмотр стиля клетки сверху. Если полученный индекс меньше 1, то это значит, что клеток выше текущей нет
     if (globalCellRow - 1 >= 0) {
-        FMapEditorBrushType CellType = GetCellStyleFromTerrainOfTile(FCellCoord(globalCellRow - 1, globalCellCol), MapTileLength);
+        FMapEditorBrushType CellType = GetCellStyleFromTerrainOfTile(FCellCoord(globalCellRow - 1, globalCellCol));
 
         //На всякий случай всё равно проверяется валидность индекса
         if (CellType == FMapEditorBrushType::Error) {
@@ -1004,7 +1004,7 @@ FNeighbourhoodOfCell UMapMatrix::CheckNeighbourhoodOfCell(int32 globalCellRow, i
     //Ниже такая же проверка проводится с нижней, левой и правой клетками
 
     if (globalCellRow + 1 < TotalRows) {
-        FMapEditorBrushType CellType = GetCellStyleFromTerrainOfTile(FCellCoord(globalCellRow + 1, globalCellCol), MapTileLength);
+        FMapEditorBrushType CellType = GetCellStyleFromTerrainOfTile(FCellCoord(globalCellRow + 1, globalCellCol));
 
         if (CellType == FMapEditorBrushType::Error) {
             UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CheckNeighbourhoodOfCell function - The cell at the global index Row: %d Col: %d is not valid or its index is invalid"), globalCellRow + 1, globalCellCol);
@@ -1018,7 +1018,7 @@ FNeighbourhoodOfCell UMapMatrix::CheckNeighbourhoodOfCell(int32 globalCellRow, i
     }
 
     if (globalCellCol - 1 >= 0) {
-        FMapEditorBrushType CellType = GetCellStyleFromTerrainOfTile(FCellCoord(globalCellRow, globalCellCol - 1), MapTileLength);
+        FMapEditorBrushType CellType = GetCellStyleFromTerrainOfTile(FCellCoord(globalCellRow, globalCellCol - 1));
 
         if (CellType == FMapEditorBrushType::Error) {
             UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CheckNeighbourhoodOfCell function - The cell at the global index Row: %d Col: %d is not valid or its index is invalid"), globalCellRow, globalCellCol - 1);
@@ -1032,7 +1032,7 @@ FNeighbourhoodOfCell UMapMatrix::CheckNeighbourhoodOfCell(int32 globalCellRow, i
     }
 
     if (globalCellCol + 1 < TotalCols) {
-        FMapEditorBrushType CellType = GetCellStyleFromTerrainOfTile(FCellCoord(globalCellRow, globalCellCol + 1), MapTileLength);
+        FMapEditorBrushType CellType = GetCellStyleFromTerrainOfTile(FCellCoord(globalCellRow, globalCellCol + 1));
 
         if (CellType == FMapEditorBrushType::Error) {
             UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the CheckNeighbourhoodOfCell function - The cell at the global index Row: %d Col: %d is not valid or its index is invalid"), globalCellRow, globalCellCol + 1);
@@ -1523,6 +1523,99 @@ bool UMapMatrix::CreateNewBottomRow(MatrixType matrixType, FMapDimensions Dimens
     return true;
 }
 
+bool UMapMatrix::ShiftDBCoords(int RowShift, int ColShift, bool autoClose)
+{
+    if (RowShift < 0 || ColShift < 0) {
+        return false;
+    }
+
+    if (!mapDataBase->IsValid()) {
+        if (!mapDataBase->Open(*FilePath, ESQLiteDatabaseOpenMode::ReadWriteCreate)) {
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the ShiftDBCoords function when trying to open mapDataBase: %s"), *mapDataBase->GetLastError());
+            return false;
+        }
+        else
+            if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the ShiftDBCoords function: mapDataBase has been opened"));
+    }
+
+    //После открытия базы данных следует ещё раз проверить её валидность
+    if (mapDataBase->IsValid()) {
+        FString SMatrixType = getStringMatrixType(MatrixType::ChunkStructure);
+
+        /* Если функия getStringMatrixType вернула значение "", то это значит, что в неё
+         * попали некорретные данные и последующее выполнение функции стоит прекратить */
+        if (SMatrixType == "") {
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the ShiftDBCoords function - incorrect map fragment type"));
+
+            if (autoClose)
+                mapDataBaseClose("ShiftDBCoords");
+            return false;
+        }
+
+        FMapDimensions Dimensions = GetMapDimensions(false);
+
+        //Инициализация транзакции
+        if (!mapDataBase->Execute(TEXT("BEGIN;"))) {
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the ShiftDBCoords function when trying to start a mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+            if (autoClose)
+                mapDataBaseClose("ShiftDBCoords");
+            return false;
+        }
+
+        for (int row = Dimensions.MaxRow; row >= Dimensions.MinRow; row--) {
+            for (int col = Dimensions.MaxCol; col >= Dimensions.MinCol; col--) {
+                if (!mapDataBase->Execute(*(FString::Printf(TEXT("ALTER TABLE \"%s %d:%d\" RENAME TO \"%s %d:%d\";"),
+                    *SMatrixType, row, col, *SMatrixType, row + RowShift, col + ColShift)))) {
+                    UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the ShiftDBCoords function when trying to !!!!!! table: %s"), *mapDataBase->GetLastError());
+
+                    if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
+                        UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the ShiftDBCoords function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+                    }
+
+                    if (autoClose)
+                        mapDataBaseClose("ShiftDBCoords");
+                    return false;
+                }
+            }
+        }
+
+        if (!mapDataBase->Execute(*(FString::Printf(TEXT("UPDATE Dimensions SET MinCol = %d, MaxCol = %d, MinRow = %d, MaxRow = %d;"),
+            Dimensions.MinCol + ColShift, Dimensions.MaxCol + ColShift, Dimensions.MinRow + RowShift, Dimensions.MaxRow + RowShift)))) {
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the ShiftDBCoords function when trying to insert a row into Dimensions table: %s"), *mapDataBase->GetLastError());
+
+            if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
+                UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the ShiftDBCoords function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+            }
+
+            if (autoClose)
+                mapDataBaseClose("ShiftDBCoords");
+            return false;
+        }
+
+        //Закрепление транзакции
+        if (!mapDataBase->Execute(TEXT("COMMIT;"))) {
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the ShiftDBCoords function when trying to commit the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+
+            if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
+                UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the ShiftDBCoords function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+            }
+
+            if (autoClose)
+                mapDataBaseClose("ShiftDBCoords");
+            return false;
+        }
+    }
+    else {
+        return false;
+    }
+
+    if (autoClose)
+        mapDataBaseClose("ShiftDBCoords");
+
+    return true;
+}
+
 //Функция, запускающая в отдельном потоке создание в базе даннх матрицы из фрагментов карты указанного типа
 void UMapMatrix::AsyncCreateBlankCard(int32 rowLen, int32 colLen, MatrixType matrixType) {
     if (GameInstance && GameInstance->LogType != ELogType::NONE)
@@ -1590,23 +1683,12 @@ void UMapMatrix::FillTerrainOfTiles()
     TerrainOfTilesRows.Empty();
 
     FMapDimensions MapDimensions = GetMapDimensions(false);
-    int minRow = MapDimensions.MinRow * TableLength;
-    if (minRow < 0)
-        minRow++;
     if (MapDimensions.isValid) {
-        for (int row = minRow; row < (MapDimensions.MaxRow + 1) * TableLength; row++) {
-            int CurrentTileRow = -1;
-            if (row >= 0)
-                CurrentTileRow = (int)(row / MapTileLength);
-            else
-                CurrentTileRow = (int)((row - MapTileLength) / MapTileLength);
+        for (int row = MapDimensions.MinRow * TableLength; row < (MapDimensions.MaxRow + 1) * TableLength; row++) {
+            int CurrentTileRow = (int)(row / MapTileLength);
 
             //Локальная координата ячейки равна остатку от деления глобальной координаты на длинну стороны тайла
-            int CellRow = -1;
-            if (row >= 0)
-                CellRow = row % MapTileLength;
-            else
-                CellRow = MapTileLength - abs(row % MapTileLength) - 1;
+            int CellRow = row % MapTileLength;
 
             //Если целевого столбца нет, он создаётся
             if (!TerrainOfTilesRows.Contains(CurrentTileRow)) {
@@ -1616,15 +1698,8 @@ void UMapMatrix::FillTerrainOfTiles()
             TMap<int, UTerrainOfTile*>* TerrainOfTilesCols = TerrainOfTilesRows.Find(CurrentTileRow);
 
             if (TerrainOfTilesCols) {
-                int minCol = MapDimensions.MinCol * TableLength;
-                if (minCol < 0)
-                    minCol++;
-                for (int col = minCol; col < (MapDimensions.MaxCol + 1) * TableLength; col++) {
-                    int CurrentTileCol = -1;
-                    if (col >= 0)
-                        CurrentTileCol = (int)(col / MapTileLength);
-                    else
-                        CurrentTileCol = (int)((col - MapTileLength) / MapTileLength);
+                for (int col = MapDimensions.MinCol * TableLength; col < (MapDimensions.MaxCol + 1) * TableLength; col++) {
+                    int CurrentTileCol = (int)(col / MapTileLength);
 
                     //Если целевой строки нет, она создаётся
                     if (!TerrainOfTilesCols->Contains(CurrentTileCol)) {
@@ -1635,11 +1710,7 @@ void UMapMatrix::FillTerrainOfTiles()
 
                     if (Terrain) {
                         //Локальная координата ячейки равна остатку от деления глобальной координаты на длинну стороны тайла
-                        int CellCol = -1;
-                        if (col >= 0)
-                            CellCol = col % MapTileLength;
-                        else
-                            CellCol = MapTileLength - abs(col % MapTileLength) - 1;
+                        int CellCol = col % MapTileLength;
 
                         FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(row, col, false);
 
@@ -1687,15 +1758,15 @@ bool UMapMatrix::ContainsTerrainOfTile(FCellCoord Coord)
 }
 
 //Проверка наличия не пустой ячейки в матрице переменных предзагрузки по глобальному индексу ячейки
-bool UMapMatrix::ContainsCellInTerrainOfTile(FCellCoord GlobalCoordOfCell, int TileSize)
+bool UMapMatrix::ContainsCellInTerrainOfTile(FCellCoord GlobalCoordOfCell)
 {
-    FCellCoord TileCoord = FCellCoord((int)(GlobalCoordOfCell.Row / TileSize), (int)(GlobalCoordOfCell.Col / TileSize));
-    FCellCoord LocalCellCoord = FCellCoord(GlobalCoordOfCell.Row % TileSize, GlobalCoordOfCell.Col % TileSize);
+    FCellCoord TileCoord = FCellCoord((int)(GlobalCoordOfCell.Row / MapTileLength), (int)(GlobalCoordOfCell.Col / MapTileLength));
+    FCellCoord LocalCelCoord = FCellCoord(GlobalCoordOfCell.Row % MapTileLength, GlobalCoordOfCell.Col % MapTileLength);
 
     if (ContainsTerrainOfTile(TileCoord)) {
         UTerrainOfTile* Terrain = GetTerrainOfTile(TileCoord);
         if (Terrain) {
-            return Terrain->Contains(LocalCellCoord);
+            return Terrain->Contains(LocalCelCoord);
         }
         else {
             UE_LOG(TerrainOfTile, Error, TEXT("!!! An error occurred in the MapMatrix class in the ContainsTerrainOfTile function - Terrain is not valid"));
@@ -1708,11 +1779,11 @@ bool UMapMatrix::ContainsCellInTerrainOfTile(FCellCoord GlobalCoordOfCell, int T
 }
 
 //Получение стиля ячейки из матрицы переменных предзагрузки по глобальному индексу ячейки
-FMapEditorBrushType UMapMatrix::GetCellStyleFromTerrainOfTile(FCellCoord GlobalCoordOfCell, int TileSize)
+FMapEditorBrushType UMapMatrix::GetCellStyleFromTerrainOfTile(FCellCoord GlobalCoordOfCell)
 {
-    if (ContainsCellInTerrainOfTile(GlobalCoordOfCell, TileSize)) {
-        FCellCoord TileCoord = FCellCoord((int)(GlobalCoordOfCell.Row / TileSize), (int)(GlobalCoordOfCell.Col / TileSize));
-        FCellCoord LocalCelCoord = FCellCoord(GlobalCoordOfCell.Row % TileSize, GlobalCoordOfCell.Col % TileSize);
+    if (ContainsCellInTerrainOfTile(GlobalCoordOfCell)) {
+        FCellCoord TileCoord = FCellCoord((int)(GlobalCoordOfCell.Row / MapTileLength), (int)(GlobalCoordOfCell.Col / MapTileLength));
+        FCellCoord LocalCelCoord = FCellCoord(GlobalCoordOfCell.Row % MapTileLength, GlobalCoordOfCell.Col % MapTileLength);
 
         UTerrainOfTile* Terrain = GetTerrainOfTile(TileCoord);
         return Terrain->GetCellType(LocalCelCoord);

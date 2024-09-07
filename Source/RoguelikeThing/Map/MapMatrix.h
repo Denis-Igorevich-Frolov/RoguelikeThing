@@ -221,6 +221,9 @@ public:
 	bool CreateNewTopRow(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose = true);
 	bool CreateNewBottomRow(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose = true);
 
+	UFUNCTION(BlueprintCallable)
+	bool ShiftDBCoords(int RowShift, int ColShift, bool autoClose = true);
+
 	//Функция, запускающая в отдельном потоке создание в базе даннх матрицы из фрагментов карты указанного типа
 	UFUNCTION(BlueprintCallable)
 	void AsyncCreateBlankCard(int32 rowLen, int32 colLen, MatrixType matrixType);
@@ -235,11 +238,11 @@ public:
 
 	//Проверка наличия не пустой ячейки в матрице переменных предзагрузки по глобальному индексу ячейки
 	UFUNCTION(BlueprintCallable)
-	bool ContainsCellInTerrainOfTile(FCellCoord GlobalCoordOfCell, int TileSize);
+	bool ContainsCellInTerrainOfTile(FCellCoord GlobalCoordOfCell);
 
 	//Получение стиля ячейки из матрицы переменных предзагрузки по глобальному индексу ячейки
 	UFUNCTION(BlueprintCallable)
-	FMapEditorBrushType GetCellStyleFromTerrainOfTile(FCellCoord GlobalCoordOfCell, int TileSize);
+	FMapEditorBrushType GetCellStyleFromTerrainOfTile(FCellCoord GlobalCoordOfCell);
 	
 	UFUNCTION(BlueprintCallable)
 	UTerrainOfTile* GetTerrainOfTile(FCellCoord Coord);

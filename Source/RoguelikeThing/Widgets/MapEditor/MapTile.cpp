@@ -267,7 +267,7 @@ void UMapTile::SetStyleFromTerrainOfTile(UMapCell* Cell, int row, int col, int M
             int GlobalCol = MyCoord.Col * MapTileLength + col;
 
             //Ячейке устанавливается такой стиль, какой был закреплён за этой координатой в MyTerrainOfTile
-            FMapEditorBrushType CellStyle = Map->GetCellStyleFromTerrainOfTile(FCellCoord(GlobalRow, GlobalCol), MapTileLength);
+            FMapEditorBrushType CellStyle = Map->GetCellStyleFromTerrainOfTile(FCellCoord(GlobalRow, GlobalCol));
 
             if (CellStyle != FMapEditorBrushType::Error) {
                 switch (CellStyle)
