@@ -618,6 +618,21 @@ void UMapMatrix::AsyncChangeMatrixSize(UMapEditor* MapEditor, int right, int lef
 {
     AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapEditor, right, left, top, bottom, this]() {
             FMapDimensions Dimensions = GetMapDimensions(false);
+            int RowsLessThanZero = 0;
+
+            if ((Dimensions.MinRow - top) < 0) {
+                RowsLessThanZero = -(Dimensions.MinRow - top);
+            }
+            int ColsLessThanZero = 0;
+
+            if ((Dimensions.MinCol - left) < 0) {
+                ColsLessThanZero = -(Dimensions.MinCol - left);
+            }
+
+            if (RowsLessThanZero != 0 || ColsLessThanZero != 0) {
+                ShiftDBCoords(RowsLessThanZero, ColsLessThanZero, false);
+                Dimensions = GetMapDimensions(false);
+            }
 
             if (right > 0) {
                 for (int i = 0; i < right; i++) {
