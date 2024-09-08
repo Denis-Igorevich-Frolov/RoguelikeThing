@@ -619,18 +619,32 @@ void UMapMatrix::AsyncChangeMatrixSize(UMapEditor* MapEditor, int right, int lef
     AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapEditor, right, left, top, bottom, this]() {
             FMapDimensions Dimensions = GetMapDimensions(false);
             int RowsLessThanZero = 0;
-
             if ((Dimensions.MinRow - top) < 0) {
                 RowsLessThanZero = -(Dimensions.MinRow - top);
             }
-            int ColsLessThanZero = 0;
 
+            int ColsLessThanZero = 0;
             if ((Dimensions.MinCol - left) < 0) {
                 ColsLessThanZero = -(Dimensions.MinCol - left);
             }
 
             if (RowsLessThanZero != 0 || ColsLessThanZero != 0) {
-                ShiftDBCoords(RowsLessThanZero, ColsLessThanZero, false);
+                ShiftDBCoords(RowsLessThanZero, ColsLessThanZero, true, false);
+                Dimensions = GetMapDimensions(false);
+            }
+
+            int RowsGreaterThanZero = 0;
+            if ((Dimensions.MinRow - top) > 0) {
+                RowsGreaterThanZero = Dimensions.MinRow - top;
+            }
+
+            int ColsGreaterThanZero = 0;
+            if ((Dimensions.MinCol - left) > 0) {
+                ColsGreaterThanZero = Dimensions.MinCol - left;
+            }
+
+            if (RowsGreaterThanZero != 0 || ColsGreaterThanZero != 0) {
+                ShiftDBCoords(RowsGreaterThanZero, ColsGreaterThanZero, false, false);
                 Dimensions = GetMapDimensions(false);
             }
 
@@ -638,6 +652,25 @@ void UMapMatrix::AsyncChangeMatrixSize(UMapEditor* MapEditor, int right, int lef
                 for (int i = 0; i < right; i++) {
                     AsyncTask(ENamedThreads::GameThread, [Dimensions, this]() {
                         if (!CreateNewRightCol(MatrixType::ChunkStructure, Dimensions, false)) {
+                            if (LoadingWidget) {
+                                LoadingWidget->LoadingComplete(false);
+                                LoadingWidget->RemoveFromParent();
+
+                                if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                                    UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncChangeMatrixSize function: The download widget has been removed"));
+                            }
+
+                            mapDataBaseClose("AsyncChangeMatrixSize");
+
+                            return;
+                        }
+                        });
+                }
+            }
+            else if (right < 0) {
+                for (int i = right; i < 0; i++) {
+                    AsyncTask(ENamedThreads::GameThread, [Dimensions, this]() {
+                        if (!RemoveRightCol(MatrixType::ChunkStructure, Dimensions, false)) {
                             if (LoadingWidget) {
                                 LoadingWidget->LoadingComplete(false);
                                 LoadingWidget->RemoveFromParent();
@@ -673,6 +706,25 @@ void UMapMatrix::AsyncChangeMatrixSize(UMapEditor* MapEditor, int right, int lef
                         });
                 }
             }
+            else if (left < 0) {
+                for (int i = left; i < 0; i++) {
+                    AsyncTask(ENamedThreads::GameThread, [Dimensions, this]() {
+                        if (!RemoveLeftCol(MatrixType::ChunkStructure, Dimensions, false)) {
+                            if (LoadingWidget) {
+                                LoadingWidget->LoadingComplete(false);
+                                LoadingWidget->RemoveFromParent();
+
+                                if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                                    UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncChangeMatrixSize function: The download widget has been removed"));
+                            }
+
+                            mapDataBaseClose("AsyncChangeMatrixSize");
+
+                            return;
+                        }
+                        });
+                }
+            }
 
             if (top > 0) {
                 for (int i = 0; i < top; i++) {
@@ -693,11 +745,49 @@ void UMapMatrix::AsyncChangeMatrixSize(UMapEditor* MapEditor, int right, int lef
                         });
                 }
             }
+            else if (top < 0) {
+                for (int i = top; i < 0; i++) {
+                    AsyncTask(ENamedThreads::GameThread, [Dimensions, this]() {
+                        if (!RemoveTopRow(MatrixType::ChunkStructure, Dimensions, false)) {
+                            if (LoadingWidget) {
+                                LoadingWidget->LoadingComplete(false);
+                                LoadingWidget->RemoveFromParent();
+
+                                if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                                    UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncChangeMatrixSize function: The download widget has been removed"));
+                            }
+
+                            mapDataBaseClose("AsyncChangeMatrixSize");
+
+                            return;
+                        }
+                        });
+                }
+            }
 
             if (bottom > 0) {
                 for (int i = 0; i < bottom; i++) {
                     AsyncTask(ENamedThreads::GameThread, [Dimensions, this]() {
                         if (!CreateNewBottomRow(MatrixType::ChunkStructure, Dimensions, false)) {
+                            if (LoadingWidget) {
+                                LoadingWidget->LoadingComplete(false);
+                                LoadingWidget->RemoveFromParent();
+
+                                if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                                    UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncChangeMatrixSize function: The download widget has been removed"));
+                            }
+
+                            mapDataBaseClose("AsyncChangeMatrixSize");
+
+                            return;
+                        }
+                        });
+                }
+            }
+            else if (bottom < 0) {
+                for (int i = bottom; i < 0; i++) {
+                    AsyncTask(ENamedThreads::GameThread, [Dimensions, this]() {
+                        if (!RemoveBottomRow(MatrixType::ChunkStructure, Dimensions, false)) {
                             if (LoadingWidget) {
                                 LoadingWidget->LoadingComplete(false);
                                 LoadingWidget->RemoveFromParent();
@@ -1538,12 +1628,352 @@ bool UMapMatrix::CreateNewBottomRow(MatrixType matrixType, FMapDimensions Dimens
     return true;
 }
 
-bool UMapMatrix::ShiftDBCoords(int RowShift, int ColShift, bool autoClose)
+bool UMapMatrix::RemoveRightCol(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose)
 {
-    if (RowShift < 0 || ColShift < 0) {
+    if ((Dimensions.MaxCol - Dimensions.MinCol - 1) < 0) {
+        return true;
+    }
+
+    if (Dimensions.isValid) {
+        for (int row = Dimensions.MinRow; row <= Dimensions.MaxRow; row++) {
+            if (!DeleteMapChunk(matrixType, row, Dimensions.MaxCol, false)) {
+                return false;
+            }
+        }
+    }
+    else {
         return false;
     }
 
+    if (!mapDataBase->IsValid()) {
+        if (!mapDataBase->Open(*FilePath, ESQLiteDatabaseOpenMode::ReadWriteCreate)) {
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the RemoveRightCol function when trying to open mapDataBase: %s"), *mapDataBase->GetLastError());
+            return false;
+        }
+        else
+            if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the RemoveRightCol function: mapDataBase has been opened"));
+    }
+
+    //После открытия базы данных следует ещё раз проверить её валидность
+    if (mapDataBase->IsValid()) {
+        FString SMatrixType = getStringMatrixType(MatrixType::ChunkStructure);
+
+        /* Если функия getStringMatrixType вернула значение "", то это значит, что в неё
+         * попали некорретные данные и последующее выполнение функции стоит прекратить */
+        if (SMatrixType == "") {
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the RemoveRightCol function - incorrect map fragment type"));
+
+            if (autoClose)
+                mapDataBaseClose("RemoveRightCol");
+            return false;
+        }
+
+        FMapDimensions Dimensions = GetMapDimensions(false);
+
+        //Инициализация транзакции
+        if (!mapDataBase->Execute(TEXT("BEGIN;"))) {
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the RemoveRightCol function when trying to start a mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+            if (autoClose)
+                mapDataBaseClose("RemoveRightCol");
+            return false;
+        }
+
+        if (!mapDataBase->Execute(*(FString::Printf(TEXT("UPDATE Dimensions SET MaxCol = %d;"), Dimensions.MaxCol - 1)))) {
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the RemoveRightCol function when trying to insert a row into Dimensions table: %s"), *mapDataBase->GetLastError());
+
+            if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
+                UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the RemoveRightCol function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+            }
+
+            if (autoClose)
+                mapDataBaseClose("RemoveRightCol");
+            return false;
+        }
+
+        //Закрепление транзакции
+        if (!mapDataBase->Execute(TEXT("COMMIT;"))) {
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the RemoveRightCol function when trying to commit the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+
+            if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
+                UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the RemoveRightCol function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+            }
+
+            if (autoClose)
+                mapDataBaseClose("RemoveRightCol");
+            return false;
+        }
+    }
+    else {
+        return false;
+    }
+
+    if (autoClose)
+        mapDataBaseClose("RemoveRightCol");
+
+    return true;
+}
+
+bool UMapMatrix::RemoveLeftCol(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose)
+{
+    if ((Dimensions.MaxCol - Dimensions.MinCol - 1) < 0) {
+        return true;
+    }
+
+    if (Dimensions.isValid) {
+        for (int row = Dimensions.MinRow; row <= Dimensions.MaxRow; row++) {
+            if (!DeleteMapChunk(matrixType, row, Dimensions.MinCol, false)) {
+                return false;
+            }
+        }
+    }
+    else {
+        return false;
+    }
+
+    if (!mapDataBase->IsValid()) {
+        if (!mapDataBase->Open(*FilePath, ESQLiteDatabaseOpenMode::ReadWriteCreate)) {
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the RemoveLeftCol function when trying to open mapDataBase: %s"), *mapDataBase->GetLastError());
+            return false;
+        }
+        else
+            if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the RemoveLeftCol function: mapDataBase has been opened"));
+    }
+
+    //После открытия базы данных следует ещё раз проверить её валидность
+    if (mapDataBase->IsValid()) {
+        FString SMatrixType = getStringMatrixType(MatrixType::ChunkStructure);
+
+        /* Если функия getStringMatrixType вернула значение "", то это значит, что в неё
+         * попали некорретные данные и последующее выполнение функции стоит прекратить */
+        if (SMatrixType == "") {
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the RemoveLeftCol function - incorrect map fragment type"));
+
+            if (autoClose)
+                mapDataBaseClose("RemoveLeftCol");
+            return false;
+        }
+
+        FMapDimensions Dimensions = GetMapDimensions(false);
+
+        //Инициализация транзакции
+        if (!mapDataBase->Execute(TEXT("BEGIN;"))) {
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the RemoveLeftCol function when trying to start a mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+            if (autoClose)
+                mapDataBaseClose("RemoveLeftCol");
+            return false;
+        }
+
+        if (!mapDataBase->Execute(*(FString::Printf(TEXT("UPDATE Dimensions SET MinCol = %d;"), Dimensions.MinCol + 1)))) {
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the RemoveLeftCol function when trying to insert a row into Dimensions table: %s"), *mapDataBase->GetLastError());
+
+            if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
+                UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the RemoveLeftCol function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+            }
+
+            if (autoClose)
+                mapDataBaseClose("RemoveLeftCol");
+            return false;
+        }
+
+        //Закрепление транзакции
+        if (!mapDataBase->Execute(TEXT("COMMIT;"))) {
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the RemoveLeftCol function when trying to commit the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+
+            if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
+                UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the RemoveLeftCol function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+            }
+
+            if (autoClose)
+                mapDataBaseClose("RemoveLeftCol");
+            return false;
+        }
+    }
+    else {
+        return false;
+    }
+
+    if (autoClose)
+        mapDataBaseClose("RemoveLeftCol");
+
+    return true;
+}
+
+bool UMapMatrix::RemoveTopRow(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose)
+{
+    if ((Dimensions.MaxRow - Dimensions.MinRow - 1) < 0) {
+        return true;
+    }
+
+    if (Dimensions.isValid) {
+        for (int col = Dimensions.MinCol; col <= Dimensions.MaxCol; col++) {
+            if (!DeleteMapChunk(matrixType, Dimensions.MinRow, col, false)) {
+                return false;
+            }
+        }
+    }
+    else {
+        return false;
+    }
+
+    if (!mapDataBase->IsValid()) {
+        if (!mapDataBase->Open(*FilePath, ESQLiteDatabaseOpenMode::ReadWriteCreate)) {
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the RemoveTopRow function when trying to open mapDataBase: %s"), *mapDataBase->GetLastError());
+            return false;
+        }
+        else
+            if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the RemoveTopRow function: mapDataBase has been opened"));
+    }
+
+    //После открытия базы данных следует ещё раз проверить её валидность
+    if (mapDataBase->IsValid()) {
+        FString SMatrixType = getStringMatrixType(MatrixType::ChunkStructure);
+
+        /* Если функия getStringMatrixType вернула значение "", то это значит, что в неё
+         * попали некорретные данные и последующее выполнение функции стоит прекратить */
+        if (SMatrixType == "") {
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the RemoveTopRow function - incorrect map fragment type"));
+
+            if (autoClose)
+                mapDataBaseClose("RemoveTopRow");
+            return false;
+        }
+
+        FMapDimensions Dimensions = GetMapDimensions(false);
+
+        //Инициализация транзакции
+        if (!mapDataBase->Execute(TEXT("BEGIN;"))) {
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the RemoveTopRow function when trying to start a mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+            if (autoClose)
+                mapDataBaseClose("RemoveTopRow");
+            return false;
+        }
+
+        if (!mapDataBase->Execute(*(FString::Printf(TEXT("UPDATE Dimensions SET MinRow = %d;"), Dimensions.MinRow + 1)))) {
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the RemoveTopRow function when trying to insert a row into Dimensions table: %s"), *mapDataBase->GetLastError());
+
+            if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
+                UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the RemoveTopRow function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+            }
+
+            if (autoClose)
+                mapDataBaseClose("RemoveTopRow");
+            return false;
+        }
+
+        //Закрепление транзакции
+        if (!mapDataBase->Execute(TEXT("COMMIT;"))) {
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the RemoveTopRow function when trying to commit the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+
+            if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
+                UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the RemoveTopRow function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+            }
+
+            if (autoClose)
+                mapDataBaseClose("RemoveTopRow");
+            return false;
+        }
+    }
+    else {
+        return false;
+    }
+
+    if (autoClose)
+        mapDataBaseClose("RemoveTopRow");
+
+    return true;
+}
+
+bool UMapMatrix::RemoveBottomRow(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose)
+{
+    if ((Dimensions.MaxRow - Dimensions.MinRow - 1) < 0) {
+        return true;
+    }
+
+    if (Dimensions.isValid) {
+        for (int col = Dimensions.MinCol; col <= Dimensions.MaxCol; col++) {
+            if (!DeleteMapChunk(matrixType, Dimensions.MaxRow, col, false)) {
+                return false;
+            }
+        }
+    }
+    else {
+        return false;
+    }
+
+    if (!mapDataBase->IsValid()) {
+        if (!mapDataBase->Open(*FilePath, ESQLiteDatabaseOpenMode::ReadWriteCreate)) {
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the RemoveBottomRow function when trying to open mapDataBase: %s"), *mapDataBase->GetLastError());
+            return false;
+        }
+        else
+            if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
+                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the RemoveBottomRow function: mapDataBase has been opened"));
+    }
+
+    //После открытия базы данных следует ещё раз проверить её валидность
+    if (mapDataBase->IsValid()) {
+        FString SMatrixType = getStringMatrixType(MatrixType::ChunkStructure);
+
+        /* Если функия getStringMatrixType вернула значение "", то это значит, что в неё
+         * попали некорретные данные и последующее выполнение функции стоит прекратить */
+        if (SMatrixType == "") {
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the RemoveBottomRow function - incorrect map fragment type"));
+
+            if (autoClose)
+                mapDataBaseClose("RemoveBottomRow");
+            return false;
+        }
+
+        FMapDimensions Dimensions = GetMapDimensions(false);
+
+        //Инициализация транзакции
+        if (!mapDataBase->Execute(TEXT("BEGIN;"))) {
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the RemoveBottomRow function when trying to start a mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+            if (autoClose)
+                mapDataBaseClose("RemoveBottomRow");
+            return false;
+        }
+
+        if (!mapDataBase->Execute(*(FString::Printf(TEXT("UPDATE Dimensions SET MaxRow = %d;"), Dimensions.MaxRow - 1)))) {
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the RemoveBottomRow function when trying to insert a row into Dimensions table: %s"), *mapDataBase->GetLastError());
+
+            if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
+                UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the RemoveBottomRow function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+            }
+
+            if (autoClose)
+                mapDataBaseClose("RemoveBottomRow");
+            return false;
+        }
+
+        //Закрепление транзакции
+        if (!mapDataBase->Execute(TEXT("COMMIT;"))) {
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the RemoveBottomRow function when trying to commit the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+
+            if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
+                UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the RemoveBottomRow function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+            }
+
+            if (autoClose)
+                mapDataBaseClose("RemoveBottomRow");
+            return false;
+        }
+    }
+    else {
+        return false;
+    }
+
+    if (autoClose)
+        mapDataBaseClose("RemoveBottomRow");
+
+    return true;
+}
+
+bool UMapMatrix::ShiftDBCoords(int RowShift, int ColShift, bool ToRightBottom, bool autoClose)
+{
     if (!mapDataBase->IsValid()) {
         if (!mapDataBase->Open(*FilePath, ESQLiteDatabaseOpenMode::ReadWriteCreate)) {
             UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the ShiftDBCoords function when trying to open mapDataBase: %s"), *mapDataBase->GetLastError());
@@ -1570,6 +2000,10 @@ bool UMapMatrix::ShiftDBCoords(int RowShift, int ColShift, bool autoClose)
 
         FMapDimensions Dimensions = GetMapDimensions(false);
 
+        if (Dimensions.MinRow + RowShift < 0 || Dimensions.MinCol + ColShift < 0 || Dimensions.MaxRow + RowShift < 0 || Dimensions.MaxCol + ColShift < 0) {
+            return false;
+        }
+
         //Инициализация транзакции
         if (!mapDataBase->Execute(TEXT("BEGIN;"))) {
             UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the ShiftDBCoords function when trying to start a mapDataBase transaction: %s"), *mapDataBase->GetLastError());
@@ -1578,34 +2012,67 @@ bool UMapMatrix::ShiftDBCoords(int RowShift, int ColShift, bool autoClose)
             return false;
         }
 
-        for (int row = Dimensions.MaxRow; row >= Dimensions.MinRow; row--) {
-            for (int col = Dimensions.MaxCol; col >= Dimensions.MinCol; col--) {
-                if (!mapDataBase->Execute(*(FString::Printf(TEXT("ALTER TABLE \"%s %d:%d\" RENAME TO \"%s %d:%d\";"),
-                    *SMatrixType, row, col, *SMatrixType, row + RowShift, col + ColShift)))) {
-                    UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the ShiftDBCoords function when trying to !!!!!! table: %s"), *mapDataBase->GetLastError());
+        if (ToRightBottom) {
+            for (int row = Dimensions.MaxRow; row >= Dimensions.MinRow; row--) {
+                for (int col = Dimensions.MaxCol; col >= Dimensions.MinCol; col--) {
+                    if (!mapDataBase->Execute(*(FString::Printf(TEXT("ALTER TABLE \"%s %d:%d\" RENAME TO \"%s %d:%d\";"),
+                        *SMatrixType, row, col, *SMatrixType, row + RowShift, col + ColShift)))) {
+                        UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the ShiftDBCoords function when trying to !!!!!! table: %s"), *mapDataBase->GetLastError());
 
-                    if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
-                        UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the ShiftDBCoords function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+                        if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
+                            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the ShiftDBCoords function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+                        }
+
+                        if (autoClose)
+                            mapDataBaseClose("ShiftDBCoords");
+                        return false;
                     }
-
-                    if (autoClose)
-                        mapDataBaseClose("ShiftDBCoords");
-                    return false;
                 }
             }
+
+            if (!mapDataBase->Execute(*(FString::Printf(TEXT("UPDATE Dimensions SET MinCol = %d, MaxCol = %d, MinRow = %d, MaxRow = %d;"),
+                Dimensions.MinCol + ColShift, Dimensions.MaxCol + ColShift, Dimensions.MinRow + RowShift, Dimensions.MaxRow + RowShift)))) {
+                UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the ShiftDBCoords function when trying to insert a row into Dimensions table: %s"), *mapDataBase->GetLastError());
+
+                if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
+                    UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the ShiftDBCoords function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+                }
+
+                if (autoClose)
+                    mapDataBaseClose("ShiftDBCoords");
+                return false;
+            }
         }
+        else {
+            for (int row = Dimensions.MinRow; row <= Dimensions.MaxRow; row++) {
+                for (int col = Dimensions.MinCol; col <= Dimensions.MaxCol; col++) {
+                    if (!mapDataBase->Execute(*(FString::Printf(TEXT("ALTER TABLE \"%s %d:%d\" RENAME TO \"%s %d:%d\";"),
+                        *SMatrixType, row, col, *SMatrixType, row - RowShift, col - ColShift)))) {
+                        UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the ShiftDBCoords function when trying to !!!!!! table: %s"), *mapDataBase->GetLastError());
 
-        if (!mapDataBase->Execute(*(FString::Printf(TEXT("UPDATE Dimensions SET MinCol = %d, MaxCol = %d, MinRow = %d, MaxRow = %d;"),
-            Dimensions.MinCol + ColShift, Dimensions.MaxCol + ColShift, Dimensions.MinRow + RowShift, Dimensions.MaxRow + RowShift)))) {
-            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the ShiftDBCoords function when trying to insert a row into Dimensions table: %s"), *mapDataBase->GetLastError());
+                        if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
+                            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the ShiftDBCoords function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+                        }
 
-            if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
-                UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the ShiftDBCoords function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+                        if (autoClose)
+                            mapDataBaseClose("ShiftDBCoords");
+                        return false;
+                    }
+                }
             }
 
-            if (autoClose)
-                mapDataBaseClose("ShiftDBCoords");
-            return false;
+            if (!mapDataBase->Execute(*(FString::Printf(TEXT("UPDATE Dimensions SET MinCol = %d, MaxCol = %d, MinRow = %d, MaxRow = %d;"),
+                Dimensions.MinCol - ColShift, Dimensions.MaxCol - ColShift, Dimensions.MinRow - RowShift, Dimensions.MaxRow - RowShift)))) {
+                UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the ShiftDBCoords function when trying to insert a row into Dimensions table: %s"), *mapDataBase->GetLastError());
+
+                if (!mapDataBase->Execute(TEXT("ROLLBACK;"))) {
+                    UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the ShiftDBCoords function when trying to rollback the mapDataBase transaction: %s"), *mapDataBase->GetLastError());
+                }
+
+                if (autoClose)
+                    mapDataBaseClose("ShiftDBCoords");
+                return false;
+            }
         }
 
         //Закрепление транзакции

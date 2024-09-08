@@ -221,8 +221,13 @@ public:
 	bool CreateNewTopRow(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose = true);
 	bool CreateNewBottomRow(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose = true);
 
+	bool RemoveRightCol(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose = true);
+	bool RemoveLeftCol(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose = true);
+	bool RemoveTopRow(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose = true);
+	bool RemoveBottomRow(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose = true);
+
 	UFUNCTION(BlueprintCallable)
-	bool ShiftDBCoords(int RowShift, int ColShift, bool autoClose = true);
+	bool ShiftDBCoords(int RowShift, int ColShift, bool ToRightBottom, bool autoClose = true);
 
 	//Функция, запускающая в отдельном потоке создание в базе даннх матрицы из фрагментов карты указанного типа
 	UFUNCTION(BlueprintCallable)
