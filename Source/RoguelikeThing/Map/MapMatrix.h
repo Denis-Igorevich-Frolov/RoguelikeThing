@@ -138,6 +138,8 @@ private:
 	void convertingGlobalIndexIntoLocalOne(int32 globalCellRow, int32 globalCellCol, int32& chunkRow,
 		int32& cellRow, int32& chunkCol, int32& cellCol);
 
+	bool ShiftDBCoords(int RowShift, int ColShift, bool ToRightBottom, bool autoClose = true);
+
 public:
 	UMapMatrix();
 	~UMapMatrix();
@@ -225,9 +227,6 @@ public:
 	bool RemoveLeftCol(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose = true);
 	bool RemoveTopRow(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose = true);
 	bool RemoveBottomRow(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose = true);
-
-	UFUNCTION(BlueprintCallable)
-	bool ShiftDBCoords(int RowShift, int ColShift, bool ToRightBottom, bool autoClose = true);
 
 	//Функция, запускающая в отдельном потоке создание в базе даннх матрицы из фрагментов карты указанного типа
 	UFUNCTION(BlueprintCallable)

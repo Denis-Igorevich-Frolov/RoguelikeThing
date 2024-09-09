@@ -618,14 +618,36 @@ void UMapMatrix::AsyncChangeMatrixSize(UMapEditor* MapEditor, int right, int lef
 {
     AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapEditor, right, left, top, bottom, this]() {
             FMapDimensions Dimensions = GetMapDimensions(false);
+
+            int NumOfRows = Dimensions.MaxRow - Dimensions.MinRow;
+            int NumOfCols = Dimensions.MaxCol - Dimensions.MinCol;
+
+            int Right = right;
+            int Left = left;
+            int Top = top;
+            int Bottom = bottom;
+
+            if ((NumOfRows + right) < 0) {
+                Right = -NumOfRows;
+            }
+            if ((NumOfRows + left) < 0) {
+                Left = -NumOfRows;
+            }
+            if ((NumOfCols + top) < 0) {
+                Top = -NumOfCols;
+            }
+            if ((NumOfCols + bottom) < 0) {
+                Bottom = -NumOfCols;
+            }
+
             int RowsLessThanZero = 0;
-            if ((Dimensions.MinRow - top) < 0) {
-                RowsLessThanZero = -(Dimensions.MinRow - top);
+            if ((Dimensions.MinRow - Top) < 0) {
+                RowsLessThanZero = -(Dimensions.MinRow - Top);
             }
 
             int ColsLessThanZero = 0;
-            if ((Dimensions.MinCol - left) < 0) {
-                ColsLessThanZero = -(Dimensions.MinCol - left);
+            if ((Dimensions.MinCol - Left) < 0) {
+                ColsLessThanZero = -(Dimensions.MinCol - Left);
             }
 
             if (RowsLessThanZero != 0 || ColsLessThanZero != 0) {
@@ -634,13 +656,13 @@ void UMapMatrix::AsyncChangeMatrixSize(UMapEditor* MapEditor, int right, int lef
             }
 
             int RowsGreaterThanZero = 0;
-            if ((Dimensions.MinRow - top) > 0) {
-                RowsGreaterThanZero = Dimensions.MinRow - top;
+            if ((Dimensions.MinRow - Top) > 0) {
+                RowsGreaterThanZero = Dimensions.MinRow - Top;
             }
 
             int ColsGreaterThanZero = 0;
-            if ((Dimensions.MinCol - left) > 0) {
-                ColsGreaterThanZero = Dimensions.MinCol - left;
+            if ((Dimensions.MinCol - Left) > 0) {
+                ColsGreaterThanZero = Dimensions.MinCol - Left;
             }
 
             if (RowsGreaterThanZero != 0 || ColsGreaterThanZero != 0) {
@@ -648,159 +670,151 @@ void UMapMatrix::AsyncChangeMatrixSize(UMapEditor* MapEditor, int right, int lef
                 Dimensions = GetMapDimensions(false);
             }
 
-            if (right > 0) {
-                for (int i = 0; i < right; i++) {
-                    AsyncTask(ENamedThreads::GameThread, [Dimensions, this]() {
-                        if (!CreateNewRightCol(MatrixType::ChunkStructure, Dimensions, false)) {
-                            if (LoadingWidget) {
-                                LoadingWidget->LoadingComplete(false);
-                                LoadingWidget->RemoveFromParent();
+            if (Right > 0) {
+                for (int i = 0; i < Right; i++) {
+                    if (!CreateNewRightCol(MatrixType::ChunkStructure, Dimensions, false)) {
+                        if (LoadingWidget) {
+                            LoadingWidget->LoadingComplete(false);
+                            LoadingWidget->RemoveFromParent();
 
-                                if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                                    UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncChangeMatrixSize function: The download widget has been removed"));
-                            }
-
-                            mapDataBaseClose("AsyncChangeMatrixSize");
-
-                            return;
+                            if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncChangeMatrixSize function: The download widget has been removed"));
                         }
-                        });
+
+                        mapDataBaseClose("AsyncChangeMatrixSize");
+
+                        return;
+                    }
+                    Dimensions = GetMapDimensions(false);
                 }
             }
-            else if (right < 0) {
-                for (int i = right; i < 0; i++) {
-                    AsyncTask(ENamedThreads::GameThread, [Dimensions, this]() {
-                        if (!RemoveRightCol(MatrixType::ChunkStructure, Dimensions, false)) {
-                            if (LoadingWidget) {
-                                LoadingWidget->LoadingComplete(false);
-                                LoadingWidget->RemoveFromParent();
+            else if (Right < 0) {
+                for (int i = Right; i < 0; i++) {
+                    if (!RemoveRightCol(MatrixType::ChunkStructure, Dimensions, false)) {
+                        if (LoadingWidget) {
+                            LoadingWidget->LoadingComplete(false);
+                            LoadingWidget->RemoveFromParent();
 
-                                if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                                    UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncChangeMatrixSize function: The download widget has been removed"));
-                            }
-
-                            mapDataBaseClose("AsyncChangeMatrixSize");
-
-                            return;
+                            if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncChangeMatrixSize function: The download widget has been removed"));
                         }
-                        });
-                }
-            }
 
-            if (left > 0) {
-                for (int i = 0; i < left; i++) {
-                    AsyncTask(ENamedThreads::GameThread, [Dimensions, this]() {
-                        if (!CreateNewLeftCol(MatrixType::ChunkStructure, Dimensions, false)) {
-                            if (LoadingWidget) {
-                                LoadingWidget->LoadingComplete(false);
-                                LoadingWidget->RemoveFromParent();
+                        mapDataBaseClose("AsyncChangeMatrixSize");
 
-                                if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                                    UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncChangeMatrixSize function: The download widget has been removed"));
-                            }
-
-                            mapDataBaseClose("AsyncChangeMatrixSize");
-
-                            return;
-                        }
-                        });
-                }
-            }
-            else if (left < 0) {
-                for (int i = left; i < 0; i++) {
-                    AsyncTask(ENamedThreads::GameThread, [Dimensions, this]() {
-                        if (!RemoveLeftCol(MatrixType::ChunkStructure, Dimensions, false)) {
-                            if (LoadingWidget) {
-                                LoadingWidget->LoadingComplete(false);
-                                LoadingWidget->RemoveFromParent();
-
-                                if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                                    UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncChangeMatrixSize function: The download widget has been removed"));
-                            }
-
-                            mapDataBaseClose("AsyncChangeMatrixSize");
-
-                            return;
-                        }
-                        });
+                        return;
+                    }
+                    Dimensions = GetMapDimensions(false);
                 }
             }
 
-            if (top > 0) {
-                for (int i = 0; i < top; i++) {
-                    AsyncTask(ENamedThreads::GameThread, [Dimensions, this]() {
-                        if (!CreateNewTopRow(MatrixType::ChunkStructure, Dimensions, false)) {
-                            if (LoadingWidget) {
-                                LoadingWidget->LoadingComplete(false);
-                                LoadingWidget->RemoveFromParent();
+            if (Left > 0) {
+                for (int i = 0; i < Left; i++) {
+                    if (!CreateNewLeftCol(MatrixType::ChunkStructure, Dimensions, false)) {
+                        if (LoadingWidget) {
+                            LoadingWidget->LoadingComplete(false);
+                            LoadingWidget->RemoveFromParent();
 
-                                if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                                    UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncChangeMatrixSize function: The download widget has been removed"));
-                            }
-
-                            mapDataBaseClose("AsyncChangeMatrixSize");
-
-                            return;
+                            if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncChangeMatrixSize function: The download widget has been removed"));
                         }
-                        });
+
+                        mapDataBaseClose("AsyncChangeMatrixSize");
+
+                        return;
+                    }
+                    Dimensions = GetMapDimensions(false);
                 }
             }
-            else if (top < 0) {
-                for (int i = top; i < 0; i++) {
-                    AsyncTask(ENamedThreads::GameThread, [Dimensions, this]() {
-                        if (!RemoveTopRow(MatrixType::ChunkStructure, Dimensions, false)) {
-                            if (LoadingWidget) {
-                                LoadingWidget->LoadingComplete(false);
-                                LoadingWidget->RemoveFromParent();
+            else if (Left < 0) {
+                for (int i = Left; i < 0; i++) {
+                    if (!RemoveLeftCol(MatrixType::ChunkStructure, Dimensions, false)) {
+                        if (LoadingWidget) {
+                            LoadingWidget->LoadingComplete(false);
+                            LoadingWidget->RemoveFromParent();
 
-                                if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                                    UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncChangeMatrixSize function: The download widget has been removed"));
-                            }
-
-                            mapDataBaseClose("AsyncChangeMatrixSize");
-
-                            return;
+                            if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncChangeMatrixSize function: The download widget has been removed"));
                         }
-                        });
+
+                        mapDataBaseClose("AsyncChangeMatrixSize");
+
+                        return;
+                    }
+                    Dimensions = GetMapDimensions(false);
                 }
             }
 
-            if (bottom > 0) {
-                for (int i = 0; i < bottom; i++) {
-                    AsyncTask(ENamedThreads::GameThread, [Dimensions, this]() {
-                        if (!CreateNewBottomRow(MatrixType::ChunkStructure, Dimensions, false)) {
-                            if (LoadingWidget) {
-                                LoadingWidget->LoadingComplete(false);
-                                LoadingWidget->RemoveFromParent();
+            if (Top > 0) {
+                for (int i = 0; i < Top; i++) {
+                    if (!CreateNewTopRow(MatrixType::ChunkStructure, Dimensions, false)) {
+                        if (LoadingWidget) {
+                            LoadingWidget->LoadingComplete(false);
+                            LoadingWidget->RemoveFromParent();
 
-                                if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                                    UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncChangeMatrixSize function: The download widget has been removed"));
-                            }
-
-                            mapDataBaseClose("AsyncChangeMatrixSize");
-
-                            return;
+                            if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncChangeMatrixSize function: The download widget has been removed"));
                         }
-                        });
+
+                        mapDataBaseClose("AsyncChangeMatrixSize");
+
+                        return;
+                    }
+                    Dimensions = GetMapDimensions(false);
                 }
             }
-            else if (bottom < 0) {
-                for (int i = bottom; i < 0; i++) {
-                    AsyncTask(ENamedThreads::GameThread, [Dimensions, this]() {
-                        if (!RemoveBottomRow(MatrixType::ChunkStructure, Dimensions, false)) {
-                            if (LoadingWidget) {
-                                LoadingWidget->LoadingComplete(false);
-                                LoadingWidget->RemoveFromParent();
+            else if (Top < 0) {
+                for (int i = Top; i < 0; i++) {
+                    if (!RemoveTopRow(MatrixType::ChunkStructure, Dimensions, false)) {
+                        if (LoadingWidget) {
+                            LoadingWidget->LoadingComplete(false);
+                            LoadingWidget->RemoveFromParent();
 
-                                if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                                    UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncChangeMatrixSize function: The download widget has been removed"));
-                            }
-
-                            mapDataBaseClose("AsyncChangeMatrixSize");
-
-                            return;
+                            if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncChangeMatrixSize function: The download widget has been removed"));
                         }
-                        });
+
+                        mapDataBaseClose("AsyncChangeMatrixSize");
+
+                        return;
+                    }
+                    Dimensions = GetMapDimensions(false);
+                }
+            }
+
+            if (Bottom > 0) {
+                for (int i = 0; i < Bottom; i++) {
+                    if (!CreateNewBottomRow(MatrixType::ChunkStructure, Dimensions, false)) {
+                        if (LoadingWidget) {
+                            LoadingWidget->LoadingComplete(false);
+                            LoadingWidget->RemoveFromParent();
+
+                            if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncChangeMatrixSize function: The download widget has been removed"));
+                        }
+
+                        mapDataBaseClose("AsyncChangeMatrixSize");
+
+                        return;
+                    }
+                    Dimensions = GetMapDimensions(false);
+                }
+            }
+            else if (Bottom < 0) {
+                for (int i = Bottom; i < 0; i++) {
+                    if (!RemoveBottomRow(MatrixType::ChunkStructure, Dimensions, false)) {
+                        if (LoadingWidget) {
+                            LoadingWidget->LoadingComplete(false);
+                            LoadingWidget->RemoveFromParent();
+
+                            if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncChangeMatrixSize function: The download widget has been removed"));
+                        }
+
+                        mapDataBaseClose("AsyncChangeMatrixSize");
+
+                        return;
+                    }
+                    Dimensions = GetMapDimensions(false);
                 }
             }
 
