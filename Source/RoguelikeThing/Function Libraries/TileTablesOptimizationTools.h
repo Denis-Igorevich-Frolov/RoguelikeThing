@@ -113,6 +113,7 @@ public:
 	//Габариты карты, которые были изначально при инициализации
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FGridDimensions OriginalDimensions = FGridDimensions();
+	//Полные габариты всей тайловой таблицы
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FMapDimensions FullMapDimensions = FMapDimensions();
 };

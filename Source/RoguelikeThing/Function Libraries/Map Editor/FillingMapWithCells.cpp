@@ -325,6 +325,9 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                         if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                             UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: An uninitialized MapTile is created with coordinates row: %d col: %d"), row, col);
 
+                        /* Высчитываются изначально заполненные ячейки минимальных чанков на случай,
+                         * если минимальная координата больше 0, хотя сейчас поддержка не нулевой
+                         * минимальной координаты не полная и такого стоит избегать */
                         NewTile->SetMyCoord(FCellCoord((MapDimensions.MinRow * NumberOfTilesInChunc) + row, (MapDimensions.MinCol * NumberOfTilesInChunc) + col));
                         //Из матрицы карты берётся предзагруженный ландшафт тайла
                         NewTile->SetMyTerrainOfTile(Map->GetTerrainOfTile(NewTile->GetMyCoord()));

@@ -138,6 +138,7 @@ private:
 	void convertingGlobalIndexIntoLocalOne(int32 globalCellRow, int32 globalCellCol, int32& chunkRow,
 		int32& cellRow, int32& chunkCol, int32& cellCol);
 
+	//Функция, сдвигающая координаты всех чанков в указанном направлении
 	bool ShiftDBCoords(int RowShift, int ColShift, bool ToRightBottom, bool autoClose = true);
 
 public:
@@ -215,17 +216,28 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetFilePath(FString filePath);
 
+
+	/* Функция изменяющая размер карты в чанках. Метод способен это делать как в большую,
+	 * так и в меньшую сторону, но не способен уменьшить карту меньше, чем 1 на 1 чанк */
 	UFUNCTION(BlueprintCallable)
 	void AsyncChangeMatrixSize(UMapEditor* MapEditor, int right, int left, int top, int bottom);
 
+	//Функция, создающая один новый солбец справа таблицы
 	bool CreateNewRightCol(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose = true);
+	//Функция, создающая один новый солбец слева таблицы
 	bool CreateNewLeftCol(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose = true);
+	//Функция, создающая одну новую строку сверху таблицы
 	bool CreateNewTopRow(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose = true);
+	//Функция, создающая одну новую строку снизу таблицы
 	bool CreateNewBottomRow(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose = true);
 
+	//Функция, удаляющая один солбец справа таблицы
 	bool RemoveRightCol(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose = true);
+	//Функция, удаляющая один солбец слева таблицы
 	bool RemoveLeftCol(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose = true);
+	//Функция, удаляющая одну строку сверху таблицы
 	bool RemoveTopRow(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose = true);
+	//Функция, удаляющая одну строку снизу таблицы
 	bool RemoveBottomRow(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose = true);
 
 	//Функция, запускающая в отдельном потоке создание в базе даннх матрицы из фрагментов карты указанного типа
