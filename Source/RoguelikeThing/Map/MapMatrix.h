@@ -141,9 +141,17 @@ private:
 	//Функция, сдвигающая координаты всех чанков в указанном направлении
 	bool ShiftDBCoords(int RowShift, int ColShift, bool ToRightBottom, bool autoClose = true);
 
+	FCellCoord MinNoEmptyTileCoord;
+	FCellCoord MaxNoEmptyTileCoord;
+
 public:
 	UMapMatrix();
 	~UMapMatrix();
+
+	UFUNCTION(BlueprintCallable)
+	const FCellCoord GetMinNoEmptyTileCoord();
+	UFUNCTION(BlueprintCallable)
+	const FCellCoord GetMaxNoEmptyTileCoord();
 
 	UFUNCTION(BlueprintCallable)
 	int32 GetTableLength();

@@ -86,6 +86,9 @@ private:
 	int NumberOfTileColsInTable = 0;
 	int NumOfTilesInChunk = 0;
 
+	int StartingMinTileRow = 0;
+	int StartingMinTileCol = 0;
+
 	bool IsInit = false;
 
 	//Функция асинхронного заполнения новых тайлов
@@ -97,8 +100,9 @@ public:
 	UTileTablesOptimizationTools();
 
 	UFUNCTION(BlueprintCallable)
-	void Init(UUniformGridPanel* refTilesGridPanel, UCoordWrapperOfTable* refTilesCoordWrapper, UTileBuffer* refTilesBuf, UMapMatrix* refMapMatrix, FGridDimensions originalDimensions,
-		FMapDimensions fullMapDimensions, FVector2D widgetAreaSize, FVector2D tileSize, FVector2D MinContentSize, int numberOfTileRowsInTable, int numberOfTileColsInTable);
+	void Init(UUniformGridPanel* refTilesGridPanel, UCoordWrapperOfTable* refTilesCoordWrapper, UTileBuffer* refTilesBuf, UMapMatrix* refMapMatrix,
+		FGridDimensions originalDimensions, FMapDimensions fullMapDimensions, FVector2D widgetAreaSize, FVector2D tileSize, FVector2D MinContentSize,
+		int numberOfTileRowsInTable, int numberOfTileColsInTable, int startingMinTileRow = 0, int startingMinTileCol = 0);
 
 	UFUNCTION(BlueprintCallable)
 	//Функция, изменяющая количество отображаемых тайлов от сдвига или масштабирования таблицы

@@ -36,7 +36,7 @@ void UTileTablesOptimizationTools::AsynchronousAreaFilling(FGridDimensions AreaD
 
                             if (Tile) {
                                 //Строки разворачиваются потому что координаты карты отсчитываются снизу вверх, а не сверху вниз, как в стандартной таблице UniformGrid
-                                Tile->SetMyCoord(FCellCoord((NumberOfMapTilesRows - row) - 1, col));
+                                Tile->SetMyCoord(FCellCoord((NumberOfMapTilesRows - row) - 1 + StartingMinTileRow, col + StartingMinTileCol));
                                 /* Высчитываются изначально заполненные ячейки минимальных чанков на случай,
                                  * если минимальная координата больше 0, хотя сейчас поддержка не нулевой
                                  * минимальной координаты не полная и такого стоит избегать */
@@ -130,8 +130,9 @@ void UTileTablesOptimizationTools::AsynchronousAreaRemoving(FGridDimensions Area
     });
 }
 
-void UTileTablesOptimizationTools::Init(UUniformGridPanel* refTilesGridPanel, UCoordWrapperOfTable* refTilesCoordWrapper, UTileBuffer* refTilesBuf, UMapMatrix* refMapMatrix,
-    FGridDimensions originalDimensions, FMapDimensions fullMapDimensions, FVector2D widgetAreaSize, FVector2D tileSize, FVector2D minContentSize, int numberOfTileRowsInTable, int numberOfTileColsInTable)
+void UTileTablesOptimizationTools::Init(UUniformGridPanel* refTilesGridPanel, UCoordWrapperOfTable* refTilesCoordWrapper, UTileBuffer* refTilesBuf,
+    UMapMatrix* refMapMatrix, FGridDimensions originalDimensions, FMapDimensions fullMapDimensions, FVector2D widgetAreaSize, FVector2D tileSize,
+    FVector2D minContentSize, int numberOfTileRowsInTable, int numberOfTileColsInTable, int startingMinTileRow, int startingMinTileCol)
 {
     TilesGridPanel = refTilesGridPanel;
     TilesCoordWrapper = refTilesCoordWrapper;
@@ -145,6 +146,8 @@ void UTileTablesOptimizationTools::Init(UUniformGridPanel* refTilesGridPanel, UC
     this->NumberOfTileRowsInTable = numberOfTileRowsInTable;
     this->NumberOfTileColsInTable = numberOfTileColsInTable;
     this->WidgetAreaSize = widgetAreaSize;
+    this->StartingMinTileRow = startingMinTileRow;
+    this->StartingMinTileCol = startingMinTileCol;
     OldDimensions = OriginalDimensions;
     CurrentDimensions = OriginalDimensions;
     
@@ -183,6 +186,8 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
         UE_LOG(TileTablesOptimizationTools, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: TilesCoordWrapper is not valid"));
         return;
     }
+
+    NumberOfMapTilesRows -= StartingMinTileRow;
 
     /* При перетаскивании контента сдвиг мыши представляет собой разницу между изначальной позицией курсора
      * в момент нажатия и его текущей позицией, что делает разницу по координате X при перетаскивании справа

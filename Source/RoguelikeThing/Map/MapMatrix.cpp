@@ -155,6 +155,16 @@ UMapMatrix::~UMapMatrix()
     TerrainOfTilesRows.Empty();
 }
 
+const FCellCoord UMapMatrix::GetMinNoEmptyTileCoord()
+{
+    return MinNoEmptyTileCoord;
+}
+
+const FCellCoord UMapMatrix::GetMaxNoEmptyTileCoord()
+{
+    return MaxNoEmptyTileCoord;
+}
+
 int32 UMapMatrix::GetTableLength()
 {
     return TableLength;
@@ -2263,6 +2273,9 @@ void UMapMatrix::FillTerrainOfTiles()
     //Сначала очищается матрица переменных предзагрузки от всех старых значений
     TerrainOfTilesRows.Empty();
 
+    MinNoEmptyTileCoord = FCellCoord(-1, -1);
+    MaxNoEmptyTileCoord = FCellCoord(-1, -1);
+
     FMapDimensions MapDimensions = GetMapDimensions(false);
     if (MapDimensions.isValid) {
         for (int row = MapDimensions.MinRow * TableLength; row < (MapDimensions.MaxRow + 1) * TableLength; row++) {
@@ -2281,6 +2294,7 @@ void UMapMatrix::FillTerrainOfTiles()
             if (TerrainOfTilesCols) {
                 for (int col = MapDimensions.MinCol * TableLength; col < (MapDimensions.MaxCol + 1) * TableLength; col++) {
                     int CurrentTileCol = (int)(col / MapTileLength);
+                    bool HaveNoEmptyCells = false;
 
                     //Если целевой строки нет, она создаётся
                     if (!TerrainOfTilesCols->Contains(CurrentTileCol)) {
@@ -2297,6 +2311,29 @@ void UMapMatrix::FillTerrainOfTiles()
 
                         if (CellType == FMapEditorBrushType::Corridor || CellType == FMapEditorBrushType::Room) {
                             Terrain->AddCellType(FCellCoord(CellRow, CellCol), CellType);
+                            if (!HaveNoEmptyCells) {
+                                HaveNoEmptyCells = true;
+
+                                if (MinNoEmptyTileCoord == FCellCoord(-1, -1)) {
+                                    MinNoEmptyTileCoord = FCellCoord(CurrentTileRow, CurrentTileCol);
+                                }
+                                if (MaxNoEmptyTileCoord == FCellCoord(-1, -1)) {
+                                    MaxNoEmptyTileCoord = FCellCoord(CurrentTileRow, CurrentTileCol);
+                                }
+
+                                if (CurrentTileRow < MinNoEmptyTileCoord.Row) {
+                                    MinNoEmptyTileCoord = FCellCoord(CurrentTileRow, MinNoEmptyTileCoord.Col);
+                                }
+                                else if (CurrentTileRow > MaxNoEmptyTileCoord.Row) {
+                                    MaxNoEmptyTileCoord = FCellCoord(CurrentTileRow, MaxNoEmptyTileCoord.Col);
+                                }
+                                if (CurrentTileCol < MinNoEmptyTileCoord.Col) {
+                                    MinNoEmptyTileCoord = FCellCoord(MinNoEmptyTileCoord.Row, CurrentTileCol);
+                                }
+                                else if (CurrentTileCol > MaxNoEmptyTileCoord.Col) {
+                                    MaxNoEmptyTileCoord = FCellCoord(MaxNoEmptyTileCoord.Row, CurrentTileCol);
+                                }
+                            }
                         }
                         else if (CellType == FMapEditorBrushType::Error) {
                             UE_LOG(TerrainOfTile, Error, TEXT("!!! An error occurred in the MapMatrix class in the FillTerrainOfTiles function - CellType is of type Error"));
