@@ -92,9 +92,9 @@ private:
 	bool IsInit = false;
 
 	//Функция асинхронного заполнения новых тайлов
-	void AsynchronousAreaFilling(FGridDimensions AreaDimensions, int NumberOfMapTilesRows);
+	void AsynchronousAreaFilling(FGridDimensions AreaDimensions);
 	//Функция асинхронного удаления старых тайлов
-	void AsynchronousAreaRemoving(FGridDimensions AreaDimensions, int NumberOfMapTilesRows);
+	void AsynchronousAreaRemoving(FGridDimensions AreaDimensions);
 	
 public:
 	UTileTablesOptimizationTools();
@@ -106,7 +106,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	//Функция, изменяющая количество отображаемых тайлов от сдвига или масштабирования таблицы
-	void ChangingVisibilityOfTableTiles(FVector2D Bias, float ZoomMultiplier, int NumberOfMapTilesRows);
+	void ChangingVisibilityOfTableTiles(FVector2D Bias, float ZoomMultiplier);
 
 	//Габариты карты, которые были при предыдущем изменении
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

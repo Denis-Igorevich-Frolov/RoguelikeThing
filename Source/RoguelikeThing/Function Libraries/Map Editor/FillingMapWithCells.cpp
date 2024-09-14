@@ -206,7 +206,7 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
 
         FGridCoord StartingMinTileCoord = FGridCoord(StartingMinTileRow, StartingMinTileCol);
 
-        if(NumberOfMapTilesCols == -1)
+        if (NumberOfMapTilesCols == -1)
             NumberOfMapTilesCols = ColsNum * NumberOfTilesInChunc - StartingMinTileCoord.Col;
         if (NumberOfMapTilesRows == -1)
             NumberOfMapTilesRows = RowsNum * NumberOfTilesInChunc - StartingMinTileCoord.Row;
@@ -331,6 +331,8 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                             UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: An uninitialized MapTile is created with coordinates row: %d col: %d"), row, col);
 
                         NewTile->SetMyCoord(FCellCoord(row + StartingMinTileCoord.Row, col + StartingMinTileCoord.Col));
+                        //Из матрицы карты берётся предзагруженный ландшафт тайла
+                        NewTile->SetMyTerrainOfTile(Map->GetTerrainOfTile(NewTile->GetMyCoord()));
 
                         //Тайл заполнаяется ячейками по переданному классу
                         if (!NewTile->FillingWithCells(MapTileLength, CellClass, MapEditor, Map)) {
