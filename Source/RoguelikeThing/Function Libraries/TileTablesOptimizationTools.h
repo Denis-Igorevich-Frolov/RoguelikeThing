@@ -89,6 +89,9 @@ private:
 	int StartingMinTileRow = 0;
 	int StartingMinTileCol = 0;
 
+	bool ParityX = false;
+	bool ParityY = false;
+
 	bool IsInit = false;
 
 	//Функция асинхронного заполнения новых тайлов
