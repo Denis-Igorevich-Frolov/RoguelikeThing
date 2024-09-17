@@ -172,14 +172,13 @@ public:
 	 * проверить не только не нарушает ли новый коридор правила расположения, но и не вызывает ли он такое же
 	 * нарушение у соседних клеток */
 	UFUNCTION(BlueprintCallable)
-	bool CheckCorrectOfCorridorLocation(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol,
-		int startingMinTileRow = 0, int startingMinTileCol = 0, int PassageDepthNumber = 1);
+	bool CheckCorrectOfCorridorLocation(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol, int PassageDepthNumber = 1);
 
 	/* Функция, проверяющая корректность применения к определённой ячейке стиля комнаты исходя из её окружения.
 	 * И хоть от самой комнаты развилки коридоров разрешены, но размещение новой комнаты рядом с коридором
 	 * может приводить к созданию неоднозначных путей */
 	UFUNCTION(BlueprintCallable)
-	bool CheckCorrectOfRoomLocation(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol, int startingMinTileRow = 0, int startingMinTileCol = 0);
+	bool CheckCorrectOfRoomLocation(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol);
 
 	//Функция, просматривающая есть ли непустые клетки вокруг указаной
 	UFUNCTION(BlueprintCallable)
