@@ -71,7 +71,7 @@ public:
 	 * должен быть наследником класса UMapCell или им самим */
 	UFUNCTION(BlueprintCallable, meta = (ToolTip = "MapTileClass must necessarily be an heir of the UMapTile class or be UMapTile, CellClass must necessarily be an heir of the UMapCell class or be UMapCell"))
 	void FillMapEditorWithCells(FMapDimensions MapDimensions, UUniformGridPanel* TilesGridPanel, UClass* CellClass, UClass* MapTileClass,
-		UTileBuffer* TileBuf, UMapEditor* MapEditor, UCoordWrapperOfTable* TilesCoordWrapper, UMapMatrix* Map, FVector2D WidgetAreaSize,
+		UTileBuffer* TileBuf, UObject* MapContainer, UCoordWrapperOfTable* TilesCoordWrapper, UMapMatrix* Map, FVector2D WidgetAreaSize,
 		int NumberOfMapTilesCols = -1, int NumberOfMapTilesRows = -1, int StartingMinTileRow = 0, int StartingMinTileCol = 0);
 
 	//Если не передать виджет загрузки, то загрузка будет будет без индикации

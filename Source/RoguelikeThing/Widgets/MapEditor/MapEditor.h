@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
-#include "RoguelikeThing/Widgets/MapEditor/CellCoord.h"
+#include "RoguelikeThing/Interfaces/ContainingTileTableInterface.h"
 #include "MapEditor.generated.h"
 
 /************************************************************************
@@ -12,7 +12,7 @@
  * Он нужен для правильного взаимодействия блюпринтов и c++ кода.
  ************************************************************************/
 UCLASS()
-class ROGUELIKETHING_API UMapEditor : public UUserWidget
+class ROGUELIKETHING_API UMapEditor : public UUserWidget, public IContainingTileTableInterface
 {
 	GENERATED_BODY()
 private:
@@ -22,14 +22,6 @@ private:
 	
 public:
 	UMapEditor(const FObjectInitializer& ObjectInitializer);
-
-	//Эвент, вызываемой ячейкой, который определяет какой стиль к ней стоит применить
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void SetDBCellValue(FCellCoord CellCoord, UMapCell* CallingCell);
-
-	//Эвент, при котором следует пересчитать какие тайлы стоит отобразить, а какие скрыть
-	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void UpdateItemAreaContent();	
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void FillMapEditor();

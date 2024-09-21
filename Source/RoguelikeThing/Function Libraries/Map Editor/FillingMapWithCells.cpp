@@ -6,6 +6,7 @@
 #include "RoguelikeThing/Widgets/MapEditor/MapTile.h"
 #include "RoguelikeThing/Widgets/MapEditor/MapCell.h"
 #include "RoguelikeThing/Widgets/MapEditor/MapEditor.h"
+#include "RoguelikeThing/Interfaces/ContainingTileTableInterface.h"
 #include <Kismet/GameplayStatics.h>
 
 DEFINE_LOG_CATEGORY(FillingMapWithCells);
@@ -24,7 +25,7 @@ UFillingMapWithCells::UFillingMapWithCells()
  * класса UMapTile или им самим, CellClass обязательно
  * должен быть наследником класса UMapCell или им самим */
 void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, UUniformGridPanel* TilesGridPanel, UClass* CellClass,
-    UClass* MapTileClass, UTileBuffer* TileBuf, UMapEditor* MapEditor, UCoordWrapperOfTable* TilesCoordWrapper, UMapMatrix* Map,
+    UClass* MapTileClass, UTileBuffer* TileBuf, UObject* MapContainer, UCoordWrapperOfTable* TilesCoordWrapper, UMapMatrix* Map,
     FVector2D WidgetAreaSize, int NumberOfMapTilesCols, int NumberOfMapTilesRows, int StartingMinTileRow, int StartingMinTileCol)
 {
     //Координатная обёртка изначально должна быть полность пустой во время заполнения карты
@@ -70,8 +71,21 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
 
         return;
     }
-    if (!MapEditor) {
-        UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: MapEditor is a null pointer"));
+    if (!MapContainer) {
+        UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: MapContainer is a null pointer"));
+
+        if (LoadingWidget) {
+            LoadingWidget->LoadingComplete(false);
+            LoadingWidget->RemoveFromParent();
+
+            if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The download widget has been removed"));
+        }
+
+        return;
+    }
+    if (!MapContainer->GetClass()->ImplementsInterface(UContainingTileTableInterface::StaticClass())) {
+        UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: MapContainer is not implementing ContainingTileTableInterface"));
 
         if (LoadingWidget) {
             LoadingWidget->LoadingComplete(false);
@@ -274,7 +288,7 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
         }
 
         //Само забиваение карты ячейками происходит в отдельном потоке
-        AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapEditor, TableLength, MapTileLength,TilesGridPanel, CellClass, MapTileClass, TilesCoordWrapper,
+        AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapContainer, TableLength, MapTileLength,TilesGridPanel, CellClass, MapTileClass, TilesCoordWrapper,
             Map, StartingPositionRow, StartingPositionCol, NumberOfMapTilesRows, NumberOfMapTilesCols, MapDimensions, NumberOfTilesInChunc, StartingMinTileCoord, this]() {
 
                 if (GameInstance && GameInstance->LogType != ELogType::NONE)
@@ -305,7 +319,7 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                             UE_LOG(FillingMapWithCells, Error, TEXT("!!! An error occurred in the FillingMapWithCells class in the FillMapEditorWithCells function: MapTile was created with an error"));
 
                             //Виджет загрузки удалятся в основном потоке так как сделать это вне его невозможно
-                            AsyncTask(ENamedThreads::GameThread, [MapEditor, TilesGridPanel, this]() {
+                            AsyncTask(ENamedThreads::GameThread, [MapContainer, TilesGridPanel, this]() {
                                 if (GameInstance && GameInstance->LogType != ELogType::NONE)
                                     UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: Launched a GameThread call from the TilesGridPanel table population thread to remove the loading widget"));
 
@@ -335,8 +349,8 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                         NewTile->SetMyTerrainOfTile(Map->GetTerrainOfTile(NewTile->GetMyCoord()));
 
                         //Тайл заполнаяется ячейками по переданному классу
-                        if (!NewTile->FillingWithCells(MapTileLength, CellClass, MapEditor, Map)) {
-                            AsyncTask(ENamedThreads::GameThread, [MapEditor, TilesGridPanel, this]() {
+                        if (!NewTile->FillingWithCells(MapTileLength, CellClass, MapContainer, Map)) {
+                            AsyncTask(ENamedThreads::GameThread, [MapContainer, TilesGridPanel, this]() {
                                 if (GameInstance && GameInstance->LogType != ELogType::NONE)
                                     UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: Launched a GameThread call from the TilesGridPanel table population thread to remove the loading widget"));
 
@@ -394,7 +408,7 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                 TilesGridPanel->SetMinDesiredSlotHeight(TileSize.Y);
 
                 //Все взаимодействия, связанные с изменением состояний виджетов выполняются в основном потоке
-                AsyncTask(ENamedThreads::GameThread, [MapEditor, TilesGridPanel, this]() {
+                AsyncTask(ENamedThreads::GameThread, [MapContainer, TilesGridPanel, this]() {
                     if (GameInstance && GameInstance->LogType != ELogType::NONE)
                         UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: Launched a GameThread call from the TilesGridPanel table population thread to configure the necessary widgets at the end of filling the TilesGridPanel table and removing the loading widget"));
 
@@ -410,7 +424,7 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                             UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: There was no download widget"));
 
                     //Вызывается эвент редактора карт, говорящий о том, что её контент обновился
-                    MapEditor->UpdateItemAreaContent();
+                    Cast<IContainingTileTableInterface>(MapContainer)->Execute_UpdateItemAreaContent(MapContainer);
 
                     //После полного забивания карты ячейками TilesGridPanel возвращается видимость
                     TilesGridPanel->SetVisibility(ESlateVisibility::Visible);

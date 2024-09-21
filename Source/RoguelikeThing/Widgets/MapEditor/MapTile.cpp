@@ -75,7 +75,7 @@ UCoordWrapperOfTable* UMapTile::GetCellsCoordWrapper()
 }
 
 //Функция, заполняющая тайл ячейками. Если MapMatrix будет передан, то у ячеек сразу подгрузятся все необходимые стили, иначе все ячейки будут со стилем по умолчанию
-bool UMapTile::FillingWithCells(int MapTileLength, UClass* CellClass, UMapEditor* MapEditor, UMapMatrix* Map)
+bool UMapTile::FillingWithCells(int MapTileLength, UClass* CellClass, TScriptInterface<IContainingTileTableInterface> MapContainer, UMapMatrix* Map)
 {
     if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
         UE_LOG(MapTile, Log, TEXT("MapTile class in the FillingWithCells function: Filling of the tile col: %d row: %d with cells has begun"), MyCoord.Col, MyCoord.Row);
@@ -96,7 +96,7 @@ bool UMapTile::FillingWithCells(int MapTileLength, UClass* CellClass, UMapEditor
             Cell->SetCoordOfParentTile(MyCoord, MapTileLength);
             Cell->SetMyCoord(FCellCoord(row, col));
             //Также ей передаётся указатель на её редактор карт
-            Cell->MyEditor = MapEditor;
+            Cell->MyContainer = MapContainer;
 
             if (GetGridPanel()) {
                 //Запоминается слот ячейки для того, чтобы он был передан в координатную обёртку

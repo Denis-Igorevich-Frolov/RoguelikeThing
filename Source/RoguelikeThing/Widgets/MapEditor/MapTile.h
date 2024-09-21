@@ -65,7 +65,7 @@ public:
 
 	//Функция, заполняющая тайл ячейками. Если MapMatrix будет передан, то у ячеек сразу подгрузятся все необходимые стили, иначе все ячейки будут со стилем по умолчанию
 	UFUNCTION(BlueprintCallable)
-	bool FillingWithCells(int MapTileLength, UClass* CellClass, UMapEditor* MapEditor, UMapMatrix* Map = nullptr);
+	bool FillingWithCells(int MapTileLength, UClass* CellClass, TScriptInterface<IContainingTileTableInterface> MapEditor, UMapMatrix* Map = nullptr);
 
 	//Функция, задающая стиль ячееки по переданной координате исходя из переменной предзагрузки MyTerrainOfTile
 	UFUNCTION(BlueprintCallable)

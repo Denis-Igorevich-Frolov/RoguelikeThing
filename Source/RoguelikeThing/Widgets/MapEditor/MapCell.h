@@ -41,7 +41,7 @@ public:
 	UMapCell(const FObjectInitializer& Object);
 	//Указатель на редактор карт, который управляет этой ячейкой
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UMapEditor* MyEditor;
+	TScriptInterface<IContainingTileTableInterface> MyContainer;
 
 	//Функция, устанавливающая ячейке стиль коридора исходя из её окружения
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
