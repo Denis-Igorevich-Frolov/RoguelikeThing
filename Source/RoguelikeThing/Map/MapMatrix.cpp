@@ -862,8 +862,6 @@ void UMapMatrix::AsyncChangeMatrixSize(UMapEditor* MapEditor, int right, int lef
             }
 
             mapDataBaseClose("AsyncChangeMatrixSize");
-
-            MapEditor->FillMapEditor();
             });
 
         if (GameInstance && GameInstance->LogType != ELogType::NONE)

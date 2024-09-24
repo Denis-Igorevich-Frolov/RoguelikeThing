@@ -22,9 +22,6 @@ private:
 	
 public:
 	UMapEditor(const FObjectInitializer& ObjectInitializer);
-	
-	UFUNCTION(BlueprintImplementableEvent)
-	void FillMapEditor();
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void OnResize(FIntPoint Size);
