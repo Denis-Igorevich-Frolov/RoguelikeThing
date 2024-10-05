@@ -24,9 +24,9 @@ UFillingMapWithCells::UFillingMapWithCells()
  * MapTileClass обязательно должен быть наследником
  * класса UMapTile или им самим, CellClass обязательно
  * должен быть наследником класса UMapCell или им самим */
-void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, UUniformGridPanel* TilesGridPanel, UClass* CellClass,
-    UClass* MapTileClass, UTileBuffer* TileBuf, UObject* MapContainer, UCoordWrapperOfTable* TilesCoordWrapper, UMapMatrix* Map,
-    FVector2D WidgetAreaSize, int NumberOfMapTilesCols, int NumberOfMapTilesRows, int StartingMinTileRow, int StartingMinTileCol)
+void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, UUniformGridPanel* TilesGridPanel,
+    UClass* CellClass, UClass* MapTileClass, UTileBuffer* TileBuf, UObject* MapContainer, UCoordWrapperOfTable* TilesCoordWrapper,
+    UMapMatrix* Map, FVector2D WidgetAreaSize, bool FillOnlyNonEmptyArea)
 {
     //Координатная обёртка изначально должна быть полность пустой во время заполнения карты
     TilesCoordWrapper->Clear();
@@ -211,19 +211,7 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
 
         int TableLength = MapDimensions.TableLength;
         int MapTileLength = MapDimensions.MapTileLength;
-
-        //Реальный размер полученной карты (в фрагментах)
-        ColsNum = MapDimensions.MaxCol - MapDimensions.MinCol + 1;
-        RowsNum = MapDimensions.MaxRow - MapDimensions.MinRow + 1;
-
         int NumberOfTilesInChunc = TableLength / MapTileLength;
-
-        FGridCoord StartingMinTileCoord = FGridCoord(StartingMinTileRow, StartingMinTileCol);
-
-        if (NumberOfMapTilesCols == -1)
-            NumberOfMapTilesCols = ColsNum * NumberOfTilesInChunc - StartingMinTileCoord.Col;
-        if (NumberOfMapTilesRows == -1)
-            NumberOfMapTilesRows = RowsNum * NumberOfTilesInChunc - StartingMinTileCoord.Row;
 
         if (TestCellWidget) {
             FVector2D CellSize = static_cast<UMapCell*>(TestCellWidget)->getSize();
@@ -242,35 +230,8 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
         NumberOfTilesColsThatFitOnScreen = ceil((WidgetAreaSize.X) / TileSize.X);
         NumberOfTilesRowsThatFitOnScreen = ceil((WidgetAreaSize.Y) / TileSize.Y);
 
-        //Если количество чанков, влезающих на экран, больше фактического количества чанков, то оно усекается
-        if (NumberOfTilesColsThatFitOnScreen > NumberOfMapTilesCols)
-            NumberOfTilesColsThatFitOnScreen = NumberOfMapTilesCols;
-        if (NumberOfTilesRowsThatFitOnScreen > NumberOfMapTilesRows)
-            NumberOfTilesRowsThatFitOnScreen = NumberOfMapTilesRows;
-
-        //Переманные, отражающие чётность фактического количества чанков
-        bool IsNumberOfTilesColsEven = (NumberOfMapTilesCols % 2) == 0;
-        bool IsNumberOfTilesRowsEven = (NumberOfMapTilesRows % 2) == 0;
-
-        //Переменные, отражающие чётность влезающего на экран количества чанков
-        bool IsNumberOfFittingTilesColsEven = (NumberOfTilesColsThatFitOnScreen % 2) == 0;
-        bool IsNumberOfFittingTilesRowsEven = (NumberOfTilesRowsThatFitOnScreen % 2) == 0;
-
-        /* Чётность фактического и влезающего на экран количества чанков всегда должна совпадать для нормальной
-         * центровки таблицы. При расхождении чётности, количество влезающих на кран ячеек увеличивается на 1.
-         * Так как выше уже была проведена усекающая проверка, не дающая влезающему количеству ячеек превысить
-         * фактическое, а быть равными эти количества при расходящейся чётности также не могут, то при увеличении
-         * влезающего количества ячеек на 1, превышение фактического количества никогда не произоёдёт. */
-        if (IsNumberOfTilesColsEven != IsNumberOfFittingTilesColsEven)
-            NumberOfTilesColsThatFitOnScreen++;
-        if (IsNumberOfTilesRowsEven != IsNumberOfFittingTilesRowsEven)
-            NumberOfTilesRowsThatFitOnScreen++;
-
-        int StartingPositionRow = (NumberOfMapTilesRows - NumberOfTilesRowsThatFitOnScreen) / 2;
-        int StartingPositionCol = (NumberOfMapTilesCols - NumberOfTilesColsThatFitOnScreen) / 2;
-
         if (GameInstance && GameInstance->LogType != ELogType::NONE)
-            UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: all checks have been passed, the TilesGridPanel grid is ready to be filled with cells with dimensions: rows: %d, columns: %d"), NumberOfMapTilesRows, NumberOfMapTilesCols);
+            UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: all checks have been passed, the TilesGridPanel grid is ready to be filled with cells"));
 
         //Все старые значения очищаются из буфера тайлов и заполняются новыми
         TileBuf->Clear();
@@ -289,13 +250,70 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
 
         //Само забиваение карты ячейками происходит в отдельном потоке
         AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapContainer, TableLength, MapTileLength,TilesGridPanel, CellClass, MapTileClass, TilesCoordWrapper,
-            Map, StartingPositionRow, StartingPositionCol, NumberOfMapTilesRows, NumberOfMapTilesCols, MapDimensions, NumberOfTilesInChunc, StartingMinTileCoord, this]() {
+            Map, MapDimensions, NumberOfTilesInChunc, FillOnlyNonEmptyArea, this]() {
 
                 if (GameInstance && GameInstance->LogType != ELogType::NONE)
                     UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The TilesGridPanel table population thread has been opened"));
 
                 //Все непустые ячейки предзагружаются из БД
                 Map->FillTerrainOfTiles();
+
+                FGridCoord StartingMinTileCoord = FGridCoord(0, 0);
+
+                if (FillOnlyNonEmptyArea) {
+                    StartingMinTileCoord = FGridCoord(Map->GetMinNoEmptyTileCoord().Row, Map->GetMinNoEmptyTileCoord().Col);
+                }
+
+                //Реальный размер полученной карты (в фрагментах)
+                ColsNum = 0;
+                RowsNum = 0;
+
+                int NumberOfMapTilesCols = 0;
+                int NumberOfMapTilesRows = 0;
+
+                if (FillOnlyNonEmptyArea) {
+                    //Реальный размер полученной карты (в фрагментах)
+                    ColsNum = Map->GetMaxNoEmptyTileCoord().Col - Map->GetMinNoEmptyTileCoord().Col + 1;
+                    RowsNum = Map->GetMaxNoEmptyTileCoord().Row - Map->GetMinNoEmptyTileCoord().Row + 1;
+
+                    NumberOfMapTilesCols = (Map->GetMaxNoEmptyTileCoord().Col + 1) - Map->GetMinNoEmptyTileCoord().Col;
+                    NumberOfMapTilesRows = (Map->GetMaxNoEmptyTileCoord().Row + 1) - Map->GetMinNoEmptyTileCoord().Row;
+                }
+                else {
+                    //Реальный размер полученной карты (в фрагментах)
+                    ColsNum = MapDimensions.MaxCol - MapDimensions.MinCol + 1;
+                    RowsNum = MapDimensions.MaxRow - MapDimensions.MinRow + 1;
+
+                    NumberOfMapTilesCols = ColsNum * NumberOfTilesInChunc;
+                    NumberOfMapTilesRows = RowsNum * NumberOfTilesInChunc;
+                }
+
+                //Если количество чанков, влезающих на экран, больше фактического количества чанков, то оно усекается
+                if (NumberOfTilesColsThatFitOnScreen > NumberOfMapTilesCols)
+                    NumberOfTilesColsThatFitOnScreen = NumberOfMapTilesCols;
+                if (NumberOfTilesRowsThatFitOnScreen > NumberOfMapTilesRows)
+                    NumberOfTilesRowsThatFitOnScreen = NumberOfMapTilesRows;
+
+                //Переманные, отражающие чётность фактического количества чанков
+                bool IsNumberOfTilesColsEven = (NumberOfMapTilesCols % 2) == 0;
+                bool IsNumberOfTilesRowsEven = (NumberOfMapTilesRows % 2) == 0;
+
+                //Переменные, отражающие чётность влезающего на экран количества чанков
+                bool IsNumberOfFittingTilesColsEven = (NumberOfTilesColsThatFitOnScreen % 2) == 0;
+                bool IsNumberOfFittingTilesRowsEven = (NumberOfTilesRowsThatFitOnScreen % 2) == 0;
+
+                /* Чётность фактического и влезающего на экран количества чанков всегда должна совпадать для нормальной
+                 * центровки таблицы. При расхождении чётности, количество влезающих на кран ячеек увеличивается на 1.
+                 * Так как выше уже была проведена усекающая проверка, не дающая влезающему количеству ячеек превысить
+                 * фактическое, а быть равными эти количества при расходящейся чётности также не могут, то при увеличении
+                 * влезающего количества ячеек на 1, превышение фактического количества никогда не произоёдёт. */
+                if ((IsNumberOfTilesColsEven != IsNumberOfFittingTilesColsEven) && (NumberOfTilesColsThatFitOnScreen + 1 <= NumberOfMapTilesCols))
+                    NumberOfTilesColsThatFitOnScreen++;
+                if ((IsNumberOfTilesRowsEven != IsNumberOfFittingTilesRowsEven) && (NumberOfTilesRowsThatFitOnScreen + 1 <= NumberOfMapTilesRows))
+                    NumberOfTilesRowsThatFitOnScreen++;
+
+                int StartingPositionRow = (NumberOfMapTilesRows - NumberOfTilesRowsThatFitOnScreen) / 2;
+                int StartingPositionCol = (NumberOfMapTilesCols - NumberOfTilesColsThatFitOnScreen) / 2;
 
                 /* Данный цикл и вложенный в него создают тайлы. При этом
                  * это происходит таким образом, чтобы самый первый тайл

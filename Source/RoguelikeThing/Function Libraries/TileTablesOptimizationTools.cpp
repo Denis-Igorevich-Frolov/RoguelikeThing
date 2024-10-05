@@ -125,9 +125,9 @@ void UTileTablesOptimizationTools::AsynchronousAreaRemoving(FGridDimensions Area
     });
 }
 
-void UTileTablesOptimizationTools::Init(UUniformGridPanel* refTilesGridPanel, UCoordWrapperOfTable* refTilesCoordWrapper, UTileBuffer* refTilesBuf,
-    UMapMatrix* refMapMatrix, FGridDimensions originalDimensions, FMapDimensions fullMapDimensions, FVector2D widgetAreaSize, FVector2D tileSize,
-    FVector2D minContentSize, int numberOfTileRowsInTable, int numberOfTileColsInTable, int startingMinTileRow, int startingMinTileCol)
+void UTileTablesOptimizationTools::Init(UUniformGridPanel* refTilesGridPanel, UCoordWrapperOfTable* refTilesCoordWrapper,
+    UTileBuffer* refTilesBuf, UMapMatrix* refMapMatrix, FGridDimensions originalDimensions, FMapDimensions fullMapDimensions,
+    FVector2D widgetAreaSize, FVector2D tileSize, FVector2D minContentSize, bool FillOnlyNonEmptyArea)
 {
     TilesGridPanel = refTilesGridPanel;
     TilesCoordWrapper = refTilesCoordWrapper;
@@ -138,16 +138,24 @@ void UTileTablesOptimizationTools::Init(UUniformGridPanel* refTilesGridPanel, UC
     this->FullMapDimensions = fullMapDimensions;
     this->TileSize = tileSize;
     this->MinContentSize = minContentSize;
-    this->NumberOfTileRowsInTable = numberOfTileRowsInTable - startingMinTileRow;
-    this->NumberOfTileColsInTable = numberOfTileColsInTable - startingMinTileCol;
+    FMapDimensions MapDimensions = MapMatrix->GetMapDimensions();
+    NumOfTilesInChunk = fullMapDimensions.TableLength / fullMapDimensions.MapTileLength;
+    if (FillOnlyNonEmptyArea) {
+        this->NumberOfTileRowsInTable = (MapMatrix->GetMaxNoEmptyTileCoord().Row + 1) - MapMatrix->GetMinNoEmptyTileCoord().Row;
+        this->NumberOfTileColsInTable = (MapMatrix->GetMaxNoEmptyTileCoord().Col + 1) - MapMatrix->GetMinNoEmptyTileCoord().Col;
+    }
+    else {
+        this->NumberOfTileRowsInTable = (MapDimensions.MaxRow + 1 - MapDimensions.MinRow) * NumOfTilesInChunk;
+        this->NumberOfTileColsInTable = (MapDimensions.MaxCol + 1 - MapDimensions.MinCol) * NumOfTilesInChunk;
+    }
     this->WidgetAreaSize = widgetAreaSize;
-    this->StartingMinTileRow = startingMinTileRow;
-    this->StartingMinTileCol = startingMinTileCol;
+    if (FillOnlyNonEmptyArea) {
+        this->StartingMinTileRow = MapMatrix->GetMinNoEmptyTileCoord().Row;
+        this->StartingMinTileCol = MapMatrix->GetMinNoEmptyTileCoord().Col;
+    }
     OldDimensions = OriginalDimensions;
     CurrentDimensions = OriginalDimensions;
     
-    NumOfTilesInChunk = fullMapDimensions.TableLength / fullMapDimensions.MapTileLength;
-
     FGridCoord MaxCoord = OriginalDimensions.Max;
     FGridCoord MinCoord = OriginalDimensions.Min;
     OriginalDimensionsSize = FVector2D((MaxCoord.Col - MinCoord.Col) * TileSize.X, (MaxCoord.Row - MinCoord.Row) * TileSize.Y);
@@ -224,7 +232,10 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
             /* При камере, упревшейся в границу контента, вычислять смещение координат проще - они всегда будут равны друг другу и такому
              * количеству тайлов, какое уложится в расстоянии на которое контент изначально торчал справа за пределами своей области */
             MaxBiasCoord.Col = SizeDifference.X / 2.0 / TileSize.X;
-            MinBiasCoord.Col = MinBiasCoord.Col - 1;
+            if (MinBiasCoord.Col != OriginalDimensions.Min.Col)
+                MinBiasCoord.Col = MaxBiasCoord.Col - 1;
+            else
+                MinBiasCoord.Col = MaxBiasCoord.Col;
 
             if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                 UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: The content rests against the right edge of the widget"));
@@ -254,7 +265,10 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
             /* При камере, упревшейся в границу контента, вычислять смещение координат проще - они всегда будут равны друг другу и такому
              * количеству тайлов, какое уложится в модуле расстояния на которое контент изначально торчал слева за пределами своей области */
             MinBiasCoord.Col = -SizeDifference.X / 2.0 / TileSize.X;
-            MaxBiasCoord.Col = MinBiasCoord.Col + 1;
+            if (MaxBiasCoord.Col != OriginalDimensions.Max.Col)
+                MaxBiasCoord.Col = MinBiasCoord.Col + 1;
+            else
+                MaxBiasCoord.Col = MinBiasCoord.Col;
 
             if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                 UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: The content rests against the left edge of the widget"));
@@ -284,7 +298,10 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
             /* При камере, упревшейся в границу контента, вычислять смещение координат проще - они всегда будут равны друг другу и такому
              * количеству тайлов, какое уложится в расстоянии на которое контент изначально торчал сверху за пределами своей области */
             MaxBiasCoord.Row = SizeDifference.Y / 2.0 / TileSize.Y;
-            MinBiasCoord.Row = MaxBiasCoord.Row - 1;
+            if (MinBiasCoord.Row != OriginalDimensions.Min.Row)
+                MinBiasCoord.Row = MaxBiasCoord.Row - 1;
+            else
+                MinBiasCoord.Row = MaxBiasCoord.Row;
 
             if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                 UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: The content rests against the top edge of the widget"));
@@ -314,7 +331,10 @@ void UTileTablesOptimizationTools::ChangingVisibilityOfTableTiles(FVector2D Bias
             /* При камере, упревшейся в границу контента, вычислять смещение координат проще - они всегда будут равны друг другу и такому
              * количеству тайлов, какое уложится в модуле расстояния на которое контент изначально торчал снизу за пределами своей области */
             MinBiasCoord.Row = -SizeDifference.Y / 2.0 / TileSize.Y;
-            MaxBiasCoord.Row = MinBiasCoord.Row + 1;
+            if (MaxBiasCoord.Row != OriginalDimensions.Max.Row)
+                MaxBiasCoord.Row = MinBiasCoord.Row + 1;
+            else
+                MaxBiasCoord.Row = MinBiasCoord.Row;
 
             if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                 UE_LOG(TileTablesOptimizationTools, Log, TEXT("TileTablesOptimizationTools class in the ChangingVisibilityOfTableTiles function: The content rests against the bottom edge of the widget"));

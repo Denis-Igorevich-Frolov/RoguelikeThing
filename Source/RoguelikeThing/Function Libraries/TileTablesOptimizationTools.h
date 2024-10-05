@@ -100,9 +100,9 @@ public:
 	UTileTablesOptimizationTools();
 
 	UFUNCTION(BlueprintCallable)
-	void Init(UUniformGridPanel* refTilesGridPanel, UCoordWrapperOfTable* refTilesCoordWrapper, UTileBuffer* refTilesBuf, UMapMatrix* refMapMatrix,
-		FGridDimensions originalDimensions, FMapDimensions fullMapDimensions, FVector2D widgetAreaSize, FVector2D tileSize, FVector2D MinContentSize,
-		int numberOfTileRowsInTable, int numberOfTileColsInTable, int startingMinTileRow = 0, int startingMinTileCol = 0);
+	void Init(UUniformGridPanel* refTilesGridPanel, UCoordWrapperOfTable* refTilesCoordWrapper, UTileBuffer* refTilesBuf,
+		UMapMatrix* refMapMatrix, FGridDimensions originalDimensions, FMapDimensions fullMapDimensions, FVector2D widgetAreaSize,
+		FVector2D tileSize, FVector2D MinContentSize,bool FillOnlyNonEmptyArea = false);
 
 	UFUNCTION(BlueprintCallable)
 	//Функция, изменяющая количество отображаемых тайлов от сдвига или масштабирования таблицы
