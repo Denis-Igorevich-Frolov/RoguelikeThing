@@ -852,7 +852,7 @@ void UMapMatrix::AsyncChangeMatrixSize(UMapEditor* MapEditor, int right, int lef
             }
         }
 
-        AsyncTask(ENamedThreads::GameThread, [MapEditor, this]() {
+        AsyncTask(ENamedThreads::GameThread, [MapEditor, Dimensions, this]() {
             if (LoadingWidget) {
                 LoadingWidget->LoadingComplete(true);
                 LoadingWidget->RemoveFromParent();
@@ -862,6 +862,8 @@ void UMapMatrix::AsyncChangeMatrixSize(UMapEditor* MapEditor, int right, int lef
             }
 
             mapDataBaseClose("AsyncChangeMatrixSize");
+
+            MapEditor->FillMapEditorWithCells(Dimensions);
             });
 
         if (GameInstance && GameInstance->LogType != ELogType::NONE)
@@ -2508,16 +2510,3 @@ FMapDimensions UMapMatrix::GetMapDimensions(bool autoClose)
 
     return FMapDimensions();
 }
-
-FMapDimensions::FMapDimensions(int32 MinRow, int32 MaxRow, int32 MinCol,
-    int32 MaxCol, int32 TableLength, int32 MapTileLength, bool isValid):
-    MinRow(MinRow), MaxRow(MaxRow), MinCol(MinCol), MaxCol(MaxCol),
-    TableLength(TableLength), MapTileLength(MapTileLength), isValid(isValid)
-{}
-
-/* Пустой конструктор по умолчанию.
- * Созданный с помощью него экземпляр не будет считаться валидным.
- * Создавать такой объект следует, если функция должна вернуть
- * экземпляр MapDimensions, но её работа была выполнена неправильно */
-FMapDimensions::FMapDimensions() : FMapDimensions(0, 0, 0, 0, TableLength, MapTileLength, false)
-{}

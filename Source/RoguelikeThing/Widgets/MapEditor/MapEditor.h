@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
 #include "RoguelikeThing/Interfaces/ContainingTileTableInterface.h"
+#include "RoguelikeThing/Map/MapDimensions.h"
 #include "MapEditor.generated.h"
 
 /************************************************************************
@@ -22,6 +23,9 @@ private:
 	
 public:
 	UMapEditor(const FObjectInitializer& ObjectInitializer);
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void FillMapEditorWithCells(FMapDimensions MapDimensions);
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void OnResize(FIntPoint Size);
