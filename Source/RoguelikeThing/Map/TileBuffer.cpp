@@ -66,13 +66,24 @@ UTileBuffer::UTileBuffer()
         UE_LOG(TileBuffer, Warning, TEXT("Warning in FillingMapWithCells class in constructor - GameInstance was not retrieved from the world"));
 }
 
-void UTileBuffer::Init(int mapTileLength, UUniformGridPanel* refTilesGridPanel, UClass* refMapTileClass, UClass* refCellClass, UMapEditor* refMapEditor)
+void UTileBuffer::Init(int mapTileLength, UUniformGridPanel* refTilesGridPanel, UClass* refMapTileClass, UClass* refCellClass, UObject* refMapContainer)
 {
+    if (!refMapContainer) {
+        UE_LOG(TileBuffer, Error, TEXT("!!! An error occurred in the TileBuffer class in the Init function: MapContainer is a null pointer"));
+
+        return;
+    }
+    if (!refMapContainer->GetClass()->ImplementsInterface(UContainingTileTableInterface::StaticClass())) {
+        UE_LOG(TileBuffer, Error, TEXT("!!! An error occurred in the TileBuffer class in the Init function: MapContainer is not implementing ContainingTileTableInterface"));
+
+        return;
+    }
+
+    this->MapContainer = refMapContainer;
     this->MapTileLength = mapTileLength;
     TilesGridPanel = refTilesGridPanel;
     MapTileClass = refMapTileClass;
     CellClass = refCellClass;
-    MapEditor = refMapEditor;
 
     IsInit = true;
 }
@@ -101,7 +112,7 @@ bool UTileBuffer::FillToMaximum()
 
         UPROPERTY()
         UMapTile* NewTile = CreateWidget<UMapTile>(TilesGridPanel, MapTileClass);
-        if (!NewTile->FillingWithCells(MapTileLength, CellClass, MapEditor)) {
+        if (!NewTile->FillingWithCells(MapTileLength, CellClass, MapContainer)) {
             UE_LOG(TileBuffer, Error, TEXT("!!! An error occurred in the TileBuffer class in the FillToMaximum function: An error occurred while trying to fill the tile with cells"));
             return false;
         }

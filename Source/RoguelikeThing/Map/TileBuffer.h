@@ -29,7 +29,7 @@ private:
 	UUniformGridPanel* TilesGridPanel;
 	//Указатель на редактор карт, который будет передан в тайлы, создаваемые буфером
 	UPROPERTY()
-	UMapEditor* MapEditor;
+	UObject* MapContainer;
 	//Класс, экземплярами которого будут создаваемые в буфере тайлы
 	UPROPERTY()
 	UClass* MapTileClass;
@@ -47,7 +47,7 @@ public:
 	UTileBuffer();
 
 	UFUNCTION(BlueprintCallable)
-	void Init(int mapTileLength, UUniformGridPanel* refTilesGridPanel, UClass* refMapTileClass, UClass* refCellClass, UMapEditor* refMapEditor);
+	void Init(int mapTileLength, UUniformGridPanel* refTilesGridPanel, UClass* refMapTileClass, UClass* refCellClass, UObject* refMapContainer);
 
 	//Получение тайла из буфера, при этом в буфере переданный тайл удаляется
 	UFUNCTION(BlueprintCallable)
