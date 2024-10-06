@@ -624,6 +624,11 @@ void UMapMatrix::setLoadWidget(ULoadingWidget* newLoadingWidget)
         UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the setLoadWidget function: The download widget has been set"));
 }
 
+ULoadingWidget* UMapMatrix::getLoadWidget()
+{
+    return LoadingWidget;
+}
+
 /* Функция изменяющая размер карты в чанках. Метод способен это делать как в большую,
  * так и в меньшую сторону, но не способен уменьшить карту меньше, чем 1 на 1 чанк */
 void UMapMatrix::AsyncChangeMatrixSize(UMapEditor* MapEditor, int right, int left, int top, int bottom)
@@ -853,21 +858,13 @@ void UMapMatrix::AsyncChangeMatrixSize(UMapEditor* MapEditor, int right, int lef
         }
 
         AsyncTask(ENamedThreads::GameThread, [MapEditor, Dimensions, this]() {
-            if (LoadingWidget) {
-                LoadingWidget->LoadingComplete(true);
-                LoadingWidget->RemoveFromParent();
-
-                if (GameInstance && GameInstance->LogType != ELogType::NONE)
-                    UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncChangeMatrixSize function: The download widget has been removed"));
-            }
+            MapEditor->FillMapEditorWithCells(Dimensions);
 
             mapDataBaseClose("AsyncChangeMatrixSize");
 
-            MapEditor->FillMapEditorWithCells(Dimensions);
+            if (GameInstance && GameInstance->LogType != ELogType::NONE)
+                UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncChangeMatrixSize function: A thread to resizing the map matrix has been closed"));
             });
-
-        if (GameInstance && GameInstance->LogType != ELogType::NONE)
-            UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncChangeMatrixSize function: A thread to resizing the map matrix has been closed"));
         });
 }
 
