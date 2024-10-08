@@ -94,8 +94,7 @@
               "RelativeToolTip": "Source\\RoguelikeThing\\Widgets\\MapEditor\\CellCoord.h",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAABYAAAAsAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-10-06T22:23:58.395Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-06T22:23:58.395Z"
             },
             {
               "$type": "Document",
@@ -120,8 +119,7 @@
               "RelativeToolTip": "Source\\RoguelikeThing\\Map\\TileBuffer.h",
               "ViewState": "AQIAAA8AAAAAAAAAAAAAAB4AAAAMAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-10-06T18:09:21.225Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-06T18:09:21.225Z"
             },
             {
               "$type": "Document",
@@ -133,8 +131,7 @@
               "RelativeToolTip": "Source\\RoguelikeThing\\Map\\TileBuffer.cpp",
               "ViewState": "AQIAADUAAAAAAAAAAAAowHAAAAATAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-10-06T18:09:25.842Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-06T18:09:25.842Z"
             },
             {
               "$type": "Document",
@@ -146,8 +143,7 @@
               "RelativeToolTip": "Source\\RoguelikeThing\\MyGameInstance.h",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAACAAAAApAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-10-06T12:32:14.737Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-06T12:32:14.737Z"
             },
             {
               "$type": "Document",
@@ -159,8 +155,7 @@
               "RelativeToolTip": "Source\\RoguelikeThing\\MyGameInstance.cpp",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-10-06T12:32:10.297Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-06T12:32:10.297Z"
             },
             {
               "$type": "Document",
@@ -172,8 +167,7 @@
               "RelativeToolTip": "Source\\RoguelikeThing\\Map\\MapMatrix.h",
               "ViewState": "AQIAAFcAAAAAAAAAAAAAAGwAAAABAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-10-05T13:38:59.206Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-05T13:38:59.206Z"
             },
             {
               "$type": "Document",
@@ -185,8 +179,7 @@
               "RelativeToolTip": "Source\\RoguelikeThing\\Map\\MapMatrix.cpp",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAABMAAAANAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-10-05T13:38:48.381Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-10-05T13:38:48.381Z"
             },
             {
               "$type": "Document",
@@ -198,8 +191,7 @@
               "RelativeToolTip": "Source\\RoguelikeThing\\Widgets\\MapEditor\\MapTile.h",
               "ViewState": "AQIAABsAAAAAAAAAAAAtwEMAAABsAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-08-31T19:03:32.204Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-08-31T19:03:32.204Z"
             },
             {
               "$type": "Document",
@@ -211,8 +203,7 @@
               "RelativeToolTip": "Source\\RoguelikeThing\\Widgets\\MapEditor\\MapTile.cpp",
               "ViewState": "AQIAAD8AAAAAAAAAAAAAAE0AAAAfAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-08-31T19:13:29.982Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-08-31T19:13:29.982Z"
             },
             {
               "$type": "Document",
@@ -224,8 +215,7 @@
               "RelativeToolTip": "Source\\RoguelikeThing\\Function Libraries\\TileTablesOptimizationTools.h",
               "ViewState": "AQIAAEwAAAAAAAAAAAAtwGAAAAA/AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-08-30T23:15:17.772Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-08-30T23:15:17.772Z"
             },
             {
               "$type": "Document",
@@ -237,8 +227,7 @@
               "RelativeToolTip": "Source\\RoguelikeThing\\Function Libraries\\TileTablesOptimizationTools.cpp",
               "ViewState": "AQIAAI0AAAAAAAAAAAAAAH8AAAAnAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-08-30T23:15:19.82Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-08-30T23:15:19.82Z"
             },
             {
               "$type": "Document",
@@ -250,8 +239,7 @@
               "RelativeToolTip": "Source\\RoguelikeThing\\Function Libraries\\Map Editor\\FillingMapWithCells.h",
               "ViewState": "AQIAADAAAAAAAAAAAAAAAAsAAAAqAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-08-30T23:11:25.088Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-08-30T23:11:25.088Z"
             },
             {
               "$type": "Document",
@@ -263,8 +251,7 @@
               "RelativeToolTip": "Source\\RoguelikeThing\\Function Libraries\\Map Editor\\FillingMapWithCells.cpp",
               "ViewState": "AQIAAF4BAAAAAAAAAAAtwHEBAABmAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-08-30T23:11:27.036Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-08-30T23:11:27.036Z"
             },
             {
               "$type": "Document",
@@ -276,8 +263,7 @@
               "RelativeToolTip": "Source\\RoguelikeThing\\Widgets\\MapEditor\\MapEditor.h",
               "ViewState": "AQIAAAgAAAAAAAAAAAAtwBsAAAAVAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-08-30T19:25:41.362Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-08-30T19:25:41.362Z"
             },
             {
               "$type": "Document",
@@ -289,8 +275,7 @@
               "RelativeToolTip": "Source\\RoguelikeThing\\Widgets\\MapEditor\\MapEditor.cpp",
               "ViewState": "AQIAAAIAAAAAAAAAAAAtwBMAAAABAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-08-30T20:32:12.108Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-08-30T20:32:12.108Z"
             },
             {
               "$type": "Document",
@@ -302,8 +287,7 @@
               "RelativeToolTip": "Source\\RoguelikeThing\\Widgets\\MapEditor\\MapCell.h",
               "ViewState": "AQIAABsAAAAAAAAAAAAtwCsAAAA8AAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2024-08-31T21:14:58.911Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-08-31T21:14:58.911Z"
             },
             {
               "$type": "Document",
@@ -315,8 +299,7 @@
               "RelativeToolTip": "Source\\RoguelikeThing\\Widgets\\MapEditor\\MapCell.cpp",
               "ViewState": "AQIAAAAAAAAAAAAAAAAAABgAAAAeAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2024-08-31T21:16:16.602Z",
-              "EditorCaption": ""
+              "WhenOpened": "2024-08-31T21:16:16.602Z"
             }
           ]
         },
