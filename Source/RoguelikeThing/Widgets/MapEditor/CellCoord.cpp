@@ -14,5 +14,5 @@ bool FCellCoord::operator==(const FCellCoord& Coord) const
 
 bool FCellCoord::operator!=(const FCellCoord& Coord) const
 {
-    return (this->Row != Coord.Row) && (this->Col != Coord.Col);
+    return (this->Row != Coord.Row) || (this->Col != Coord.Col);
 }

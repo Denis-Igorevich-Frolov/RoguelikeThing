@@ -2440,6 +2440,55 @@ UTerrainOfTile* UMapMatrix::GetTerrainOfTile(FCellCoord Coord)
     }
 }
 
+TArray<FCellCoord> UMapMatrix::GetCorridorArray(FCellCoord CallingCellCoord, FCellCoord CurrentCellCoord)
+{
+    TArray<FCellCoord> CellsArray;
+    CellsArray.Add(CallingCellCoord);
+
+    if (FCellCoord(CallingCellCoord.Row + 1, CallingCellCoord.Col) != CurrentCellCoord) {
+        FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(CallingCellCoord.Row + 1, CallingCellCoord.Col);
+
+        if (CellType == FMapEditorBrushType::Corridor) {
+            CellsArray.Append(GetCorridorArray(FCellCoord(CallingCellCoord.Row + 1, CallingCellCoord.Col), CallingCellCoord));
+        }
+        else if (CellType == FMapEditorBrushType::Room) {
+            CellsArray.Add(FCellCoord(CallingCellCoord.Row + 1, CallingCellCoord.Col));
+        }
+    }
+    if (FCellCoord(CallingCellCoord.Row - 1, CallingCellCoord.Col) != CurrentCellCoord) {
+        FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(CallingCellCoord.Row - 1, CallingCellCoord.Col);
+
+        if (CellType == FMapEditorBrushType::Corridor) {
+            CellsArray.Append(GetCorridorArray(FCellCoord(CallingCellCoord.Row - 1, CallingCellCoord.Col), CallingCellCoord));
+        }
+        else if (CellType == FMapEditorBrushType::Room) {
+            CellsArray.Add(FCellCoord(CallingCellCoord.Row - 1, CallingCellCoord.Col));
+        }
+    }
+    if (FCellCoord(CallingCellCoord.Row, CallingCellCoord.Col + 1) != CurrentCellCoord) {
+        FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(CallingCellCoord.Row, CallingCellCoord.Col + 1);
+
+        if (CellType == FMapEditorBrushType::Corridor) {
+            CellsArray.Append(GetCorridorArray(FCellCoord(CallingCellCoord.Row, CallingCellCoord.Col + 1), CallingCellCoord));
+        }
+        else if (CellType == FMapEditorBrushType::Room) {
+            CellsArray.Add(FCellCoord(CallingCellCoord.Row, CallingCellCoord.Col + 1));
+        }
+    }
+    if (FCellCoord(CallingCellCoord.Row, CallingCellCoord.Col - 1) != CurrentCellCoord) {
+        FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(CallingCellCoord.Row, CallingCellCoord.Col - 1);
+
+        if (CellType == FMapEditorBrushType::Corridor) {
+            CellsArray.Append(GetCorridorArray(FCellCoord(CallingCellCoord.Row, CallingCellCoord.Col - 1), CallingCellCoord));
+        }
+        else if (CellType == FMapEditorBrushType::Room) {
+            CellsArray.Add(FCellCoord(CallingCellCoord.Row, CallingCellCoord.Col - 1));
+        }
+    }
+
+    return CellsArray;
+}
+
 FMapDimensions UMapMatrix::GetMapDimensions(bool autoClose)
 {
     /* Если mapDataBase непроинициализированна, это означает, что база

@@ -229,4 +229,7 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	UTerrainOfTile* GetTerrainOfTile(FCellCoord Coord);
+
+	UFUNCTION(BlueprintCallable)
+	TArray<FCellCoord> GetCorridorArray(FCellCoord CallingCellCoord, FCellCoord CurrentCellCoord);
 };
