@@ -25,7 +25,7 @@ void UTileTablesOptimizationTools::AsynchronousAreaFilling(FGridDimensions AreaD
             for (int col = AreaDimensions.Min.Col; col <= AreaDimensions.Max.Col; col++) {
                 for (int row = AreaDimensions.Min.Row; row <= AreaDimensions.Max.Row; row++) {
                     if (TilesCoordWrapper->FindWidget(row, col)) {
-                        UE_LOG(TileTablesOptimizationTools, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the AsynchronousAreaFilling function: Tile Col: %d, Row: %d already exists"), col, row);
+                        UE_LOG(TileTablesOptimizationTools, Warning, TEXT("!!! An warning in the TileTablesOptimizationTools class in the AsynchronousAreaFilling function: Tile Col: %d, Row: %d already exists"), col, row);
                     }
                     else {
                         //Изменение состояния виджетов доступно только в основном потоке
@@ -77,7 +77,7 @@ void UTileTablesOptimizationTools::AsynchronousAreaRemoving(FGridDimensions Area
                         //Если буфер тайлов полностью заплнен, виджет росто удаляется
                         if (TilesBuf->BufSize() + 1 > TilesBuf->GetMaxSize()) {
                             if (!TilesCoordWrapper->RemoveWidget(row, col)) {
-                                UE_LOG(TileTablesOptimizationTools, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the AsynchronousAreaRemoving function: Failed to remove tile Col: %d, Row: %d from TilesCoordWrapper"), col, row);
+                                UE_LOG(TileTablesOptimizationTools, Warning, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the AsynchronousAreaRemoving function: Failed to remove tile Col: %d, Row: %d from TilesCoordWrapper"), col, row);
                             }
 
                             //Так как произошло удаление виджета, следует форсировать сборку мусора
@@ -109,7 +109,7 @@ void UTileTablesOptimizationTools::AsynchronousAreaRemoving(FGridDimensions Area
                                 }
                             }
                             else {
-                                UE_LOG(TileTablesOptimizationTools, Error, TEXT("!!! An error occurred in the TileTablesOptimizationTools class in the AsynchronousAreaRemoving function: GridSlot Col: %d, Row: %d of tile is not valid"), col, row);
+                                UE_LOG(TileTablesOptimizationTools, Warning, TEXT("!!! An warning in the TileTablesOptimizationTools class in the AsynchronousAreaRemoving function: GridSlot Col: %d, Row: %d of tile is not valid"), col, row);
                             }
                         }
                         });
