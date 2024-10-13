@@ -25,7 +25,7 @@ void UTileTablesOptimizationTools::AsynchronousAreaFilling(FGridDimensions AreaD
             for (int col = AreaDimensions.Min.Col; col <= AreaDimensions.Max.Col; col++) {
                 for (int row = AreaDimensions.Min.Row; row <= AreaDimensions.Max.Row; row++) {
                     if (TilesCoordWrapper->FindWidget(row, col)) {
-                        UE_LOG(TileTablesOptimizationTools, Warning, TEXT("!!! An warning in the TileTablesOptimizationTools class in the AsynchronousAreaFilling function: Tile Col: %d, Row: %d already exists"), col, row);
+                        UE_LOG(TileTablesOptimizationTools, Warning, TEXT("Warning in the TileTablesOptimizationTools class in the AsynchronousAreaFilling function: Tile Col: %d, Row: %d already exists"), col, row);
                     }
                     else {
                         //Изменение состояния виджетов доступно только в основном потоке
@@ -109,7 +109,7 @@ void UTileTablesOptimizationTools::AsynchronousAreaRemoving(FGridDimensions Area
                                 }
                             }
                             else {
-                                UE_LOG(TileTablesOptimizationTools, Warning, TEXT("!!! An warning in the TileTablesOptimizationTools class in the AsynchronousAreaRemoving function: GridSlot Col: %d, Row: %d of tile is not valid"), col, row);
+                                UE_LOG(TileTablesOptimizationTools, Warning, TEXT("Warning in the TileTablesOptimizationTools class in the AsynchronousAreaRemoving function: GridSlot Col: %d, Row: %d of tile is not valid"), col, row);
                             }
                         }
                         });
