@@ -2445,7 +2445,7 @@ TArray<FCellCoord> UMapMatrix::GetCorridorArray(FCellCoord CallingCellCoord, FCe
     TArray<FCellCoord> CellsArray;
     CellsArray.Add(CallingCellCoord);
 
-    if (FCellCoord(CallingCellCoord.Row + 1, CallingCellCoord.Col) != CurrentCellCoord) {
+    if ((FCellCoord(CallingCellCoord.Row + 1, CallingCellCoord.Col) != CurrentCellCoord) && (CallingCellCoord.Row + 1 <= (MaxNoEmptyTileCoord.Row + 1) * MapTileLength - 1)) {
         FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(CallingCellCoord.Row + 1, CallingCellCoord.Col);
 
         if (CellType == FMapEditorBrushType::Corridor) {
@@ -2455,7 +2455,7 @@ TArray<FCellCoord> UMapMatrix::GetCorridorArray(FCellCoord CallingCellCoord, FCe
             CellsArray.Add(FCellCoord(CallingCellCoord.Row + 1, CallingCellCoord.Col));
         }
     }
-    if (FCellCoord(CallingCellCoord.Row - 1, CallingCellCoord.Col) != CurrentCellCoord) {
+    if ((FCellCoord(CallingCellCoord.Row - 1, CallingCellCoord.Col) != CurrentCellCoord) && (CallingCellCoord.Row - 1 >= MinNoEmptyTileCoord.Row * MapTileLength)) {
         FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(CallingCellCoord.Row - 1, CallingCellCoord.Col);
 
         if (CellType == FMapEditorBrushType::Corridor) {
@@ -2465,7 +2465,7 @@ TArray<FCellCoord> UMapMatrix::GetCorridorArray(FCellCoord CallingCellCoord, FCe
             CellsArray.Add(FCellCoord(CallingCellCoord.Row - 1, CallingCellCoord.Col));
         }
     }
-    if (FCellCoord(CallingCellCoord.Row, CallingCellCoord.Col + 1) != CurrentCellCoord) {
+    if ((FCellCoord(CallingCellCoord.Row, CallingCellCoord.Col + 1) != CurrentCellCoord) && (CallingCellCoord.Col + 1 <= (MaxNoEmptyTileCoord.Col + 1) * MapTileLength - 1)) {
         FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(CallingCellCoord.Row, CallingCellCoord.Col + 1);
 
         if (CellType == FMapEditorBrushType::Corridor) {
@@ -2475,7 +2475,7 @@ TArray<FCellCoord> UMapMatrix::GetCorridorArray(FCellCoord CallingCellCoord, FCe
             CellsArray.Add(FCellCoord(CallingCellCoord.Row, CallingCellCoord.Col + 1));
         }
     }
-    if (FCellCoord(CallingCellCoord.Row, CallingCellCoord.Col - 1) != CurrentCellCoord) {
+    if ((FCellCoord(CallingCellCoord.Row, CallingCellCoord.Col - 1) != CurrentCellCoord) && (CallingCellCoord.Col - 1 >= MinNoEmptyTileCoord.Row * MapTileLength)) {
         FMapEditorBrushType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(CallingCellCoord.Row, CallingCellCoord.Col - 1);
 
         if (CellType == FMapEditorBrushType::Corridor) {
