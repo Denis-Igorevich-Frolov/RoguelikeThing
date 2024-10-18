@@ -142,7 +142,11 @@ void UTileTablesOptimizationTools::Init(UUniformGridPanel* refTilesGridPanel, UC
     NumOfTilesInChunk = fullMapDimensions.TableLength / fullMapDimensions.MapTileLength;
     if (FillOnlyNonEmptyArea) {
         this->NumberOfTileRowsInTable = (MapMatrix->GetMaxNoEmptyTileCoord().Row + 1) - MapMatrix->GetMinNoEmptyTileCoord().Row;
+        if (NumberOfTileRowsInTable <= 0)
+            NumberOfTileRowsInTable = 1;
         this->NumberOfTileColsInTable = (MapMatrix->GetMaxNoEmptyTileCoord().Col + 1) - MapMatrix->GetMinNoEmptyTileCoord().Col;
+        if (NumberOfTileColsInTable <= 0)
+            NumberOfTileColsInTable = 1;
     }
     else {
         this->NumberOfTileRowsInTable = (MapDimensions.MaxRow + 1 - MapDimensions.MinRow) * NumOfTilesInChunk;
