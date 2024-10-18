@@ -142,7 +142,7 @@ bool UMapTile::FillingWithCells(int MapTileLength, UClass* CellClass, TScriptInt
 }
 
 //Функция, обновляющая информацию о ячейках, стиль которых отличается от базового
-void UMapTile::UpdateInformationAboutCells(UMapCell* Cell, FMapEditorBrushType CellStyle)
+void UMapTile::UpdateInformationAboutCells(UMapCell* Cell, FCellType CellStyle)
 {
     if (!Cell) {
         UE_LOG(MapTile, Error, TEXT("!!! An error occurred in the MapTile class in the UpdateInformationAboutCells function: Transmitted cell is not valid"));
@@ -156,7 +156,7 @@ void UMapTile::UpdateInformationAboutCells(UMapCell* Cell, FMapEditorBrushType C
     }
 
     //Если стиль ячейки не пустой, то он записывается в массив заполненных ячеек
-    if ((CellStyle == FMapEditorBrushType::Corridor) || (CellStyle == FMapEditorBrushType::Room)) {
+    if ((CellStyle == FCellType::Corridor) || (CellStyle == FCellType::Room)) {
         if (!FilledCells.Contains(Cell)) {
             FilledCells.Add(Cell);
         }
@@ -203,21 +203,21 @@ bool UMapTile::FillCellsAccordingToTerrain(UMapMatrix* Map)
                     UMapCell* Cell = static_cast<UMapCell*>(AbstractCell);
 
                     if (Cell) {
-                        FMapEditorBrushType CellStyle = MyTerrainOfTile->GetCellType(CellCoord);
+                        FCellType CellStyle = MyTerrainOfTile->GetCellType(CellCoord);
 
-                        if (CellStyle != FMapEditorBrushType::Error) {
+                        if (CellStyle != FCellType::Error) {
                             FCellCoord CellGlobalCoord = Cell->GetMyGlobalCoord();
                             //Ячейке устанавливается такой стиль, какой был закреплён за этой координатой в MyTerrainOfTile
                             switch (CellStyle)
                             {
-                            case FMapEditorBrushType::Corridor:
+                            case FCellType::Corridor:
                                 Cell->SetCorridorStyle(Map->CheckNeighbourhoodOfCell(CellGlobalCoord.Row, CellGlobalCoord.Col));
                                 FilledCells.Add(Cell);
 
                                 if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                                     UE_LOG(MapTile, Log, TEXT("MapTile class in the FillCellsAccordingToTerrain function: Cell row: %d col: %d is set to the corridor style"), CellGlobalCoord.Row, CellGlobalCoord.Col);
                                 break;
-                            case FMapEditorBrushType::Room:
+                            case FCellType::Room:
                                 Cell->SetRoomStyle();
                                 FilledCells.Add(Cell);
 
@@ -267,18 +267,18 @@ void UMapTile::SetStyleFromTerrainOfTile(UMapCell* Cell, int row, int col, int M
             int GlobalCol = MyCoord.Col * MapTileLength + col;
 
             //Ячейке устанавливается такой стиль, какой был закреплён за этой координатой в MyTerrainOfTile
-            FMapEditorBrushType CellStyle = Map->GetCellStyleFromTerrainOfTile(FCellCoord(GlobalRow, GlobalCol));
+            FCellType CellStyle = Map->GetCellStyleFromTerrainOfTile(FCellCoord(GlobalRow, GlobalCol));
 
-            if (CellStyle != FMapEditorBrushType::Error) {
+            if (CellStyle != FCellType::Error) {
                 switch (CellStyle)
                 {
-                case FMapEditorBrushType::Corridor:
+                case FCellType::Corridor:
                     Cell->SetCorridorStyle(Map->CheckNeighbourhoodOfCell(GlobalRow, GlobalCol));
                     if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                         UE_LOG(MapTile, Log, TEXT("MapTile class in the SetStyleFromTerrainOfTile function: Cell row: %d col: %d is set to the corridor style"), GlobalRow, GlobalCol);
                     FilledCells.Add(Cell);
                     break;
-                case FMapEditorBrushType::Room:
+                case FCellType::Room:
                     Cell->SetRoomStyle();
                     if (GameInstance && GameInstance->LogType == ELogType::DETAILED)
                         UE_LOG(MapTile, Log, TEXT("MapTile class in the SetStyleFromTerrainOfTile function: Cell row: %d col: %d is set to the room style"), GlobalRow, GlobalCol);

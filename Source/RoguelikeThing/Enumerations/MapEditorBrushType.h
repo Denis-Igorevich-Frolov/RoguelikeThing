@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "RoguelikeThing/Enumerations/CellType.h"
 #include "MapEditorBrushType.generated.h"
 
 /**********************************************************************************
@@ -29,6 +30,9 @@ class ROGUELIKETHING_API UMapEditorBrushType : public UObject
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FMapEditorBrushType BrushType;
+
+	UFUNCTION(BlueprintCallable)
+	FCellType getCellType();
 
 	//Помимо текущего типа кисти, данный класс также хранит и все прочие характеристики, которые сопутствуют кистям
 

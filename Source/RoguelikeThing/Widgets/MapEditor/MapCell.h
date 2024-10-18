@@ -6,6 +6,7 @@
 #include "RoguelikeThing/Widgets/MapEditor/MapEditor.h"
 #include "RoguelikeThing/Widgets/MapEditor/CellCoord.h"
 #include "RoguelikeThing/Structs/Widgets/MapEditor/MapCell/NeighbourhoodOfCell.h"
+#include "RoguelikeThing/Enumerations/CellType.h"
 #include "MapCell.generated.h"
 
 /*****************************************************
@@ -13,14 +14,6 @@
  *****************************************************/
 
 DECLARE_LOG_CATEGORY_EXTERN(MapCell, Log, All);
-
-//Все возможные типы ячейки
-UENUM(BlueprintType)
-enum class FCellType : uint8 {
-	CORRIDOR	UMETA(DisplayName = "Corridor"),
-	ROOM		UMETA(DisplayName = "Room"),
-	NONE		UMETA(DisplayName = "None")
-};
 
 UCLASS()
 class ROGUELIKETHING_API UMapCell : public UAbstractTile
@@ -76,7 +69,7 @@ public:
 
 	//Текущий тип (стиль) ячейки
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FCellType CurrentType = FCellType::NONE;
+	FCellType CurrentType = FCellType::Emptiness;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	bool Researched = false;

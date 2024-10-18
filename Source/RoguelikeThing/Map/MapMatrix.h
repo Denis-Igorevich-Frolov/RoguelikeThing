@@ -2,13 +2,13 @@
 
 #pragma once
 
-#include "RoguelikeThing/Enumerations/MapEditorBrushType.h"
 #include "SQLiteDatabase.h"
 #include "RoguelikeThing/MyGameInstance.h"
 #include "RoguelikeThing/Structs/Widgets/MapEditor/MapCell/NeighbourhoodOfCell.h"
 #include <RoguelikeThing/Widgets/MapEditor/CellCoord.h>
 #include <RoguelikeThing/Widgets/MapEditor/MapEditor.h>
 #include "RoguelikeThing/Map/MapDimensions.h"
+#include "RoguelikeThing/Enumerations/CellType.h"
 #include "MapMatrix.generated.h"
 
 /****************************************************************
@@ -25,12 +25,6 @@
 DECLARE_LOG_CATEGORY_EXTERN(MapMatrix, Log, All);
 DECLARE_LOG_CATEGORY_EXTERN(TerrainOfTile, Log, All);
 
-//Данное перечисление включает в себя все возможные типы фрагментов карты
-UENUM(BlueprintType)
-enum class MatrixType : uint8 {
-	ChunkStructure	UMETA(DisplayName = "ChunkStructure"), //Структура чанка карты
-};
-
 //Класс предзагрузки структуры тайла. Хранит в себе все не нулевые ячейки тайла
 UCLASS(BlueprintType)
 class ROGUELIKETHING_API UTerrainOfTile : public UObject
@@ -38,13 +32,13 @@ class ROGUELIKETHING_API UTerrainOfTile : public UObject
 	GENERATED_BODY()
 
 private:
-	TMap<int, TMap<int, FMapEditorBrushType>> TerrainOfTileRows;
+	TMap<int, TMap<int, FCellType>> TerrainOfTileRows;
 
 public:
 	UFUNCTION(BlueprintCallable)
-	void AddCellType(FCellCoord Coord, FMapEditorBrushType CellType);
+	void AddCellType(FCellCoord Coord, FCellType CellType);
 	UFUNCTION(BlueprintCallable)
-	FMapEditorBrushType GetCellType(FCellCoord Coord);
+	FCellType GetCellType(FCellCoord Coord);
 	UFUNCTION(BlueprintCallable)
 	bool Contains(FCellCoord Coord);
 	//Получение массива всех не нулевых ячеек тайла
@@ -85,9 +79,6 @@ private:
 	//Менеджер высокого уровня для экземпляра запущенной игры
 	UPROPERTY()
 	UMyGameInstance* GameInstance;
-
-	//Функция, возвращающая название типа фрагмента карты по перечислению MatrixType
-	FString getStringMatrixType(MatrixType matrixType);
 	
 	//Функция, закрывающая подготовленное заявление для загрузки данных из БД
 	void destroyLoadStatement(FString FunctionName);
@@ -132,13 +123,13 @@ public:
 	 * проверить не только не нарушает ли новый коридор правила расположения, но и не вызывает ли он такое же
 	 * нарушение у соседних клеток */
 	UFUNCTION(BlueprintCallable)
-	bool CheckCorrectOfCorridorLocation(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol, int PassageDepthNumber = 1);
+	bool CheckCorrectOfCorridorLocation(int32 globalCellRow, int32 globalCellCol, int PassageDepthNumber = 1);
 
 	/* Функция, проверяющая корректность применения к определённой ячейке стиля комнаты исходя из её окружения.
 	 * И хоть от самой комнаты развилки коридоров разрешены, но размещение новой комнаты рядом с коридором
 	 * может приводить к созданию неоднозначных путей */
 	UFUNCTION(BlueprintCallable)
-	bool CheckCorrectOfRoomLocation(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol);
+	bool CheckCorrectOfRoomLocation(int32 globalCellRow, int32 globalCellCol);
 
 	//Функция, просматривающая есть ли непустые клетки вокруг указаной
 	UFUNCTION(BlueprintCallable)
@@ -146,21 +137,21 @@ public:
 
 	/* Функция, создающая новый фрагмент карты на основе переданного типа и индекса фрагмента.
 	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
-	bool CreateMapChunk(MatrixType matrixType, int32 chunkRow, int32 chunkCol, bool autoClose = true);
+	bool CreateMapChunk(int32 chunkRow, int32 chunkCol, bool autoClose = true);
 
 	/* Функция, удаляющая фрагмент карты на основе переданного типа и индекса фрагмента.
 	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
-	bool DeleteMapChunk(MatrixType matrixType, int32 chunkRow, int32 chunkCol, bool autoClose = true);
+	bool DeleteMapChunk(int32 chunkRow, int32 chunkCol, bool autoClose = true);
 	
 	/* Функция, записывающая значение в ячейку фрагмента БД по её локальному индексу.
 	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
 	UFUNCTION(BlueprintCallable)
-	bool SetValueOfMapChunkCell(MatrixType matrixType,  int32 chunkRow, int32 chunkCol, int32 cellRow, int32 cellCol, FMapEditorBrushType value, bool autoClose = true);
+	bool SetValueOfMapChunkCell(int32 chunkRow, int32 chunkCol, int32 cellRow, int32 cellCol, FCellType value, bool autoClose = true);
 	
 	/* Функция, считывающая значение из ячейки фрагмента БД по её локальному индексу.
 	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
 	UFUNCTION(BlueprintCallable)
-	FMapEditorBrushType GetValueOfMapChunkStructureCell(int32 chunkRow, int32 chunkCol, int32 cellRow, int32 cellCol, bool autoClose = true);
+	FCellType GetValueOfMapChunkStructureCell(int32 chunkRow, int32 chunkCol, int32 cellRow, int32 cellCol, bool autoClose = true);
 	
     //Функция, закрывающая базу данных карты
 	UFUNCTION(BlueprintCallable)
@@ -169,12 +160,12 @@ public:
 	/* Функция, записывающая значение в ячейку фрагмента БД по её глобальному индексу.
 	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
 	UFUNCTION(BlueprintCallable)
-	bool SetValueOfMapChunkCellByGlobalIndex(MatrixType matrixType, int32 globalCellRow, int32 globalCellCol, FMapEditorBrushType value, bool autoClose = true);
+	bool SetValueOfMapChunkCellByGlobalIndex(int32 globalCellRow, int32 globalCellCol, FCellType value, bool autoClose = true);
 
 	/* Функция, считывающая значение из ячейки фрагмента БД по её глобальному индексу.
 	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
 	UFUNCTION(BlueprintCallable)
-	FMapEditorBrushType GetValueOfMapChunkStructureCellByGlobalIndex(int32 globalCellRow, int32 globalCellCol, bool autoClose = true);
+	FCellType GetValueOfMapChunkStructureCellByGlobalIndex(int32 globalCellRow, int32 globalCellCol, bool autoClose = true);
 
 	//Функция, устанавливающая имя файла с базой данных
 	UFUNCTION(BlueprintCallable)
@@ -190,26 +181,26 @@ public:
 	void AsyncChangeMatrixSize(UMapEditor* MapEditor, int right, int left, int top, int bottom);
 
 	//Функция, создающая один новый солбец справа таблицы
-	bool CreateNewRightCol(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose = true);
+	bool CreateNewRightCol(FMapDimensions Dimensions, bool autoClose = true);
 	//Функция, создающая один новый солбец слева таблицы
-	bool CreateNewLeftCol(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose = true);
+	bool CreateNewLeftCol(FMapDimensions Dimensions, bool autoClose = true);
 	//Функция, создающая одну новую строку сверху таблицы
-	bool CreateNewTopRow(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose = true);
+	bool CreateNewTopRow(FMapDimensions Dimensions, bool autoClose = true);
 	//Функция, создающая одну новую строку снизу таблицы
-	bool CreateNewBottomRow(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose = true);
+	bool CreateNewBottomRow(FMapDimensions Dimensions, bool autoClose = true);
 
 	//Функция, удаляющая один солбец справа таблицы
-	bool RemoveRightCol(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose = true);
+	bool RemoveRightCol(FMapDimensions Dimensions, bool autoClose = true);
 	//Функция, удаляющая один солбец слева таблицы
-	bool RemoveLeftCol(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose = true);
+	bool RemoveLeftCol(FMapDimensions Dimensions, bool autoClose = true);
 	//Функция, удаляющая одну строку сверху таблицы
-	bool RemoveTopRow(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose = true);
+	bool RemoveTopRow(FMapDimensions Dimensions, bool autoClose = true);
 	//Функция, удаляющая одну строку снизу таблицы
-	bool RemoveBottomRow(MatrixType matrixType, FMapDimensions Dimensions, bool autoClose = true);
+	bool RemoveBottomRow(FMapDimensions Dimensions, bool autoClose = true);
 
-	//Функция, запускающая в отдельном потоке создание в базе даннх матрицы из фрагментов карты указанного типа
+	//Функция, запускающая в отдельном потоке создание в базе даннх матрицы из фрагментов карты всех типов
 	UFUNCTION(BlueprintCallable)
-	void AsyncCreateBlankCard(int32 rowLen, int32 colLen, MatrixType matrixType);
+	void AsyncCreateBlankCard(int32 rowLen, int32 colLen);
 	
 	//Функция заполняющая переменную предзагрузки TerrainOfTile для всех тайлов в таблице
 	UFUNCTION(BlueprintCallable)
@@ -225,7 +216,7 @@ public:
 
 	//Получение стиля ячейки из матрицы переменных предзагрузки по глобальному индексу ячейки
 	UFUNCTION(BlueprintCallable)
-	FMapEditorBrushType GetCellStyleFromTerrainOfTile(FCellCoord GlobalCoordOfCell);
+	FCellType GetCellStyleFromTerrainOfTile(FCellCoord GlobalCoordOfCell);
 	
 	UFUNCTION(BlueprintCallable)
 	UTerrainOfTile* GetTerrainOfTile(FCellCoord Coord);

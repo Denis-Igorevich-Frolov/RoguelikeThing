@@ -73,7 +73,7 @@ public:
 	
 	//Функция, обновляющая информацию о ячейках, стиль которых отличается от базового
 	UFUNCTION(BlueprintCallable)
-	void UpdateInformationAboutCells(UMapCell* Cell, FMapEditorBrushType CellStyle);
+	void UpdateInformationAboutCells(UMapCell* Cell, FCellType CellStyle);
 	
 	//Функция, преводящая стиль ячеек в соответствие с переменной предзагрузки MyTerrainOfTile
 	UFUNCTION(BlueprintCallable)
