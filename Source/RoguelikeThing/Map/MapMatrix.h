@@ -99,6 +99,9 @@ public:
 	~UMapMatrix();
 
 	UFUNCTION(BlueprintCallable)
+	void Destroy();
+
+	UFUNCTION(BlueprintCallable)
 	const FCellCoord GetMinNoEmptyTileCoord();
 	UFUNCTION(BlueprintCallable)
 	const FCellCoord GetMaxNoEmptyTileCoord();

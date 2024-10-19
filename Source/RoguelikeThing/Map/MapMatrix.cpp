@@ -156,6 +156,15 @@ UMapMatrix::~UMapMatrix()
     TerrainOfTilesRows.Empty();
 }
 
+void UMapMatrix::Destroy()
+{
+    if (this && IsValidLowLevel())
+    {
+        ConditionalBeginDestroy();
+        MarkPendingKill();
+    }
+}
+
 const FCellCoord UMapMatrix::GetMinNoEmptyTileCoord()
 {
     return MinNoEmptyTileCoord;
