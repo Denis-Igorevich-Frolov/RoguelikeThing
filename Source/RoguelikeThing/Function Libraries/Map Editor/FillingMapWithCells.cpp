@@ -442,7 +442,7 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                         if (GameInstance && GameInstance->LogType != ELogType::NONE)
                             UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: There was no download widget"));
 
-                    //Вызывается эвент редактора карт, говорящий о том, что её контент обновился
+                    //Вызывается эвент контейнера таблицы, говорящий о том, что её контент обновился
                     Cast<IContainingTileTableInterface>(MapContainer)->Execute_UpdateItemAreaContent(MapContainer);
 
                     //После полного забивания карты ячейками TilesGridPanel возвращается видимость

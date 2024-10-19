@@ -7,9 +7,10 @@
 #include "RoguelikeThing/Widgets/MapEditor/CellCoord.h"
 #include "ContainingTileTableInterface.generated.h"
 
-/**
- * 
- */
+/*************************************************************************************************
+ * Данный интерфейс должны имплементировать все классы, которые хранят в себе тайловую таблицу
+ *************************************************************************************************/
+
 UINTERFACE(MinimalAPI, Blueprintable)
 class UContainingTileTableInterface : public UInterface
 {
