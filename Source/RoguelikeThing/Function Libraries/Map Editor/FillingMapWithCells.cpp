@@ -273,12 +273,12 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
                 int NumberOfMapTilesRows = 0;
 
                 if (FillOnlyNonEmptyArea) {
-                    //Реальный размер полученной карты (в фрагментах)
-                    ColsNum = Map->GetMaxNoEmptyTileCoord().Col - Map->GetMinNoEmptyTileCoord().Col + 1;
-                    RowsNum = Map->GetMaxNoEmptyTileCoord().Row - Map->GetMinNoEmptyTileCoord().Row + 1;
+                    NumberOfMapTilesCols = Map->GetMaxNoEmptyTileCoord().Col + 1 - Map->GetMinNoEmptyTileCoord().Col;
+                    NumberOfMapTilesRows = Map->GetMaxNoEmptyTileCoord().Row + 1 - Map->GetMinNoEmptyTileCoord().Row;
 
-                    NumberOfMapTilesCols = (Map->GetMaxNoEmptyTileCoord().Col + 1) - Map->GetMinNoEmptyTileCoord().Col;
-                    NumberOfMapTilesRows = (Map->GetMaxNoEmptyTileCoord().Row + 1) - Map->GetMinNoEmptyTileCoord().Row;
+                    //Реальный размер полученной карты (в фрагментах)
+                    ColsNum = NumberOfMapTilesCols / NumberOfTilesInChunc;
+                    RowsNum = NumberOfMapTilesRows / NumberOfTilesInChunc;
                 }
                 else {
                     //Реальный размер полученной карты (в фрагментах)
