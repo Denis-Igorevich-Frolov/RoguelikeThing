@@ -153,6 +153,8 @@ void UTileTablesOptimizationTools::Init(UUniformGridPanel* refTilesGridPanel, UC
         this->NumberOfTileColsInTable = (MapDimensions.MaxCol + 1 - MapDimensions.MinCol) * NumOfTilesInChunk;
     }
     this->WidgetAreaSize = widgetAreaSize;
+    /* Если изначальная таблица была заполнена только в габаритах непустых тайлов, то и оптимизатор
+     * должен её обрабатывать в этих границах. Для этого здесь берутся индексы первых непустых тайлов */
     if (FillOnlyNonEmptyArea) {
         this->StartingMinTileRow = MapMatrix->GetMinNoEmptyTileCoord().Row;
         this->StartingMinTileCol = MapMatrix->GetMinNoEmptyTileCoord().Col;

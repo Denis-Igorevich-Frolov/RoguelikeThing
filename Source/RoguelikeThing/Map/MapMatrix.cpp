@@ -2218,9 +2218,12 @@ void UMapMatrix::FillTerrainOfTiles()
 
                         if (CellType == FCellType::Corridor || CellType == FCellType::Room) {
                             Terrain->AddCellType(FCellCoord(CellRow, CellCol), CellType);
+                            //Проверка, не является ли текущий тайл минимальным или максимальным непустым тайлом
                             if (!HaveNoEmptyCells) {
                                 HaveNoEmptyCells = true;
 
+                                /* Если минимальные или максимальные координаты не проинициализированы ни одним
+                                 * другим тайлом, то координаты текущего тайла автоматически записываются */
                                 if (MinNoEmptyTileCoord == FCellCoord(-1, -1)) {
                                     MinNoEmptyTileCoord = FCellCoord(CurrentTileRow, CurrentTileCol);
                                 }

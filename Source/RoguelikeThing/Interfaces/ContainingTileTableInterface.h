@@ -24,7 +24,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void UpdateItemAreaContent();
 
-	//Ёвент, вызываемой €чейкой, который определ€ет какой стиль к ней стоит применить
+	//Ёвент, вызываемый €чейкой, когда на неЄ нажали
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
-	void SetDBCellValue(FCellCoord CellCoord, UMapCell* CallingCell);
+	void OnCellPressed(FCellCoord CellCoord, UMapCell* CallingCell);
 };

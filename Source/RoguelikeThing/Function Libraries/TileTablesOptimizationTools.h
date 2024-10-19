@@ -86,6 +86,8 @@ private:
 	int NumberOfTileColsInTable = 0;
 	int NumOfTilesInChunk = 0;
 
+	/* По умолчанию тайлы карты начинаются с координаты 0:0, но если это необходимо, то матрицу
+	 * можно усечь, и её новые стартовые координаты необходимо будет передать в оптимизатор */
 	int StartingMinTileRow = 0;
 	int StartingMinTileCol = 0;
 

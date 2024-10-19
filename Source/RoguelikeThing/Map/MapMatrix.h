@@ -90,6 +90,7 @@ private:
 	//Функция, сдвигающая координаты всех чанков в указанном направлении
 	bool ShiftDBCoords(int RowShift, int ColShift, bool ToRightBottom, bool autoClose = true);
 
+	//Минимальный и максимальный тайлы, в которых есть хотя бы 1 непустая ячейка
 	FCellCoord MinNoEmptyTileCoord;
 	FCellCoord MaxNoEmptyTileCoord;
 

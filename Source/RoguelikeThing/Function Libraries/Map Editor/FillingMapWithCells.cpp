@@ -260,6 +260,7 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
 
                 FGridCoord StartingMinTileCoord = FGridCoord(0, 0);
 
+                //Если заполнение таблицы будет происходить только в габаритах непустых ячеек, то здесь считываются минимальные непустые координаты матрицы
                 if (FillOnlyNonEmptyArea) {
                     StartingMinTileCoord = FGridCoord(Map->GetMinNoEmptyTileCoord().Row, Map->GetMinNoEmptyTileCoord().Col);
                 }
