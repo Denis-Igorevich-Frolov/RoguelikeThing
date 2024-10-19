@@ -333,14 +333,6 @@ bool UMapMatrix::CreateMapChunk(int32 chunkRow, int32 chunkCol, bool autoClose)
                 }
             }
 
-            //if (!mapDataBase->Execute(*FString::Printf(TEXT("CREATE TABLE \"Test %d:%d\" AS SELECT* FROM \"%d:%d\" WHERE 0;"), chunkRow, chunkCol, chunkRow, chunkCol))) {
-            //    UE_LOG(MapMatrix, Log, TEXT("Ass 6 %s"), *mapDataBase->GetLastError());
-            //}
-
-            //if (!mapDataBase->Execute(*FString::Printf(TEXT("INSERT INTO \"Test %d:%d\" SELECT * FROM \"%d:%d\";"), chunkRow, chunkCol, chunkRow, chunkCol))) {
-            //    UE_LOG(MapMatrix, Error, TEXT("ASS 3 %s"), *mapDataBase->GetLastError());
-            //}
-
             if (GameInstance && GameInstance->LogType != ELogType::NONE)
                 UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the CreateMapChunk function: The creation of %d rows in the \"%d:%d\" table has been completed"), TableLength, chunkRow, chunkCol);
 
@@ -1327,8 +1319,12 @@ bool UMapMatrix::SetValueOfMapChunkCell(int32 chunkRow, int32 chunkCol, int32 ce
         if(value == FCellType::Emptiness)
             QueryToSetCellValue = FString::Printf(TEXT("UPDATE \"%d:%d\" SET \"Col %d\" = NULL WHERE RowNum = %d;"), chunkRow, chunkCol, cellCol, cellRow);
         else {
-            QueryToSetCellValue = FString::Printf(TEXT("UPDATE \"%d:%d\" SET \"Col %d\" = json('{\"Structure\" : \"%s\",\"Test\" : \"eeee\"}') WHERE RowNum = %d;"), chunkRow, chunkCol, cellCol, *Value, cellRow);
-            //QueryToSetCellValue = FString::Printf(TEXT("UPDATE \"%d:%d\" SET \"Col %d\" = json_replace (\"Col %d\", '$.Structure', \"%s\") WHERE RowNum = %d;"), chunkRow, chunkCol, cellCol, cellCol, *Value, cellRow);
+            LoadStatement->Create(*mapDataBase, *(FString::Printf(TEXT("SELECT * FROM \"%d:%d\" WHERE RowNum IS %d AND \"Col %d\" IS NOT NULL;"), chunkRow, chunkCol, cellRow, cellCol)));
+            if (LoadStatement->IsValid() && LoadStatement->Step() == ESQLitePreparedStatementStepResult::Row)
+                QueryToSetCellValue = FString::Printf(TEXT("UPDATE \"%d:%d\" SET \"Col %d\" = json_replace(\"Col %d\", '$.Structure', \"%s\") WHERE RowNum = %d;"), chunkRow, chunkCol, cellCol, cellCol, *Value, cellRow);
+            else
+                QueryToSetCellValue = FString::Printf(TEXT("UPDATE \"%d:%d\" SET \"Col %d\" = json('{\"Structure\" : \"%s\",\"Test\" : \"e\"}') WHERE RowNum = %d;"), chunkRow, chunkCol, cellCol, *Value, cellRow);
+            destroyLoadStatement("SetValueOfMapChunkCell");
         }
 
         if (!mapDataBase->Execute(*QueryToSetCellValue)) {
