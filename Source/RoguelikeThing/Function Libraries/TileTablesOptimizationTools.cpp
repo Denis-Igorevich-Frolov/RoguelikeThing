@@ -142,9 +142,13 @@ void UTileTablesOptimizationTools::Init(UUniformGridPanel* refTilesGridPanel, UC
     NumOfTilesInChunk = fullMapDimensions.TableLength / fullMapDimensions.MapTileLength;
     if (FillOnlyNonEmptyArea) {
         this->NumberOfTileRowsInTable = (MapMatrix->GetMaxNoEmptyTileCoord().Row + 1) - MapMatrix->GetMinNoEmptyTileCoord().Row;
+        /* Совсем пустых карт не бывает, она может быть такой маленькой, что занимает
+         * пространство меньше 1 чанка, но этот чанк всё равно необходимо отрисовать */
         if (NumberOfTileRowsInTable <= 0)
             NumberOfTileRowsInTable = 1;
         this->NumberOfTileColsInTable = (MapMatrix->GetMaxNoEmptyTileCoord().Col + 1) - MapMatrix->GetMinNoEmptyTileCoord().Col;
+        /* Совсем пустых карт не бывает, она может быть такой маленькой, что занимает
+         * пространство меньше 1 чанка, но этот чанк всё равно необходимо отрисовать */
         if (NumberOfTileColsInTable <= 0)
             NumberOfTileColsInTable = 1;
     }

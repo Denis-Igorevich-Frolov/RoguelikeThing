@@ -98,6 +98,7 @@ public:
 	UMapMatrix();
 	~UMapMatrix();
 
+	//Функция полного удаления текущего объекта. Всегда вызывать не обязательно, использовать по необходимости
 	UFUNCTION(BlueprintCallable)
 	void Destroy();
 
@@ -139,12 +140,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FNeighbourhoodOfCell CheckNeighbourhoodOfCell(int32 globalCellRow, int32 globalCellCol);
 
-	/* Функция, создающая новый фрагмент карты на основе переданного типа и индекса фрагмента.
-	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
+	/* Функция, создающая новый фрагмент карты на основе переданного индекса фрагмента. Стоит быть
+	 * внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
 	bool CreateMapChunk(int32 chunkRow, int32 chunkCol, bool autoClose = true);
 
-	/* Функция, удаляющая фрагмент карты на основе переданного типа и индекса фрагмента.
-	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
+	/* Функция, удаляющая фрагмент карты на основе переданного индекса фрагмента. Стоит быть
+	 * внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
 	bool DeleteMapChunk(int32 chunkRow, int32 chunkCol, bool autoClose = true);
 	
 	/* Функция, записывающая значение в ячейку фрагмента БД по её локальному индексу.
@@ -202,7 +203,7 @@ public:
 	//Функция, удаляющая одну строку снизу таблицы
 	bool RemoveBottomRow(FMapDimensions Dimensions, bool autoClose = true);
 
-	//Функция, запускающая в отдельном потоке создание в базе даннх матрицы из фрагментов карты всех типов
+	//Функция, запускающая в отдельном потоке создание в базе даннх матрицы из фрагментов карты
 	UFUNCTION(BlueprintCallable)
 	void AsyncCreateBlankCard(int32 rowLen, int32 colLen);
 	
@@ -225,6 +226,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	UTerrainOfTile* GetTerrainOfTile(FCellCoord Coord);
 
+	/* Функция, считывающая координаты всего коридора. В CallingCellCoord следует передать
+	 * первую координату коридора, а в CurrentCellCoord - текущее местоположение пати. Если
+	 * на конце коридора будет встречена комната, то она добавится в конец массива */
 	UFUNCTION(BlueprintCallable)
 	TArray<FCellCoord> GetCorridorArray(FCellCoord CallingCellCoord, FCellCoord CurrentCellCoord);
 };

@@ -31,6 +31,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	FMapEditorBrushType BrushType;
 
+	//Функция, возвращающая соответствующий текущему стилю кисти стиль клетки
 	UFUNCTION(BlueprintCallable)
 	FCellType getCellType();
 

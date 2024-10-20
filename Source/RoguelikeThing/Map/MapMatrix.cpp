@@ -156,6 +156,7 @@ UMapMatrix::~UMapMatrix()
     TerrainOfTilesRows.Empty();
 }
 
+//Функция полного удаления текущего объекта. Всегда вызывать не обязательно, использовать по необходимости
 void UMapMatrix::Destroy()
 {
     if (this && IsValidLowLevel())
@@ -253,8 +254,8 @@ void UMapMatrix::convertingGlobalIndexIntoLocalOne(int32 globalCellRow, int32 gl
         cellCol = TableLength;
 }
 
-/* Функция, создающая новый фрагмент карты на отснове переданного типа и индекса фрагмента.
- * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
+/* Функция, создающая новый фрагмент карты на основе переданного индекса фрагмента. Стоит быть
+ * внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
 bool UMapMatrix::CreateMapChunk(int32 chunkRow, int32 chunkCol, bool autoClose)
 {
     /* Если mapDataBase непроинициализированна, это означает, что база
@@ -1189,8 +1190,8 @@ FNeighbourhoodOfCell UMapMatrix::CheckNeighbourhoodOfCell(int32 globalCellRow, i
     return NeighbourhoodOfCell;
 }
 
-/* Функция, удаляющая фрагмент карты на отснове переданного типа и индекса фрагмента.
- * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
+/* Функция, удаляющая фрагмент карты на основе переданного индекса фрагмента. Стоит быть
+ * внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
 bool UMapMatrix::DeleteMapChunk(int32 chunkRow, int32 chunkCol, bool autoClose)
 {
     /* Если mapDataBase непроинициализированна, это означает, что база
@@ -1324,14 +1325,18 @@ bool UMapMatrix::SetValueOfMapChunkCell(int32 chunkRow, int32 chunkCol, int32 ce
 
         //Формирование запроса на запись данных в ячейку
         FString QueryToSetCellValue;
-        //Если значение равно 0, то чтобы не загружать базу данных, в неё передаётся NULL, который будет работать эквивалентно 0, но весить меньше
+        /* Если значение равно Emptiness, то чтобы не загружать базу данных, в неё передаётся NULL,
+         * который будет работать эквивалентно "Structure" : "Emptiness", но весить меньше */
         if(value == FCellType::Emptiness)
             QueryToSetCellValue = FString::Printf(TEXT("UPDATE \"%d:%d\" SET \"Col %d\" = NULL WHERE RowNum = %d;"), chunkRow, chunkCol, cellCol, cellRow);
         else {
+            //Перед записью в ячаейку проверяется не пуста ли она
             LoadStatement->Create(*mapDataBase, *(FString::Printf(TEXT("SELECT * FROM \"%d:%d\" WHERE RowNum IS %d AND \"Col %d\" IS NOT NULL;"), chunkRow, chunkCol, cellRow, cellCol)));
             if (LoadStatement->IsValid() && LoadStatement->Step() == ESQLitePreparedStatementStepResult::Row)
+                //Если в ячейке уже есть данные, то json, помещённый в ячейку, модифицируется на новое значение Structure
                 QueryToSetCellValue = FString::Printf(TEXT("UPDATE \"%d:%d\" SET \"Col %d\" = json_replace(\"Col %d\", '$.Structure', \"%s\") WHERE RowNum = %d;"), chunkRow, chunkCol, cellCol, cellCol, *Value, cellRow);
             else
+                //Иначе создаётся новый json со всеми необходимыми параметрами клетки
                 QueryToSetCellValue = FString::Printf(TEXT("UPDATE \"%d:%d\" SET \"Col %d\" = json('{\"Structure\" : \"%s\",\"Test\" : \"e\"}') WHERE RowNum = %d;"), chunkRow, chunkCol, cellCol, *Value, cellRow);
             destroyLoadStatement("SetValueOfMapChunkCell");
         }
@@ -2123,7 +2128,7 @@ bool UMapMatrix::ShiftDBCoords(int RowShift, int ColShift, bool ToRightBottom, b
     return true;
 }
 
-//Функция, запускающая в отдельном потоке создание в базе даннх матрицы из фрагментов карты всех типов
+//Функция, запускающая в отдельном потоке создание в базе даннх матрицы из фрагментов карты
 void UMapMatrix::AsyncCreateBlankCard(int32 rowLen, int32 colLen) {
     if (GameInstance && GameInstance->LogType != ELogType::NONE)
         UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncCreateBlankCard function: Started asynchronous creation of %d rows by %d columns of map fragments"), rowLen+1, colLen+1);
@@ -2362,21 +2367,35 @@ UTerrainOfTile* UMapMatrix::GetTerrainOfTile(FCellCoord Coord)
     }
 }
 
+/* Функция, считывающая координаты всего коридора. В CallingCellCoord следует передать
+ * первую координату коридора, а в CurrentCellCoord - текущее местоположение пати. Если
+ * на конце коридора будет встречена комната, то она добавится в конец массива */
 TArray<FCellCoord> UMapMatrix::GetCorridorArray(FCellCoord CallingCellCoord, FCellCoord CurrentCellCoord)
 {
     TArray<FCellCoord> CellsArray;
+    //Сначала в массив добавляется ячейка, запустившая функцию
     CellsArray.Add(CallingCellCoord);
+
+    /* Затем прощупываются координаты вокруг CallingCellCoord, и если обнаруженная
+     * ячейка будет коридором и не будет являться предыдущей ячейкой поиска
+     * CurrentCellCoord, то она добавится в массив и поиск продолжится */
 
     if ((FCellCoord(CallingCellCoord.Row + 1, CallingCellCoord.Col) != CurrentCellCoord) && (CallingCellCoord.Row + 1 <= (MaxNoEmptyTileCoord.Row + 1) * MapTileLength - 1)) {
         FCellType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(CallingCellCoord.Row + 1, CallingCellCoord.Col);
 
         if (CellType == FCellType::Corridor) {
+            /* Если обнаруженная ячейка является коридором, то данная функция рекурсивно запускается, передавая
+             * в CallingCellCoord координату обнаруженной ячейки, а в CurrentCellCoord - текущую ячейку */
             CellsArray.Append(GetCorridorArray(FCellCoord(CallingCellCoord.Row + 1, CallingCellCoord.Col), CallingCellCoord));
         }
         else if (CellType == FCellType::Room) {
+            /* Если во время поиска обнаруживается комната, это значит, что конец коридора найден.
+             * Координата этой комнаты передаётся в массив, чтобы во время прохода по коридору у спавнера
+             * коридоров была информация о том, куда перемещать пати после входа в конечную дверь */
             CellsArray.Add(FCellCoord(CallingCellCoord.Row + 1, CallingCellCoord.Col));
         }
     }
+    //Аналогично для всех других сторон
     if ((FCellCoord(CallingCellCoord.Row - 1, CallingCellCoord.Col) != CurrentCellCoord) && (CallingCellCoord.Row - 1 >= MinNoEmptyTileCoord.Row * MapTileLength)) {
         FCellType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(CallingCellCoord.Row - 1, CallingCellCoord.Col);
 
@@ -2407,6 +2426,8 @@ TArray<FCellCoord> UMapMatrix::GetCorridorArray(FCellCoord CallingCellCoord, FCe
             CellsArray.Add(FCellCoord(CallingCellCoord.Row, CallingCellCoord.Col - 1));
         }
     }
+
+    //Рекурсия оканчивается, если обнаружена комната или все окружающие ячейки последней вызванной клетки коридора окажутся пустыми
 
     return CellsArray;
 }

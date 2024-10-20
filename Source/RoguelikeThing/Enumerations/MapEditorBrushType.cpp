@@ -3,6 +3,7 @@
 
 #include "RoguelikeThing/Enumerations/MapEditorBrushType.h"
 
+//Функция, возвращающая соответствующий текущему стилю кисти стиль клетки
 FCellType UMapEditorBrushType::getCellType()
 {
 	switch (BrushType)

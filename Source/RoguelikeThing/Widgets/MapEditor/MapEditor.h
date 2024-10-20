@@ -24,6 +24,7 @@ private:
 public:
 	UMapEditor(const FObjectInitializer& ObjectInitializer);
 
+	//Функция, забивающая карту редактора карт ячейками
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void FillMapEditorWithCells(FMapDimensions MapDimensions);
 
