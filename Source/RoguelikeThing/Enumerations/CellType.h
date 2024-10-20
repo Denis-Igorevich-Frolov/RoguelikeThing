@@ -1,4 +1,4 @@
-// Denis Igorevich Frolov did all this. Once there. All things reserved.
+п»ї// Denis Igorevich Frolov did all this. Once there. All things reserved.
 
 #pragma once
 
@@ -9,7 +9,7 @@
 /**
  * 
  */
- //Все возможные типы ячейки
+ //Р’СЃРµ РІРѕР·РјРѕР¶РЅС‹Рµ С‚РёРїС‹ СЏС‡РµР№РєРё
 UENUM(BlueprintType)
 enum class FCellType : uint8 {
 	Emptiness		UMETA(DisplayName = "Emptiness"),

@@ -22,6 +22,8 @@ class ROGUELIKETHING_API IContainingTileTableInterface
 	GENERATED_BODY()
 
 public:
+	/* Ивент, говорящий о том, что отображение таблицы следует обновить. Например
+	 * при загрузке новой таблицы или при изменении размеров текущей */
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void UpdateItemAreaContent();
 
