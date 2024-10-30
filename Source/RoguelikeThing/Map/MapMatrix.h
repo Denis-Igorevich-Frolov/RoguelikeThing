@@ -175,6 +175,9 @@ public:
 	//Функция, устанавливающая имя файла с базой данных
 	UFUNCTION(BlueprintCallable)
 	void SetFileName(FString fileName, bool WithExtension = false);
+	
+	UFUNCTION(BlueprintCallable)
+	void SetFileDir(FString fileDir);
 
 	//Функция, устанавливающая путь до файла с базой данных
 	UFUNCTION(BlueprintCallable)

@@ -1578,6 +1578,13 @@ void UMapMatrix::SetFileName(FString fileName, bool WithExtension)
         UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the SetFileName function: The name of the database file is set to %s, the path to the file is %s"), *fileName, *FilePath);
 }
 
+void UMapMatrix::SetFileDir(FString fileDir)
+{
+    FilePath = FPaths::ProjectSavedDir() + TEXT("/Save/") + fileDir + TEXT("/Map.db");
+    if (GameInstance && GameInstance->LogType != ELogType::NONE)
+        UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the SetFileDir function: The directory of the database file is set to %s, the path to the file is %s"), *fileDir, *FilePath);
+}
+
 //Функция, устанавливающая путь до файла с базой данных
 void UMapMatrix::SetFilePath(FString filePath)
 {
