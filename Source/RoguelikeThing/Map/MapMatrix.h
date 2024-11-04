@@ -94,6 +94,8 @@ private:
 	FCellCoord MinNoEmptyTileCoord;
 	FCellCoord MaxNoEmptyTileCoord;
 
+	FString OriginalDirName;
+
 public:
 	UMapMatrix();
 	~UMapMatrix();
@@ -171,11 +173,10 @@ public:
 	 * Стоит быть внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
 	UFUNCTION(BlueprintCallable)
 	FCellType GetValueOfMapChunkStructureCellByGlobalIndex(int32 globalCellRow, int32 globalCellCol, bool autoClose = true);
-
-	//Функция, устанавливающая имя файла с базой данных
-	UFUNCTION(BlueprintCallable)
-	void SetFileName(FString fileName, bool WithExtension = false);
 	
+	UFUNCTION(BlueprintCallable)
+	void SetOriginalDirName(FString originalDirName);
+
 	UFUNCTION(BlueprintCallable)
 	void SetFileDir(FString fileDir);
 

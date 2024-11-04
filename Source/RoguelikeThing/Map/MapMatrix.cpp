@@ -5,6 +5,8 @@
 #include "RoguelikeThing/Widgets/LoadingWidget.h"
 #include <Kismet/GameplayStatics.h>
 #include <RoguelikeThing/Function Libraries/MyFileManager.h>
+#include "Misc/SecureHash.h"
+#include <RoguelikeThing/SaveGame/MySaveGame.h>
 
 DEFINE_LOG_CATEGORY(MapMatrix);
 DEFINE_LOG_CATEGORY(TerrainOfTile);
@@ -1568,19 +1570,15 @@ FCellType UMapMatrix::GetValueOfMapChunkStructureCellByGlobalIndex(int32 globalC
     return GetValueOfMapChunkStructureCell(chunkRow, chunkCol, cellRow, cellCol, autoClose);
 }
 
-//Функция, устанавливающая имя файла с базой данных
-void UMapMatrix::SetFileName(FString fileName, bool WithExtension)
+void UMapMatrix::SetOriginalDirName(FString originalDirName)
 {
-    FilePath = FPaths::ProjectSavedDir() + TEXT("/Save/") + fileName;
-    if (!WithExtension)
-        FilePath += TEXT(".db");
-    if (GameInstance && GameInstance->LogType != ELogType::NONE)
-        UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the SetFileName function: The name of the database file is set to %s, the path to the file is %s"), *fileName, *FilePath);
+    this->OriginalDirName = originalDirName;
 }
 
 void UMapMatrix::SetFileDir(FString fileDir)
 {
-    FilePath = FPaths::ProjectSavedDir() + TEXT("/Save/") + fileDir + TEXT("/Map.db");
+    FilePath = FPaths::ProjectSavedDir() + TEXT("/SaveGames/") + fileDir + TEXT("/Map.db");
+    OriginalDirName = fileDir;
     if (GameInstance && GameInstance->LogType != ELogType::NONE)
         UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the SetFileDir function: The directory of the database file is set to %s, the path to the file is %s"), *fileDir, *FilePath);
 }
@@ -1589,6 +1587,12 @@ void UMapMatrix::SetFileDir(FString fileDir)
 void UMapMatrix::SetFilePath(FString filePath)
 {
     FilePath = filePath;
+
+    TArray<FString> PartsOfPath;
+    filePath.ParseIntoArray(PartsOfPath, TEXT("/"), false);
+    if (PartsOfPath.IsValidIndex(PartsOfPath.Num() - 2)) {
+        OriginalDirName = PartsOfPath[PartsOfPath.Num() - 2];
+    }
     if (GameInstance && GameInstance->LogType != ELogType::NONE)
         UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the SetFilePath function: The path to the database file is set as %s"), *FilePath);
 }
@@ -2198,6 +2202,13 @@ void UMapMatrix::AsyncCreateBlankCard(int32 rowLen, int32 colLen) {
 //Функция заполняющая переменную предзагрузки TerrainOfTile для всех тайлов в таблице
 void UMapMatrix::FillTerrainOfTiles()
 {
+    FMD5Hash hash = FMD5Hash::HashFile(*FilePath);
+
+    UMySaveGame* SaveGame = Cast<UMySaveGame>(UGameplayStatics::CreateSaveGameObject(UMySaveGame::StaticClass()));
+    if (SaveGame) {
+        UGameplayStatics::AsyncSaveGameToSlot(SaveGame, FString::Printf(TEXT("%s/save"), *OriginalDirName), 0);
+    }
+
     //Сначала очищается матрица переменных предзагрузки от всех старых значений
     TerrainOfTilesRows.Empty();
 
