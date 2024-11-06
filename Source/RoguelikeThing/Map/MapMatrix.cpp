@@ -2203,10 +2203,27 @@ void UMapMatrix::AsyncCreateBlankCard(int32 rowLen, int32 colLen) {
 void UMapMatrix::FillTerrainOfTiles()
 {
     FMD5Hash hash = FMD5Hash::HashFile(*FilePath);
+    FString MapDataBaseHex = LexToString(hash);
 
-    UMySaveGame* SaveGame = Cast<UMySaveGame>(UGameplayStatics::CreateSaveGameObject(UMySaveGame::StaticClass()));
+    UMySaveGame* SaveGame = Cast<UMySaveGame>(UGameplayStatics::LoadGameFromSlot(FString::Printf(TEXT("%s/save"), *OriginalDirName), 0));
+
     if (SaveGame) {
-        UGameplayStatics::AsyncSaveGameToSlot(SaveGame, FString::Printf(TEXT("%s/save"), *OriginalDirName), 0);
+        if (SaveGame->MapDataBaseHex == MapDataBaseHex) {
+            UE_LOG(MapMatrix, Log, TEXT("ok"));
+        }
+        else {
+            UE_LOG(MapMatrix, Log, TEXT("not ok"));
+
+            SaveGame->MapDataBaseHex = MapDataBaseHex;
+            UGameplayStatics::SaveGameToSlot(SaveGame, FString::Printf(TEXT("%s/save"), *OriginalDirName), 0);
+        }
+    }
+    else {
+        SaveGame = Cast<UMySaveGame>(UGameplayStatics::CreateSaveGameObject(UMySaveGame::StaticClass()));
+        if (SaveGame) {
+            SaveGame->MapDataBaseHex = MapDataBaseHex;
+            UGameplayStatics::SaveGameToSlot(SaveGame, FString::Printf(TEXT("%s/save"), *OriginalDirName), 0);
+        }
     }
 
     //Сначала очищается матрица переменных предзагрузки от всех старых значений

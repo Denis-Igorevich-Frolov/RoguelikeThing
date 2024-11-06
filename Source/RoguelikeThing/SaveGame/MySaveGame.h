@@ -15,5 +15,6 @@ class ROGUELIKETHING_API UMySaveGame : public USaveGame
 	GENERATED_BODY()
 	
 public:
+	UPROPERTY(VisibleAnywhere)
 	FString MapDataBaseHex;
 };
