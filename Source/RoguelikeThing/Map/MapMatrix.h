@@ -9,6 +9,7 @@
 #include <RoguelikeThing/Widgets/MapEditor/MapEditor.h>
 #include "RoguelikeThing/Map/MapDimensions.h"
 #include "RoguelikeThing/Enumerations/CellType.h"
+#include "RoguelikeThing/Map/TerrainOfTile.h"
 #include "MapMatrix.generated.h"
 
 /****************************************************************
@@ -23,30 +24,6 @@
  ****************************************************************/
 
 DECLARE_LOG_CATEGORY_EXTERN(MapMatrix, Log, All);
-DECLARE_LOG_CATEGORY_EXTERN(TerrainOfTile, Log, All);
-
-//Класс предзагрузки структуры тайла. Хранит в себе все не нулевые ячейки тайла
-UCLASS(BlueprintType)
-class ROGUELIKETHING_API UTerrainOfTile : public UObject
-{
-	GENERATED_BODY()
-
-private:
-	TMap<int, TMap<int, FCellType>> TerrainOfTileRows;
-
-public:
-	UFUNCTION(BlueprintCallable)
-	void AddCellType(FCellCoord Coord, FCellType CellType);
-	UFUNCTION(BlueprintCallable)
-	FCellType GetCellType(FCellCoord Coord);
-	UFUNCTION(BlueprintCallable)
-	bool Contains(FCellCoord Coord);
-	//Получение массива всех не нулевых ячеек тайла
-	UFUNCTION(BlueprintCallable)
-	TArray<FCellCoord> GetFilledCoord();
-	UFUNCTION(BlueprintCallable)
-	bool RemoveCell(FCellCoord Coord);
-};
 
 UCLASS(Blueprintable, BlueprintType)
 class ROGUELIKETHING_API UMapMatrix : public UObject
