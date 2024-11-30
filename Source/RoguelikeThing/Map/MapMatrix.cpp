@@ -6,7 +6,6 @@
 #include <Kismet/GameplayStatics.h>
 #include <RoguelikeThing/Function Libraries/MyFileManager.h>
 #include "Misc/SecureHash.h"
-#include <RoguelikeThing/SaveGame/MySaveGame.h>
 
 DEFINE_LOG_CATEGORY(MapMatrix);
 
@@ -33,7 +32,8 @@ UMapMatrix::~UMapMatrix()
     mapDataBase->Close();
     delete mapDataBase;
 
-    TerrainOfTilesRows.Empty();
+    if(TerrainOfTilesRows)
+        TerrainOfTilesRows->TerrainOfTilesRows.Empty();
 }
 
 //Функция полного удаления текущего объекта. Всегда вызывать не обязательно, использовать по необходимости
@@ -1264,6 +1264,7 @@ bool UMapMatrix::SetValueOfMapChunkCell(int32 chunkRow, int32 chunkCol, int32 ce
 
     if (autoClose)
         mapDataBaseClose("SetValueOfMapChunkCell");
+
     return true;
 }
 
@@ -1453,6 +1454,16 @@ void UMapMatrix::SetOriginalDirName(FString originalDirName)
     this->OriginalDirName = originalDirName;
 }
 
+FString UMapMatrix::GetOriginalDirName()
+{
+    return OriginalDirName;
+}
+
+FString UMapMatrix::GetOriginalDirPath()
+{
+    return FPaths::ProjectSavedDir() + TEXT("SaveGames/") + OriginalDirName;
+}
+
 void UMapMatrix::SetFileDir(FString fileDir)
 {
     FilePath = FPaths::ProjectSavedDir() + TEXT("/SaveGames/") + fileDir + TEXT("/Map.db");
@@ -1471,8 +1482,14 @@ void UMapMatrix::SetFilePath(FString filePath)
     if (PartsOfPath.IsValidIndex(PartsOfPath.Num() - 2)) {
         OriginalDirName = PartsOfPath[PartsOfPath.Num() - 2];
     }
+
     if (GameInstance && GameInstance->LogType != ELogType::NONE)
         UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the SetFilePath function: The path to the database file is set as %s"), *FilePath);
+}
+
+FString UMapMatrix::GetFilePath()
+{
+    return FilePath;
 }
 
 //Функция, создающая один новый солбец справа таблицы
@@ -2078,138 +2095,125 @@ void UMapMatrix::AsyncCreateBlankCard(int32 rowLen, int32 colLen) {
 }
 
 //Функция заполняющая переменную предзагрузки TerrainOfTile для всех тайлов в таблице
-void UMapMatrix::FillTerrainOfTiles()
+void UMapMatrix::FillTerrainOfTiles(UMySaveGame* SaveGame)
 {
-    FMD5Hash hash = FMD5Hash::HashFile(*FilePath);
-    FString MapDataBaseHex = LexToString(hash);
+    FMD5Hash FileHash = FMD5Hash::HashFile(*FilePath);
+    FString MapDataBaseHex = LexToString(FileHash);
 
-    UMySaveGame* SaveGame = Cast<UMySaveGame>(UGameplayStatics::LoadGameFromSlot(FString::Printf(TEXT("%s/save"), *OriginalDirName), 0));
+    UE_LOG(MapMatrix, Log, TEXT("2 SavedHex %s, RealHex %s"), *SaveGame->MapDataBaseHex, *MapDataBaseHex);
 
-    if (!SaveGame){
-        SaveGame = Cast<UMySaveGame>(UGameplayStatics::CreateSaveGameObject(UMySaveGame::StaticClass()));
-    }
+    if (SaveGame->MapDataBaseHex == MapDataBaseHex) {
+        UE_LOG(MapMatrix, Log, TEXT("ok"));
 
-    if (SaveGame) {
-        if (SaveGame->MapDataBaseHex == MapDataBaseHex) {
-            UE_LOG(MapMatrix, Log, TEXT("ok"));
-
-            TerrainOfTilesRows = SaveGame->TerrainOfTilesContainer->TerrainOfTilesRows;
-            MinNoEmptyTileCoord = SaveGame->MinNoEmptyTileCoord;
-            MaxNoEmptyTileCoord = SaveGame->MaxNoEmptyTileCoord;
-        }
-        else {
-            UE_LOG(MapMatrix, Log, TEXT("not ok"));
-
-
-            //Сначала очищается матрица переменных предзагрузки от всех старых значений
-            TerrainOfTilesRows.Empty();
-
-            MinNoEmptyTileCoord = FCellCoord(-1, -1);
-            MaxNoEmptyTileCoord = FCellCoord(-1, -1);
-
-            FMapDimensions MapDimensions = GetMapDimensions(false);
-            if (MapDimensions.isValid) {
-                for (int row = MapDimensions.MinRow * TableLength; row < (MapDimensions.MaxRow + 1) * TableLength; row++) {
-                    int CurrentTileRow = (int)(row / MapTileLength);
-
-                    //Локальная координата ячейки равна остатку от деления глобальной координаты на длинну стороны тайла
-                    int CellRow = row % MapTileLength;
-
-                    //Если целевого столбца нет, он создаётся
-                    if (!TerrainOfTilesRows.Contains(CurrentTileRow)) {
-                        TerrainOfTilesRows.Add(CurrentTileRow, TMap<int, UTerrainOfTile*>{});
-                    }
-
-                    TMap<int, UTerrainOfTile*>* TerrainOfTilesCols = TerrainOfTilesRows.Find(CurrentTileRow);
-
-                    if (TerrainOfTilesCols) {
-                        for (int col = MapDimensions.MinCol * TableLength; col < (MapDimensions.MaxCol + 1) * TableLength; col++) {
-                            int CurrentTileCol = (int)(col / MapTileLength);
-                            bool HaveNoEmptyCells = false;
-
-                            //Если целевой строки нет, она создаётся
-                            if (!TerrainOfTilesCols->Contains(CurrentTileCol)) {
-                                TerrainOfTilesCols->Add(CurrentTileCol, NewObject<UTerrainOfTile>());
-                            }
-
-                            UTerrainOfTile* Terrain = *TerrainOfTilesCols->Find(CurrentTileCol);
-
-                            if (Terrain) {
-                                //Локальная координата ячейки равна остатку от деления глобальной координаты на длинну стороны тайла
-                                int CellCol = col % MapTileLength;
-
-                                FCellType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(row, col, false);
-
-                                if (CellType == FCellType::Corridor || CellType == FCellType::Room) {
-                                    Terrain->AddCellType(FCellCoord(CellRow, CellCol), CellType);
-                                    //Проверка, не является ли текущий тайл минимальным или максимальным непустым тайлом
-                                    if (!HaveNoEmptyCells) {
-                                        HaveNoEmptyCells = true;
-
-                                        /* Если минимальные или максимальные координаты не проинициализированы ни одним
-                                         * другим тайлом, то координаты текущего тайла автоматически записываются */
-                                        if (MinNoEmptyTileCoord == FCellCoord(-1, -1)) {
-                                            MinNoEmptyTileCoord = FCellCoord(CurrentTileRow, CurrentTileCol);
-                                        }
-                                        if (MaxNoEmptyTileCoord == FCellCoord(-1, -1)) {
-                                            MaxNoEmptyTileCoord = FCellCoord(CurrentTileRow, CurrentTileCol);
-                                        }
-
-                                        if (CurrentTileRow < MinNoEmptyTileCoord.Row) {
-                                            MinNoEmptyTileCoord = FCellCoord(CurrentTileRow, MinNoEmptyTileCoord.Col);
-                                        }
-                                        else if (CurrentTileRow > MaxNoEmptyTileCoord.Row) {
-                                            MaxNoEmptyTileCoord = FCellCoord(CurrentTileRow, MaxNoEmptyTileCoord.Col);
-                                        }
-                                        if (CurrentTileCol < MinNoEmptyTileCoord.Col) {
-                                            MinNoEmptyTileCoord = FCellCoord(MinNoEmptyTileCoord.Row, CurrentTileCol);
-                                        }
-                                        else if (CurrentTileCol > MaxNoEmptyTileCoord.Col) {
-                                            MaxNoEmptyTileCoord = FCellCoord(MaxNoEmptyTileCoord.Row, CurrentTileCol);
-                                        }
-                                    }
-                                }
-                                else if (CellType == FCellType::Error) {
-                                    UE_LOG(TerrainOfTile, Error, TEXT("!!! An error occurred in the MapMatrix class in the FillTerrainOfTiles function - CellType is of type Error"));
-                                }
-                            }
-                            else {
-                                UE_LOG(TerrainOfTile, Error, TEXT("!!! An error occurred in the MapMatrix class in the FillTerrainOfTiles function - Terrain is not valid"));
-                            }
-                        }
-                    }
-                    else {
-                        UE_LOG(TerrainOfTile, Error, TEXT("!!! An error occurred in the MapMatrix class in the FillTerrainOfTiles function - TerrainOfTilesCols is not valid"));
-                    }
-                }
-            }
-            else {
-                UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the FillTerrainOfTiles function - MapDimensions is not valid"));
-            }
-
-            SaveGame->MapDataBaseHex = MapDataBaseHex;
-            if (SaveGame->TerrainOfTilesContainer)
-                SaveGame->TerrainOfTilesContainer->MarkPendingKill();
-            SaveGame->TerrainOfTilesContainer = NewObject<UTerrainOfTilesContainer>();
-            SaveGame->TerrainOfTilesContainer->TerrainOfTilesRows = TerrainOfTilesRows;
-            SaveGame->MinNoEmptyTileCoord = MinNoEmptyTileCoord;
-            SaveGame->MaxNoEmptyTileCoord = MaxNoEmptyTileCoord;
-
-            UGameplayStatics::SaveGameToSlot(SaveGame, FString::Printf(TEXT("%s/save"), *OriginalDirName), 0);
-        }
+        TerrainOfTilesRows = SaveGame->LoadTerrainOfTilesContainer();
+        MinNoEmptyTileCoord = SaveGame->MinNoEmptyTileCoord;
+        MaxNoEmptyTileCoord = SaveGame->MaxNoEmptyTileCoord;
     }
     else {
-        UE_LOG(MapMatrix, Error, TEXT("AAASSSS"));
+        UE_LOG(MapMatrix, Log, TEXT("not ok"));
+
+        //Сначала очищается матрица переменных предзагрузки от всех старых значений
+        if(TerrainOfTilesRows)
+            TerrainOfTilesRows->TerrainOfTilesRows.Empty();
+        else {
+            TerrainOfTilesRows = NewObject<UTerrainOfTilesContainer>();
+        }
+
+        MinNoEmptyTileCoord = FCellCoord(-1, -1);
+        MaxNoEmptyTileCoord = FCellCoord(-1, -1);
+
+        FMapDimensions MapDimensions = GetMapDimensions(false);
+        if (MapDimensions.isValid) {
+            for (int row = MapDimensions.MinRow * TableLength; row < (MapDimensions.MaxRow + 1) * TableLength; row++) {
+                int CurrentTileRow = (int)(row / MapTileLength);
+
+                //Локальная координата ячейки равна остатку от деления глобальной координаты на длинну стороны тайла
+                int CellRow = row % MapTileLength;
+
+                //Если целевого столбца нет, он создаётся
+                if (!TerrainOfTilesRows->TerrainOfTilesRows.Contains(CurrentTileRow)) {
+                    UTerrainOfTilesRow* Row = NewObject<UTerrainOfTilesRow>();
+                    TerrainOfTilesRows->TerrainOfTilesRows.Add(CurrentTileRow, Row);
+                }
+
+                UTerrainOfTilesRow* TerrainOfTilesCols = *TerrainOfTilesRows->TerrainOfTilesRows.Find(CurrentTileRow);
+
+                if (TerrainOfTilesCols) {
+                    for (int col = MapDimensions.MinCol * TableLength; col < (MapDimensions.MaxCol + 1) * TableLength; col++) {
+                        int CurrentTileCol = (int)(col / MapTileLength);
+                        bool HaveNoEmptyCells = false;
+
+                        //Если целевой строки нет, она создаётся
+                        if (!TerrainOfTilesCols->TerrainOfTilesRow.Contains(CurrentTileCol)) {
+                            TerrainOfTilesCols->TerrainOfTilesRow.Add(CurrentTileCol, NewObject<UTerrainOfTile>());
+                        }
+
+                        UTerrainOfTile* Terrain = *TerrainOfTilesCols->TerrainOfTilesRow.Find(CurrentTileCol);
+
+                        if (Terrain) {
+                            //Локальная координата ячейки равна остатку от деления глобальной координаты на длинну стороны тайла
+                            int CellCol = col % MapTileLength;
+
+                            FCellType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(row, col, false);
+
+                            if (CellType == FCellType::Corridor || CellType == FCellType::Room) {
+                                Terrain->AddCellType(FCellCoord(CellRow, CellCol), CellType);
+                                //Проверка, не является ли текущий тайл минимальным или максимальным непустым тайлом
+                                if (!HaveNoEmptyCells) {
+                                    HaveNoEmptyCells = true;
+
+                                    /* Если минимальные или максимальные координаты не проинициализированы ни одним
+                                     * другим тайлом, то координаты текущего тайла автоматически записываются */
+                                    if (MinNoEmptyTileCoord == FCellCoord(-1, -1)) {
+                                        MinNoEmptyTileCoord = FCellCoord(CurrentTileRow, CurrentTileCol);
+                                    }
+                                    if (MaxNoEmptyTileCoord == FCellCoord(-1, -1)) {
+                                        MaxNoEmptyTileCoord = FCellCoord(CurrentTileRow, CurrentTileCol);
+                                    }
+
+                                    if (CurrentTileRow < MinNoEmptyTileCoord.Row) {
+                                        MinNoEmptyTileCoord = FCellCoord(CurrentTileRow, MinNoEmptyTileCoord.Col);
+                                    }
+                                    else if (CurrentTileRow > MaxNoEmptyTileCoord.Row) {
+                                        MaxNoEmptyTileCoord = FCellCoord(CurrentTileRow, MaxNoEmptyTileCoord.Col);
+                                    }
+                                    if (CurrentTileCol < MinNoEmptyTileCoord.Col) {
+                                        MinNoEmptyTileCoord = FCellCoord(MinNoEmptyTileCoord.Row, CurrentTileCol);
+                                    }
+                                    else if (CurrentTileCol > MaxNoEmptyTileCoord.Col) {
+                                        MaxNoEmptyTileCoord = FCellCoord(MaxNoEmptyTileCoord.Row, CurrentTileCol);
+                                    }
+                                }
+                            }
+                            else if (CellType == FCellType::Error) {
+                                UE_LOG(TerrainOfTile, Error, TEXT("!!! An error occurred in the MapMatrix class in the FillTerrainOfTiles function - CellType is of type Error"));
+                            }
+                        }
+                        else {
+                            UE_LOG(TerrainOfTile, Error, TEXT("!!! An error occurred in the MapMatrix class in the FillTerrainOfTiles function - Terrain is not valid"));
+                        }
+                    }
+                }
+                else {
+                    UE_LOG(TerrainOfTile, Error, TEXT("!!! An error occurred in the MapMatrix class in the FillTerrainOfTiles function - TerrainOfTilesCols is not valid"));
+                }
+            }
+
+            SaveMap(SaveGame);
+        }
+        else {
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the FillTerrainOfTiles function - MapDimensions is not valid"));
+        }
     }
 }
 
 //Проверка наличия переменной предзагрузки по переданной координате
 bool UMapMatrix::ContainsTerrainOfTile(FCellCoord Coord)
 {
-    if (TerrainOfTilesRows.Contains(Coord.Row)) {
-        TMap<int, UTerrainOfTile*>* TerrainOfTilesCols = TerrainOfTilesRows.Find(Coord.Row);
+    if (TerrainOfTilesRows->TerrainOfTilesRows.Contains(Coord.Row)) {
+        UTerrainOfTilesRow* TerrainOfTilesCols = *TerrainOfTilesRows->TerrainOfTilesRows.Find(Coord.Row);
         if (TerrainOfTilesCols) {
-            if (TerrainOfTilesCols->Contains(Coord.Col)) {
+            if (TerrainOfTilesCols->TerrainOfTilesRow.Contains(Coord.Col)) {
                 return true;
             }
             else
@@ -2264,11 +2268,11 @@ FCellType UMapMatrix::GetCellStyleFromTerrainOfTile(FCellCoord GlobalCoordOfCell
 UTerrainOfTile* UMapMatrix::GetTerrainOfTile(FCellCoord Coord)
 {
     if (ContainsTerrainOfTile(Coord)) {
-        TMap<int, UTerrainOfTile*>* TerrainOfTilesCols = TerrainOfTilesRows.Find(Coord.Row);
+        UTerrainOfTilesRow* TerrainOfTilesCols = *TerrainOfTilesRows->TerrainOfTilesRows.Find(Coord.Row);
         if (TerrainOfTilesCols) {
-            UTerrainOfTile** TerrainOfTileRef = TerrainOfTilesCols->Find(Coord.Col);
+            UTerrainOfTile* TerrainOfTileRef = *TerrainOfTilesCols->TerrainOfTilesRow.Find(Coord.Col);
             if (TerrainOfTileRef) {
-                UTerrainOfTile* Terrain = *TerrainOfTileRef;
+                UTerrainOfTile* Terrain = TerrainOfTileRef;
                 if (Terrain) {
                     return Terrain;
                 }
@@ -2355,6 +2359,27 @@ TArray<FCellCoord> UMapMatrix::GetCorridorArray(FCellCoord CallingCellCoord, FCe
     //Рекурсия оканчивается, если обнаружена комната или все окружающие ячейки последней вызванной клетки коридора окажутся пустыми
 
     return CellsArray;
+}
+
+void UMapMatrix::SaveMap(UMySaveGame* SaveGame)
+{
+    if (SaveGame) {
+        mapDataBaseClose("SaveMap");
+
+        FMD5Hash FileHash = FMD5Hash::HashFile(*FilePath);
+        FString MapDataBaseHex = LexToString(FileHash);
+       
+        SaveGame->MapDataBaseHex = MapDataBaseHex;
+
+        SaveGame->SaveTerrainOfTilesContainer(TerrainOfTilesRows);
+        SaveGame->MinNoEmptyTileCoord = MinNoEmptyTileCoord;
+        SaveGame->MaxNoEmptyTileCoord = MaxNoEmptyTileCoord;
+
+        UGameplayStatics::SaveGameToSlot(SaveGame, FString::Printf(TEXT("%s/save"), *OriginalDirName), 0);
+    }
+    else {
+        UE_LOG(MapMatrix, Error, TEXT("!!! AAASSS"));
+    }
 }
 
 FMapDimensions UMapMatrix::GetMapDimensions(bool autoClose)

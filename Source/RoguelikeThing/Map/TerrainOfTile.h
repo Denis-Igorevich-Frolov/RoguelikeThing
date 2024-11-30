@@ -13,6 +13,15 @@ DECLARE_LOG_CATEGORY_EXTERN(TerrainOfTile, Log, All);
 /**
  * 
  */
+USTRUCT(BlueprintType)
+struct FTerrainOfTileRows
+{
+	GENERATED_BODY()
+
+public:
+	TMap<int, TMap<int, FCellType>> TerrainOfTileRows;
+};
+
  // ласс предзагрузки структуры тайла. ’ранит в себе все не нулевые €чейки тайла
 UCLASS(BlueprintType)
 class ROGUELIKETHING_API UTerrainOfTile : public UObject
@@ -20,7 +29,8 @@ class ROGUELIKETHING_API UTerrainOfTile : public UObject
 	GENERATED_BODY()
 
 private:
-	TMap<int, TMap<int, FCellType>> TerrainOfTileRows;
+	UPROPERTY(SaveGame)
+	FTerrainOfTileRows TerrainOfTileRows;
 
 public:
 	UFUNCTION(BlueprintCallable)

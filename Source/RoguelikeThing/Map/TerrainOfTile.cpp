@@ -7,8 +7,8 @@ DEFINE_LOG_CATEGORY(TerrainOfTile);
 void UTerrainOfTile::AddCellType(FCellCoord Coord, FCellType CellType)
 {
     //≈сли соответствующа€ строка уже есть в матрице, в неЄ просто добавл€етс€ переданное значение
-    if (TerrainOfTileRows.Contains(Coord.Row)) {
-        TMap<int, FCellType>* TerrainOfTileCols = TerrainOfTileRows.Find(Coord.Row);
+    if (TerrainOfTileRows.TerrainOfTileRows.Contains(Coord.Row)) {
+        TMap<int, FCellType>* TerrainOfTileCols = TerrainOfTileRows.TerrainOfTileRows.Find(Coord.Row);
         if (TerrainOfTileCols) {
             //≈сли по целевой координате уже есть какое-либо значение, его сначала следует удалить
             if (TerrainOfTileCols->Contains(Coord.Col)) {
@@ -25,14 +25,14 @@ void UTerrainOfTile::AddCellType(FCellCoord Coord, FCellType CellType)
     else {
         TMap<int, FCellType> cols;
         cols.Add(Coord.Col, CellType);
-        TerrainOfTileRows.Add(Coord.Row, cols);
+        TerrainOfTileRows.TerrainOfTileRows.Add(Coord.Row, cols);
     }
 }
 
 FCellType UTerrainOfTile::GetCellType(FCellCoord Coord)
 {
-    if (TerrainOfTileRows.Contains(Coord.Row)) {
-        TMap<int, FCellType>* TerrainOfTileCols = TerrainOfTileRows.Find(Coord.Row);
+    if (TerrainOfTileRows.TerrainOfTileRows.Contains(Coord.Row)) {
+        TMap<int, FCellType>* TerrainOfTileCols = TerrainOfTileRows.TerrainOfTileRows.Find(Coord.Row);
         if (TerrainOfTileCols) {
             if (TerrainOfTileCols->Contains(Coord.Col)) {
                 return *TerrainOfTileCols->Find(Coord.Col);
@@ -48,8 +48,8 @@ FCellType UTerrainOfTile::GetCellType(FCellCoord Coord)
 
 bool UTerrainOfTile::Contains(FCellCoord Coord)
 {
-    if (TerrainOfTileRows.Contains(Coord.Row)) {
-        TMap<int, FCellType>* TerrainOfTileCols = TerrainOfTileRows.Find(Coord.Row);
+    if (TerrainOfTileRows.TerrainOfTileRows.Contains(Coord.Row)) {
+        TMap<int, FCellType>* TerrainOfTileCols = TerrainOfTileRows.TerrainOfTileRows.Find(Coord.Row);
         if (TerrainOfTileCols) {
             if (TerrainOfTileCols->Contains(Coord.Col)) {
                 return true;
@@ -70,13 +70,13 @@ bool UTerrainOfTile::Contains(FCellCoord Coord)
 TArray<FCellCoord> UTerrainOfTile::GetFilledCoord()
 {
     TArray<int> TileRowsKeys;
-    TerrainOfTileRows.GenerateKeyArray(TileRowsKeys);
+    TerrainOfTileRows.TerrainOfTileRows.GenerateKeyArray(TileRowsKeys);
 
     if (TileRowsKeys.Num() != 0) {
         TArray<FCellCoord> FilledCoord;
 
         for (int row : TileRowsKeys) {
-            TMap<int, FCellType>* TerrainOfTileCols = TerrainOfTileRows.Find(row);
+            TMap<int, FCellType>* TerrainOfTileCols = TerrainOfTileRows.TerrainOfTileRows.Find(row);
 
             if (TerrainOfTileCols) {
                 TArray<int> TileColsKeys;
@@ -100,15 +100,15 @@ TArray<FCellCoord> UTerrainOfTile::GetFilledCoord()
 
 bool UTerrainOfTile::RemoveCell(FCellCoord Coord)
 {
-    if (TerrainOfTileRows.Contains(Coord.Row)) {
-        TMap<int, FCellType>* TerrainOfTileCols = TerrainOfTileRows.Find(Coord.Row);
+    if (TerrainOfTileRows.TerrainOfTileRows.Contains(Coord.Row)) {
+        TMap<int, FCellType>* TerrainOfTileCols = TerrainOfTileRows.TerrainOfTileRows.Find(Coord.Row);
         if (TerrainOfTileCols) {
             if (TerrainOfTileCols->Contains(Coord.Col)) {
                 TerrainOfTileCols->Remove(Coord.Col);
 
                 //≈сли в строке больше нет ни одного элемента, то она удалетс€
                 if (TerrainOfTileCols->Num() == 0) {
-                    TerrainOfTileRows.Remove(Coord.Row);
+                    TerrainOfTileRows.TerrainOfTileRows.Remove(Coord.Row);
                 }
 
                 return true;

@@ -11,14 +11,19 @@
 /**
  * 
  */
-UCLASS()
+UCLASS(BlueprintType)
 class ROGUELIKETHING_API UMySaveGame : public USaveGame
 {
 	GENERATED_BODY()
-	
-public:
+
+private:
 	UPROPERTY(VisibleAnywhere)
 	UTerrainOfTilesContainer* TerrainOfTilesContainer;
+
+	UPROPERTY(VisibleAnywhere)
+	TArray<uint8> BinTerrainOfTilesContainer;
+	
+public:
 
 	UPROPERTY(VisibleAnywhere)
 	FCellCoord MinNoEmptyTileCoord = FCellCoord(-1, -1);
@@ -28,4 +33,7 @@ public:
 
 	UPROPERTY(VisibleAnywhere)
 	FString MapDataBaseHex;
+
+	void SaveTerrainOfTilesContainer(UTerrainOfTilesContainer* terrainOfTilesContainer);
+	UTerrainOfTilesContainer* LoadTerrainOfTilesContainer();
 };

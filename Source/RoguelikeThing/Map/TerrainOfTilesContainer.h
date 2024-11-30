@@ -10,11 +10,24 @@
 /**
  * 
  */
+
+UCLASS()
+class ROGUELIKETHING_API UTerrainOfTilesRow : public UObject
+{
+	GENERATED_BODY()
+
+public:
+	UPROPERTY(SaveGame)
+	TMap<int, UTerrainOfTile*> TerrainOfTilesRow;
+};
+
 UCLASS()
 class ROGUELIKETHING_API UTerrainOfTilesContainer : public UObject
 {
 	GENERATED_BODY()
-	
+
 public:
-	TMap<int, TMap<int, UTerrainOfTile*>> TerrainOfTilesRows;
+	UPROPERTY(SaveGame)
+	TMap<int, UTerrainOfTilesRow*> TerrainOfTilesRows;
 };
+

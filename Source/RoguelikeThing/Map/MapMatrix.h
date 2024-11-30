@@ -10,6 +10,7 @@
 #include "RoguelikeThing/Map/MapDimensions.h"
 #include "RoguelikeThing/Enumerations/CellType.h"
 #include "RoguelikeThing/Map/TerrainOfTile.h"
+#include <RoguelikeThing/SaveGame/MySaveGame.h>
 #include "MapMatrix.generated.h"
 
 /****************************************************************
@@ -37,7 +38,7 @@ private:
 	bool SuccessCreateBlankCard = false;
 
 	//Матрица переменных предзагрузки для всех тайлов текущей таблицы
-	TMap<int, TMap<int, UTerrainOfTile*>> TerrainOfTilesRows;
+	UTerrainOfTilesContainer* TerrainOfTilesRows;
 
 	//Путь до файла, в котором лежит база данных карты
 	FString FilePath = FPaths::ProjectSavedDir() + TEXT("/Save/Map.db");
@@ -72,6 +73,8 @@ private:
 	FCellCoord MaxNoEmptyTileCoord;
 
 	FString OriginalDirName;
+	//UPROPERTY()
+	//UMySaveGame* SaveGame;
 
 public:
 	UMapMatrix();
@@ -152,14 +155,23 @@ public:
 	FCellType GetValueOfMapChunkStructureCellByGlobalIndex(int32 globalCellRow, int32 globalCellCol, bool autoClose = true);
 	
 	UFUNCTION(BlueprintCallable)
-	void SetOriginalDirName(FString originalDirName);
+	void SetOriginalDirName(FString originalDirName);	
+
+	UFUNCTION(BlueprintCallable)
+	FString GetOriginalDirName();
+
+	UFUNCTION(BlueprintCallable)
+	FString GetOriginalDirPath();
 
 	UFUNCTION(BlueprintCallable)
 	void SetFileDir(FString fileDir);
 
 	//Функция, устанавливающая путь до файла с базой данных
 	UFUNCTION(BlueprintCallable)
-	void SetFilePath(FString filePath);
+	void SetFilePath(FString filePath);	
+	
+	UFUNCTION(BlueprintCallable)
+	FString GetFilePath();
 
 	/* Функция изменяющая размер карты в чанках. Метод способен это делать как в большую,
 	 * так и в меньшую сторону, но не способен уменьшить карту меньше, чем 1 на 1 чанк */
@@ -190,7 +202,7 @@ public:
 	
 	//Функция заполняющая переменную предзагрузки TerrainOfTile для всех тайлов в таблице
 	UFUNCTION(BlueprintCallable)
-    void FillTerrainOfTiles();
+    void FillTerrainOfTiles(UMySaveGame* SaveGame);
 	
 	//Проверка наличия переменной предзагрузки по переданной координате
 	UFUNCTION(BlueprintCallable)
@@ -212,4 +224,7 @@ public:
 	 * на конце коридора будет встречена комната, то она добавится в конец массива */
 	UFUNCTION(BlueprintCallable)
 	TArray<FCellCoord> GetCorridorArray(FCellCoord CallingCellCoord, FCellCoord CurrentCellCoord);
+
+	UFUNCTION(BlueprintCallable)
+	void SaveMap(UMySaveGame* SaveGame);
 };
