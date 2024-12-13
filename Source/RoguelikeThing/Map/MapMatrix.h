@@ -38,6 +38,7 @@ private:
 	bool SuccessCreateBlankCard = false;
 
 	//Матрица переменных предзагрузки для всех тайлов текущей таблицы
+	UPROPERTY()
 	UTerrainOfTilesContainer* TerrainOfTilesRows;
 
 	//Путь до файла, в котором лежит база данных карты

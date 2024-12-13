@@ -322,15 +322,7 @@ void UMapTile::ClearFilledCells()
             FilledCells = TArray<UMapCell*>();
         }
 
-        //Переменная предзагрузки удаляется
-        if (MyTerrainOfTile) {
-            if (MyTerrainOfTile->IsValidLowLevel()) {
-                MyTerrainOfTile->MarkPendingKill();
-            }
-            else {
-                UE_LOG(MapTile, Warning, TEXT("Warning in the MapTile class in the SetMyTerrainOfTile function - MyTerrainOfTile is not valid low level"));
-            }
-        }
+        //Переменная предзагрузки обнуляется
         MyTerrainOfTile = nullptr;
 
         if (GameInstance && GameInstance->LogType == ELogType::DETAILED)

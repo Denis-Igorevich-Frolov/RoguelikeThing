@@ -2132,10 +2132,12 @@ void UMapMatrix::FillTerrainOfTiles(UMySaveGame* SaveGame)
 
                 //Если целевого столбца нет, он создаётся
                 if (!TerrainOfTilesRows->TerrainOfTilesRows.Contains(CurrentTileRow)) {
+                    UPROPERTY()
                     UTerrainOfTilesRow* Row = NewObject<UTerrainOfTilesRow>();
                     TerrainOfTilesRows->TerrainOfTilesRows.Add(CurrentTileRow, Row);
                 }
 
+                UPROPERTY()
                 UTerrainOfTilesRow* TerrainOfTilesCols = *TerrainOfTilesRows->TerrainOfTilesRows.Find(CurrentTileRow);
 
                 if (TerrainOfTilesCols) {
@@ -2148,6 +2150,7 @@ void UMapMatrix::FillTerrainOfTiles(UMySaveGame* SaveGame)
                             TerrainOfTilesCols->TerrainOfTilesRow.Add(CurrentTileCol, NewObject<UTerrainOfTile>());
                         }
 
+                        UPROPERTY()
                         UTerrainOfTile* Terrain = *TerrainOfTilesCols->TerrainOfTilesRow.Find(CurrentTileCol);
 
                         if (Terrain) {
@@ -2186,16 +2189,16 @@ void UMapMatrix::FillTerrainOfTiles(UMySaveGame* SaveGame)
                                 }
                             }
                             else if (CellType == FCellType::Error) {
-                                UE_LOG(TerrainOfTile, Error, TEXT("!!! An error occurred in the MapMatrix class in the FillTerrainOfTiles function - CellType is of type Error"));
+                                UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the FillTerrainOfTiles function - CellType is of type Error"));
                             }
                         }
                         else {
-                            UE_LOG(TerrainOfTile, Error, TEXT("!!! An error occurred in the MapMatrix class in the FillTerrainOfTiles function - Terrain is not valid"));
+                            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the FillTerrainOfTiles function - Terrain is not valid"));
                         }
                     }
                 }
                 else {
-                    UE_LOG(TerrainOfTile, Error, TEXT("!!! An error occurred in the MapMatrix class in the FillTerrainOfTiles function - TerrainOfTilesCols is not valid"));
+                    UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the FillTerrainOfTiles function - TerrainOfTilesCols is not valid"));
                 }
             }
 
@@ -2220,7 +2223,7 @@ bool UMapMatrix::ContainsTerrainOfTile(FCellCoord Coord)
                 return false;
         }
         else {
-            UE_LOG(TerrainOfTile, Error, TEXT("!!! An error occurred in the MapMatrix class in the ContainsTerrainOfTile function - TerrainOfTilesCols is not valid"));
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the ContainsTerrainOfTile function - TerrainOfTilesCols is not valid"));
             return false;
         }
     }
@@ -2240,7 +2243,7 @@ bool UMapMatrix::ContainsCellInTerrainOfTile(FCellCoord GlobalCoordOfCell)
             return Terrain->Contains(LocalCelCoord);
         }
         else {
-            UE_LOG(TerrainOfTile, Error, TEXT("!!! An error occurred in the MapMatrix class in the ContainsTerrainOfTile function - Terrain is not valid"));
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the ContainsTerrainOfTile function - Terrain is not valid"));
             return false;
         }
     }
@@ -2277,17 +2280,17 @@ UTerrainOfTile* UMapMatrix::GetTerrainOfTile(FCellCoord Coord)
                     return Terrain;
                 }
                 else {
-                    UE_LOG(TerrainOfTile, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetTerrainOfTile function - Terrain is not valid"));
+                    UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetTerrainOfTile function - Terrain is not valid"));
                     return nullptr;
                 }
             }
             else {
-                UE_LOG(TerrainOfTile, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetTerrainOfTile function - TerrainOfTileRef is not valid"));
+                UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetTerrainOfTile function - TerrainOfTileRef is not valid"));
                 return nullptr;
             }
         }
         else {
-            UE_LOG(TerrainOfTile, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetTerrainOfTile function - TerrainOfTilesCols is not valid"));
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetTerrainOfTile function - TerrainOfTilesCols is not valid"));
             return nullptr;
         }
     }
