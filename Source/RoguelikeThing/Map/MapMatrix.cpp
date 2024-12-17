@@ -134,6 +134,12 @@ void UMapMatrix::convertingGlobalIndexIntoLocalOne(int32 globalCellRow, int32 gl
         cellCol = TableLength;
 }
 
+void UMapMatrix::convertingLocalIndexIntoGlobalOne(int32 chunkRow, int32 cellRow, int32 chunkCol, int32 cellCol, int32& globalCellRow, int32& globalCellCol)
+{
+    globalCellRow = chunkRow * TableLength + cellRow - 1;
+    globalCellCol = chunkCol * TableLength + cellCol - 1;
+}
+
 /* Функция, создающая новый фрагмент карты на основе переданного индекса фрагмента. Стоит быть
  * внимательным при назначении autoClose false - mapDataBase не будет закрыта автоматически */
 bool UMapMatrix::CreateMapChunk(int32 chunkRow, int32 chunkCol, bool autoClose)
@@ -1264,6 +1270,13 @@ bool UMapMatrix::SetValueOfMapChunkCell(int32 chunkRow, int32 chunkCol, int32 ce
 
     if (autoClose)
         mapDataBaseClose("SetValueOfMapChunkCell");
+
+    int32 globalCellRow;
+    int32 globalCellCol;
+    convertingLocalIndexIntoGlobalOne(chunkRow, cellRow, chunkCol, cellCol, globalCellRow, globalCellCol);
+    if (TerrainOfTilesRows->ReCreationContainer.Contains(FVector2D(globalCellRow, globalCellCol)))
+        TerrainOfTilesRows->ReCreationContainer.Remove(FVector2D(globalCellRow, globalCellCol));
+    TerrainOfTilesRows->ReCreationContainer.Add(FVector2D(globalCellRow, globalCellCol), value);
 
     return true;
 }

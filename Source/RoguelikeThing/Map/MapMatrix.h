@@ -66,6 +66,8 @@ private:
 	void convertingGlobalIndexIntoLocalOne(int32 globalCellRow, int32 globalCellCol, int32& chunkRow,
 		int32& cellRow, int32& chunkCol, int32& cellCol);
 
+	void convertingLocalIndexIntoGlobalOne(int32 chunkRow, int32 cellRow, int32 chunkCol, int32 cellCol, int32& globalCellRow, int32& globalCellCol);
+
 	//Функция, сдвигающая координаты всех чанков в указанном направлении
 	bool ShiftDBCoords(int RowShift, int ColShift, bool ToRightBottom, bool autoClose = true);
 
