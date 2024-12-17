@@ -2132,12 +2132,12 @@ void UMapMatrix::FillTerrainOfTiles(UMySaveGame* SaveGame)
 
                 //Если целевого столбца нет, он создаётся
                 if (!TerrainOfTilesRows->TerrainOfTilesRows.Contains(CurrentTileRow)) {
-                    UPROPERTY()
+                    UPROPERTY(SaveGame)
                     UTerrainOfTilesRow* Row = NewObject<UTerrainOfTilesRow>();
                     TerrainOfTilesRows->TerrainOfTilesRows.Add(CurrentTileRow, Row);
                 }
 
-                UPROPERTY()
+                UPROPERTY(SaveGame)
                 UTerrainOfTilesRow* TerrainOfTilesCols = *TerrainOfTilesRows->TerrainOfTilesRows.Find(CurrentTileRow);
 
                 if (TerrainOfTilesCols) {
@@ -2147,10 +2147,12 @@ void UMapMatrix::FillTerrainOfTiles(UMySaveGame* SaveGame)
 
                         //Если целевой строки нет, она создаётся
                         if (!TerrainOfTilesCols->TerrainOfTilesRow.Contains(CurrentTileCol)) {
-                            TerrainOfTilesCols->TerrainOfTilesRow.Add(CurrentTileCol, NewObject<UTerrainOfTile>());
+                            UPROPERTY(SaveGame)
+                            UTerrainOfTile* Terrain = NewObject<UTerrainOfTile>();
+                            TerrainOfTilesCols->TerrainOfTilesRow.Add(CurrentTileCol, Terrain);
                         }
 
-                        UPROPERTY()
+                        UPROPERTY(SaveGame)
                         UTerrainOfTile* Terrain = *TerrainOfTilesCols->TerrainOfTilesRow.Find(CurrentTileCol);
 
                         if (Terrain) {
@@ -2159,6 +2161,7 @@ void UMapMatrix::FillTerrainOfTiles(UMySaveGame* SaveGame)
 
                             FCellType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(row, col, false);
 
+                            TerrainOfTilesRows->ReCreationContainer.Add(FVector2D(row, col), CellType);
                             if (CellType == FCellType::Corridor || CellType == FCellType::Room) {
                                 Terrain->AddCellType(FCellCoord(CellRow, CellCol), CellType);
                                 //Проверка, не является ли текущий тайл минимальным или максимальным непустым тайлом
@@ -2373,6 +2376,8 @@ void UMapMatrix::SaveMap(UMySaveGame* SaveGame)
         FString MapDataBaseHex = LexToString(FileHash);
        
         SaveGame->MapDataBaseHex = MapDataBaseHex;
+        
+        SaveGame->MapDimensions = GetMapDimensions(true);
 
         SaveGame->SaveTerrainOfTilesContainer(TerrainOfTilesRows);
         SaveGame->MinNoEmptyTileCoord = MinNoEmptyTileCoord;

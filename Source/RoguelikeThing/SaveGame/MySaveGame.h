@@ -26,8 +26,9 @@ private:
 public:
 
 	UPROPERTY(VisibleAnywhere)
+	FMapDimensions MapDimensions;
+	UPROPERTY(VisibleAnywhere)
 	FCellCoord MinNoEmptyTileCoord = FCellCoord(-1, -1);
-
 	UPROPERTY(VisibleAnywhere)
 	FCellCoord MaxNoEmptyTileCoord = FCellCoord(-1, -1);
 

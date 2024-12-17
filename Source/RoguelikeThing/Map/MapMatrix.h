@@ -74,8 +74,6 @@ private:
 	FCellCoord MaxNoEmptyTileCoord;
 
 	FString OriginalDirName;
-	//UPROPERTY()
-	//UMySaveGame* SaveGame;
 
 public:
 	UMapMatrix();
