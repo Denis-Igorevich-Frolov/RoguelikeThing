@@ -21,7 +21,7 @@ UTerrainOfTilesContainer* UMySaveGame::LoadTerrainOfTilesContainer()
     TerrainAr.ArIsSaveGame = true;
     TerrainOfTilesContainer = NewObject<UTerrainOfTilesContainer>();
     TerrainOfTilesContainer->Serialize(TerrainAr);
-    TerrainOfTilesContainer->ReCreateTerrains(MapDimensions);
+    TerrainOfTilesContainer->ReCreateTerrains(MapDimensions, MinNoEmptyTileCoord, MaxNoEmptyTileCoord);
 
     return TerrainOfTilesContainer;
 }

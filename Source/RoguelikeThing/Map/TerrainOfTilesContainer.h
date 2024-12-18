@@ -36,6 +36,6 @@ public:
 	TMap<FVector2D, FCellType> ReCreationContainer;
 
 	UFUNCTION(BlueprintCallable)
-	void ReCreateTerrains(FMapDimensions MapDimensions);
+	void ReCreateTerrains(FMapDimensions MapDimensions, FCellCoord& MinNoEmptyTileCoord, FCellCoord& MaxNoEmptyTileCoord);
 };
 
