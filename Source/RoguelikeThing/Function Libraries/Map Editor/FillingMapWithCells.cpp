@@ -481,6 +481,11 @@ void UFillingMapWithCells::setLoadWidget(ULoadingWidget* newLoadingWidget)
         UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the setLoadWidget function: The download widget has been set"));
 }
 
+bool UFillingMapWithCells::LoadWidgetIsValide()
+{
+    return (bool)LoadingWidget && LoadingWidget->IsInViewport();
+}
+
 //Геттер количества фрагментов по горизонтали
 int32 UFillingMapWithCells::GetColNum()
 {

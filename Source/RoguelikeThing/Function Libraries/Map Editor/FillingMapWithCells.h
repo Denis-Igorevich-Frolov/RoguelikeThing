@@ -77,6 +77,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void setLoadWidget(ULoadingWidget* newLoadingWidget);
 
+	UFUNCTION(BlueprintCallable)
+	bool LoadWidgetIsValide();
+
 	//Геттер количества фрагментов по горизонтали
 	UFUNCTION(BlueprintCallable)
 	int32 GetColNum();

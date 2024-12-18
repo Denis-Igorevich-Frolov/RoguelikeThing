@@ -16,7 +16,6 @@ void UMySaveGame::SaveTerrainOfTilesContainer(UTerrainOfTilesContainer* terrainO
 
 UTerrainOfTilesContainer* UMySaveGame::LoadTerrainOfTilesContainer()
 {
-    UE_LOG(LogTemp, Error, TEXT("BinTerrainOfTilesContainer %d"), BinTerrainOfTilesContainer.Num());
     FMemoryReader TerrainReader = FMemoryReader(BinTerrainOfTilesContainer);
     FObjectAndNameAsStringProxyArchive TerrainAr(TerrainReader, false);
     TerrainAr.ArIsSaveGame = true;

@@ -736,6 +736,9 @@ void UMapMatrix::AsyncChangeMatrixSize(UMapEditor* MapEditor, int right, int lef
 
             if (GameInstance && GameInstance->LogType != ELogType::NONE)
                 UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the AsyncChangeMatrixSize function: A thread to resizing the map matrix has been closed"));
+
+            LoadingWidget->LoadingComplete(true);
+            LoadingWidget->RemoveFromParent();
             });
         });
 }
@@ -2113,18 +2116,12 @@ void UMapMatrix::FillTerrainOfTiles(UMySaveGame* SaveGame)
     FMD5Hash FileHash = FMD5Hash::HashFile(*FilePath);
     FString MapDataBaseHex = LexToString(FileHash);
 
-    UE_LOG(MapMatrix, Log, TEXT("2 SavedHex %s, RealHex %s"), *SaveGame->MapDataBaseHex, *MapDataBaseHex);
-
     if (SaveGame->MapDataBaseHex == MapDataBaseHex) {
-        UE_LOG(MapMatrix, Log, TEXT("ok"));
-
         TerrainOfTilesRows = SaveGame->LoadTerrainOfTilesContainer();
         MinNoEmptyTileCoord = SaveGame->MinNoEmptyTileCoord;
         MaxNoEmptyTileCoord = SaveGame->MaxNoEmptyTileCoord;
     }
     else {
-        UE_LOG(MapMatrix, Log, TEXT("not ok"));
-
         //Сначала очищается матрица переменных предзагрузки от всех старых значений
         if(TerrainOfTilesRows)
             TerrainOfTilesRows->TerrainOfTilesRows.Empty();
