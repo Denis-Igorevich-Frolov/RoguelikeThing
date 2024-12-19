@@ -3,9 +3,13 @@
 
 #include "RoguelikeThing/Map/TerrainOfTilesContainer.h"
 
+DEFINE_LOG_CATEGORY(TerrainOfTilesContainer);
+
+//Функция, восстанавливающая состояние всех переменных предзагрузки на основе массива ReCreationContainer при загрузке сохранения
 void UTerrainOfTilesContainer::ReCreateTerrains(FMapDimensions MapDimensions, FCellCoord& MinNoEmptyTileCoord, FCellCoord& MaxNoEmptyTileCoord)
 {
-    TerrainOfTilesRows.Empty();
+    //Сначала очищается матрица переменных предзагрузки, если там что-то было
+    Clear();
 
     int TableLength = MapDimensions.TableLength;
     int MapTileLength = MapDimensions.MapTileLength;
@@ -17,7 +21,7 @@ void UTerrainOfTilesContainer::ReCreateTerrains(FMapDimensions MapDimensions, FC
             //Локальная координата ячейки равна остатку от деления глобальной координаты на длинну стороны тайла
             int CellRow = row % MapTileLength;
 
-            //Если целевого столбца нет, он создаётся
+            //Если целевой строки нет, она создаётся
             if (!TerrainOfTilesRows.Contains(CurrentTileRow)) {
                 UPROPERTY(SaveGame)
                 UTerrainOfTilesRow* Row = NewObject<UTerrainOfTilesRow>();
@@ -25,28 +29,49 @@ void UTerrainOfTilesContainer::ReCreateTerrains(FMapDimensions MapDimensions, FC
             }
 
             UPROPERTY(SaveGame)
-            UTerrainOfTilesRow* TerrainOfTilesCols = *TerrainOfTilesRows.Find(CurrentTileRow);
+            UTerrainOfTilesRow* TerrainOfTilesRow;
+            if(TerrainOfTilesRows.Contains(CurrentTileRow)){
+                TerrainOfTilesRow = *TerrainOfTilesRows.Find(CurrentTileRow);
+            }
+            else {
+                UE_LOG(TerrainOfTilesContainer, Error, TEXT("!!! An error occurred in the TerrainOfTilesContainer class in the ReCreateTerrains function - Array TerrainOfTilesRows not contains valeu with key %d"), CurrentTileRow);
+                break;
+            }
 
-            if (TerrainOfTilesCols) {
+            if (TerrainOfTilesRow) {
                 for (int col = MapDimensions.MinCol * TableLength; col < (MapDimensions.MaxCol + 1) * TableLength; col++) {
                     int CurrentTileCol = (int)(col / MapTileLength);
                     bool HaveNoEmptyCells = false;
 
-                    //Если целевой строки нет, она создаётся
-                    if (!TerrainOfTilesCols->TerrainOfTilesRow.Contains(CurrentTileCol)) {
+                    //Если целевой переменной предзагрузки нет, она создаётся
+                    if (!TerrainOfTilesRow->TerrainOfTilesRow.Contains(CurrentTileCol)) {
                         UPROPERTY(SaveGame)
                         UTerrainOfTile* Terrain = NewObject<UTerrainOfTile>();
-                        TerrainOfTilesCols->TerrainOfTilesRow.Add(CurrentTileCol, Terrain);
+                        TerrainOfTilesRow->TerrainOfTilesRow.Add(CurrentTileCol, Terrain);
                     }
 
                     UPROPERTY(SaveGame)
-                    UTerrainOfTile* Terrain = *TerrainOfTilesCols->TerrainOfTilesRow.Find(CurrentTileCol);
+                    UTerrainOfTile* Terrain;
+                    if (TerrainOfTilesRow->TerrainOfTilesRow.Contains(CurrentTileCol)) {
+                        Terrain = *TerrainOfTilesRow->TerrainOfTilesRow.Find(CurrentTileCol);
+                    }
+                    else {
+                        UE_LOG(TerrainOfTilesContainer, Error, TEXT("!!! An error occurred in the TerrainOfTilesContainer class in the ReCreateTerrains function - Array TerrainOfTilesRow->TerrainOfTilesRow not contains valeu with key %d"), CurrentTileCol);
+                        break;
+                    }
 
                     if (Terrain) {
                         //Локальная координата ячейки равна остатку от деления глобальной координаты на длинну стороны тайла
                         int CellCol = col % MapTileLength;
 
-                        FCellType CellType = *ReCreationContainer.Find(FVector2D(row, col));
+                        FCellType CellType;
+                        if (ReCreationContainer.Contains(FVector2D(row, col))) {
+                            CellType = *ReCreationContainer.Find(FVector2D(row, col));
+                        }
+                        else {
+                            UE_LOG(TerrainOfTilesContainer, Error, TEXT("!!! An error occurred in the TerrainOfTilesContainer class in the ReCreateTerrains function - Array ReCreationContainer not contains valeu with key (Row: %d ; Col: %d)"), row, col);
+                            CellType = FCellType::Error;
+                        }
 
                         if (CellType == FCellType::Corridor || CellType == FCellType::Room) {
                             Terrain->AddCellType(FCellCoord(CellRow, CellCol), CellType);
@@ -74,20 +99,49 @@ void UTerrainOfTilesContainer::ReCreateTerrains(FMapDimensions MapDimensions, FC
                             }
                         }
                         else if (CellType == FCellType::Error) {
-                            //UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the FillTerrainOfTiles function - CellType is of type Error"));
+                            UE_LOG(TerrainOfTilesContainer, Error, TEXT("!!! An error occurred in the TerrainOfTilesContainer class in the ReCreateTerrains function - CellType is of type Error"));
                         }
                     }
                     else {
-                        //UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the FillTerrainOfTiles function - Terrain is not valid"));
+                        UE_LOG(TerrainOfTilesContainer, Error, TEXT("!!! An error occurred in the TerrainOfTilesContainer class in the ReCreateTerrains function - Terrain is not valid"));
                     }
                 }
             }
             else {
-                //UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the FillTerrainOfTiles function - TerrainOfTilesCols is not valid"));
+                UE_LOG(TerrainOfTilesContainer, Error, TEXT("!!! An error occurred in the TerrainOfTilesContainer class in the ReCreateTerrains function - TerrainOfTilesRow is not valid"));
             }
         }
     }
     else {
-        //UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the FillTerrainOfTiles function - MapDimensions is not valid"));
+        UE_LOG(TerrainOfTilesContainer, Error, TEXT("!!! An error occurred in the TerrainOfTilesContainer class in the ReCreateTerrains function - MapDimensions is not valid"));
+    }
+}
+
+//Функция полной очистки матрицы переменных предзагрузки
+void UTerrainOfTilesContainer::Clear()
+{
+    if (TerrainOfTilesRows.Num() != 0) {
+        TArray<UTerrainOfTilesRow*> Rows;
+        TerrainOfTilesRows.GenerateValueArray(Rows);
+
+        for (UTerrainOfTilesRow* Row : Rows) {
+            if (Row && Row->TerrainOfTilesRow.Num() != 0) {
+                TArray<UTerrainOfTile*> Terrains;
+                Row->TerrainOfTilesRow.GenerateValueArray(Terrains);
+
+                for (UTerrainOfTile* Terrain : Terrains) {
+                    if (Terrain && Terrain->IsValidLowLevel()) {
+                        Terrain->MarkPendingKill();
+                    }
+                }
+
+                Row->TerrainOfTilesRow.Empty();
+            }
+
+            if (Row && Row->IsValidLowLevel()) {
+                Row->MarkPendingKill();
+            }
+        }
+        TerrainOfTilesRows.Empty();
     }
 }

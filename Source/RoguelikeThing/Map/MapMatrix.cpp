@@ -32,8 +32,8 @@ UMapMatrix::~UMapMatrix()
     mapDataBase->Close();
     delete mapDataBase;
 
-    if(TerrainOfTilesRows)
-        TerrainOfTilesRows->TerrainOfTilesRows.Empty();
+    if(TerrainOfTilesContainer)
+        TerrainOfTilesContainer->TerrainOfTilesRows.Empty();
 }
 
 //Функция полного удаления текущего объекта. Всегда вызывать не обязательно, использовать по необходимости
@@ -134,6 +134,7 @@ void UMapMatrix::convertingGlobalIndexIntoLocalOne(int32 globalCellRow, int32 gl
         cellCol = TableLength;
 }
 
+//Функция, конвертирующая локальный индекс отдельного фрагмента в глобальный индекс базы данных карты
 void UMapMatrix::convertingLocalIndexIntoGlobalOne(int32 chunkRow, int32 cellRow, int32 chunkCol, int32 cellCol, int32& globalCellRow, int32& globalCellCol)
 {
     globalCellRow = chunkRow * TableLength + cellRow - 1;
@@ -1277,9 +1278,11 @@ bool UMapMatrix::SetValueOfMapChunkCell(int32 chunkRow, int32 chunkCol, int32 ce
     int32 globalCellRow;
     int32 globalCellCol;
     convertingLocalIndexIntoGlobalOne(chunkRow, cellRow, chunkCol, cellCol, globalCellRow, globalCellCol);
-    if (TerrainOfTilesRows->ReCreationContainer.Contains(FVector2D(globalCellRow, globalCellCol)))
-        TerrainOfTilesRows->ReCreationContainer.Remove(FVector2D(globalCellRow, globalCellCol));
-    TerrainOfTilesRows->ReCreationContainer.Add(FVector2D(globalCellRow, globalCellCol), value);
+    //Если в массиве пересоздания тайлов уже существует информация о текущей ячейке, то она удаляется
+    if (TerrainOfTilesContainer->ReCreationContainer.Contains(FVector2D(globalCellRow, globalCellCol)))
+        TerrainOfTilesContainer->ReCreationContainer.Remove(FVector2D(globalCellRow, globalCellCol));
+    //Затем в массив пересоздания тайлов помещается актуальная информация о стиле ячейки
+    TerrainOfTilesContainer->ReCreationContainer.Add(FVector2D(globalCellRow, globalCellCol), value);
 
     return true;
 }
@@ -1465,21 +1468,29 @@ FCellType UMapMatrix::GetValueOfMapChunkStructureCellByGlobalIndex(int32 globalC
     return GetValueOfMapChunkStructureCell(chunkRow, chunkCol, cellRow, cellCol, autoClose);
 }
 
+//Функция, устанавливающая имя папки, в которой хранится оригинальный файл базы данных
 void UMapMatrix::SetOriginalDirName(FString originalDirName)
 {
     this->OriginalDirName = originalDirName;
+
+    if (GameInstance && GameInstance->LogType != ELogType::NONE)
+        UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the SetOriginalDirName function: The name of the original database dir is set to %s"), *OriginalDirName);
 }
 
+//Функция, возвращающая имя папки, в которой хранится оригинальный файл базы данных
 FString UMapMatrix::GetOriginalDirName()
 {
     return OriginalDirName;
 }
 
+//Функция, возвращающая полный путь до папки, в которой хранится оригинальный файл базы данных
 FString UMapMatrix::GetOriginalDirPath()
 {
     return FPaths::ProjectSavedDir() + TEXT("SaveGames/") + OriginalDirName;
 }
 
+/* Функция, устанавливающая имя директории с текущим файлом базы данных, и
+ * по этому имени одновременно вычисляется полный путь до файла базы данных */
 void UMapMatrix::SetFileDir(FString fileDir)
 {
     FilePath = FPaths::ProjectSavedDir() + TEXT("/SaveGames/") + fileDir + TEXT("/Map.db");
@@ -1488,21 +1499,29 @@ void UMapMatrix::SetFileDir(FString fileDir)
         UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the SetFileDir function: The directory of the database file is set to %s, the path to the file is %s"), *fileDir, *FilePath);
 }
 
-//Функция, устанавливающая путь до файла с базой данных
+/* Функция устанавливающая полный путь до файла базы данных, и по
+ * этому пути одновременно вычисляется имя директории базы данных */
 void UMapMatrix::SetFilePath(FString filePath)
 {
     FilePath = filePath;
 
     TArray<FString> PartsOfPath;
+    //Строка пути к файлу разбивается на отрезки, разделённые знаком '/'
     filePath.ParseIntoArray(PartsOfPath, TEXT("/"), false);
+    //Директория файла сохранения будет предпоследней в массиве отрезков
+    //Вычитается же 2, а не 1 потому что порядковый номер приводится к индексу
     if (PartsOfPath.IsValidIndex(PartsOfPath.Num() - 2)) {
         OriginalDirName = PartsOfPath[PartsOfPath.Num() - 2];
+    }
+    else {
+        UE_LOG(MapMatrix, Error, TEXT("MapMatrix class in the SetFilePath function: The directory name of the database file was not recognized from the path %s"), *FilePath);
     }
 
     if (GameInstance && GameInstance->LogType != ELogType::NONE)
         UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the SetFilePath function: The path to the database file is set as %s"), *FilePath);
 }
 
+//Функция, возвращающая полный путь до файла текущей базы данных, с которой непосредственно производятся манипуляции (может указывать на временный файл)
 FString UMapMatrix::GetFilePath()
 {
     return FilePath;
@@ -2113,20 +2132,33 @@ void UMapMatrix::AsyncCreateBlankCard(int32 rowLen, int32 colLen) {
 //Функция заполняющая переменную предзагрузки TerrainOfTile для всех тайлов в таблице
 void UMapMatrix::FillTerrainOfTiles(UMySaveGame* SaveGame)
 {
-    FMD5Hash FileHash = FMD5Hash::HashFile(*FilePath);
-    FString MapDataBaseHex = LexToString(FileHash);
+    if (!SaveGame) {
+        UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the FillTerrainOfTiles function - SaveGame is not valid"));
+        return;
+    }
 
-    if (SaveGame->MapDataBaseHex == MapDataBaseHex) {
-        TerrainOfTilesRows = SaveGame->LoadTerrainOfTilesContainer();
+    //Получается хеш текущего файла базы данных
+    FMD5Hash FileHash = FMD5Hash::HashFile(*FilePath);
+    FString MapDataBaseHash = LexToString(FileHash);
+
+    /* Производится сравнение хеша, оставшегося в файле сохранения с момента
+     * последнего сохранения базы данных, и теущего хеша базы данных */
+    //Если хеши равны, то переинициализация переменных предзагрузки не требуется, данные просто восстанавливаются из сериализованных
+    if (SaveGame->MapDataBaseHash == MapDataBaseHash) {
+        UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the FillTerrainOfTiles function: The hash of the database file has not changed, the table is loaded from the save.sav file"));
+        TerrainOfTilesContainer = SaveGame->LoadTerrainOfTilesContainer();
         MinNoEmptyTileCoord = SaveGame->MinNoEmptyTileCoord;
         MaxNoEmptyTileCoord = SaveGame->MaxNoEmptyTileCoord;
     }
+    //Если же хеши разные, то база данных была отредактирована извне и требуется полная переинициализация переменных предзагрузки
     else {
+        UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the FillTerrainOfTiles function: The hash of the database file has changed, and the table is being completely reinitialized from the Map.db database"));
         //Сначала очищается матрица переменных предзагрузки от всех старых значений
-        if(TerrainOfTilesRows)
-            TerrainOfTilesRows->TerrainOfTilesRows.Empty();
+        if (TerrainOfTilesContainer) {
+            TerrainOfTilesContainer->Clear();
+        }
         else {
-            TerrainOfTilesRows = NewObject<UTerrainOfTilesContainer>();
+            TerrainOfTilesContainer = NewObject<UTerrainOfTilesContainer>();
         }
 
         MinNoEmptyTileCoord = FCellCoord(-1, -1);
@@ -2140,29 +2172,43 @@ void UMapMatrix::FillTerrainOfTiles(UMySaveGame* SaveGame)
                 //Локальная координата ячейки равна остатку от деления глобальной координаты на длинну стороны тайла
                 int CellRow = row % MapTileLength;
 
-                //Если целевого столбца нет, он создаётся
-                if (!TerrainOfTilesRows->TerrainOfTilesRows.Contains(CurrentTileRow)) {
+                //Если целевой строки нет, она создаётся
+                if (!TerrainOfTilesContainer->TerrainOfTilesRows.Contains(CurrentTileRow)) {
                     UPROPERTY(SaveGame)
                     UTerrainOfTilesRow* Row = NewObject<UTerrainOfTilesRow>();
-                    TerrainOfTilesRows->TerrainOfTilesRows.Add(CurrentTileRow, Row);
+                    TerrainOfTilesContainer->TerrainOfTilesRows.Add(CurrentTileRow, Row);
                 }
 
                 UPROPERTY(SaveGame)
-                UTerrainOfTilesRow* TerrainOfTilesCols = *TerrainOfTilesRows->TerrainOfTilesRows.Find(CurrentTileRow);
+                UTerrainOfTilesRow* TerrainOfTilesRow;
+                if (TerrainOfTilesContainer->TerrainOfTilesRows.Contains(CurrentTileRow)) {
+                    TerrainOfTilesRow = *TerrainOfTilesContainer->TerrainOfTilesRows.Find(CurrentTileRow);
+                }
+                else {
+                    UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the FillTerrainOfTiles function - Array TerrainOfTilesContainer->TerrainOfTilesRows not contains valeu with key %d"), CurrentTileRow);
+                    break;
+                }
 
-                if (TerrainOfTilesCols) {
+                if (TerrainOfTilesRow) {
                     for (int col = MapDimensions.MinCol * TableLength; col < (MapDimensions.MaxCol + 1) * TableLength; col++) {
                         int CurrentTileCol = (int)(col / MapTileLength);
 
-                        //Если целевой строки нет, она создаётся
-                        if (!TerrainOfTilesCols->TerrainOfTilesRow.Contains(CurrentTileCol)) {
+                        //Если целевой переменной предзагрузки нет, она создаётся
+                        if (!TerrainOfTilesRow->TerrainOfTilesRow.Contains(CurrentTileCol)) {
                             UPROPERTY(SaveGame)
                             UTerrainOfTile* Terrain = NewObject<UTerrainOfTile>();
-                            TerrainOfTilesCols->TerrainOfTilesRow.Add(CurrentTileCol, Terrain);
+                            TerrainOfTilesRow->TerrainOfTilesRow.Add(CurrentTileCol, Terrain);
                         }
 
                         UPROPERTY(SaveGame)
-                        UTerrainOfTile* Terrain = *TerrainOfTilesCols->TerrainOfTilesRow.Find(CurrentTileCol);
+                        UTerrainOfTile* Terrain;
+                        if (TerrainOfTilesRow->TerrainOfTilesRow.Contains(CurrentTileCol)) {
+                            Terrain = *TerrainOfTilesRow->TerrainOfTilesRow.Find(CurrentTileCol);
+                        }
+                        else {
+                            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the FillTerrainOfTiles function - Array TerrainOfTilesRow->TerrainOfTilesRow not contains valeu with key %d"), CurrentTileCol);
+                            break;
+                        }
 
                         if (Terrain) {
                             //Локальная координата ячейки равна остатку от деления глобальной координаты на длинну стороны тайла
@@ -2170,7 +2216,7 @@ void UMapMatrix::FillTerrainOfTiles(UMySaveGame* SaveGame)
 
                             FCellType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(row, col, false);
 
-                            TerrainOfTilesRows->ReCreationContainer.Add(FVector2D(row, col), CellType);
+                            TerrainOfTilesContainer->ReCreationContainer.Add(FVector2D(row, col), CellType);
                             if (CellType == FCellType::Corridor || CellType == FCellType::Room) {
                                 Terrain->AddCellType(FCellCoord(CellRow, CellCol), CellType);
                                 //Проверка, не является ли текущий тайл минимальным или максимальным непустым тайлом
@@ -2206,7 +2252,7 @@ void UMapMatrix::FillTerrainOfTiles(UMySaveGame* SaveGame)
                     }
                 }
                 else {
-                    UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the FillTerrainOfTiles function - TerrainOfTilesCols is not valid"));
+                    UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the FillTerrainOfTiles function - TerrainOfTilesRow is not valid"));
                 }
             }
 
@@ -2221,17 +2267,17 @@ void UMapMatrix::FillTerrainOfTiles(UMySaveGame* SaveGame)
 //Проверка наличия переменной предзагрузки по переданной координате
 bool UMapMatrix::ContainsTerrainOfTile(FCellCoord Coord)
 {
-    if (TerrainOfTilesRows->TerrainOfTilesRows.Contains(Coord.Row)) {
-        UTerrainOfTilesRow* TerrainOfTilesCols = *TerrainOfTilesRows->TerrainOfTilesRows.Find(Coord.Row);
-        if (TerrainOfTilesCols) {
-            if (TerrainOfTilesCols->TerrainOfTilesRow.Contains(Coord.Col)) {
+    if (TerrainOfTilesContainer->TerrainOfTilesRows.Contains(Coord.Row)) {
+        UTerrainOfTilesRow* TerrainOfTilesRow = *TerrainOfTilesContainer->TerrainOfTilesRows.Find(Coord.Row);
+        if (TerrainOfTilesRow) {
+            if (TerrainOfTilesRow->TerrainOfTilesRow.Contains(Coord.Col)) {
                 return true;
             }
             else
                 return false;
         }
         else {
-            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the ContainsTerrainOfTile function - TerrainOfTilesCols is not valid"));
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the ContainsTerrainOfTile function - TerrainOfTilesRow is not valid"));
             return false;
         }
     }
@@ -2279,9 +2325,23 @@ FCellType UMapMatrix::GetCellStyleFromTerrainOfTile(FCellCoord GlobalCoordOfCell
 UTerrainOfTile* UMapMatrix::GetTerrainOfTile(FCellCoord Coord)
 {
     if (ContainsTerrainOfTile(Coord)) {
-        UTerrainOfTilesRow* TerrainOfTilesCols = *TerrainOfTilesRows->TerrainOfTilesRows.Find(Coord.Row);
-        if (TerrainOfTilesCols) {
-            UTerrainOfTile* TerrainOfTileRef = *TerrainOfTilesCols->TerrainOfTilesRow.Find(Coord.Col);
+        UTerrainOfTilesRow* TerrainOfTilesRow;
+        if (TerrainOfTilesContainer->TerrainOfTilesRows.Contains(Coord.Row)) {
+            TerrainOfTilesRow = *TerrainOfTilesContainer->TerrainOfTilesRows.Find(Coord.Row);
+        }
+        else {
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetTerrainOfTile function - Array TerrainOfTilesContainer->TerrainOfTilesRows not contains valeu with key %d"), Coord.Row);
+            return nullptr;
+        }
+        if (TerrainOfTilesRow) {
+            UTerrainOfTile* TerrainOfTileRef;
+            if (TerrainOfTilesRow->TerrainOfTilesRow.Contains(Coord.Col)) {
+                TerrainOfTileRef = *TerrainOfTilesRow->TerrainOfTilesRow.Find(Coord.Col);
+            }
+            else {
+                UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetTerrainOfTile function - Array TerrainOfTilesRow->TerrainOfTilesRow not contains valeu with key %d"), Coord.Col);
+                return nullptr;
+            }
             if (TerrainOfTileRef) {
                 UTerrainOfTile* Terrain = TerrainOfTileRef;
                 if (Terrain) {
@@ -2298,7 +2358,7 @@ UTerrainOfTile* UMapMatrix::GetTerrainOfTile(FCellCoord Coord)
             }
         }
         else {
-            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetTerrainOfTile function - TerrainOfTilesCols is not valid"));
+            UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the GetTerrainOfTile function - TerrainOfTilesRow is not valid"));
             return nullptr;
         }
     }
@@ -2372,24 +2432,27 @@ TArray<FCellCoord> UMapMatrix::GetCorridorArray(FCellCoord CallingCellCoord, FCe
     return CellsArray;
 }
 
+//Функция сохранение текущей карты в переданную переменную сохранения SaveGame
 void UMapMatrix::SaveMap(UMySaveGame* SaveGame)
 {
     if (SaveGame) {
+        //Для начала сохранения стоит освободить базу данных, закрыв её
         mapDataBaseClose("SaveMap");
 
+        //Запоминается хеш файла базы данных для будущей проверки при загрузке
         FMD5Hash FileHash = FMD5Hash::HashFile(*FilePath);
-        FString MapDataBaseHex = LexToString(FileHash);
-       
-        SaveGame->MapDataBaseHex = MapDataBaseHex;
+        FString MapDataBaseHash = LexToString(FileHash);
+        SaveGame->MapDataBaseHash = MapDataBaseHash;
         
+        //Также запоминаются габариты карты и контейнер переменных предзагрузки карты
         SaveGame->MapDimensions = GetMapDimensions(true);
+        SaveGame->SaveTerrainOfTilesContainer(TerrainOfTilesContainer);
 
-        SaveGame->SaveTerrainOfTilesContainer(TerrainOfTilesRows);
-
+        //Файл .sav помещается в ту же директорию, что и изначальная база данных
         UGameplayStatics::SaveGameToSlot(SaveGame, FString::Printf(TEXT("%s/save"), *OriginalDirName), 0);
     }
     else {
-        UE_LOG(MapMatrix, Error, TEXT("!!! AAASSS"));
+        UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the SaveMap function - SaveGame is not valid"));
     }
 }
 

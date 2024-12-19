@@ -77,6 +77,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void setLoadWidget(ULoadingWidget* newLoadingWidget);
 
+	//Функция, проверяющая валидность переданного в функциональную библиотеку указателя на виджет загрузки
 	UFUNCTION(BlueprintCallable)
 	bool LoadWidgetIsValide();
 

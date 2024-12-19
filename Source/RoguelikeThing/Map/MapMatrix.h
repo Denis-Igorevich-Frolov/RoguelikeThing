@@ -39,7 +39,7 @@ private:
 
 	//Матрица переменных предзагрузки для всех тайлов текущей таблицы
 	UPROPERTY()
-	UTerrainOfTilesContainer* TerrainOfTilesRows;
+	UTerrainOfTilesContainer* TerrainOfTilesContainer;
 
 	//Путь до файла, в котором лежит база данных карты
 	FString FilePath = FPaths::ProjectSavedDir() + TEXT("/Save/Map.db");
@@ -66,6 +66,7 @@ private:
 	void convertingGlobalIndexIntoLocalOne(int32 globalCellRow, int32 globalCellCol, int32& chunkRow,
 		int32& cellRow, int32& chunkCol, int32& cellCol);
 
+	//Функция, конвертирующая локальный индекс отдельного фрагмента в глобальный индекс базы данных карты
 	void convertingLocalIndexIntoGlobalOne(int32 chunkRow, int32 cellRow, int32 chunkCol, int32 cellCol, int32& globalCellRow, int32& globalCellCol);
 
 	//Функция, сдвигающая координаты всех чанков в указанном направлении
@@ -155,22 +156,29 @@ public:
 	UFUNCTION(BlueprintCallable)
 	FCellType GetValueOfMapChunkStructureCellByGlobalIndex(int32 globalCellRow, int32 globalCellCol, bool autoClose = true);
 	
+	//Функция, устанавливающая имя папки, в которой хранится оригинальный файл базы данных
 	UFUNCTION(BlueprintCallable)
 	void SetOriginalDirName(FString originalDirName);	
 
+	//Функция, возвращающая имя папки, в которой хранится оригинальный файл базы данных
 	UFUNCTION(BlueprintCallable)
 	FString GetOriginalDirName();
 
+	//Функция, возвращающая полный путь до папки, в которой хранится оригинальный файл базы данных
 	UFUNCTION(BlueprintCallable)
 	FString GetOriginalDirPath();
 
+	/* Функция, устанавливающая имя директории с текущим файлом базы данных, и
+     * по этому имени одновременно вычисляется полный путь до файла базы данных */
 	UFUNCTION(BlueprintCallable)
 	void SetFileDir(FString fileDir);
 
-	//Функция, устанавливающая путь до файла с базой данных
+	/* Функция устанавливающая полный путь до файла базы данных, и по
+	 * этому пути одновременно вычисляется имя директории базы данных */
 	UFUNCTION(BlueprintCallable)
 	void SetFilePath(FString filePath);	
 	
+	//Функция, возвращающая полный путь до файла текущей базы данных, с которой непосредственно производятся манипуляции (может указывать на временный файл)
 	UFUNCTION(BlueprintCallable)
 	FString GetFilePath();
 
@@ -226,6 +234,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	TArray<FCellCoord> GetCorridorArray(FCellCoord CallingCellCoord, FCellCoord CurrentCellCoord);
 
+	//Функция сохранение текущей карты в переданную переменную сохранения SaveGame
 	UFUNCTION(BlueprintCallable)
 	void SaveMap(UMySaveGame* SaveGame);
 };

@@ -322,7 +322,10 @@ void UMapTile::ClearFilledCells()
             FilledCells = TArray<UMapCell*>();
         }
 
-        //Переменная предзагрузки обнуляется
+        /* Переменная предзагрузки обнуляется. Сама переменная MyTerrainOfTile принадлежит
+         * не данному экземпляру тайла, а общему хранилищу UTerrainOfTilesContainer, так что
+         * не чистим, не удаляем её, а просто зануляем, утечки памяти не будет. Когда и если
+         * она понадобится другому тайлу, указатель должен быть валидным */
         MyTerrainOfTile = nullptr;
 
         if (GameInstance && GameInstance->LogType == ELogType::DETAILED)

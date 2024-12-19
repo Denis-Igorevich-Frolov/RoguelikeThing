@@ -481,8 +481,10 @@ void UFillingMapWithCells::setLoadWidget(ULoadingWidget* newLoadingWidget)
         UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the setLoadWidget function: The download widget has been set"));
 }
 
+//Функция, проверяющая валидность переданного в функциональную библиотеку указателя на виджет загрузки
 bool UFillingMapWithCells::LoadWidgetIsValide()
 {
+    //Если виджет загрузки не во вьюпорте, то он скоро удалится. Это значит, что он невалиден
     return (bool)LoadingWidget && LoadingWidget->IsInViewport();
 }
 
