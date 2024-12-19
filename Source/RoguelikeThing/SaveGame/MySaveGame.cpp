@@ -1,10 +1,10 @@
-// Denis Igorevich Frolov did all this. Once there. All things reserved.
+п»ї// Denis Igorevich Frolov did all this. Once there. All things reserved.
 
 
 #include "RoguelikeThing/SaveGame/MySaveGame.h"
 #include <Serialization/ObjectAndNameAsStringProxyArchive.h>
 
-//Функция, сериализующая переданную переменную terrainOfTilesContainer
+//Р¤СѓРЅРєС†РёСЏ, СЃРµСЂРёР°Р»РёР·СѓСЋС‰Р°СЏ РїРµСЂРµРґР°РЅРЅСѓСЋ РїРµСЂРµРјРµРЅРЅСѓСЋ terrainOfTilesContainer
 void UMySaveGame::SaveTerrainOfTilesContainer(UTerrainOfTilesContainer* terrainOfTilesContainer)
 {
     TerrainOfTilesContainer = terrainOfTilesContainer;
@@ -15,7 +15,7 @@ void UMySaveGame::SaveTerrainOfTilesContainer(UTerrainOfTilesContainer* terrainO
     TerrainOfTilesContainer->Serialize(TerrainAr);
 }
 
-//Функция, десериализующая переменную TerrainOfTilesContainer
+//Р¤СѓРЅРєС†РёСЏ, РґРµСЃРµСЂРёР°Р»РёР·СѓСЋС‰Р°СЏ РїРµСЂРµРјРµРЅРЅСѓСЋ TerrainOfTilesContainer
 UTerrainOfTilesContainer* UMySaveGame::LoadTerrainOfTilesContainer()
 {
     FMemoryReader TerrainReader = FMemoryReader(BinTerrainOfTilesContainer);
@@ -23,7 +23,7 @@ UTerrainOfTilesContainer* UMySaveGame::LoadTerrainOfTilesContainer()
     TerrainAr.ArIsSaveGame = true;
     TerrainOfTilesContainer = NewObject<UTerrainOfTilesContainer>();
     TerrainOfTilesContainer->Serialize(TerrainAr);
-    //Производится восстановление состояния переменных предзагрузки, а за одно актуализируются пременные MinNoEmptyTileCoord и MaxNoEmptyTileCoord
+    //РџСЂРѕРёР·РІРѕРґРёС‚СЃСЏ РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёРµ СЃРѕСЃС‚РѕСЏРЅРёСЏ РїРµСЂРµРјРµРЅРЅС‹С… РїСЂРµРґР·Р°РіСЂСѓР·РєРё, Р° Р·Р° РѕРґРЅРѕ Р°РєС‚СѓР°Р»РёР·РёСЂСѓСЋС‚СЃСЏ РїСЂРµРјРµРЅРЅС‹Рµ MinNoEmptyTileCoord Рё MaxNoEmptyTileCoord
     TerrainOfTilesContainer->ReCreateTerrains(MapDimensions, MinNoEmptyTileCoord, MaxNoEmptyTileCoord);
 
     return TerrainOfTilesContainer;

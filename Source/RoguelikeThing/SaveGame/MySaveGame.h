@@ -1,4 +1,4 @@
-// Denis Igorevich Frolov did all this. Once there. All things reserved.
+п»ї// Denis Igorevich Frolov did all this. Once there. All things reserved.
 
 #pragma once
 
@@ -9,7 +9,7 @@
 #include "MySaveGame.generated.h"
 
 /*******************************************************************
- * Данный класс является классом, создающим файл сохранения .sav
+ * Р”Р°РЅРЅС‹Р№ РєР»Р°СЃСЃ СЏРІР»СЏРµС‚СЃСЏ РєР»Р°СЃСЃРѕРј, СЃРѕР·РґР°СЋС‰РёРј С„Р°Р№Р» СЃРѕС…СЂР°РЅРµРЅРёСЏ .sav
  *******************************************************************/
 
 UCLASS(BlueprintType)
@@ -18,34 +18,34 @@ class ROGUELIKETHING_API UMySaveGame : public USaveGame
 	GENERATED_BODY()
 
 private:
-	/* Контейнер, хранящий все переменные предзагрузки текущей карты. Чтобы восстанвить состояние
-	 * предзагрузки карты посли её загрузки из файла .sav необходимо вызвать функцию ReCreateTerrains */
+	/* РљРѕРЅС‚РµР№РЅРµСЂ, С…СЂР°РЅСЏС‰РёР№ РІСЃРµ РїРµСЂРµРјРµРЅРЅС‹Рµ РїСЂРµРґР·Р°РіСЂСѓР·РєРё С‚РµРєСѓС‰РµР№ РєР°СЂС‚С‹. Р§С‚РѕР±С‹ РІРѕСЃСЃС‚Р°РЅРІРёС‚СЊ СЃРѕСЃС‚РѕСЏРЅРёРµ
+	 * РїСЂРµРґР·Р°РіСЂСѓР·РєРё РєР°СЂС‚С‹ РїРѕСЃР»Рё РµС‘ Р·Р°РіСЂСѓР·РєРё РёР· С„Р°Р№Р»Р° .sav РЅРµРѕР±С…РѕРґРёРјРѕ РІС‹Р·РІР°С‚СЊ С„СѓРЅРєС†РёСЋ ReCreateTerrains */
 	UPROPERTY(VisibleAnywhere)
 	UTerrainOfTilesContainer* TerrainOfTilesContainer;
 
-	//Бинарный массив для сохранения и загрузки переменной TerrainOfTilesContainer
+	//Р‘РёРЅР°СЂРЅС‹Р№ РјР°СЃСЃРёРІ РґР»СЏ СЃРѕС…СЂР°РЅРµРЅРёСЏ Рё Р·Р°РіСЂСѓР·РєРё РїРµСЂРµРјРµРЅРЅРѕР№ TerrainOfTilesContainer
 	UPROPERTY(VisibleAnywhere)
 	TArray<uint8> BinTerrainOfTilesContainer;
 	
 public:
 
-	//Габариты сохранённой карты
+	//Р“Р°Р±Р°СЂРёС‚С‹ СЃРѕС…СЂР°РЅС‘РЅРЅРѕР№ РєР°СЂС‚С‹
 	UPROPERTY(VisibleAnywhere)
 	FMapDimensions MapDimensions;
 
-	/* Минимальные и максимальные координаты непустых тайлов карты. После вызова функции
-	 * ReCreateTerrains переменной TerrainOfTilesContainer данные координаты актуализируются */
+	/* РњРёРЅРёРјР°Р»СЊРЅС‹Рµ Рё РјР°РєСЃРёРјР°Р»СЊРЅС‹Рµ РєРѕРѕСЂРґРёРЅР°С‚С‹ РЅРµРїСѓСЃС‚С‹С… С‚Р°Р№Р»РѕРІ РєР°СЂС‚С‹. РџРѕСЃР»Рµ РІС‹Р·РѕРІР° С„СѓРЅРєС†РёРё
+	 * ReCreateTerrains РїРµСЂРµРјРµРЅРЅРѕР№ TerrainOfTilesContainer РґР°РЅРЅС‹Рµ РєРѕРѕСЂРґРёРЅР°С‚С‹ Р°РєС‚СѓР°Р»РёР·РёСЂСѓСЋС‚СЃСЏ */
 	UPROPERTY(VisibleAnywhere)
 	FCellCoord MinNoEmptyTileCoord = FCellCoord(-1, -1);
 	UPROPERTY(VisibleAnywhere)
 	FCellCoord MaxNoEmptyTileCoord = FCellCoord(-1, -1);
 
-	//Хеш файла .db, по которому производится проверка измененился ли извне файл базы данных с момента последнего сохранения
+	//РҐРµС€ С„Р°Р№Р»Р° .db, РїРѕ РєРѕС‚РѕСЂРѕРјСѓ РїСЂРѕРёР·РІРѕРґРёС‚СЃСЏ РїСЂРѕРІРµСЂРєР° РёР·РјРµРЅРµРЅРёР»СЃСЏ Р»Рё РёР·РІРЅРµ С„Р°Р№Р» Р±Р°Р·С‹ РґР°РЅРЅС‹С… СЃ РјРѕРјРµРЅС‚Р° РїРѕСЃР»РµРґРЅРµРіРѕ СЃРѕС…СЂР°РЅРµРЅРёСЏ
 	UPROPERTY(VisibleAnywhere)
 	FString MapDataBaseHash;
 
-	//Функция, сериализующая переданную переменную terrainOfTilesContainer
+	//Р¤СѓРЅРєС†РёСЏ, СЃРµСЂРёР°Р»РёР·СѓСЋС‰Р°СЏ РїРµСЂРµРґР°РЅРЅСѓСЋ РїРµСЂРµРјРµРЅРЅСѓСЋ terrainOfTilesContainer
 	void SaveTerrainOfTilesContainer(UTerrainOfTilesContainer* terrainOfTilesContainer);
-	//Функция, десериализующая переданную переменную terrainOfTilesContainer
+	//Р¤СѓРЅРєС†РёСЏ, РґРµСЃРµСЂРёР°Р»РёР·СѓСЋС‰Р°СЏ РїРµСЂРµРґР°РЅРЅСѓСЋ РїРµСЂРµРјРµРЅРЅСѓСЋ terrainOfTilesContainer
 	UTerrainOfTilesContainer* LoadTerrainOfTilesContainer();
 };
