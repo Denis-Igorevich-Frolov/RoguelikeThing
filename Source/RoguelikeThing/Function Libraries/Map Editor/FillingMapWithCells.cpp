@@ -26,7 +26,7 @@ UFillingMapWithCells::UFillingMapWithCells()
  * должен быть наследником класса UMapCell или им самим */
 void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, UUniformGridPanel* TilesGridPanel,
     UClass* CellClass, UClass* MapTileClass, UTileBuffer* TileBuf, UObject* MapContainer, UCoordWrapperOfTable* TilesCoordWrapper,
-    UMapMatrix* Map, FVector2D WidgetAreaSize, UMySaveGame* SaveGame, bool FillOnlyNonEmptyArea)
+    UMapMatrix* Map, FVector2D WidgetAreaSize, UMapSaver* MapSaver, bool FillOnlyNonEmptyArea)
 {
     //Координатная обёртка изначально должна быть полность пустой во время заполнения карты
     TilesCoordWrapper->Clear();
@@ -250,13 +250,13 @@ void UFillingMapWithCells::FillMapEditorWithCells(FMapDimensions MapDimensions, 
 
         //Само забиваение карты ячейками происходит в отдельном потоке
         AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [MapContainer, TableLength, MapTileLength,TilesGridPanel, CellClass, MapTileClass, TilesCoordWrapper,
-            Map, MapDimensions, NumberOfTilesInChunc, FillOnlyNonEmptyArea, SaveGame, this]() {
+            Map, MapDimensions, NumberOfTilesInChunc, FillOnlyNonEmptyArea, MapSaver, this]() {
 
                 if (GameInstance && GameInstance->LogType != ELogType::NONE)
                     UE_LOG(FillingMapWithCells, Log, TEXT("FillingMapWithCells class in the FillMapEditorWithCells function: The TilesGridPanel table population thread has been opened"));
 
                 //Все непустые ячейки предзагружаются из БД
-                Map->FillTerrainOfTiles(SaveGame);
+                Map->FillTerrainOfTiles(MapSaver);
 
                 FGridCoord StartingMinTileCoord = FGridCoord(0, 0);
 

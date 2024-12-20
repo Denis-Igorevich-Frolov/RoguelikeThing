@@ -2,6 +2,7 @@
 
 
 #include "RoguelikeThing/GameObjects/ExpeditionInteractionObject.h"
+#include <XmlParser/Public/XmlFile.h>
 
 // Sets default values
 AExpeditionInteractionObject::AExpeditionInteractionObject()
@@ -24,4 +25,13 @@ void AExpeditionInteractionObject::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 }
+
+//void AExpeditionInteractionObject::XMLTest()
+//{
+//    FXmlFile* XmlFile = new FXmlFile("E:/Unreal projects/RoguelikeThing/Data/Expedition interaction objects/WoodChest.xml");
+//    FXmlNode* RootNode = XmlFile->GetRootNode();
+//    FString AssetContent = RootNode->FindChildNode("to")->GetContent();
+//
+//    GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, AssetContent);
+//}
 

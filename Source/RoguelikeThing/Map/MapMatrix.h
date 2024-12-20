@@ -10,7 +10,7 @@
 #include "RoguelikeThing/Map/MapDimensions.h"
 #include "RoguelikeThing/Enumerations/CellType.h"
 #include "RoguelikeThing/Map/TerrainOfTile.h"
-#include <RoguelikeThing/SaveGame/MySaveGame.h>
+#include <RoguelikeThing/SaveGame/MapSaver.h>
 #include "MapMatrix.generated.h"
 
 /****************************************************************
@@ -211,7 +211,7 @@ public:
 	
 	//Функция заполняющая переменную предзагрузки TerrainOfTile для всех тайлов в таблице
 	UFUNCTION(BlueprintCallable)
-    void FillTerrainOfTiles(UMySaveGame* SaveGame);
+    void FillTerrainOfTiles(UMapSaver* MapSaver);
 	
 	//Проверка наличия переменной предзагрузки по переданной координате
 	UFUNCTION(BlueprintCallable)
@@ -234,7 +234,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	TArray<FCellCoord> GetCorridorArray(FCellCoord CallingCellCoord, FCellCoord CurrentCellCoord);
 
-	//Функция сохранение текущей карты в переданную переменную сохранения SaveGame
+	//Функция сохранение текущей карты в переданную переменную сохранения MapSaver
 	UFUNCTION(BlueprintCallable)
-	void SaveMap(UMySaveGame* SaveGame);
+	void SaveMap(UMapSaver* MapSaver);
 };

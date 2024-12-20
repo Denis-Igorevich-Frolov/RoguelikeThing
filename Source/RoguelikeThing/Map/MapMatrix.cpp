@@ -2130,10 +2130,10 @@ void UMapMatrix::AsyncCreateBlankCard(int32 rowLen, int32 colLen) {
 }
 
 //Функция заполняющая переменную предзагрузки TerrainOfTile для всех тайлов в таблице
-void UMapMatrix::FillTerrainOfTiles(UMySaveGame* SaveGame)
+void UMapMatrix::FillTerrainOfTiles(UMapSaver* MapSaver)
 {
-    if (!SaveGame) {
-        UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the FillTerrainOfTiles function - SaveGame is not valid"));
+    if (!MapSaver) {
+        UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the FillTerrainOfTiles function - MapSaver is not valid"));
         return;
     }
 
@@ -2144,11 +2144,11 @@ void UMapMatrix::FillTerrainOfTiles(UMySaveGame* SaveGame)
     /* Производится сравнение хеша, оставшегося в файле сохранения с момента
      * последнего сохранения базы данных, и теущего хеша базы данных */
     //Если хеши равны, то переинициализация переменных предзагрузки не требуется, данные просто восстанавливаются из сериализованных
-    if (SaveGame->MapDataBaseHash == MapDataBaseHash) {
-        UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the FillTerrainOfTiles function: The hash of the database file has not changed, the table is loaded from the save.sav file"));
-        TerrainOfTilesContainer = SaveGame->LoadTerrainOfTilesContainer();
-        MinNoEmptyTileCoord = SaveGame->MinNoEmptyTileCoord;
-        MaxNoEmptyTileCoord = SaveGame->MaxNoEmptyTileCoord;
+    if (MapSaver->MapDataBaseHash == MapDataBaseHash) {
+        UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the FillTerrainOfTiles function: The hash of the database file has not changed, the table is loaded from the map.sav file"));
+        TerrainOfTilesContainer = MapSaver->LoadTerrainOfTilesContainer();
+        MinNoEmptyTileCoord = MapSaver->MinNoEmptyTileCoord;
+        MaxNoEmptyTileCoord = MapSaver->MaxNoEmptyTileCoord;
     }
     //Если же хеши разные, то база данных была отредактирована извне и требуется полная переинициализация переменных предзагрузки
     else {
@@ -2256,7 +2256,7 @@ void UMapMatrix::FillTerrainOfTiles(UMySaveGame* SaveGame)
                 }
             }
 
-            SaveMap(SaveGame);
+            SaveMap(MapSaver);
         }
         else {
             UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the FillTerrainOfTiles function - MapDimensions is not valid"));
@@ -2432,27 +2432,27 @@ TArray<FCellCoord> UMapMatrix::GetCorridorArray(FCellCoord CallingCellCoord, FCe
     return CellsArray;
 }
 
-//Функция сохранение текущей карты в переданную переменную сохранения SaveGame
-void UMapMatrix::SaveMap(UMySaveGame* SaveGame)
+//Функция сохранение текущей карты в переданную переменную сохранения MapSaver
+void UMapMatrix::SaveMap(UMapSaver* MapSaver)
 {
-    if (SaveGame) {
+    if (MapSaver) {
         //Для начала сохранения стоит освободить базу данных, закрыв её
         mapDataBaseClose("SaveMap");
 
         //Запоминается хеш файла базы данных для будущей проверки при загрузке
         FMD5Hash FileHash = FMD5Hash::HashFile(*FilePath);
         FString MapDataBaseHash = LexToString(FileHash);
-        SaveGame->MapDataBaseHash = MapDataBaseHash;
+        MapSaver->MapDataBaseHash = MapDataBaseHash;
         
         //Также запоминаются габариты карты и контейнер переменных предзагрузки карты
-        SaveGame->MapDimensions = GetMapDimensions(true);
-        SaveGame->SaveTerrainOfTilesContainer(TerrainOfTilesContainer);
+        MapSaver->MapDimensions = GetMapDimensions(true);
+        MapSaver->SaveTerrainOfTilesContainer(TerrainOfTilesContainer);
 
         //Файл .sav помещается в ту же директорию, что и изначальная база данных
-        UGameplayStatics::SaveGameToSlot(SaveGame, FString::Printf(TEXT("%s/save"), *OriginalDirName), 0);
+        UGameplayStatics::SaveGameToSlot(MapSaver, FString::Printf(TEXT("%s/map"), *OriginalDirName), 0);
     }
     else {
-        UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the SaveMap function - SaveGame is not valid"));
+        UE_LOG(MapMatrix, Error, TEXT("!!! An error occurred in the MapMatrix class in the SaveMap function - MapSaver is not valid"));
     }
 }
 
