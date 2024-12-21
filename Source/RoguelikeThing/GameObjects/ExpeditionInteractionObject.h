@@ -4,24 +4,23 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "RoguelikeThing/GameObjects/ExpeditionInteractionObjectData.h"
 #include "ExpeditionInteractionObject.generated.h"
 
 UCLASS()
 class ROGUELIKETHING_API AExpeditionInteractionObject : public AActor
 {
 	GENERATED_BODY()
-	
-public:	
-	// Sets default values for this actor's properties
-	AExpeditionInteractionObject();
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+private:
+	UExpeditionInteractionObjectData* ExpeditionInteractionObjectData;
 
-public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+public:
+
+
+	UFUNCTION(BlueprintCallable)
+	void SetExpeditionInteractionObjectData(UExpeditionInteractionObjectData* expeditionInteractionObjectData);
+	const UExpeditionInteractionObjectData* SetExpeditionInteractionObjectData();
 
 	//UFUNCTION(BlueprintCallable)
 	//void XMLTest();

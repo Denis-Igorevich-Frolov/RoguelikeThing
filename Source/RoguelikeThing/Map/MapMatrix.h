@@ -234,7 +234,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	TArray<FCellCoord> GetCorridorArray(FCellCoord CallingCellCoord, FCellCoord CurrentCellCoord);
 
-	//Функция сохранение текущей карты в переданную переменную сохранения MapSaver
+	//Функция сохранения текущей карты в переданную переменную сохранения MapSaver
 	UFUNCTION(BlueprintCallable)
 	void SaveMap(UMapSaver* MapSaver);
 };

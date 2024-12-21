@@ -15,7 +15,7 @@ void UMapSaver::SaveTerrainOfTilesContainer(UTerrainOfTilesContainer* terrainOfT
     TerrainOfTilesContainer->Serialize(TerrainAr);
 }
 
-//Функция, десериализующая переменную TerrainOfTilesContainer
+//Функция, десериализующая данные из BinTerrainOfTilesContainer
 UTerrainOfTilesContainer* UMapSaver::LoadTerrainOfTilesContainer()
 {
     FMemoryReader TerrainReader = FMemoryReader(BinTerrainOfTilesContainer);

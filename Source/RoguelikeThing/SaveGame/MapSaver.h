@@ -46,6 +46,6 @@ public:
 
 	//Функция, сериализующая переданную переменную terrainOfTilesContainer
 	void SaveTerrainOfTilesContainer(UTerrainOfTilesContainer* terrainOfTilesContainer);
-	//Функция, десериализующая переданную переменную terrainOfTilesContainer
+	//Функция, десериализующая данные из BinTerrainOfTilesContainer
 	UTerrainOfTilesContainer* LoadTerrainOfTilesContainer();
 };

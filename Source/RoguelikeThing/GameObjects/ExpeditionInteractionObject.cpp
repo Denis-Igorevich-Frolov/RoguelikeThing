@@ -2,29 +2,7 @@
 
 
 #include "RoguelikeThing/GameObjects/ExpeditionInteractionObject.h"
-#include <XmlParser/Public/XmlFile.h>
-
-// Sets default values
-AExpeditionInteractionObject::AExpeditionInteractionObject()
-{
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
-
-}
-
-// Called when the game starts or when spawned
-void AExpeditionInteractionObject::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void AExpeditionInteractionObject::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
+//#include <XmlParser/Public/XmlFile.h>
 
 //void AExpeditionInteractionObject::XMLTest()
 //{
@@ -35,3 +13,12 @@ void AExpeditionInteractionObject::Tick(float DeltaTime)
 //    GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, AssetContent);
 //}
 
+void AExpeditionInteractionObject::SetExpeditionInteractionObjectData(UExpeditionInteractionObjectData* expeditionInteractionObjectData)
+{
+    ExpeditionInteractionObjectData = expeditionInteractionObjectData;
+}
+
+const UExpeditionInteractionObjectData* AExpeditionInteractionObject::SetExpeditionInteractionObjectData()
+{
+    return ExpeditionInteractionObjectData;
+}

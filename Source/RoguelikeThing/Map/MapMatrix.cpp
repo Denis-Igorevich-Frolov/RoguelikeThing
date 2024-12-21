@@ -2142,7 +2142,7 @@ void UMapMatrix::FillTerrainOfTiles(UMapSaver* MapSaver)
     FString MapDataBaseHash = LexToString(FileHash);
 
     /* Производится сравнение хеша, оставшегося в файле сохранения с момента
-     * последнего сохранения базы данных, и теущего хеша базы данных */
+     * последнего сохранения базы данных, и текущего хеша базы данных */
     //Если хеши равны, то переинициализация переменных предзагрузки не требуется, данные просто восстанавливаются из сериализованных
     if (MapSaver->MapDataBaseHash == MapDataBaseHash) {
         UE_LOG(MapMatrix, Log, TEXT("MapMatrix class in the FillTerrainOfTiles function: The hash of the database file has not changed, the table is loaded from the map.sav file"));

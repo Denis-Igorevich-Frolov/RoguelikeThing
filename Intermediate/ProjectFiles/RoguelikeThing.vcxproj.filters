@@ -3,7 +3,7 @@
   <ItemGroup>
     <None Include="..\..\RoguelikeThing.uproject" />
     <Filter Include="Source">
-      <UniqueIdentifier>{FC8BFD7D-D3C1-4082-AAEB-84B1EB680AE7}</UniqueIdentifier>
+      <UniqueIdentifier>{3BE3C554-2991-4199-8381-110ECE5A33BA}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Source\RoguelikeThing.Target.cs">
       <Filter>Source</Filter>
@@ -14,7 +14,7 @@
     <None Include="..\..\.gitattributes" />
     <None Include="..\..\.gitignore" />
     <Filter Include="Config">
-      <UniqueIdentifier>{3F474A87-3969-467B-9DEC-449DF8E70DA3}</UniqueIdentifier>
+      <UniqueIdentifier>{0BBC12C2-E72F-46A2-9E2F-FDEFFF289091}</UniqueIdentifier>
     </Filter>
     <None Include="..\..\Config\DefaultEditor.ini">
       <Filter>Config</Filter>
@@ -29,7 +29,7 @@
       <Filter>Config</Filter>
     </None>
     <Filter Include="Source\RoguelikeThing">
-      <UniqueIdentifier>{E8072051-BF98-400A-9039-B79C9B829DCC}</UniqueIdentifier>
+      <UniqueIdentifier>{4DCFC484-9AEC-4D3D-B2D1-70F1A51D67C5}</UniqueIdentifier>
     </Filter>
     <ClCompile Include="..\..\Source\RoguelikeThing\CoordWrapperOfTable.cpp">
       <Filter>Source\RoguelikeThing</Filter>
@@ -59,7 +59,7 @@
       <Filter>Source\RoguelikeThing</Filter>
     </ClInclude>
     <Filter Include="Source\RoguelikeThing\Enumerations">
-      <UniqueIdentifier>{BA2D7A2F-569B-4FDB-AB6D-6B1D1CD42045}</UniqueIdentifier>
+      <UniqueIdentifier>{B64078B7-14F8-4BE9-9368-1C4F2242C903}</UniqueIdentifier>
     </Filter>
     <ClCompile Include="..\..\Source\RoguelikeThing\Enumerations\CellType.cpp">
       <Filter>Source\RoguelikeThing\Enumerations</Filter>
@@ -74,7 +74,7 @@
       <Filter>Source\RoguelikeThing\Enumerations</Filter>
     </ClInclude>
     <Filter Include="Source\RoguelikeThing\Function Libraries">
-      <UniqueIdentifier>{F0FB9520-1E03-4203-8130-0462504F4D79}</UniqueIdentifier>
+      <UniqueIdentifier>{2FC2DF6B-E010-4096-BC0A-B283F321A643}</UniqueIdentifier>
     </Filter>
     <ClCompile Include="..\..\Source\RoguelikeThing\Function Libraries\LogPrinter.cpp">
       <Filter>Source\RoguelikeThing\Function Libraries</Filter>
@@ -95,7 +95,7 @@
       <Filter>Source\RoguelikeThing\Function Libraries</Filter>
     </ClInclude>
     <Filter Include="Source\RoguelikeThing\Function Libraries\Map Editor">
-      <UniqueIdentifier>{6FE21238-839D-43B4-BE45-456171A65BA1}</UniqueIdentifier>
+      <UniqueIdentifier>{8A318161-0CE2-41C2-9BB6-FC0F3FCB95F8}</UniqueIdentifier>
     </Filter>
     <ClCompile Include="..\..\Source\RoguelikeThing\Function Libraries\Map Editor\FillingMapWithCells.cpp">
       <Filter>Source\RoguelikeThing\Function Libraries\Map Editor</Filter>
@@ -104,16 +104,16 @@
       <Filter>Source\RoguelikeThing\Function Libraries\Map Editor</Filter>
     </ClInclude>
     <Filter Include="Source\RoguelikeThing\Function Libraries\Preparers">
-      <UniqueIdentifier>{AA2441F6-C051-4F06-9B36-8D0351899971}</UniqueIdentifier>
+      <UniqueIdentifier>{149BC6EE-C621-4520-901D-4732383F8845}</UniqueIdentifier>
     </Filter>
-    <ClCompile Include="..\..\Source\RoguelikeThing\Function Libraries\Preparers\InteractiveObjectsPreparer.cpp">
+    <ClCompile Include="..\..\Source\RoguelikeThing\Function Libraries\Preparers\ExpeditionInteractionObjectPreparer.cpp">
       <Filter>Source\RoguelikeThing\Function Libraries\Preparers</Filter>
     </ClCompile>
-    <ClInclude Include="..\..\Source\RoguelikeThing\Function Libraries\Preparers\InteractiveObjectsPreparer.h">
+    <ClInclude Include="..\..\Source\RoguelikeThing\Function Libraries\Preparers\ExpeditionInteractionObjectPreparer.h">
       <Filter>Source\RoguelikeThing\Function Libraries\Preparers</Filter>
     </ClInclude>
     <Filter Include="Source\RoguelikeThing\GameObjects">
-      <UniqueIdentifier>{40F1281E-55CA-4C22-BAFE-A62F9D3FBF6F}</UniqueIdentifier>
+      <UniqueIdentifier>{7A6C06BF-E88D-4567-A05F-00121BF32E2B}</UniqueIdentifier>
     </Filter>
     <ClCompile Include="..\..\Source\RoguelikeThing\GameObjects\ExpeditionInteractionObject.cpp">
       <Filter>Source\RoguelikeThing\GameObjects</Filter>
@@ -128,7 +128,7 @@
       <Filter>Source\RoguelikeThing\GameObjects</Filter>
     </ClInclude>
     <Filter Include="Source\RoguelikeThing\Interfaces">
-      <UniqueIdentifier>{BD497D5C-7B58-4B93-9021-7F6A62A4728C}</UniqueIdentifier>
+      <UniqueIdentifier>{8AA855BF-0EC3-4F76-9FF0-E7C2E4F67AFD}</UniqueIdentifier>
     </Filter>
     <ClCompile Include="..\..\Source\RoguelikeThing\Interfaces\ContainingTileTableInterface.cpp">
       <Filter>Source\RoguelikeThing\Interfaces</Filter>
@@ -136,8 +136,17 @@
     <ClInclude Include="..\..\Source\RoguelikeThing\Interfaces\ContainingTileTableInterface.h">
       <Filter>Source\RoguelikeThing\Interfaces</Filter>
     </ClInclude>
+    <Filter Include="Source\RoguelikeThing\Lists">
+      <UniqueIdentifier>{8890771E-53EE-4565-914A-443912248B18}</UniqueIdentifier>
+    </Filter>
+    <ClCompile Include="..\..\Source\RoguelikeThing\Lists\ExpeditionInteractionObjectsList.cpp">
+      <Filter>Source\RoguelikeThing\Lists</Filter>
+    </ClCompile>
+    <ClInclude Include="..\..\Source\RoguelikeThing\Lists\ExpeditionInteractionObjectsList.h">
+      <Filter>Source\RoguelikeThing\Lists</Filter>
+    </ClInclude>
     <Filter Include="Source\RoguelikeThing\Map">
-      <UniqueIdentifier>{96CA8FB4-516A-4963-A374-01FCF2BBFE7A}</UniqueIdentifier>
+      <UniqueIdentifier>{23FD0C8F-86BB-4E66-8A19-154D0DC827DD}</UniqueIdentifier>
     </Filter>
     <ClCompile Include="..\..\Source\RoguelikeThing\Map\MapDimensions.cpp">
       <Filter>Source\RoguelikeThing\Map</Filter>
@@ -170,12 +179,12 @@
       <Filter>Source\RoguelikeThing\Map</Filter>
     </ClInclude>
     <Filter Include="Source\RoguelikeThing\SaveGame">
-      <UniqueIdentifier>{CFD5A286-C971-464B-BDF8-CA7E152CEEEA}</UniqueIdentifier>
+      <UniqueIdentifier>{0AD111FD-85C2-4E3C-8409-EA67C405F84E}</UniqueIdentifier>
     </Filter>
-    <ClCompile Include="..\..\Source\RoguelikeThing\SaveGame\InteractiveObjectsSaver.cpp">
+    <ClCompile Include="..\..\Source\RoguelikeThing\SaveGame\ExpeditionInteractionObjectSaver.cpp">
       <Filter>Source\RoguelikeThing\SaveGame</Filter>
     </ClCompile>
-    <ClInclude Include="..\..\Source\RoguelikeThing\SaveGame\InteractiveObjectsSaver.h">
+    <ClInclude Include="..\..\Source\RoguelikeThing\SaveGame\ExpeditionInteractionObjectSaver.h">
       <Filter>Source\RoguelikeThing\SaveGame</Filter>
     </ClInclude>
     <ClCompile Include="..\..\Source\RoguelikeThing\SaveGame\MapSaver.cpp">
@@ -185,16 +194,16 @@
       <Filter>Source\RoguelikeThing\SaveGame</Filter>
     </ClInclude>
     <Filter Include="Source\RoguelikeThing\Structs">
-      <UniqueIdentifier>{1FDEBDB0-0183-450B-9CD1-86598960F795}</UniqueIdentifier>
+      <UniqueIdentifier>{2EC377B3-C6FE-431B-87C7-0B26577DA006}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\RoguelikeThing\Structs\Widgets">
-      <UniqueIdentifier>{55FB1A2C-77A3-4F88-A035-1C9B657AC6C0}</UniqueIdentifier>
+      <UniqueIdentifier>{6CE26620-F91A-419D-AD5C-9CFF42CEF1D9}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\RoguelikeThing\Structs\Widgets\MapEditor">
-      <UniqueIdentifier>{D7ED531E-03C9-4BE8-BF3B-9A1BE8AC71FA}</UniqueIdentifier>
+      <UniqueIdentifier>{8B734D68-FEB6-4678-84B3-76774C68CE71}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source\RoguelikeThing\Structs\Widgets\MapEditor\MapCell">
-      <UniqueIdentifier>{7ABA4898-80A6-4B4E-AC85-EB63DDD75F45}</UniqueIdentifier>
+      <UniqueIdentifier>{B853E56F-7674-4B04-87B0-9F0A13AB9F77}</UniqueIdentifier>
     </Filter>
     <ClCompile Include="..\..\Source\RoguelikeThing\Structs\Widgets\MapEditor\MapCell\NeighbourhoodOfCell.cpp">
       <Filter>Source\RoguelikeThing\Structs\Widgets\MapEditor\MapCell</Filter>
@@ -203,7 +212,7 @@
       <Filter>Source\RoguelikeThing\Structs\Widgets\MapEditor\MapCell</Filter>
     </ClInclude>
     <Filter Include="Source\RoguelikeThing\Widgets">
-      <UniqueIdentifier>{9BE55BCF-2003-4573-9D89-317E078C7FB7}</UniqueIdentifier>
+      <UniqueIdentifier>{33EABBDC-1208-46C6-8059-40C67C871529}</UniqueIdentifier>
     </Filter>
     <ClCompile Include="..\..\Source\RoguelikeThing\Widgets\LoadingWidget.cpp">
       <Filter>Source\RoguelikeThing\Widgets</Filter>
@@ -212,7 +221,7 @@
       <Filter>Source\RoguelikeThing\Widgets</Filter>
     </ClInclude>
     <Filter Include="Source\RoguelikeThing\Widgets\Abstract">
-      <UniqueIdentifier>{581342AE-AA7B-4B60-89E2-A4D85B3B4CBD}</UniqueIdentifier>
+      <UniqueIdentifier>{896BB12F-A566-46B4-85B1-F74BCD18BDAE}</UniqueIdentifier>
     </Filter>
     <ClCompile Include="..\..\Source\RoguelikeThing\Widgets\Abstract\AbstractTile.cpp">
       <Filter>Source\RoguelikeThing\Widgets\Abstract</Filter>
@@ -221,7 +230,7 @@
       <Filter>Source\RoguelikeThing\Widgets\Abstract</Filter>
     </ClInclude>
     <Filter Include="Source\RoguelikeThing\Widgets\MapEditor">
-      <UniqueIdentifier>{DDD001DA-D60E-455B-9592-5CCBCA4AA0E2}</UniqueIdentifier>
+      <UniqueIdentifier>{97F2A580-0417-491A-98E2-9846CF663A6F}</UniqueIdentifier>
     </Filter>
     <ClCompile Include="..\..\Source\RoguelikeThing\Widgets\MapEditor\CellCoord.cpp">
       <Filter>Source\RoguelikeThing\Widgets\MapEditor</Filter>
