@@ -21,11 +21,11 @@ struct FInteractionCondition
 {
 	GENERATED_BODY()
 
-	UPROPERTY(VisibleAnywhere, SaveGame)
-	FString EventsText;
+	UPROPERTY(BlueprintReadWrite, SaveGame)
+	FString InteractionText;
 
-	UPROPERTY(VisibleAnywhere, SaveGame)
-	TArray<FInteractionEvent> InteractionEvents;
+	UPROPERTY(BlueprintReadWrite, SaveGame)
+	TMap<FString, FInteractionEvent> InteractionEvents;
 };
 
 UCLASS(BlueprintType)
@@ -34,15 +34,15 @@ class ROGUELIKETHING_API UExpeditionInteractionObjectData : public UObject
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(VisibleAnywhere, SaveGame)
+	UPROPERTY(BlueprintReadWrite, SaveGame)
 	FString id;
 
-	UPROPERTY(VisibleAnywhere, SaveGame)
+	UPROPERTY(BlueprintReadWrite, SaveGame)
 	FString Name;
 
-	UPROPERTY(VisibleAnywhere, SaveGame)
+	UPROPERTY(BlueprintReadWrite, SaveGame)
 	FString InteractionText;
 
-	UPROPERTY(VisibleAnywhere, SaveGame)
+	UPROPERTY(BlueprintReadWrite, SaveGame)
 	TMap<FString, FInteractionCondition> TermsOfInteractions;
 };
