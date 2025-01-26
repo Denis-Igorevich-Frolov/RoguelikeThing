@@ -5,6 +5,7 @@
 *.db-shm
 *.opendb
 
+/Data/*
 /Binaries/*
 /DerivedDataCache/*
 /Intermediate/Build/*

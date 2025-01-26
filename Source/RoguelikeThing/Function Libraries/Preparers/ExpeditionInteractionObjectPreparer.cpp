@@ -2,9 +2,10 @@
 
 
 #include "RoguelikeThing/Function Libraries/Preparers/ExpeditionInteractionObjectPreparer.h"
-#include <IPlatformFileSandboxWrapper.h>
 #include <HAL/FileManagerGeneric.h>
 #include <XmlParser/Public/XmlFile.h>
+#include <Kismet/GameplayStatics.h>
+#include <Serialization/ObjectAndNameAsStringProxyArchive.h>
 
 void UExpeditionInteractionObjectPreparer::CheckingDefaultExpeditionInteractionObjects()
 {
@@ -286,18 +287,23 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadExpe
             ExpeditionInteractionObjectData->TermsOfInteractions.Add(InteractionNode->GetTag(), InteractionCondition);
         }
 
-        //IFileManager& FileManager = IFileManager::Get();
-        //TArray<FString> Files;
-        //FString Path = FString(FPaths::ConvertRelativePathToFull(FPaths::ProjectDir()) + TEXT("/Data/Expedition interaction objects"));
-        //FString Extention ("");
-        //FileManager.FindFiles(Files, *Path, *Extention);
-
-        //for (FString s : Files) {
-        //        GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Red, s);
-        //}
-
         if (XmlFile)
             delete XmlFile;
+    } 
+    else {
+        TArray<uint8> BinExpeditionInteractionObjectData;
+        FFileHelper::LoadFileToArray(BinExpeditionInteractionObjectData, *SAVFilePath);
+
+        FMemoryReader InteractionObjectReader = FMemoryReader(BinExpeditionInteractionObjectData);
+        FObjectAndNameAsStringProxyArchive InteractionObjectAr(InteractionObjectReader, false);
+        InteractionObjectAr.ArIsSaveGame = true;
+
+        ExpeditionInteractionObjectData = NewObject<UExpeditionInteractionObjectData>();
+        ExpeditionInteractionObjectData->Serialize(InteractionObjectAr);
+
+        if (!ExpeditionInteractionObjectData) {
+            UE_LOG(LogTemp, Error, TEXT("!ExpeditionInteractionObjectData, BinExpeditionInteractionObjectData size %d"), BinExpeditionInteractionObjectData.Num());
+        }
     }
 
     return ExpeditionInteractionObjectData;
@@ -361,13 +367,29 @@ void UExpeditionInteractionObjectPreparer::GetAllExpeditionInteractionObjectsDat
             FileManager.FindFiles(XMLFilesPaths, *ModuleXMLDir, TEXT("xml"));
 
             for (FString XMLFilePath : XMLFilesPaths) {
-                UExpeditionInteractionObjectData* ExpeditionInteractionObjectData = LoadExpeditionInteractionObject(ModuleName, XMLFilePath, ModuleSAVDir, FileManager);
-                if (ExpeditionInteractionObjectData) {
-                    UE_LOG(LogTemp, Log, TEXT("id %s, Name %s, Text %s"), *ExpeditionInteractionObjectData->id, *ExpeditionInteractionObjectData->Name, *ExpeditionInteractionObjectData->InteractionText);
-                    InteractionObjectsDataArray.Add(ExpeditionInteractionObjectData->id, ExpeditionInteractionObjectData);
-                }else{
-                    UE_LOG(LogTemp, Log, TEXT("AAASSSS"));
-                }
+                AsyncTask(ENamedThreads::GameThread, [&InteractionObjectsDataArray, ModuleName, XMLFilePath, ModuleSAVDir, &FileManager, this]() {
+                    UExpeditionInteractionObjectData* ExpeditionInteractionObjectData = LoadExpeditionInteractionObject(ModuleName, XMLFilePath, ModuleSAVDir, FileManager);
+                    if (ExpeditionInteractionObjectData) {
+                        InteractionObjectsDataArray.Add(ExpeditionInteractionObjectData->id, ExpeditionInteractionObjectData);
+
+                        TArray<FString> DirFragments;
+                        XMLFilePath.ParseIntoArray(DirFragments, TEXT("/"));
+                        FString SAVFilePath = FPaths::ProjectDir() + "Data/Expedition interaction objects/" + ModuleName + "/sav/" + DirFragments.Last().LeftChop(4) + ".sav";
+
+                        if (!FileManager.FileExists(*SAVFilePath)) {
+                            TArray<uint8> BinExpeditionInteractionObjectData;
+                            FMemoryWriter InteractionObjectWriter = FMemoryWriter(BinExpeditionInteractionObjectData);
+                            FObjectAndNameAsStringProxyArchive InteractionObjectAr(InteractionObjectWriter, false);
+                            InteractionObjectAr.ArIsSaveGame = true;
+                            ExpeditionInteractionObjectData->Serialize(InteractionObjectAr);
+
+                            UGameplayStatics::SaveDataToSlot(BinExpeditionInteractionObjectData, SAVFilePath.LeftChop(4), 0);
+                        }
+                    }
+                    else {
+                        UE_LOG(LogTemp, Error, TEXT("!ExpeditionInteractionObjectData"));
+                    }
+                    });
             }
 
             GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, TEXT("Expedition interaction objects data loading complite"));
