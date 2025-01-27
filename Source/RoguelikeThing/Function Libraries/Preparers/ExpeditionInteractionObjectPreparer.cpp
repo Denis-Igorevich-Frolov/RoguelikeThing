@@ -348,58 +348,51 @@ void UExpeditionInteractionObjectPreparer::GetAllExpeditionInteractionObjectsDat
             TArray<FString> XMLFilesPaths;
             FileManager.FindFiles(XMLFilesPaths, *ModuleXMLDir, TEXT("xml"));
 
-            AsyncTask(ENamedThreads::GameThread, [&InteractionObjectsDataArray, ModuleName, XMLFilesPaths, ModuleSAVDir, &FileManager, this]() {
-                UExpeditionInteractionObjectsSaver* ExpeditionInteractionObjectsSaver = NewObject<UExpeditionInteractionObjectsSaver>();
+            UExpeditionInteractionObjectsSaver* ExpeditionInteractionObjectsSaver = NewObject<UExpeditionInteractionObjectsSaver>();
 
-                FString ExpeditionInteractionObjectsSaverFilePath = FPaths::ProjectDir() + "Data/Expedition interaction objects/" + ModuleName + "/sav/" + ModuleName + ".sav";
-                bool ExpeditionInteractionObjectsSaverFileExist = FileManager.FileExists(*ExpeditionInteractionObjectsSaverFilePath);
+            FString ExpeditionInteractionObjectsSaverFilePath = FPaths::ProjectDir() + "Data/Expedition interaction objects/" + ModuleName + "/sav/" + ModuleName + ".sav";
+            bool ExpeditionInteractionObjectsSaverFileExist = FileManager.FileExists(*ExpeditionInteractionObjectsSaverFilePath);
 
-                if (ExpeditionInteractionObjectsSaverFileExist) {
-                    ExpeditionInteractionObjectsSaver->LoadBinArray(ExpeditionInteractionObjectsSaverFilePath);
+            if (ExpeditionInteractionObjectsSaverFileExist) {
+                ExpeditionInteractionObjectsSaver->LoadBinArray(ExpeditionInteractionObjectsSaverFilePath);
+            }
+            if (ExpeditionInteractionObjectsSaverFileExist && XMLFilesPaths.Num() == ExpeditionInteractionObjectsSaver->GetBinArraySize() &&
+                ExpeditionInteractionObjectsSaver->CheckHashChange()) {
+                GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Purple, FString(ModuleName + " SAV file load"));
+
+                TMap<FString, UExpeditionInteractionObjectData*> ExpeditionInteractionObjectsData = ExpeditionInteractionObjectsSaver->GetExpeditionInteractionObjectsData();
+                for (FString XMLFilePath : XMLFilesPaths) {
+                    UPROPERTY()
+                    UExpeditionInteractionObjectData* ExpeditionInteractionObjectData = *ExpeditionInteractionObjectsData.Find(XMLFilePath);
+                    if (ExpeditionInteractionObjectData) {
+                        InteractionObjectsDataArray.Add(ExpeditionInteractionObjectData->id, ExpeditionInteractionObjectData);
+                    }
+                    else {
+                        UE_LOG(LogTemp, Error, TEXT("!ExpeditionInteractionObjectData"));
+                    }
+                }
+            }
+            else {
+                GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Purple, FString(ModuleName + " XML file load"));
+
+                ExpeditionInteractionObjectsSaver->ClearArray();
+                for (FString XMLFilePath : XMLFilesPaths) {
+                    UPROPERTY()
+                    UExpeditionInteractionObjectData* ExpeditionInteractionObjectData = LoadExpeditionInteractionObject(ModuleName, XMLFilePath, ModuleSAVDir, FileManager);
+
+                    if (ExpeditionInteractionObjectData) {
+                        ExpeditionInteractionObjectsSaver->AddExpeditionInteractionObjectDataToBinArray(ExpeditionInteractionObjectData, XMLFilePath);
+
+                        InteractionObjectsDataArray.Add(ExpeditionInteractionObjectData->id, ExpeditionInteractionObjectData);
+                    }
+                    else {
+                        UE_LOG(LogTemp, Error, TEXT("!ExpeditionInteractionObjectData"));
+                    }
                 }
 
-                AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [ExpeditionInteractionObjectsSaverFileExist, ExpeditionInteractionObjectsSaver, XMLFilesPaths,
-                    &InteractionObjectsDataArray, ModuleName, ModuleSAVDir, &FileManager, ExpeditionInteractionObjectsSaverFilePath, this]() {
-                        if (ExpeditionInteractionObjectsSaverFileExist && XMLFilesPaths.Num() == ExpeditionInteractionObjectsSaver->GetBinArraySize() &&
-                            ExpeditionInteractionObjectsSaver->CheckHashChange()) {
-                            GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Purple, TEXT("SAV load"));
-
-                            TMap<FString, UExpeditionInteractionObjectData*> ExpeditionInteractionObjectsData = ExpeditionInteractionObjectsSaver->GetExpeditionInteractionObjectsData();
-                            for (FString XMLFilePath : XMLFilesPaths) {
-                                UPROPERTY()
-                                UExpeditionInteractionObjectData* ExpeditionInteractionObjectData = *ExpeditionInteractionObjectsData.Find(XMLFilePath);
-                                if (ExpeditionInteractionObjectData) {
-                                    InteractionObjectsDataArray.Add(ExpeditionInteractionObjectData->id, ExpeditionInteractionObjectData);
-                                }
-                                else {
-                                    UE_LOG(LogTemp, Error, TEXT("!ExpeditionInteractionObjectData"));
-                                }
-                            }
-                        }
-                        else {
-                            GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Purple, TEXT("XML load"));
-
-                            ExpeditionInteractionObjectsSaver->ClearArray();
-                            for (FString XMLFilePath : XMLFilesPaths) {
-                                UPROPERTY()
-                                UExpeditionInteractionObjectData* ExpeditionInteractionObjectData = LoadExpeditionInteractionObject(ModuleName, XMLFilePath, ModuleSAVDir, FileManager);
-
-                                if (ExpeditionInteractionObjectData) {
-                                    ExpeditionInteractionObjectsSaver->AddExpeditionInteractionObjectDataToBinArray(ExpeditionInteractionObjectData, XMLFilePath);
-
-                                    InteractionObjectsDataArray.Add(ExpeditionInteractionObjectData->id, ExpeditionInteractionObjectData);
-                                }
-                                else {
-                                    UE_LOG(LogTemp, Error, TEXT("!ExpeditionInteractionObjectData"));
-                                }
-                            }
-
-                            ExpeditionInteractionObjectsSaver->SaveBinArray(ExpeditionInteractionObjectsSaverFilePath);
-                        }
-                    });
-                });
-
-            GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, TEXT("Expedition interaction objects data loading complite"));
+                ExpeditionInteractionObjectsSaver->SaveBinArray(ExpeditionInteractionObjectsSaverFilePath);
+            }
         }
+        GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, TEXT("Expedition interaction objects data loading complite"));
         });
 }
