@@ -181,10 +181,10 @@
     <Filter Include="Source\RoguelikeThing\SaveGame">
       <UniqueIdentifier>{0AD111FD-85C2-4E3C-8409-EA67C405F84E}</UniqueIdentifier>
     </Filter>
-    <ClCompile Include="..\..\Source\RoguelikeThing\SaveGame\ExpeditionInteractionObjectSaver.cpp">
+    <ClCompile Include="..\..\Source\RoguelikeThing\SaveGame\ExpeditionInteractionObjectsSaver.cpp">
       <Filter>Source\RoguelikeThing\SaveGame</Filter>
     </ClCompile>
-    <ClInclude Include="..\..\Source\RoguelikeThing\SaveGame\ExpeditionInteractionObjectSaver.h">
+    <ClInclude Include="..\..\Source\RoguelikeThing\SaveGame\ExpeditionInteractionObjectsSaver.h">
       <Filter>Source\RoguelikeThing\SaveGame</Filter>
     </ClInclude>
     <ClCompile Include="..\..\Source\RoguelikeThing\SaveGame\MapSaver.cpp">

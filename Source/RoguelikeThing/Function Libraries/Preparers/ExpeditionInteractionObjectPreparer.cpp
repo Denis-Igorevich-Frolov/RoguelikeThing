@@ -6,6 +6,7 @@
 #include <XmlParser/Public/XmlFile.h>
 #include <Kismet/GameplayStatics.h>
 #include <Serialization/ObjectAndNameAsStringProxyArchive.h>
+#include <RoguelikeThing/SaveGame/ExpeditionInteractionObjectsSaver.h>
 
 void UExpeditionInteractionObjectPreparer::CheckingDefaultExpeditionInteractionObjects()
 {
@@ -61,250 +62,231 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadExpe
         return nullptr;
     }
 
-    UExpeditionInteractionObjectData* ExpeditionInteractionObjectData = nullptr;
-    FString SAVFilePath = ModuleSAVDir + "/" + FileName + ".sav";
-    if (!FileManager.FileExists(*SAVFilePath)) {
-        UPROPERTY()
-        ExpeditionInteractionObjectData = NewObject<UExpeditionInteractionObjectData>();
+    UPROPERTY()
+    UExpeditionInteractionObjectData* ExpeditionInteractionObjectData = NewObject<UExpeditionInteractionObjectData>();
 
-        FXmlFile* XmlFile = new FXmlFile(*XMLFilePath);
-        if (!XmlFile) {
-            UE_LOG(LogTemp, Error, TEXT("!!!6"));
+    FXmlFile* XmlFile = new FXmlFile(*XMLFilePath);
+    if (!XmlFile) {
+        UE_LOG(LogTemp, Error, TEXT("!!!6"));
 
-            if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
-                ExpeditionInteractionObjectData->MarkPendingKill();
-            }
-
-            if (ModuleName == "Default") {
-                RestoringDefaultFileByName(FileName);
-                return LoadExpeditionInteractionObject(ModuleName, XMLFilePath, ModuleSAVDir, FileManager);
-            }
-
-            return nullptr;
+        if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
+            ExpeditionInteractionObjectData->MarkPendingKill();
         }
 
-        FXmlNode* RootNode = XmlFile->GetRootNode();
-        if (!RootNode) {
-            UE_LOG(LogTemp, Error, TEXT("!!!7"));
-
-            if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
-                ExpeditionInteractionObjectData->MarkPendingKill();
-            }
-
-            if (ModuleName == "Default") {
-                RestoringDefaultFileByName(FileName);
-                return LoadExpeditionInteractionObject(ModuleName, XMLFilePath, ModuleSAVDir, FileManager);
-            }
-
-            return nullptr;
+        if (ModuleName == "Default") {
+            RestoringDefaultFileByName(FileName);
+            return LoadExpeditionInteractionObject(ModuleName, XMLFilePath, ModuleSAVDir, FileManager);
         }
 
-        FXmlNode* IdNode = RootNode->FindChildNode("id");
-        if (!IdNode) {
-            UE_LOG(LogTemp, Error, TEXT("!!!8"));
-
-            if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
-                ExpeditionInteractionObjectData->MarkPendingKill();
-            }
-
-            if (ModuleName == "Default") {
-                RestoringDefaultFileByName(FileName);
-                return LoadExpeditionInteractionObject(ModuleName, XMLFilePath, ModuleSAVDir, FileManager);
-            }
-
-            return nullptr;
-        }
-        FString id = IdNode->GetContent();
-        if (id == "") {
-            UE_LOG(LogTemp, Error, TEXT("!!!9"));
-
-            if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
-                ExpeditionInteractionObjectData->MarkPendingKill();
-            }
-
-            if (ModuleName == "Default") {
-                RestoringDefaultFileByName(FileName);
-                return LoadExpeditionInteractionObject(ModuleName, XMLFilePath, ModuleSAVDir, FileManager);
-            }
-
-            return nullptr;
-        }
-        ExpeditionInteractionObjectData->id = id;
-
-        FXmlNode* NameNode = RootNode->FindChildNode("Name");
-        if (!NameNode) {
-            UE_LOG(LogTemp, Error, TEXT("!!!10"));
-
-            if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
-                ExpeditionInteractionObjectData->MarkPendingKill();
-            }
-
-            if (ModuleName == "Default") {
-                RestoringDefaultFileByName(FileName);
-                return LoadExpeditionInteractionObject(ModuleName, XMLFilePath, ModuleSAVDir, FileManager);
-            }
-
-            return nullptr;
-        }
-        FString Name = NameNode->GetContent();
-        if (id == "") {
-            UE_LOG(LogTemp, Error, TEXT("!!!11"));
-
-            if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
-                ExpeditionInteractionObjectData->MarkPendingKill();
-            }
-
-            if (ModuleName == "Default") {
-                RestoringDefaultFileByName(FileName);
-                return LoadExpeditionInteractionObject(ModuleName, XMLFilePath, ModuleSAVDir, FileManager);
-            }
-
-            return nullptr;
-        }
-        ExpeditionInteractionObjectData->Name = Name;
-
-        FXmlNode* InteractionTextNode = RootNode->FindChildNode("InteractionText");
-        if (!InteractionTextNode) {
-            UE_LOG(LogTemp, Error, TEXT("!!!10"));
-
-            if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
-                ExpeditionInteractionObjectData->MarkPendingKill();
-            }
-
-            if (ModuleName == "Default") {
-                RestoringDefaultFileByName(FileName);
-                return LoadExpeditionInteractionObject(ModuleName, XMLFilePath, ModuleSAVDir, FileManager);
-            }
-
-            return nullptr;
-        }
-        FString InteractionText = InteractionTextNode->GetContent();
-        if (id == "") {
-            UE_LOG(LogTemp, Error, TEXT("!!!11"));
-
-            if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
-                ExpeditionInteractionObjectData->MarkPendingKill();
-            }
-
-            if (ModuleName == "Default") {
-                RestoringDefaultFileByName(FileName);
-                return LoadExpeditionInteractionObject(ModuleName, XMLFilePath, ModuleSAVDir, FileManager);
-            }
-
-            return nullptr;
-        }
-        ExpeditionInteractionObjectData->InteractionText = InteractionText;
-
-        FXmlNode* TermsOfInteractionsNode = RootNode->FindChildNode("TermsOfInteractions");
-        if (!TermsOfInteractionsNode) {
-            UE_LOG(LogTemp, Error, TEXT("!!!12"));
-
-            if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
-                ExpeditionInteractionObjectData->MarkPendingKill();
-            }
-
-            if (ModuleName == "Default") {
-                RestoringDefaultFileByName(FileName);
-                return LoadExpeditionInteractionObject(ModuleName, XMLFilePath, ModuleSAVDir, FileManager);
-            }
-
-            return nullptr;
-        }
-
-        TArray<FXmlNode*> TermsOfInteractions = TermsOfInteractionsNode->GetChildrenNodes();
-        for (FXmlNode* InteractionNode : TermsOfInteractions) {
-            if (!InteractionNode) {
-                UE_LOG(LogTemp, Error, TEXT("!!!13"));
-
-                if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
-                    ExpeditionInteractionObjectData->MarkPendingKill();
-                }
-
-                if (ModuleName == "Default") {
-                    RestoringDefaultFileByName(FileName);
-                    return LoadExpeditionInteractionObject(ModuleName, XMLFilePath, ModuleSAVDir, FileManager);
-                }
-
-                return nullptr;
-            }
-
-            FXmlNode* EventsText = InteractionNode->FindChildNode("EventsText");
-            if (!EventsText) {
-                UE_LOG(LogTemp, Error, TEXT("!!!14"));
-
-                if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
-                    ExpeditionInteractionObjectData->MarkPendingKill();
-                }
-
-                if (ModuleName == "Default") {
-                    RestoringDefaultFileByName(FileName);
-                    return LoadExpeditionInteractionObject(ModuleName, XMLFilePath, ModuleSAVDir, FileManager);
-                }
-
-                return nullptr;
-            }
-
-            FInteractionCondition InteractionCondition;
-            InteractionCondition.InteractionText = EventsText->GetContent();
-
-            FXmlNode* EventsNode = InteractionNode->FindChildNode("Events");
-            if (!EventsNode) {
-                UE_LOG(LogTemp, Error, TEXT("!!!15"));
-
-                if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
-                    ExpeditionInteractionObjectData->MarkPendingKill();
-                }
-
-                if (ModuleName == "Default") {
-                    RestoringDefaultFileByName(FileName);
-                    return LoadExpeditionInteractionObject(ModuleName, XMLFilePath, ModuleSAVDir, FileManager);
-                }
-
-                return nullptr;
-            }
-
-            TArray<FXmlNode*> Events = EventsNode->GetChildrenNodes();
-            for (FXmlNode* Event : Events) {
-                if (!Event) {
-                    UE_LOG(LogTemp, Error, TEXT("!!!16"));
-
-                    if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
-                        ExpeditionInteractionObjectData->MarkPendingKill();
-                    }
-
-                    if (ModuleName == "Default") {
-                        RestoringDefaultFileByName(FileName);
-                        return LoadExpeditionInteractionObject(ModuleName, XMLFilePath, ModuleSAVDir, FileManager);
-                    }
-
-                    return nullptr;
-                }
-
-                FInteractionEvent InteractionEvent;
-                InteractionCondition.InteractionEvents.Add(Event->GetTag(), InteractionEvent);
-            }
-
-            ExpeditionInteractionObjectData->TermsOfInteractions.Add(InteractionNode->GetTag(), InteractionCondition);
-        }
-
-        if (XmlFile)
-            delete XmlFile;
-    } 
-    else {
-        TArray<uint8> BinExpeditionInteractionObjectData;
-        FFileHelper::LoadFileToArray(BinExpeditionInteractionObjectData, *SAVFilePath);
-
-        FMemoryReader InteractionObjectReader = FMemoryReader(BinExpeditionInteractionObjectData);
-        FObjectAndNameAsStringProxyArchive InteractionObjectAr(InteractionObjectReader, false);
-        InteractionObjectAr.ArIsSaveGame = true;
-
-        ExpeditionInteractionObjectData = NewObject<UExpeditionInteractionObjectData>();
-        ExpeditionInteractionObjectData->Serialize(InteractionObjectAr);
-
-        if (!ExpeditionInteractionObjectData) {
-            UE_LOG(LogTemp, Error, TEXT("!ExpeditionInteractionObjectData, BinExpeditionInteractionObjectData size %d"), BinExpeditionInteractionObjectData.Num());
-        }
+        return nullptr;
     }
+
+    FXmlNode* RootNode = XmlFile->GetRootNode();
+    if (!RootNode) {
+        UE_LOG(LogTemp, Error, TEXT("!!!7"));
+
+        if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
+            ExpeditionInteractionObjectData->MarkPendingKill();
+        }
+
+        if (ModuleName == "Default") {
+            RestoringDefaultFileByName(FileName);
+            return LoadExpeditionInteractionObject(ModuleName, XMLFilePath, ModuleSAVDir, FileManager);
+        }
+
+        return nullptr;
+    }
+
+    FXmlNode* IdNode = RootNode->FindChildNode("id");
+    if (!IdNode) {
+        UE_LOG(LogTemp, Error, TEXT("!!!8"));
+
+        if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
+            ExpeditionInteractionObjectData->MarkPendingKill();
+        }
+
+        if (ModuleName == "Default") {
+            RestoringDefaultFileByName(FileName);
+            return LoadExpeditionInteractionObject(ModuleName, XMLFilePath, ModuleSAVDir, FileManager);
+        }
+
+        return nullptr;
+    }
+    FString id = IdNode->GetContent();
+    if (id == "") {
+        UE_LOG(LogTemp, Error, TEXT("!!!9"));
+
+        if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
+            ExpeditionInteractionObjectData->MarkPendingKill();
+        }
+
+        if (ModuleName == "Default") {
+            RestoringDefaultFileByName(FileName);
+            return LoadExpeditionInteractionObject(ModuleName, XMLFilePath, ModuleSAVDir, FileManager);
+        }
+
+        return nullptr;
+    }
+    ExpeditionInteractionObjectData->id = id;
+
+    FXmlNode* NameNode = RootNode->FindChildNode("Name");
+    if (!NameNode) {
+        UE_LOG(LogTemp, Error, TEXT("!!!10"));
+
+        if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
+            ExpeditionInteractionObjectData->MarkPendingKill();
+        }
+
+        if (ModuleName == "Default") {
+            RestoringDefaultFileByName(FileName);
+            return LoadExpeditionInteractionObject(ModuleName, XMLFilePath, ModuleSAVDir, FileManager);
+        }
+
+        return nullptr;
+    }
+    FString Name = NameNode->GetContent();
+    if (id == "") {
+        UE_LOG(LogTemp, Error, TEXT("!!!11"));
+
+        if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
+            ExpeditionInteractionObjectData->MarkPendingKill();
+        }
+
+        if (ModuleName == "Default") {
+            RestoringDefaultFileByName(FileName);
+            return LoadExpeditionInteractionObject(ModuleName, XMLFilePath, ModuleSAVDir, FileManager);
+        }
+
+        return nullptr;
+    }
+    ExpeditionInteractionObjectData->Name = Name;
+
+    FXmlNode* InteractionTextNode = RootNode->FindChildNode("InteractionText");
+    if (!InteractionTextNode) {
+        UE_LOG(LogTemp, Error, TEXT("!!!10"));
+
+        if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
+            ExpeditionInteractionObjectData->MarkPendingKill();
+        }
+
+        if (ModuleName == "Default") {
+            RestoringDefaultFileByName(FileName);
+            return LoadExpeditionInteractionObject(ModuleName, XMLFilePath, ModuleSAVDir, FileManager);
+        }
+
+        return nullptr;
+    }
+    FString InteractionText = InteractionTextNode->GetContent();
+    if (id == "") {
+        UE_LOG(LogTemp, Error, TEXT("!!!11"));
+
+        if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
+            ExpeditionInteractionObjectData->MarkPendingKill();
+        }
+
+        if (ModuleName == "Default") {
+            RestoringDefaultFileByName(FileName);
+            return LoadExpeditionInteractionObject(ModuleName, XMLFilePath, ModuleSAVDir, FileManager);
+        }
+
+        return nullptr;
+    }
+    ExpeditionInteractionObjectData->InteractionText = InteractionText;
+
+    FXmlNode* TermsOfInteractionsNode = RootNode->FindChildNode("TermsOfInteractions");
+    if (!TermsOfInteractionsNode) {
+        UE_LOG(LogTemp, Error, TEXT("!!!12"));
+
+        if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
+            ExpeditionInteractionObjectData->MarkPendingKill();
+        }
+
+        if (ModuleName == "Default") {
+            RestoringDefaultFileByName(FileName);
+            return LoadExpeditionInteractionObject(ModuleName, XMLFilePath, ModuleSAVDir, FileManager);
+        }
+
+        return nullptr;
+    }
+
+    TArray<FXmlNode*> TermsOfInteractions = TermsOfInteractionsNode->GetChildrenNodes();
+    for (FXmlNode* InteractionNode : TermsOfInteractions) {
+        if (!InteractionNode) {
+            UE_LOG(LogTemp, Error, TEXT("!!!13"));
+
+            if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
+                ExpeditionInteractionObjectData->MarkPendingKill();
+            }
+
+            if (ModuleName == "Default") {
+                RestoringDefaultFileByName(FileName);
+                return LoadExpeditionInteractionObject(ModuleName, XMLFilePath, ModuleSAVDir, FileManager);
+            }
+
+            return nullptr;
+        }
+
+        FXmlNode* EventsText = InteractionNode->FindChildNode("EventsText");
+        if (!EventsText) {
+            UE_LOG(LogTemp, Error, TEXT("!!!14"));
+
+            if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
+                ExpeditionInteractionObjectData->MarkPendingKill();
+            }
+
+            if (ModuleName == "Default") {
+                RestoringDefaultFileByName(FileName);
+                return LoadExpeditionInteractionObject(ModuleName, XMLFilePath, ModuleSAVDir, FileManager);
+            }
+
+            return nullptr;
+        }
+
+        FInteractionCondition InteractionCondition;
+        InteractionCondition.InteractionText = EventsText->GetContent();
+
+        FXmlNode* EventsNode = InteractionNode->FindChildNode("Events");
+        if (!EventsNode) {
+            UE_LOG(LogTemp, Error, TEXT("!!!15"));
+
+            if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
+                ExpeditionInteractionObjectData->MarkPendingKill();
+            }
+
+            if (ModuleName == "Default") {
+                RestoringDefaultFileByName(FileName);
+                return LoadExpeditionInteractionObject(ModuleName, XMLFilePath, ModuleSAVDir, FileManager);
+            }
+
+            return nullptr;
+        }
+
+        TArray<FXmlNode*> Events = EventsNode->GetChildrenNodes();
+        for (FXmlNode* Event : Events) {
+            if (!Event) {
+                UE_LOG(LogTemp, Error, TEXT("!!!16"));
+
+                if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
+                    ExpeditionInteractionObjectData->MarkPendingKill();
+                }
+
+                if (ModuleName == "Default") {
+                    RestoringDefaultFileByName(FileName);
+                    return LoadExpeditionInteractionObject(ModuleName, XMLFilePath, ModuleSAVDir, FileManager);
+                }
+
+                return nullptr;
+            }
+
+            FInteractionEvent InteractionEvent;
+            InteractionCondition.InteractionEvents.Add(Event->GetTag(), InteractionEvent);
+        }
+
+        ExpeditionInteractionObjectData->TermsOfInteractions.Add(InteractionNode->GetTag(), InteractionCondition);
+    }
+
+    if (XmlFile)
+        delete XmlFile;
 
     return ExpeditionInteractionObjectData;
 }
@@ -366,31 +348,56 @@ void UExpeditionInteractionObjectPreparer::GetAllExpeditionInteractionObjectsDat
             TArray<FString> XMLFilesPaths;
             FileManager.FindFiles(XMLFilesPaths, *ModuleXMLDir, TEXT("xml"));
 
-            for (FString XMLFilePath : XMLFilesPaths) {
-                AsyncTask(ENamedThreads::GameThread, [&InteractionObjectsDataArray, ModuleName, XMLFilePath, ModuleSAVDir, &FileManager, this]() {
-                    UExpeditionInteractionObjectData* ExpeditionInteractionObjectData = LoadExpeditionInteractionObject(ModuleName, XMLFilePath, ModuleSAVDir, FileManager);
-                    if (ExpeditionInteractionObjectData) {
-                        InteractionObjectsDataArray.Add(ExpeditionInteractionObjectData->id, ExpeditionInteractionObjectData);
+            AsyncTask(ENamedThreads::GameThread, [&InteractionObjectsDataArray, ModuleName, XMLFilesPaths, ModuleSAVDir, &FileManager, this]() {
+                UExpeditionInteractionObjectsSaver* ExpeditionInteractionObjectsSaver = NewObject<UExpeditionInteractionObjectsSaver>();
 
-                        TArray<FString> DirFragments;
-                        XMLFilePath.ParseIntoArray(DirFragments, TEXT("/"));
-                        FString SAVFilePath = FPaths::ProjectDir() + "Data/Expedition interaction objects/" + ModuleName + "/sav/" + DirFragments.Last().LeftChop(4) + ".sav";
+                FString ExpeditionInteractionObjectsSaverFilePath = FPaths::ProjectDir() + "Data/Expedition interaction objects/" + ModuleName + "/sav/" + ModuleName + ".sav";
+                bool ExpeditionInteractionObjectsSaverFileExist = FileManager.FileExists(*ExpeditionInteractionObjectsSaverFilePath);
 
-                        if (!FileManager.FileExists(*SAVFilePath)) {
-                            TArray<uint8> BinExpeditionInteractionObjectData;
-                            FMemoryWriter InteractionObjectWriter = FMemoryWriter(BinExpeditionInteractionObjectData);
-                            FObjectAndNameAsStringProxyArchive InteractionObjectAr(InteractionObjectWriter, false);
-                            InteractionObjectAr.ArIsSaveGame = true;
-                            ExpeditionInteractionObjectData->Serialize(InteractionObjectAr);
+                if (ExpeditionInteractionObjectsSaverFileExist) {
+                    ExpeditionInteractionObjectsSaver->LoadBinArray(ExpeditionInteractionObjectsSaverFilePath);
+                }
 
-                            UGameplayStatics::SaveDataToSlot(BinExpeditionInteractionObjectData, SAVFilePath.LeftChop(4), 0);
+                AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [ExpeditionInteractionObjectsSaverFileExist, ExpeditionInteractionObjectsSaver, XMLFilesPaths,
+                    &InteractionObjectsDataArray, ModuleName, ModuleSAVDir, &FileManager, ExpeditionInteractionObjectsSaverFilePath, this]() {
+                        if (ExpeditionInteractionObjectsSaverFileExist && XMLFilesPaths.Num() == ExpeditionInteractionObjectsSaver->GetBinArraySize() &&
+                            ExpeditionInteractionObjectsSaver->CheckHashChange()) {
+                            GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Purple, TEXT("SAV load"));
+
+                            TMap<FString, UExpeditionInteractionObjectData*> ExpeditionInteractionObjectsData = ExpeditionInteractionObjectsSaver->GetExpeditionInteractionObjectsData();
+                            for (FString XMLFilePath : XMLFilesPaths) {
+                                UPROPERTY()
+                                UExpeditionInteractionObjectData* ExpeditionInteractionObjectData = *ExpeditionInteractionObjectsData.Find(XMLFilePath);
+                                if (ExpeditionInteractionObjectData) {
+                                    InteractionObjectsDataArray.Add(ExpeditionInteractionObjectData->id, ExpeditionInteractionObjectData);
+                                }
+                                else {
+                                    UE_LOG(LogTemp, Error, TEXT("!ExpeditionInteractionObjectData"));
+                                }
+                            }
                         }
-                    }
-                    else {
-                        UE_LOG(LogTemp, Error, TEXT("!ExpeditionInteractionObjectData"));
-                    }
+                        else {
+                            GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Purple, TEXT("XML load"));
+
+                            ExpeditionInteractionObjectsSaver->ClearArray();
+                            for (FString XMLFilePath : XMLFilesPaths) {
+                                UPROPERTY()
+                                UExpeditionInteractionObjectData* ExpeditionInteractionObjectData = LoadExpeditionInteractionObject(ModuleName, XMLFilePath, ModuleSAVDir, FileManager);
+
+                                if (ExpeditionInteractionObjectData) {
+                                    ExpeditionInteractionObjectsSaver->AddExpeditionInteractionObjectDataToBinArray(ExpeditionInteractionObjectData, XMLFilePath);
+
+                                    InteractionObjectsDataArray.Add(ExpeditionInteractionObjectData->id, ExpeditionInteractionObjectData);
+                                }
+                                else {
+                                    UE_LOG(LogTemp, Error, TEXT("!ExpeditionInteractionObjectData"));
+                                }
+                            }
+
+                            ExpeditionInteractionObjectsSaver->SaveBinArray(ExpeditionInteractionObjectsSaverFilePath);
+                        }
                     });
-            }
+                });
 
             GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, TEXT("Expedition interaction objects data loading complite"));
         }
