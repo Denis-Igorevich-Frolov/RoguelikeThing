@@ -7,6 +7,10 @@
 #include "RoguelikeThing/GameObjects/ExpeditionInteractionObjectData.h"
 #include "ExpeditionInteractionObject.generated.h"
 
+/**************************************************************************************************
+ * Данный класс является классом объекта взаимодействия, находящимся на карте во время экспедиции
+ **************************************************************************************************/
+
 UCLASS()
 class ROGUELIKETHING_API AExpeditionInteractionObject : public AActor
 {
@@ -17,11 +21,8 @@ private:
 
 public:
 
-
 	UFUNCTION(BlueprintCallable)
 	void SetExpeditionInteractionObjectData(UExpeditionInteractionObjectData* expeditionInteractionObjectData);
-	const UExpeditionInteractionObjectData* SetExpeditionInteractionObjectData();
-
-	//UFUNCTION(BlueprintCallable)
-	//void XMLTest();
+	UFUNCTION(BlueprintCallable)
+	const UExpeditionInteractionObjectData* GetExpeditionInteractionObjectData();
 };
