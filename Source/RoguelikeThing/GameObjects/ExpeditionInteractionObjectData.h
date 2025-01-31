@@ -42,6 +42,12 @@ public:
 	FString id;
 
 	UPROPERTY(BlueprintReadWrite, SaveGame)
+	FString Category;
+
+	UPROPERTY(BlueprintReadWrite, SaveGame)
+	FString SubCategory;
+
+	UPROPERTY(BlueprintReadWrite, SaveGame)
 	FString Name;
 
 	//Текст, который будет выведен при попытке взаимодействия с объектом

@@ -15,6 +15,57 @@
 
 DECLARE_LOG_CATEGORY_EXTERN(ExpeditionInteractionObjectPreparer, Log, All);
 
+//Структура подкатегории объектов взаимодействия
+USTRUCT(BlueprintType)
+struct FExpeditionInteractionObjectSubCategory
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+	TMap<FString, UExpeditionInteractionObjectData*> InteractionObjectsDataArray;
+};
+
+//Структура категории объектов взаимодействия
+USTRUCT(BlueprintType)
+struct FExpeditionInteractionObjectCategory
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+	TMap<FString, FExpeditionInteractionObjectSubCategory> InteractionObjectsSubCategorysArray;
+};
+
+//Структура модуля объектов взаимодействия
+USTRUCT(BlueprintType)
+struct FExpeditionInteractionObjectModule
+{
+	GENERATED_BODY()
+
+	UPROPERTY(BlueprintReadWrite)
+	TMap<FString, FExpeditionInteractionObjectCategory> InteractionObjectsCategorysArray;
+};
+
+//Контейнер со всеми объектами взаимодействия
+UCLASS(BlueprintType)
+class UExpeditionInteractionObjectContainer : public UObject
+{
+	GENERATED_BODY()
+
+private:
+
+	UPROPERTY()
+	TMap<FString, FExpeditionInteractionObjectModule> InteractionObjectsModulesArray;
+
+public:
+	FString InteractionObjectsModulesArray2;
+
+	UFUNCTION(BlueprintCallable)
+	void AddExpeditionInteractionObjectData(FString ModuleName, FString CategoryName, FString SubCategoryName,
+		FString ObjectId, UExpeditionInteractionObjectData* ExpeditionInteractionObjectData);
+	UFUNCTION(BlueprintCallable)
+	const UExpeditionInteractionObjectData* const FindExpeditionInteractionObjectData(FString ModuleName, FString CategoryName, FString SubCategoryName, FString ObjectId);
+};
+
 UCLASS(BlueprintType)
 class ROGUELIKETHING_API UExpeditionInteractionObjectPreparer : public UBlueprintFunctionLibrary
 {
@@ -37,5 +88,5 @@ public:
 
 	//Функция получения данных обо всех объектах взаимодействия всех модулей
 	UFUNCTION(BlueprintCallable)
-	void GetAllExpeditionInteractionObjectsData(UPARAM(ref)TMap<FString, UExpeditionInteractionObjectData*>& InteractionObjectsDataArray);
+	void GetAllExpeditionInteractionObjectsData(UPARAM(ref)UExpeditionInteractionObjectContainer*& ExpeditionInteractionObjectContainer);
 };

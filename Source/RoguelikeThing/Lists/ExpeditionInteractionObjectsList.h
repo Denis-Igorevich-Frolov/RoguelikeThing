@@ -23,6 +23,8 @@ public:
 				"\n"
 				"<root>\n"
 				"	<id>WoodChest</id>\n"
+				"	<Category>Container</Category>\n"
+				"	<SubCategory>Common</SubCategory>\n"
 				"	<Name>Деревянный сундук</Name>\n"
 				"	<InteractionText>Крепкий и тяжёлый деревянный сундук. На его лицевой стороне зияет замочная скважина.</InteractionText>\n"
 				"	<TermsOfInteractions>\n"

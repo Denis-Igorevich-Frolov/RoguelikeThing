@@ -196,6 +196,58 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadExpe
     }
     ExpeditionInteractionObjectData->id = id;
 
+    FXmlNode* CategoryNode = RootNode->FindChildNode("Category");
+    if (!CategoryNode) {
+        UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadExpeditionInteractionObjectFromXML function - Failed to extract Category node from file %s"), *XMLFilePath);
+
+        if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
+            ExpeditionInteractionObjectData->MarkPendingKill();
+        }
+
+        if (ModuleName == "Default") {
+            UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
+            if (RestoringDefaultFileByName(FileName)) {
+                UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("File %s has been restored"), *XMLFilePath);
+                return LoadExpeditionInteractionObjectFromXML(ModuleName, XMLFilePath, FileManager, ++RecursionDepth);
+            }
+            else {
+                UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadExpeditionInteractionObjectFromXML function - An attempt to restore file %s failed. Abnormal termination."), *XMLFilePath);
+                FGenericPlatformMisc::RequestExit(false);
+            }
+        }
+
+        return nullptr;
+    }
+
+    FString Category = CategoryNode->GetContent();
+    ExpeditionInteractionObjectData->Category = Category;
+
+    FXmlNode* SubCategoryNode = RootNode->FindChildNode("SubCategory");
+    if (!SubCategoryNode) {
+        UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadExpeditionInteractionObjectFromXML function - Failed to extract SubCategory node from file %s"), *XMLFilePath);
+
+        if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
+            ExpeditionInteractionObjectData->MarkPendingKill();
+        }
+
+        if (ModuleName == "Default") {
+            UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
+            if (RestoringDefaultFileByName(FileName)) {
+                UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("File %s has been restored"), *XMLFilePath);
+                return LoadExpeditionInteractionObjectFromXML(ModuleName, XMLFilePath, FileManager, ++RecursionDepth);
+            }
+            else {
+                UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadExpeditionInteractionObjectFromXML function - An attempt to restore file %s failed. Abnormal termination."), *XMLFilePath);
+                FGenericPlatformMisc::RequestExit(false);
+            }
+        }
+
+        return nullptr;
+    }
+
+    FString SubCategory = SubCategoryNode->GetContent();
+    ExpeditionInteractionObjectData->SubCategory = SubCategory;
+
     FXmlNode* NameNode = RootNode->FindChildNode("Name");
     if (!NameNode) {
         UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadExpeditionInteractionObjectFromXML function - Failed to extract Name node from file %s"), *XMLFilePath);
@@ -424,9 +476,9 @@ bool UExpeditionInteractionObjectPreparer::RestoringDefaultFileByName(FString Na
 }
 
 //Функция получения данных обо всех объектах взаимодействия всех модулей
-void UExpeditionInteractionObjectPreparer::GetAllExpeditionInteractionObjectsData(TMap<FString, UExpeditionInteractionObjectData*>& InteractionObjectsDataArray)
+void UExpeditionInteractionObjectPreparer::GetAllExpeditionInteractionObjectsData(UExpeditionInteractionObjectContainer*& ExpeditionInteractionObjectContainer)
 {
-    AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [&InteractionObjectsDataArray, this]() {
+    AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [ExpeditionInteractionObjectContainer, this]() {
         //Сначала проверяется не повреждены ли данные модуля Default
         CheckingDefaultExpeditionInteractionObjects();
 
@@ -485,7 +537,8 @@ void UExpeditionInteractionObjectPreparer::GetAllExpeditionInteractionObjectsDat
                     UPROPERTY()
                     UExpeditionInteractionObjectData* ExpeditionInteractionObjectData = *ExpeditionInteractionObjectsData.Find(XMLFilePath);
                     if (ExpeditionInteractionObjectData) {
-                        InteractionObjectsDataArray.Add(ExpeditionInteractionObjectData->id, ExpeditionInteractionObjectData);
+                        ExpeditionInteractionObjectContainer->AddExpeditionInteractionObjectData(ModuleName, ExpeditionInteractionObjectData->Category,
+                            ExpeditionInteractionObjectData->SubCategory, ExpeditionInteractionObjectData->id, ExpeditionInteractionObjectData);
                     }
                     else {
                         UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the GetAllExpeditionInteractionObjectsData function - ExpeditionInteractionObjectData is not valid"));
@@ -514,7 +567,8 @@ void UExpeditionInteractionObjectPreparer::GetAllExpeditionInteractionObjectsDat
                     if (ExpeditionInteractionObjectData) {
                         InteractionObjectsSaver->AddExpeditionInteractionObjectDataToBinArray(ExpeditionInteractionObjectData, XMLFilePath);
 
-                        InteractionObjectsDataArray.Add(ExpeditionInteractionObjectData->id, ExpeditionInteractionObjectData);
+                        ExpeditionInteractionObjectContainer->AddExpeditionInteractionObjectData(ModuleName, ExpeditionInteractionObjectData->Category,
+                            ExpeditionInteractionObjectData->SubCategory, ExpeditionInteractionObjectData->id, ExpeditionInteractionObjectData);
                     }
                     else {
                         UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the GetAllExpeditionInteractionObjectsData function - ExpeditionInteractionObjectData is not valid"));
@@ -528,4 +582,44 @@ void UExpeditionInteractionObjectPreparer::GetAllExpeditionInteractionObjectsDat
         }
         GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, TEXT("Expedition interaction objects data loading complite"));
         });
+}
+
+void UExpeditionInteractionObjectContainer::AddExpeditionInteractionObjectData(FString ModuleName, FString CategoryName,
+    FString SubCategoryName, FString ObjectId, UExpeditionInteractionObjectData* ExpeditionInteractionObjectData)
+{
+    FExpeditionInteractionObjectModule& Module = InteractionObjectsModulesArray.FindOrAdd(ModuleName);
+    FExpeditionInteractionObjectCategory& Category = Module.InteractionObjectsCategorysArray.FindOrAdd(CategoryName);
+    FExpeditionInteractionObjectSubCategory& SubCategory = Category.InteractionObjectsSubCategorysArray.FindOrAdd(SubCategoryName);
+
+    SubCategory.InteractionObjectsDataArray.Add(ObjectId, ExpeditionInteractionObjectData);
+}
+
+const UExpeditionInteractionObjectData* const UExpeditionInteractionObjectContainer::FindExpeditionInteractionObjectData(
+    FString ModuleName, FString CategoryName, FString SubCategoryName, FString ObjectId)
+{
+    FExpeditionInteractionObjectModule* Module = InteractionObjectsModulesArray.Find(ModuleName);
+    if (Module) {
+        FExpeditionInteractionObjectCategory* Category = Module->InteractionObjectsCategorysArray.Find(CategoryName);
+        if (Category) {
+            FExpeditionInteractionObjectSubCategory* SubCategory  = Category->InteractionObjectsSubCategorysArray.Find(SubCategoryName);
+            if (SubCategory) {
+                UExpeditionInteractionObjectData** ExpeditionInteractionObjectData = SubCategory->InteractionObjectsDataArray.Find(ObjectId);
+                if (ExpeditionInteractionObjectData) {
+                    return *ExpeditionInteractionObjectData;
+                }
+                else {
+                    return nullptr;
+                }
+            }
+            else {
+                return nullptr;
+            }
+        }
+        else {
+            return nullptr;
+        }
+    }
+    else {
+        return nullptr;
+    }
 }
