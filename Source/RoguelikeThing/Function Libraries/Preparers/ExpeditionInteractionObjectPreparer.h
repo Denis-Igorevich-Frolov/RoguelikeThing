@@ -66,6 +66,9 @@ public:
 	const UExpeditionInteractionObjectData* const FindExpeditionInteractionObjectData(FString ModuleName, FString CategoryName, FString SubCategoryName, FString ObjectId);
 };
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FChangeTextOfTheDownloadDetailsDelegate, FString, Text, FColor, Color);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE(FLoadingCompleteDelegate);
+
 UCLASS(BlueprintType)
 class ROGUELIKETHING_API UExpeditionInteractionObjectPreparer : public UBlueprintFunctionLibrary
 {
@@ -82,6 +85,13 @@ private:
 	UExpeditionInteractionObjectData* LoadExpeditionInteractionObjectFromXML(FString ModuleName, FString XMLFilePath, IPlatformFile& FileManager, int RecursionDepth = 0);
 	
 public:
+
+	UPROPERTY(BlueprintAssignable)
+	FChangeTextOfTheDownloadDetailsDelegate ChangeTextOfTheDownloadDetails;
+
+	UPROPERTY(BlueprintAssignable)
+	FLoadingCompleteDelegate LoadingComplete;
+
 	//Функция восстановления файла из моодуля Default по его имени (без расширения)
 	UFUNCTION(BlueprintCallable)
 	bool RestoringDefaultFileByName(FString Name);

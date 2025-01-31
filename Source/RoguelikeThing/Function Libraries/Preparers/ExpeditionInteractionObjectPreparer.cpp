@@ -529,7 +529,9 @@ void UExpeditionInteractionObjectPreparer::GetAllExpeditionInteractionObjectsDat
             //Идёт проверка не изменилось ли количество xml файлов в директории модуля и не изменился ли их хеш
             if (InteractionObjectsSaver && XMLFilesPaths.Num() == InteractionObjectsSaver->GetBinArraySize() && InteractionObjectsSaver->CheckHashChange()) {
                 UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("Loading will be done from a save file %s with serialized data"), *ExpeditionInteractionObjectsSaverFilePath);
-                GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Purple, FString(ModuleName + ".sav file loading"));
+                AsyncTask(ENamedThreads::GameThread, [ModuleName, this]() {
+                    ChangeTextOfTheDownloadDetails.Broadcast(FString("Loading file:  " + ModuleName + ".sav"), FColor::FromHex("160124"));
+                    });
 
                 //Если все файлы остались неизменными с момента сериализации, то загрузка объектов ведётся напрямую из сохранённых бинарных данных
                 TMap<FString, UExpeditionInteractionObjectData*> ExpeditionInteractionObjectsData = InteractionObjectsSaver->GetExpeditionInteractionObjectsData();
@@ -545,7 +547,9 @@ void UExpeditionInteractionObjectPreparer::GetAllExpeditionInteractionObjectsDat
                         
                         TArray<FString> PathPieces;
                         XMLFilePath.ParseIntoArray(PathPieces, TEXT("/"), false);
-                        GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, FString("Object " + PathPieces.Last().Left(4) + " could not be loaded"));
+                        AsyncTask(ENamedThreads::GameThread, [ModuleName, PathPieces, this]() {
+                            ChangeTextOfTheDownloadDetails.Broadcast(FString("Object " + PathPieces.Last().Left(4) + " could not be loaded"), FColor::Red);
+                            });
                     }
                 }
             }
@@ -559,7 +563,9 @@ void UExpeditionInteractionObjectPreparer::GetAllExpeditionInteractionObjectsDat
 
                     TArray<FString> PathPieces;
                     XMLFilePath.ParseIntoArray(PathPieces, TEXT("/"), false);
-                    GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Purple, FString(PathPieces.Last() + " file loading"));
+                    AsyncTask(ENamedThreads::GameThread, [PathPieces, this]() {
+                        ChangeTextOfTheDownloadDetails.Broadcast(FString("Loading file:  " + PathPieces.Last()), FColor::FromHex("160124"));
+                        });
 
                     UPROPERTY()
                     UExpeditionInteractionObjectData* ExpeditionInteractionObjectData = LoadExpeditionInteractionObjectFromXML(ModuleName, XMLFilePath, FileManager);
@@ -572,7 +578,9 @@ void UExpeditionInteractionObjectPreparer::GetAllExpeditionInteractionObjectsDat
                     }
                     else {
                         UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the GetAllExpeditionInteractionObjectsData function - ExpeditionInteractionObjectData is not valid"));
-                        GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Red, FString("Object " + PathPieces.Last().Left(4) + " could not be loaded"));
+                        AsyncTask(ENamedThreads::GameThread, [PathPieces, this]() {
+                            ChangeTextOfTheDownloadDetails.Broadcast(FString("Object " + PathPieces.Last().Left(4) + " could not be loaded"), FColor::Red);
+                            });
                     }
                 }
 
@@ -580,7 +588,10 @@ void UExpeditionInteractionObjectPreparer::GetAllExpeditionInteractionObjectsDat
                 InteractionObjectsSaver->SaveBinArray(ExpeditionInteractionObjectsSaverFilePath);
             }
         }
-        GEngine->AddOnScreenDebugMessage(-1, 3.0f, FColor::Green, TEXT("Expedition interaction objects data loading complite"));
+        AsyncTask(ENamedThreads::GameThread, [this]() {
+            ChangeTextOfTheDownloadDetails.Broadcast(FString("Expedition interaction objects data loading complite"), FColor::Green);
+            LoadingComplete.Broadcast();
+            });
         });
 }
 
