@@ -61,7 +61,17 @@ void UExpeditionInteractionObjectsSaver::LoadBinArray(FString FilePath)
     InteractionObjectsAr.ArIsSaveGame = true;
 
     //Создаётся промежуточный экземпляр этого же класса, потому что сериализация на this как-то не сработала
-    UExpeditionInteractionObjectsSaver* Saver = NewObject<UExpeditionInteractionObjectsSaver>();
+    UPROPERTY()
+    UExpeditionInteractionObjectsSaver* Saver = nullptr;
+
+    AsyncTask(ENamedThreads::GameThread, [&Saver, this]() {
+        Saver = NewObject<UExpeditionInteractionObjectsSaver>();
+        Saver->AddToRoot();
+        });
+
+    while (!Saver) {
+        FPlatformProcess::SleepNoStats(0.0f);
+    }
 
     if (Saver) {
         Saver->Serialize(InteractionObjectsAr);
@@ -71,8 +81,12 @@ void UExpeditionInteractionObjectsSaver::LoadBinArray(FString FilePath)
         XMLFilesHash = Saver->XMLFilesHash;
 
         //И в конце промежуточный экземпляр уничтожается за ненадобностью
-        if (Saver->IsValidLowLevel())
+        if (Saver->IsValidLowLevel()) {
+            if (Saver->IsRooted())
+                Saver->RemoveFromRoot();
+
             Saver->MarkPendingKill();
+        }
     }
     else {
         UE_LOG(ExpeditionInteractionObjectsSaver, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectsSaver class in the LoadBinArray function - ExpeditionInteractionObjectsSaver is not valid"));
@@ -140,6 +154,7 @@ TMap<FString, UExpeditionInteractionObjectData*> UExpeditionInteractionObjectsSa
 
             UPROPERTY()
             UExpeditionInteractionObjectData* ExpeditionInteractionObjectData = NewObject<UExpeditionInteractionObjectData>();
+
             ExpeditionInteractionObjectData->Serialize(InteractionObjectAr);
 
             Result.Add(Key, ExpeditionInteractionObjectData);

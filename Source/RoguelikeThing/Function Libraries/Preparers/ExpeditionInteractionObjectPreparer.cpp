@@ -76,13 +76,25 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadExpe
     }
 
     UPROPERTY()
-    UExpeditionInteractionObjectData* ExpeditionInteractionObjectData = NewObject<UExpeditionInteractionObjectData>();
+    UExpeditionInteractionObjectData* ExpeditionInteractionObjectData = nullptr;
+
+    AsyncTask(ENamedThreads::GameThread, [&ExpeditionInteractionObjectData, this]() {
+        ExpeditionInteractionObjectData = NewObject<UExpeditionInteractionObjectData>();
+        ExpeditionInteractionObjectData->AddToRoot();
+        });
+
+    while (!ExpeditionInteractionObjectData) {
+        FPlatformProcess::SleepNoStats(0.0f);
+    }
 
     FXmlFile* XmlFile = new FXmlFile(*XMLFilePath);
     if (!XmlFile) {
         UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadExpeditionInteractionObjectFromXML function - Failed to create file %s"), *XMLFilePath);
 
         if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
+            if (ExpeditionInteractionObjectData->IsRooted())
+                ExpeditionInteractionObjectData->RemoveFromRoot();
+
             ExpeditionInteractionObjectData->MarkPendingKill();
         }
 
@@ -478,7 +490,7 @@ bool UExpeditionInteractionObjectPreparer::RestoringDefaultFileByName(FString Na
 //Функция получения данных обо всех объектах взаимодействия всех модулей
 void UExpeditionInteractionObjectPreparer::GetAllExpeditionInteractionObjectsData(UExpeditionInteractionObjectContainer*& ExpeditionInteractionObjectContainer)
 {
-    AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [ExpeditionInteractionObjectContainer, this]() {
+    AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [&ExpeditionInteractionObjectContainer, this]() {
         //Сначала проверяется не повреждены ли данные модуля Default
         CheckingDefaultExpeditionInteractionObjects();
 
@@ -516,7 +528,17 @@ void UExpeditionInteractionObjectPreparer::GetAllExpeditionInteractionObjectsDat
             TArray<FString> XMLFilesPaths;
             FileManager.FindFiles(XMLFilesPaths, *ModuleXMLDir, TEXT("xml"));
 
-            UExpeditionInteractionObjectsSaver* InteractionObjectsSaver = NewObject<UExpeditionInteractionObjectsSaver>();
+            UPROPERTY()
+            UExpeditionInteractionObjectsSaver* InteractionObjectsSaver = nullptr;
+
+            AsyncTask(ENamedThreads::GameThread, [&InteractionObjectsSaver, this]() {
+                InteractionObjectsSaver = NewObject<UExpeditionInteractionObjectsSaver>();
+                InteractionObjectsSaver->AddToRoot();
+                });
+
+            while (!InteractionObjectsSaver) {
+                FPlatformProcess::SleepNoStats(0.0f);
+            }
 
             FString ExpeditionInteractionObjectsSaverFilePath = FPaths::ProjectDir() + "Data/Expedition interaction objects/" + ModuleName + "/sav/" + ModuleName + ".sav";
             bool ExpeditionInteractionObjectsSaverFileExist = FileManager.FileExists(*ExpeditionInteractionObjectsSaverFilePath);
@@ -534,7 +556,18 @@ void UExpeditionInteractionObjectPreparer::GetAllExpeditionInteractionObjectsDat
                     });
 
                 //Если все файлы остались неизменными с момента сериализации, то загрузка объектов ведётся напрямую из сохранённых бинарных данных
-                TMap<FString, UExpeditionInteractionObjectData*> ExpeditionInteractionObjectsData = InteractionObjectsSaver->GetExpeditionInteractionObjectsData();
+                TMap<FString, UExpeditionInteractionObjectData*> ExpeditionInteractionObjectsData;
+                
+                bool done = false;
+                AsyncTask(ENamedThreads::GameThread, [&ExpeditionInteractionObjectsData, &InteractionObjectsSaver, &done]() {
+                    ExpeditionInteractionObjectsData = InteractionObjectsSaver->GetExpeditionInteractionObjectsData();
+                    done = true;
+                    });
+
+                while (!done) {
+                    FPlatformProcess::SleepNoStats(0.0f);
+                }
+
                 for (FString XMLFilePath : XMLFilesPaths) {
                     UPROPERTY()
                     UExpeditionInteractionObjectData* ExpeditionInteractionObjectData = *ExpeditionInteractionObjectsData.Find(XMLFilePath);
@@ -586,6 +619,9 @@ void UExpeditionInteractionObjectPreparer::GetAllExpeditionInteractionObjectsDat
 
                 //Заново сгенерированный массив данных обо всех объектах интеракции данного модуля сериализуется и сохраняется в sav файл
                 InteractionObjectsSaver->SaveBinArray(ExpeditionInteractionObjectsSaverFilePath);
+
+                if (InteractionObjectsSaver->IsValidLowLevel() && InteractionObjectsSaver->IsRooted())
+                    InteractionObjectsSaver->RemoveFromRoot();
             }
         }
         AsyncTask(ENamedThreads::GameThread, [this]() {
