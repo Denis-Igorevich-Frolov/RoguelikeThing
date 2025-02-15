@@ -46,7 +46,7 @@ public:
 
 	/* Функция, добавляющая данные о предмете взаимодействия экспедиции в массив всех объектов
 	 * соответствующего модуля для последующего сохранения. Также сохраняется хеш исходного xml файла */
-	void AddExpeditionInteractionObjectDataToBinArray(UExpeditionInteractionObjectData* ExpeditionInteractionObjectData, FString FilePath);
+	void AddExpeditionInteractionObjectDataToBinArray(UExpeditionInteractionObjectData* ExpeditionInteractionObjectData, FString SavedLocalFilePath, FString FullFilePath);
 	/* Получение коллекции всех объектов взаимодействия экспедиции загруженного модуля. Ключом коллекции
 	 * является путь до исходного xml файла, а значением - непосредственно данные по этому объекту */
 	TMap<FString, UExpeditionInteractionObjectData*> GetExpeditionInteractionObjectsData();

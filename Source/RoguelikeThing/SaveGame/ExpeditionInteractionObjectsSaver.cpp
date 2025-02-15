@@ -9,11 +9,12 @@ DEFINE_LOG_CATEGORY(ExpeditionInteractionObjectsSaver);
 
 /* Функция, добавляющая данные о предмете взаимодействия экспедиции в массив всех объектов
  * соответствующего модуля для последующего сохранения. Также сохраняется хеш исходного xml файла */
-void UExpeditionInteractionObjectsSaver::AddExpeditionInteractionObjectDataToBinArray(UExpeditionInteractionObjectData* ExpeditionInteractionObjectData, FString FilePath)
+void UExpeditionInteractionObjectsSaver::AddExpeditionInteractionObjectDataToBinArray(
+    UExpeditionInteractionObjectData* ExpeditionInteractionObjectData, FString SavedLocalFilePath, FString FullFilePath)
 {
     IPlatformFile& FileManager = FPlatformFileManager::Get().GetPlatformFile();
 
-    if (FileManager.FileExists(*FilePath)) {
+    if (FileManager.FileExists(*FullFilePath)) {
         //В бинрную обёртку записываются сериализованные данные переменной ExpeditionInteractionObjectData
         UPROPERTY(SaveGame)
         FBinArrayWrapper BinArrayWrapper;
@@ -22,16 +23,16 @@ void UExpeditionInteractionObjectsSaver::AddExpeditionInteractionObjectDataToBin
         InteractionObjectAr.ArIsSaveGame = true;
         ExpeditionInteractionObjectData->Serialize(InteractionObjectAr);
 
-        BinExpeditionInteractionObjectsData.Add(FilePath, BinArrayWrapper);
+        BinExpeditionInteractionObjectsData.Add(SavedLocalFilePath, BinArrayWrapper);
 
         //Запоминается хеш исходного xml файла, который понадобится при следующей загрузке, чтобы отследить возможное изменение файла
-        FMD5Hash FileHash = FMD5Hash::HashFile(*FilePath);
+        FMD5Hash FileHash = FMD5Hash::HashFile(*FullFilePath);
         FString ExpeditionInteractionObjectHash = LexToString(FileHash);
 
-        XMLFilesHash.Add(FilePath, ExpeditionInteractionObjectHash);
+        XMLFilesHash.Add(SavedLocalFilePath, ExpeditionInteractionObjectHash);
     }
     else {
-        UE_LOG(ExpeditionInteractionObjectsSaver, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectsSaver class in the AddExpeditionInteractionObjectDataToBinArray function - file %s is not exist"), *FilePath);
+        UE_LOG(ExpeditionInteractionObjectsSaver, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectsSaver class in the AddExpeditionInteractionObjectDataToBinArray function - file %s is not exist"), *FullFilePath);
     }
 
 }
@@ -101,11 +102,12 @@ bool UExpeditionInteractionObjectsSaver::CheckHashChange()
 
     IPlatformFile& FileManager = FPlatformFileManager::Get().GetPlatformFile();
     for (FString FilePath : XMLFilesPaths) {
+        FString FullFilePath = FPaths::ConvertRelativePathToFull(FPaths::ProjectDir()) + FilePath;
         //Если файла, который раньше был, больше нет, то следовательно изменения очевидно происходили
-        if (FileManager.FileExists(*FilePath)) {
+        if (FileManager.FileExists(*FullFilePath)) {
             FString OldFileHash = *XMLFilesHash.Find(FilePath);
 
-            FMD5Hash FileHash = FMD5Hash::HashFile(*FilePath);
+            FMD5Hash FileHash = FMD5Hash::HashFile(*FullFilePath);
             FString CurrentFileHas = LexToString(FileHash);
 
             if (CurrentFileHas != OldFileHash) {

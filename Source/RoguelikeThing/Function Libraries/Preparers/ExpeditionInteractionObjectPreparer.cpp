@@ -102,7 +102,7 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadExpe
         if (ModuleName == "Default") {
             UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
             if (RestoringDefaultFileByName(FileName)) {
-                UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("File %s has been restored"), *XMLFilePath);
+                UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
                 //И после его восстановления, рекурсивно запускается эта же функция с целью ещё раз попытаться загрузить уже восстановленный файл
                 return LoadExpeditionInteractionObjectFromXML(ModuleName, XMLFilePath, FileManager, ++RecursionDepth);
             }
@@ -120,13 +120,16 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadExpe
         UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadExpeditionInteractionObjectFromXML function - xml code from file %s is not valid"), *XMLFilePath);
 
         if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
+            if (ExpeditionInteractionObjectData->IsRooted())
+                ExpeditionInteractionObjectData->RemoveFromRoot();
+
             ExpeditionInteractionObjectData->MarkPendingKill();
         }
 
         if (ModuleName == "Default") {
             UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
             if (RestoringDefaultFileByName(FileName)) {
-                UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("File %s has been restored"), *XMLFilePath);
+                UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
                 return LoadExpeditionInteractionObjectFromXML(ModuleName, XMLFilePath, FileManager, ++RecursionDepth);
             }
             else {
@@ -143,13 +146,16 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadExpe
         UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadExpeditionInteractionObjectFromXML function - Failed to extract RootNode from file %s"), *XMLFilePath);
 
         if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
+            if (ExpeditionInteractionObjectData->IsRooted())
+                ExpeditionInteractionObjectData->RemoveFromRoot();
+
             ExpeditionInteractionObjectData->MarkPendingKill();
         }
 
         if (ModuleName == "Default") {
             UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
             if (RestoringDefaultFileByName(FileName)) {
-                UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("File %s has been restored"), *XMLFilePath);
+                UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
                 return LoadExpeditionInteractionObjectFromXML(ModuleName, XMLFilePath, FileManager, ++RecursionDepth);
             }
             else {
@@ -166,13 +172,16 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadExpe
         UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadExpeditionInteractionObjectFromXML function - Failed to extract id node from file %s"), *XMLFilePath);
 
         if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
+            if (ExpeditionInteractionObjectData->IsRooted())
+                ExpeditionInteractionObjectData->RemoveFromRoot();
+
             ExpeditionInteractionObjectData->MarkPendingKill();
         }
 
         if (ModuleName == "Default") {
             UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
             if (RestoringDefaultFileByName(FileName)) {
-                UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("File %s has been restored"), *XMLFilePath);
+                UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
                 return LoadExpeditionInteractionObjectFromXML(ModuleName, XMLFilePath, FileManager, ++RecursionDepth);
             }
             else {
@@ -189,13 +198,16 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadExpe
         UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadExpeditionInteractionObjectFromXML function - Id node from file %s is empty"), *XMLFilePath);
 
         if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
+            if (ExpeditionInteractionObjectData->IsRooted())
+                ExpeditionInteractionObjectData->RemoveFromRoot();
+
             ExpeditionInteractionObjectData->MarkPendingKill();
         }
 
         if (ModuleName == "Default") {
             UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
             if (RestoringDefaultFileByName(FileName)) {
-                UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("File %s has been restored"), *XMLFilePath);
+                UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
                 return LoadExpeditionInteractionObjectFromXML(ModuleName, XMLFilePath, FileManager, ++RecursionDepth);
             }
             else {
@@ -213,13 +225,16 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadExpe
         UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadExpeditionInteractionObjectFromXML function - Failed to extract Category node from file %s"), *XMLFilePath);
 
         if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
+            if (ExpeditionInteractionObjectData->IsRooted())
+                ExpeditionInteractionObjectData->RemoveFromRoot();
+
             ExpeditionInteractionObjectData->MarkPendingKill();
         }
 
         if (ModuleName == "Default") {
             UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
             if (RestoringDefaultFileByName(FileName)) {
-                UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("File %s has been restored"), *XMLFilePath);
+                UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
                 return LoadExpeditionInteractionObjectFromXML(ModuleName, XMLFilePath, FileManager, ++RecursionDepth);
             }
             else {
@@ -239,13 +254,16 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadExpe
         UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadExpeditionInteractionObjectFromXML function - Failed to extract SubCategory node from file %s"), *XMLFilePath);
 
         if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
+            if (ExpeditionInteractionObjectData->IsRooted())
+                ExpeditionInteractionObjectData->RemoveFromRoot();
+
             ExpeditionInteractionObjectData->MarkPendingKill();
         }
 
         if (ModuleName == "Default") {
             UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
             if (RestoringDefaultFileByName(FileName)) {
-                UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("File %s has been restored"), *XMLFilePath);
+                UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
                 return LoadExpeditionInteractionObjectFromXML(ModuleName, XMLFilePath, FileManager, ++RecursionDepth);
             }
             else {
@@ -265,13 +283,16 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadExpe
         UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadExpeditionInteractionObjectFromXML function - Failed to extract Name node from file %s"), *XMLFilePath);
 
         if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
+            if (ExpeditionInteractionObjectData->IsRooted())
+                ExpeditionInteractionObjectData->RemoveFromRoot();
+
             ExpeditionInteractionObjectData->MarkPendingKill();
         }
 
         if (ModuleName == "Default") {
             UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
             if (RestoringDefaultFileByName(FileName)) {
-                UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("File %s has been restored"), *XMLFilePath);
+                UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
                 return LoadExpeditionInteractionObjectFromXML(ModuleName, XMLFilePath, FileManager, ++RecursionDepth);
             }
             else {
@@ -288,13 +309,16 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadExpe
         UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadExpeditionInteractionObjectFromXML function - Name node from file %s is empty"), *XMLFilePath);
 
         if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
+            if (ExpeditionInteractionObjectData->IsRooted())
+                ExpeditionInteractionObjectData->RemoveFromRoot();
+
             ExpeditionInteractionObjectData->MarkPendingKill();
         }
 
         if (ModuleName == "Default") {
             UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
             if (RestoringDefaultFileByName(FileName)) {
-                UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("File %s has been restored"), *XMLFilePath);
+                UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
                 return LoadExpeditionInteractionObjectFromXML(ModuleName, XMLFilePath, FileManager, ++RecursionDepth);
             }
             else {
@@ -312,13 +336,16 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadExpe
         UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadExpeditionInteractionObjectFromXML function - Failed to extract InteractionText node from file %s"), *XMLFilePath);
 
         if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
+            if (ExpeditionInteractionObjectData->IsRooted())
+                ExpeditionInteractionObjectData->RemoveFromRoot();
+
             ExpeditionInteractionObjectData->MarkPendingKill();
         }
 
         if (ModuleName == "Default") {
             UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
             if (RestoringDefaultFileByName(FileName)) {
-                UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("File %s has been restored"), *XMLFilePath);
+                UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
                 return LoadExpeditionInteractionObjectFromXML(ModuleName, XMLFilePath, FileManager, ++RecursionDepth);
             }
             else {
@@ -341,13 +368,16 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadExpe
         UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadExpeditionInteractionObjectFromXML function - Failed to extract TermsOfInteractions node from file %s"), *XMLFilePath);
 
         if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
+            if (ExpeditionInteractionObjectData->IsRooted())
+                ExpeditionInteractionObjectData->RemoveFromRoot();
+
             ExpeditionInteractionObjectData->MarkPendingKill();
         }
 
         if (ModuleName == "Default") {
             UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
             if (RestoringDefaultFileByName(FileName)) {
-                UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("File %s has been restored"), *XMLFilePath);
+                UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
                 return LoadExpeditionInteractionObjectFromXML(ModuleName, XMLFilePath, FileManager, ++RecursionDepth);
             }
             else {
@@ -365,13 +395,16 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadExpe
             UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadExpeditionInteractionObjectFromXML function - InteractionNode from file %s is not valid"), *XMLFilePath);
 
             if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
+                if (ExpeditionInteractionObjectData->IsRooted())
+                    ExpeditionInteractionObjectData->RemoveFromRoot();
+
                 ExpeditionInteractionObjectData->MarkPendingKill();
             }
 
             if (ModuleName == "Default") {
                 UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
                 if (RestoringDefaultFileByName(FileName)) {
-                    UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("File %s has been restored"), *XMLFilePath);
+                    UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
                     return LoadExpeditionInteractionObjectFromXML(ModuleName, XMLFilePath, FileManager, ++RecursionDepth);
                 }
                 else {
@@ -388,13 +421,16 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadExpe
             UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadExpeditionInteractionObjectFromXML function - Failed to extract EventsText node from %s node from file %s"), *InteractionNode->GetTag(), *XMLFilePath);
 
             if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
+                if (ExpeditionInteractionObjectData->IsRooted())
+                    ExpeditionInteractionObjectData->RemoveFromRoot();
+
                 ExpeditionInteractionObjectData->MarkPendingKill();
             }
 
             if (ModuleName == "Default") {
                 UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
                 if (RestoringDefaultFileByName(FileName)) {
-                    UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("File %s has been restored"), *XMLFilePath);
+                    UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
                     return LoadExpeditionInteractionObjectFromXML(ModuleName, XMLFilePath, FileManager, ++RecursionDepth);
                 }
                 else {
@@ -414,13 +450,16 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadExpe
             UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadExpeditionInteractionObjectFromXML function - Failed to extract Events node from %s node from file %s"), *InteractionNode->GetTag(), *XMLFilePath);
 
             if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
+                if (ExpeditionInteractionObjectData->IsRooted())
+                    ExpeditionInteractionObjectData->RemoveFromRoot();
+
                 ExpeditionInteractionObjectData->MarkPendingKill();
             }
 
             if (ModuleName == "Default") {
                 UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
                 if (RestoringDefaultFileByName(FileName)) {
-                    UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("File %s has been restored"), *XMLFilePath);
+                    UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
                     return LoadExpeditionInteractionObjectFromXML(ModuleName, XMLFilePath, FileManager, ++RecursionDepth);
                 }
                 else {
@@ -438,13 +477,16 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadExpe
                 UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadExpeditionInteractionObjectFromXML function - Event node from %s node from file %s is not valid"), *InteractionNode->GetTag(), *XMLFilePath);
 
                 if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
+                    if (ExpeditionInteractionObjectData->IsRooted())
+                        ExpeditionInteractionObjectData->RemoveFromRoot();
+
                     ExpeditionInteractionObjectData->MarkPendingKill();
                 }
 
                 if (ModuleName == "Default") {
                     UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
                     if (RestoringDefaultFileByName(FileName)) {
-                        UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("File %s has been restored"), *XMLFilePath);
+                        UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
                         return LoadExpeditionInteractionObjectFromXML(ModuleName, XMLFilePath, FileManager, ++RecursionDepth);
                     }
                     else {
@@ -476,7 +518,14 @@ bool UExpeditionInteractionObjectPreparer::RestoringDefaultFileByName(FString Na
 
     FString ModulePath = FString(FPaths::ConvertRelativePathToFull(FPaths::ProjectDir()) + TEXT("Data/Expedition interaction objects/Default/xml/"));
     FString FilePath = ModulePath + Name;
-    FString FileContent = *expeditionInteractionObjectsList.ExpeditionInteractionObjectsXMLs.Find(*Name);
+    FString* FileContentRef = expeditionInteractionObjectsList.ExpeditionInteractionObjectsXMLs.Find(*Name);
+
+    if (!FileContentRef) {
+        UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!!!!!!!!"));
+        return false;
+    }
+
+    FString FileContent = *FileContentRef;
 
     if (!FFileHelper::SaveStringToFile(FileContent, *FilePath, FFileHelper::EEncodingOptions::ForceUTF8, &IFileManager::Get(), EFileWrite::FILEWRITE_None)) {
         UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the ConvertRelativePathToFull function - Failed to create file %s"), *FilePath);
@@ -528,6 +577,10 @@ void UExpeditionInteractionObjectPreparer::GetAllExpeditionInteractionObjectsDat
             TArray<FString> XMLFilesPaths;
             FileManager.FindFiles(XMLFilesPaths, *ModuleXMLDir, TEXT("xml"));
 
+            for (FString& XMLFilePath : XMLFilesPaths) {
+                XMLFilePath = XMLFilePath.Replace(*FString(FPaths::ConvertRelativePathToFull(FPaths::ProjectDir())), *FString(""));
+            }
+
             UPROPERTY()
             UExpeditionInteractionObjectsSaver* InteractionObjectsSaver = nullptr;
 
@@ -569,20 +622,27 @@ void UExpeditionInteractionObjectPreparer::GetAllExpeditionInteractionObjectsDat
                 }
 
                 for (FString XMLFilePath : XMLFilesPaths) {
-                    UPROPERTY()
-                    UExpeditionInteractionObjectData* ExpeditionInteractionObjectData = *ExpeditionInteractionObjectsData.Find(XMLFilePath);
-                    if (ExpeditionInteractionObjectData) {
-                        ExpeditionInteractionObjectContainer->AddExpeditionInteractionObjectData(ModuleName, ExpeditionInteractionObjectData->Category,
-                            ExpeditionInteractionObjectData->SubCategory, ExpeditionInteractionObjectData->id, ExpeditionInteractionObjectData);
+                    UExpeditionInteractionObjectData** ExpeditionInteractionObjectDataRef = ExpeditionInteractionObjectsData.Find(XMLFilePath);
+
+                    if (ExpeditionInteractionObjectDataRef) {
+                        UPROPERTY()
+                        UExpeditionInteractionObjectData* ExpeditionInteractionObjectData = *ExpeditionInteractionObjectDataRef;
+                        if (ExpeditionInteractionObjectData) {
+                            ExpeditionInteractionObjectContainer->AddExpeditionInteractionObjectData(ModuleName, ExpeditionInteractionObjectData->Category,
+                                ExpeditionInteractionObjectData->SubCategory, ExpeditionInteractionObjectData->id, ExpeditionInteractionObjectData);
+                        }
+                        else {
+                            UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the GetAllExpeditionInteractionObjectsData function - ExpeditionInteractionObjectData is not valid"));
+
+                            TArray<FString> PathPieces;
+                            XMLFilePath.ParseIntoArray(PathPieces, TEXT("/"), false);
+                            AsyncTask(ENamedThreads::GameThread, [ModuleName, PathPieces, this]() {
+                                ChangeTextOfTheDownloadDetails.Broadcast(FString("Object " + PathPieces.Last().Left(4) + " could not be loaded"), FColor::Red);
+                                });
+                        }
                     }
                     else {
-                        UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the GetAllExpeditionInteractionObjectsData function - ExpeditionInteractionObjectData is not valid"));
-                        
-                        TArray<FString> PathPieces;
-                        XMLFilePath.ParseIntoArray(PathPieces, TEXT("/"), false);
-                        AsyncTask(ENamedThreads::GameThread, [ModuleName, PathPieces, this]() {
-                            ChangeTextOfTheDownloadDetails.Broadcast(FString("Object " + PathPieces.Last().Left(4) + " could not be loaded"), FColor::Red);
-                            });
+                        UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!!!!"));
                     }
                 }
             }
@@ -592,19 +652,21 @@ void UExpeditionInteractionObjectPreparer::GetAllExpeditionInteractionObjectsDat
                 //Если файлы менялись, то загрузка производится из xml файлов с их последующим сохранениев в новый sav файл
                 InteractionObjectsSaver->ClearArray();
                 for (FString XMLFilePath : XMLFilesPaths) {
-                    UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("Loading will be done from a xml file %s"), *XMLFilePath);
+                    FString FullXMLFilePath = FPaths::ConvertRelativePathToFull(FPaths::ProjectDir()) + XMLFilePath;
+
+                    UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("Loading will be done from a xml file %s"), *FullXMLFilePath);
 
                     TArray<FString> PathPieces;
-                    XMLFilePath.ParseIntoArray(PathPieces, TEXT("/"), false);
+                    FullXMLFilePath.ParseIntoArray(PathPieces, TEXT("/"), false);
                     AsyncTask(ENamedThreads::GameThread, [PathPieces, this]() {
                         ChangeTextOfTheDownloadDetails.Broadcast(FString("Loading file:  " + PathPieces.Last()), FColor::FromHex("160124"));
                         });
 
                     UPROPERTY()
-                    UExpeditionInteractionObjectData* ExpeditionInteractionObjectData = LoadExpeditionInteractionObjectFromXML(ModuleName, XMLFilePath, FileManager);
+                    UExpeditionInteractionObjectData* ExpeditionInteractionObjectData = LoadExpeditionInteractionObjectFromXML(ModuleName, FullXMLFilePath, FileManager);
 
                     if (ExpeditionInteractionObjectData) {
-                        InteractionObjectsSaver->AddExpeditionInteractionObjectDataToBinArray(ExpeditionInteractionObjectData, XMLFilePath);
+                        InteractionObjectsSaver->AddExpeditionInteractionObjectDataToBinArray(ExpeditionInteractionObjectData, XMLFilePath, FullXMLFilePath);
 
                         ExpeditionInteractionObjectContainer->AddExpeditionInteractionObjectData(ModuleName, ExpeditionInteractionObjectData->Category,
                             ExpeditionInteractionObjectData->SubCategory, ExpeditionInteractionObjectData->id, ExpeditionInteractionObjectData);
