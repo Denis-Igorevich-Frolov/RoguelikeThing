@@ -32,7 +32,7 @@ UMapMatrix::~UMapMatrix()
     mapDataBase->Close();
     delete mapDataBase;
 
-    if(TerrainOfTilesContainer)
+    if(TerrainOfTilesContainer && TerrainOfTilesContainer->IsValidLowLevel())
         TerrainOfTilesContainer->TerrainOfTilesRows.Empty();
 }
 
