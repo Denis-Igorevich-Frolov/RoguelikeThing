@@ -2416,7 +2416,7 @@ TArray<FCellCoord> UMapMatrix::GetCorridorArray(FCellCoord CallingCellCoord, FCe
             CellsArray.Add(FCellCoord(CallingCellCoord.Row, CallingCellCoord.Col + 1));
         }
     }
-    if ((FCellCoord(CallingCellCoord.Row, CallingCellCoord.Col - 1) != CurrentCellCoord) && (CallingCellCoord.Col - 1 >= MinNoEmptyTileCoord.Row * MapTileLength)) {
+    if ((FCellCoord(CallingCellCoord.Row, CallingCellCoord.Col - 1) != CurrentCellCoord) && (CallingCellCoord.Col - 1 >= MinNoEmptyTileCoord.Col * MapTileLength)) {
         FCellType CellType = GetValueOfMapChunkStructureCellByGlobalIndex(CallingCellCoord.Row, CallingCellCoord.Col - 1);
 
         if (CellType == FCellType::Corridor) {
