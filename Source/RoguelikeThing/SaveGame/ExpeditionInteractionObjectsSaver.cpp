@@ -41,6 +41,7 @@ void UExpeditionInteractionObjectsSaver::AddExpeditionInteractionObjectDataToBin
  * одному модулю, сохраняется в sav файл, который будет находится по переданному пути */
 void UExpeditionInteractionObjectsSaver::SaveBinArray(FString FilePath)
 {
+    SavFilePath = FilePath;
     TArray<uint8> BinArrayData;
     FMemoryWriter InteractionObjectsWriter = FMemoryWriter(BinArrayData);
     FObjectAndNameAsStringProxyArchive InteractionObjectAr(InteractionObjectsWriter, false);
@@ -82,6 +83,7 @@ void UExpeditionInteractionObjectsSaver::LoadBinArray(FString FilePath)
         //Из промежуточного экземпляра все коллекции перекидываются на текущий
         BinExpeditionInteractionObjectsData = Saver->BinExpeditionInteractionObjectsData;
         XMLFilesHash = Saver->XMLFilesHash;
+        SavFilePath = Saver->SavFilePath;
 
         //И в конце промежуточный экземпляр уничтожается за ненадобностью
         if (Saver->IsValidLowLevel()) {
@@ -169,4 +171,9 @@ TMap<FString, UExpeditionInteractionObjectData*> UExpeditionInteractionObjectsSa
     }
 
     return Result;
+}
+
+const FString UExpeditionInteractionObjectsSaver::GetSavFilePath()
+{
+    return SavFilePath;
 }

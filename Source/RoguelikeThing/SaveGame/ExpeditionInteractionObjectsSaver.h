@@ -42,6 +42,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, SaveGame)
 	TMap<FString, FString> XMLFilesHash;
 
+	UPROPERTY(VisibleAnywhere, SaveGame)
+	FString SavFilePath;
+
 public:
 
 	/* Функция, добавляющая данные о предмете взаимодействия экспедиции в массив всех объектов
@@ -50,6 +53,7 @@ public:
 	/* Получение коллекции всех объектов взаимодействия экспедиции загруженного модуля. Ключом коллекции
 	 * является путь до исходного xml файла, а значением - непосредственно данные по этому объекту */
 	TMap<FString, UExpeditionInteractionObjectData*> GetExpeditionInteractionObjectsData();
+	const FString GetSavFilePath();
 	/* Полностью сформированный массив объектов взаимодействия экспедиции, относящихся к
 	 * одному модулю, сохраняется в sav файл, который будет находится по переданному пути */
 	void SaveBinArray(FString FilePath);

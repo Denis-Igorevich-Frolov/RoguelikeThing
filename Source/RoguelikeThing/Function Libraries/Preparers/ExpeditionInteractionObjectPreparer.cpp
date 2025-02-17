@@ -627,7 +627,8 @@ void UExpeditionInteractionObjectPreparer::GetAllExpeditionInteractionObjectsDat
             }
 
             //Идёт проверка не изменилось ли количество xml файлов в директории модуля и не изменился ли их хеш
-            if (InteractionObjectsSaver && XMLFilesPaths.Num() == InteractionObjectsSaver->GetBinArraySize() && InteractionObjectsSaver->CheckHashChange()) {
+            if (InteractionObjectsSaver && XMLFilesPaths.Num() == InteractionObjectsSaver->GetBinArraySize() && InteractionObjectsSaver->CheckHashChange() &&
+                ExpeditionInteractionObjectsSaverFilePath == InteractionObjectsSaver->GetSavFilePath()) {
                 UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("Loading will be done from a save file %s with serialized data"), *ExpeditionInteractionObjectsSaverFilePath);
                 AsyncTask(ENamedThreads::GameThread, [ModuleName, IsModDir, this]() {
                     ChangeTextOfTheDownloadDetails.Broadcast(FString("Loading file:  " + ModuleName + ".sav"), FColor::FromHex("160124"));
