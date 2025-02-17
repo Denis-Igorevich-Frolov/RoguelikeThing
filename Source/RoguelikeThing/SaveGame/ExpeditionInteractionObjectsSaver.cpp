@@ -47,7 +47,9 @@ void UExpeditionInteractionObjectsSaver::SaveBinArray(FString FilePath)
     InteractionObjectAr.ArIsSaveGame = true;
     this->Serialize(InteractionObjectAr);
 
-    UGameplayStatics::SaveDataToSlot(BinArrayData, FilePath.LeftChop(4), 0);
+    if (!UGameplayStatics::SaveDataToSlot(BinArrayData, FilePath.LeftChop(4), 0)) {
+        UE_LOG(ExpeditionInteractionObjectsSaver, Error, TEXT("!!! AAAAAAAAAAAAA %s BinArrayData %d"), *FilePath, BinArrayData.Num());
+    }
 }
 
 /* Загрузка массива объектов взаимодействия экспедиции, который был сохранён в слот по переданному пути.

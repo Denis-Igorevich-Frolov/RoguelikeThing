@@ -98,5 +98,5 @@ public:
 
 	//Функция получения данных обо всех объектах взаимодействия всех модулей
 	UFUNCTION(BlueprintCallable)
-	void GetAllExpeditionInteractionObjectsData(UPARAM(ref)UExpeditionInteractionObjectContainer*& ExpeditionInteractionObjectContainer);
+	void GetAllExpeditionInteractionObjectsData(UPARAM(ref)UExpeditionInteractionObjectContainer*& ExpeditionInteractionObjectContainer, TArray<FString> ModsDirWithInteractionObjects);
 };

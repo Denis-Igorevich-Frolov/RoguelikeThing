@@ -6,6 +6,7 @@
 *.opendb
 
 /Data/*
+/Mods/*
 /Binaries/*
 /DerivedDataCache/*
 /Intermediate/Build/*

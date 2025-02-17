@@ -537,9 +537,10 @@ bool UExpeditionInteractionObjectPreparer::RestoringDefaultFileByName(FString Na
 }
 
 //Функция получения данных обо всех объектах взаимодействия всех модулей
-void UExpeditionInteractionObjectPreparer::GetAllExpeditionInteractionObjectsData(UExpeditionInteractionObjectContainer*& ExpeditionInteractionObjectContainer)
+void UExpeditionInteractionObjectPreparer::GetAllExpeditionInteractionObjectsData(
+    UExpeditionInteractionObjectContainer*& ExpeditionInteractionObjectContainer, TArray<FString> ModsDirWithInteractionObjects)
 {
-    AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [&ExpeditionInteractionObjectContainer, this]() {
+    AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [&ExpeditionInteractionObjectContainer, ModsDirWithInteractionObjects, this]() {
         //Сначала проверяется не повреждены ли данные модуля Default
         CheckingDefaultExpeditionInteractionObjects();
 
@@ -559,7 +560,7 @@ void UExpeditionInteractionObjectPreparer::GetAllExpeditionInteractionObjectsDat
             int SequentialDirectoryNumber = 0;
             DirPieces.Find("Expedition interaction objects", SequentialDirectoryNumber);
 
-            /* Отсееваются некорневые директории по длинне пути. Если директория корневая,
+            /* Отсееваются некорневые директории по длине пути. Если директория корневая,
              * то её длинна должна быть равна последовательному номеру корня общего для всех
              * модулей + 1. Также стоит учеть, что SequentialDirectoryNumber - это индекс,
              * которому до последовательного номера следует прибавить ещё 1 */
@@ -568,11 +569,24 @@ void UExpeditionInteractionObjectPreparer::GetAllExpeditionInteractionObjectsDat
             }
         }
 
+        ModuleNames.Append(ModsDirWithInteractionObjects);
+
         IPlatformFile& FileManager = FPlatformFileManager::Get().GetPlatformFile();
         for (FString ModuleName : ModuleNames) {
             UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("Loading of the expedition interaction objects module %s has begun"), *ModuleName);
 
-            FString ModuleXMLDir = FString(StartDirPath + "/" + ModuleName + "/xml");
+            bool IsModDir = false;
+            if (FileManager.DirectoryExists(*FString(FPaths::ConvertRelativePathToFull(FPaths::ProjectDir()) + "Mods/" + ModuleName))) {
+                IsModDir = true;
+            }
+
+            FString ModuleXMLDir = "";
+            if (IsModDir) {
+                ModuleXMLDir = FString(FPaths::ConvertRelativePathToFull(FPaths::ProjectDir()) + "Mods/" + ModuleName + "/xml");
+            }
+            else {
+                ModuleXMLDir = FString(StartDirPath + "/" + ModuleName + "/xml");
+            }
 
             TArray<FString> XMLFilesPaths;
             FileManager.FindFiles(XMLFilesPaths, *ModuleXMLDir, TEXT("xml"));
@@ -593,7 +607,18 @@ void UExpeditionInteractionObjectPreparer::GetAllExpeditionInteractionObjectsDat
                 FPlatformProcess::SleepNoStats(0.0f);
             }
 
-            FString ExpeditionInteractionObjectsSaverFilePath = FPaths::ProjectDir() + "Data/Expedition interaction objects/" + ModuleName + "/sav/" + ModuleName + ".sav";
+            FString ExpeditionInteractionObjectsSaverFilePath = "";
+            if (IsModDir) {
+                TArray<FString> NamePieces;
+                ModuleName.ParseIntoArray(NamePieces, TEXT("/"), false);
+
+                ExpeditionInteractionObjectsSaverFilePath = FPaths::ProjectDir() + "Mods/" + ModuleName + "/sav/" + NamePieces.Last() + ".sav";
+
+                ModuleName = NamePieces.Last();
+            }
+            else {
+                ExpeditionInteractionObjectsSaverFilePath = FPaths::ProjectDir() + "Data/Expedition interaction objects/" + ModuleName + "/sav/" + ModuleName + ".sav";
+            }
             bool ExpeditionInteractionObjectsSaverFileExist = FileManager.FileExists(*ExpeditionInteractionObjectsSaverFilePath);
 
             //Если существует сериализованный файл данных о модуле, он загружается
@@ -604,7 +629,7 @@ void UExpeditionInteractionObjectPreparer::GetAllExpeditionInteractionObjectsDat
             //Идёт проверка не изменилось ли количество xml файлов в директории модуля и не изменился ли их хеш
             if (InteractionObjectsSaver && XMLFilesPaths.Num() == InteractionObjectsSaver->GetBinArraySize() && InteractionObjectsSaver->CheckHashChange()) {
                 UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("Loading will be done from a save file %s with serialized data"), *ExpeditionInteractionObjectsSaverFilePath);
-                AsyncTask(ENamedThreads::GameThread, [ModuleName, this]() {
+                AsyncTask(ENamedThreads::GameThread, [ModuleName, IsModDir, this]() {
                     ChangeTextOfTheDownloadDetails.Broadcast(FString("Loading file:  " + ModuleName + ".sav"), FColor::FromHex("160124"));
                     });
 
