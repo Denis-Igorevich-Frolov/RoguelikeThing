@@ -3,3 +3,7 @@
 
 #include "RoguelikeThing/Lists/ExpeditionInteractionObjectsList.h"
 
+const TMap<FString, FString> UExpeditionInteractionObjectsList::GetXmlList()
+{
+    return ExpeditionInteractionObjectsXMLs;
+}

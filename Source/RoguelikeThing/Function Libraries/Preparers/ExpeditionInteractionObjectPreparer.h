@@ -2,8 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "Kismet/BlueprintFunctionLibrary.h"
+#include "RoguelikeThing/Function Libraries/Preparers/AbstractPreparer.h"
 #include "RoguelikeThing/GameObjects/ExpeditionInteractionObjectData.h"
 #include "RoguelikeThing/Lists/ExpeditionInteractionObjectsList.h"
 #include "ExpeditionInteractionObjectPreparer.generated.h"
@@ -52,51 +51,37 @@ class UExpeditionInteractionObjectContainer : public UObject
 	GENERATED_BODY()
 
 private:
-
 	UPROPERTY()
 	TMap<FString, FExpeditionInteractionObjectModule> InteractionObjectsModulesArray;
 
 public:
-	FString InteractionObjectsModulesArray2;
-
 	UFUNCTION(BlueprintCallable)
-	void AddExpeditionInteractionObjectData(FString ModuleName, FString CategoryName, FString SubCategoryName,
+	void AddData(FString ModuleName, FString CategoryName, FString SubCategoryName,
 		FString ObjectId, UExpeditionInteractionObjectData* ExpeditionInteractionObjectData);
 	UFUNCTION(BlueprintCallable)
-	const UExpeditionInteractionObjectData* const FindExpeditionInteractionObjectData(FString ModuleName, FString CategoryName, FString SubCategoryName, FString ObjectId);
+	const UExpeditionInteractionObjectData* const FindData(FString ModuleName, FString CategoryName, FString SubCategoryName, FString ObjectId);
 };
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FChangeTextOfTheDownloadDetailsDelegate, FString, Text, FColor, Color);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE(FLoadingCompleteDelegate);
-
 UCLASS(BlueprintType)
-class ROGUELIKETHING_API UExpeditionInteractionObjectPreparer : public UBlueprintFunctionLibrary
+class ROGUELIKETHING_API UExpeditionInteractionObjectPreparer : public UAbstractPreparer
 {
 	GENERATED_BODY()
 
 private:
-
 	//Список исходников всех объектов из модуля Default для возможного их восстановления
-	ExpeditionInteractionObjectsList expeditionInteractionObjectsList;
+	UPROPERTY()
+	UExpeditionInteractionObjectsList* ExpeditionInteractionObjectsList;
 
 	//Проверка существования объектов из модуля Default. При обнаружении их отсутствия, они восстанавливаются из исходного списка
 	void CheckingDefaultExpeditionInteractionObjects();
-	//Функция загрузки данных об объекте из его xml файла
-	UExpeditionInteractionObjectData* LoadExpeditionInteractionObjectFromXML(FString ModuleName, FString XMLFilePath, IPlatformFile& FileManager, int RecursionDepth = 0);
 	
 public:
+	//Функция загрузки данных об объекте из его xml файла
+	UExpeditionInteractionObjectData* LoadObjectFromXML(FString ModuleName, FString XMLFilePath, IPlatformFile& FileManager, int RecursionDepth = 0);
 
-	UPROPERTY(BlueprintAssignable)
-	FChangeTextOfTheDownloadDetailsDelegate ChangeTextOfTheDownloadDetails;
-
-	UPROPERTY(BlueprintAssignable)
-	FLoadingCompleteDelegate LoadingComplete;
-
-	//Функция восстановления файла из моодуля Default по его имени (без расширения)
-	UFUNCTION(BlueprintCallable)
-	bool RestoringDefaultFileByName(FString Name);
+	UExpeditionInteractionObjectPreparer();
 
 	//Функция получения данных обо всех объектах взаимодействия всех модулей
 	UFUNCTION(BlueprintCallable)
-	void GetAllExpeditionInteractionObjectsData(UPARAM(ref)UExpeditionInteractionObjectContainer*& ExpeditionInteractionObjectContainer, TArray<FString> ModsDirWithInteractionObjects);
+	void GetAllObjectsData(UPARAM(ref)UExpeditionInteractionObjectContainer* ExpeditionInteractionObjectContainer, TArray<FString> ModsDirWithInteractionObjects);
 };

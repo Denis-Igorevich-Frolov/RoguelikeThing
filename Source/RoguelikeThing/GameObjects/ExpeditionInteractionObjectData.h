@@ -2,8 +2,7 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
+#include "RoguelikeThing/GameObjects/AbstractData.h"
 #include "ExpeditionInteractionObjectData.generated.h"
 
 /*********************************************************************************************************************************
@@ -33,23 +32,11 @@ struct FInteractionCondition
 };
 
 UCLASS(BlueprintType)
-class ROGUELIKETHING_API UExpeditionInteractionObjectData : public UObject
+class ROGUELIKETHING_API UExpeditionInteractionObjectData : public UAbstractData
 {
 	GENERATED_BODY()
 	
 public:
-	UPROPERTY(BlueprintReadWrite, SaveGame)
-	FString id;
-
-	UPROPERTY(BlueprintReadWrite, SaveGame)
-	FString Category;
-
-	UPROPERTY(BlueprintReadWrite, SaveGame)
-	FString SubCategory;
-
-	UPROPERTY(BlueprintReadWrite, SaveGame)
-	FString Name;
-
 	//Текст, который будет выведен при попытке взаимодействия с объектом
 	UPROPERTY(BlueprintReadWrite, SaveGame)
 	FString InteractionText;

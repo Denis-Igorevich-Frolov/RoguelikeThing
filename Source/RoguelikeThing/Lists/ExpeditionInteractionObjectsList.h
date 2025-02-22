@@ -2,17 +2,20 @@
 
 #pragma once
 
-#include "CoreMinimal.h"
-#include "UObject/NoExportTypes.h"
+#include "RoguelikeThing/Lists/AbstractList.h"
+#include "ExpeditionInteractionObjectsList.generated.h"
 
 /***************************************************************************************************************
  * Данный класс является списком контента xml файлов всех объектов взаимодействия экспедиции, представленных
  * по умолчанию. При повреждении или утрате исходных файлов, они будут восстановлены по этому списку.
  ***************************************************************************************************************/
 
-class ExpeditionInteractionObjectsList
+UCLASS()
+class ROGUELIKETHING_API UExpeditionInteractionObjectsList : public UAbstractList
 {
-public:
+	GENERATED_BODY()
+
+private:
 	//Коллекция всех xml файлов объектов по умолчанию. Ключом является имя файла, а значением - его контент
     TMap<FString, FString>ExpeditionInteractionObjectsXMLs{
         {
@@ -37,4 +40,7 @@ public:
             ))
         }
     };
+
+public:
+	const TMap<FString, FString> GetXmlList() override;
 };
