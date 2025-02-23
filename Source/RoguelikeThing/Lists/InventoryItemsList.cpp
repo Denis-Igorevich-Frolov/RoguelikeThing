@@ -3,7 +3,22 @@
 
 #include "RoguelikeThing/Lists/InventoryItemsList.h"
 
-const TMap<FString, FString> UInventoryItemsList::GetXmlList()
+FString UInventoryItemsList::GetXmlText(FString FileName)
 {
-    return InventoryItemsXMLs;
+    TArray<FString> Keys;
+    InventoryItemsXMLs.GenerateKeyArray(Keys);
+
+    if (Keys.Find(FileName) == INDEX_NONE) {
+        return "";
+    }
+
+    return *InventoryItemsXMLs.Find(FileName);
+}
+
+TArray<FString> UInventoryItemsList::GetModuleFilesArray()
+{
+    TArray<FString> Keys;
+    InventoryItemsXMLs.GenerateKeyArray(Keys);
+
+    return Keys;
 }

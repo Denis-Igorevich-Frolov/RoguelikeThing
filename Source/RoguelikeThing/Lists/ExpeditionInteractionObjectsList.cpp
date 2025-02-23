@@ -3,7 +3,22 @@
 
 #include "RoguelikeThing/Lists/ExpeditionInteractionObjectsList.h"
 
-const TMap<FString, FString> UExpeditionInteractionObjectsList::GetXmlList()
+FString UExpeditionInteractionObjectsList::GetXmlText(FString FileName)
 {
-    return ExpeditionInteractionObjectsXMLs;
+    TArray<FString> Keys;
+    ExpeditionInteractionObjectsXMLs.GenerateKeyArray(Keys);
+
+    if (Keys.Find(FileName) == INDEX_NONE) {
+        return "";
+    }
+    
+    return *ExpeditionInteractionObjectsXMLs.Find(FileName);
+}
+
+TArray<FString> UExpeditionInteractionObjectsList::GetModuleFilesArray()
+{
+    TArray<FString> Keys;
+    ExpeditionInteractionObjectsXMLs.GenerateKeyArray(Keys);
+
+    return Keys;
 }

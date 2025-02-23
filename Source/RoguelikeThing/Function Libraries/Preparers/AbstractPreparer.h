@@ -1,4 +1,4 @@
-// Denis Igorevich Frolov did all this. Once there. All things reserved.
+п»ї// Denis Igorevich Frolov did all this. Once there. All things reserved.
 
 #pragma once
 
@@ -10,8 +10,8 @@
 #include "AbstractPreparer.generated.h"
 
 /*************************************************************************************************************************
- * Данный класс является классом подготовки и загрузки всех всевозможных объектов взаимодействия экспедиции, которые
- * находятся во всех модулях, а также восстановления повреждённых данных связанных с объектами из модуля Default
+ * Р”Р°РЅРЅС‹Р№ РєР»Р°СЃСЃ СЏРІР»СЏРµС‚СЃСЏ РєР»Р°СЃСЃРѕРј РїРѕРґРіРѕС‚РѕРІРєРё Рё Р·Р°РіСЂСѓР·РєРё РІСЃРµС… РІСЃРµРІРѕР·РјРѕР¶РЅС‹С… РѕР±СЉРµРєС‚РѕРІ РІР·Р°РёРјРѕРґРµР№СЃС‚РІРёСЏ СЌРєСЃРїРµРґРёС†РёРё, РєРѕС‚РѕСЂС‹Рµ
+ * РЅР°С…РѕРґСЏС‚СЃСЏ РІРѕ РІСЃРµС… РјРѕРґСѓР»СЏС…, Р° С‚Р°РєР¶Рµ РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёСЏ РїРѕРІСЂРµР¶РґС‘РЅРЅС‹С… РґР°РЅРЅС‹С… СЃРІСЏР·Р°РЅРЅС‹С… СЃ РѕР±СЉРµРєС‚Р°РјРё РёР· РјРѕРґСѓР»СЏ Default
  *************************************************************************************************************************/
 
 DECLARE_LOG_CATEGORY_EXTERN(AbstractPreparer, Log, All);
@@ -24,20 +24,22 @@ class ROGUELIKETHING_API UAbstractPreparer : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
 
-public:
+protected:
 
-	//Проверка существования объектов из модуля Default. При обнаружении их отсутствия, они восстанавливаются из исходного списка
+	//РџСЂРѕРІРµСЂРєР° СЃСѓС‰РµСЃС‚РІРѕРІР°РЅРёСЏ РѕР±СЉРµРєС‚РѕРІ РёР· РјРѕРґСѓР»СЏ Default. РџСЂРё РѕР±РЅР°СЂСѓР¶РµРЅРёРё РёС… РѕС‚СЃСѓС‚СЃС‚РІРёСЏ, РѕРЅРё РІРѕСЃСЃС‚Р°РЅР°РІР»РёРІР°СЋС‚СЃСЏ РёР· РёСЃС…РѕРґРЅРѕРіРѕ СЃРїРёСЃРєР°
 	void CheckingDefaultAbstracts(UAbstractList* ObjectsList);
-	//Функция загрузки данных об объекте из его xml файла
+	//Р¤СѓРЅРєС†РёСЏ Р·Р°РіСЂСѓР·РєРё РґР°РЅРЅС‹С… РѕР± РѕР±СЉРµРєС‚Рµ РёР· РµРіРѕ xml С„Р°Р№Р»Р°
 	template<typename DataType, typename ListType, typename PreparerType>
 	DataType* LoadDataFromXML(PreparerType* Preparer, FString ModuleName, FString XMLFilePath, IPlatformFile& FileManager, ListType* ObjectsList,
 		DataType*(*UploadingData)(PreparerType* Preparer, DataType* Data, FXmlNode* RootNode, FString FileName, ListType* ObjectsList, FString ModuleName, FString XMLFilePath, IPlatformFile& FileManager, int RecursionDepth), int RecursionDepth = 0);
 
-	//Функция восстановления файла из моодуля Default по его имени (без расширения)
+	//Р¤СѓРЅРєС†РёСЏ РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёСЏ С„Р°Р№Р»Р° РёР· РјРѕРѕРґСѓР»СЏ Default РїРѕ РµРіРѕ РёРјРµРЅРё (Р±РµР· СЂР°СЃС€РёСЂРµРЅРёСЏ)
 	UFUNCTION(BlueprintCallable)
 	bool RestoringDefaultFileByName(FString Name, UAbstractList* ObjectsList);
 
-	//Функция получения данных обо всех объектах взаимодействия всех модулей
+public:
+
+	//Р¤СѓРЅРєС†РёСЏ РїРѕР»СѓС‡РµРЅРёСЏ РґР°РЅРЅС‹С… РѕР±Рѕ РІСЃРµС… РѕР±СЉРµРєС‚Р°С… РІР·Р°РёРјРѕРґРµР№СЃС‚РІРёСЏ РІСЃРµС… РјРѕРґСѓР»РµР№
 	template<typename Container, typename DataType, typename PreparerType>
 	void GetAllData(UPARAM(ref)Container* DataContainer, TArray<FString> ModsDirWithAbstract, UAbstractList* ObjectsList, PreparerType* Preparer);
 

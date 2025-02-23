@@ -39,5 +39,6 @@ private:
     };
 
 public:
-	const TMap<FString, FString> GetXmlList() override;
+	FString GetXmlText(FString FileName) override;
+	TArray<FString> GetModuleFilesArray() override;
 };

@@ -1,4 +1,4 @@
-// Denis Igorevich Frolov did all this. Once there. All things reserved.
+п»ї// Denis Igorevich Frolov did all this. Once there. All things reserved.
 
 
 #include "RoguelikeThing/Function Libraries/Preparers/AbstractPreparer.h"
@@ -9,13 +9,13 @@
 
 DEFINE_LOG_CATEGORY(AbstractPreparer);
 
-//Проверка существования объектов из модуля Default. При обнаружении их отсутствия, они восстанавливаются из исходного списка
+//РџСЂРѕРІРµСЂРєР° СЃСѓС‰РµСЃС‚РІРѕРІР°РЅРёСЏ РѕР±СЉРµРєС‚РѕРІ РёР· РјРѕРґСѓР»СЏ Default. РџСЂРё РѕР±РЅР°СЂСѓР¶РµРЅРёРё РёС… РѕС‚СЃСѓС‚СЃС‚РІРёСЏ, РѕРЅРё РІРѕСЃСЃС‚Р°РЅР°РІР»РёРІР°СЋС‚СЃСЏ РёР· РёСЃС…РѕРґРЅРѕРіРѕ СЃРїРёСЃРєР°
 void UAbstractPreparer::CheckingDefaultAbstracts (UAbstractList* ObjectsList)
 {
     IPlatformFile& FileManager = FPlatformFileManager::Get().GetPlatformFile();
 
     FString ModulePath = FString(FPaths::ConvertRelativePathToFull(FPaths::ProjectDir()) + TEXT("Data/Expedition interaction objects/Default/xml"));
-    //Если директории объектов взаимодействия по умолчанию нет, она создаётся
+    //Р•СЃР»Рё РґРёСЂРµРєС‚РѕСЂРёРё РѕР±СЉРµРєС‚РѕРІ РІР·Р°РёРјРѕРґРµР№СЃС‚РІРёСЏ РїРѕ СѓРјРѕР»С‡Р°РЅРёСЋ РЅРµС‚, РѕРЅР° СЃРѕР·РґР°С‘С‚СЃСЏ
     if (!FileManager.DirectoryExists(*ModulePath)) {
         if (!FileManager.CreateDirectoryTree(*ModulePath)) {
             UE_LOG(AbstractPreparer, Error, TEXT("!!! An error occurred in the AbstractPreparer class in the CheckingDefaultAbstract function - Failed to create directory %s"), *ModulePath);
@@ -24,15 +24,14 @@ void UAbstractPreparer::CheckingDefaultAbstracts (UAbstractList* ObjectsList)
         UE_LOG(AbstractPreparer, Log, TEXT("Directory %s has been created"), *ModulePath);
     }
 
-    TArray<FString> XML_Files;
-    ObjectsList->GetXmlList().GenerateKeyArray(XML_Files);
+    TArray<FString> XML_Files = ObjectsList->GetModuleFilesArray();
 
     for (FString FileName : XML_Files) {
         FString FilePath = FString(ModulePath + "/" + FileName);
 
-        //Если файла, связанного с объектом, который должен быть в модуле Default нет, то он восстанавливается из исходного списка
+        //Р•СЃР»Рё С„Р°Р№Р»Р°, СЃРІСЏР·Р°РЅРЅРѕРіРѕ СЃ РѕР±СЉРµРєС‚РѕРј, РєРѕС‚РѕСЂС‹Р№ РґРѕР»Р¶РµРЅ Р±С‹С‚СЊ РІ РјРѕРґСѓР»Рµ Default РЅРµС‚, С‚Рѕ РѕРЅ РІРѕСЃСЃС‚Р°РЅР°РІР»РёРІР°РµС‚СЃСЏ РёР· РёСЃС…РѕРґРЅРѕРіРѕ СЃРїРёСЃРєР°
         if (!FileManager.FileExists(*FilePath)) {
-            FString FileContent = *ObjectsList->GetXmlList().Find(*FileName);
+            FString FileContent = *ObjectsList->GetXmlText(*FileName);
 
             if (!FFileHelper::SaveStringToFile(FileContent, *FilePath, FFileHelper::EEncodingOptions::ForceUTF8, &IFileManager::Get(), EFileWrite::FILEWRITE_None)) {
                 UE_LOG(AbstractPreparer, Error, TEXT("!!! An error occurred in the AbstractPreparer class in the CheckingDefaultAbstract function - Failed to create file %s"), *FilePath);
@@ -43,13 +42,13 @@ void UAbstractPreparer::CheckingDefaultAbstracts (UAbstractList* ObjectsList)
     }
 }
 
-//Функция загрузки данных об объекте из его xml файла
+//Р¤СѓРЅРєС†РёСЏ Р·Р°РіСЂСѓР·РєРё РґР°РЅРЅС‹С… РѕР± РѕР±СЉРµРєС‚Рµ РёР· РµРіРѕ xml С„Р°Р№Р»Р°
 template<typename DataType, typename ListType, typename PreparerType>
 DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString ModuleName, FString XMLFilePath, IPlatformFile& FileManager, ListType* ObjectsList,
     DataType*(*UploadingData)(PreparerType* Preparer, DataType* Data, FXmlNode* RootNode, FString FileName, ListType* ObjectsList, FString ModuleName, FString XMLFilePath, IPlatformFile& FileManager, int RecursionDepth), int RecursionDepth)
 {
     TArray<FString> PathPieces;
-    //Переданный путь до xml файла разбивается на фрагменты, где последний элемент - это сам файл, а все предыдущие - папки, в которые он вложен
+    //РџРµСЂРµРґР°РЅРЅС‹Р№ РїСѓС‚СЊ РґРѕ xml С„Р°Р№Р»Р° СЂР°Р·Р±РёРІР°РµС‚СЃСЏ РЅР° С„СЂР°РіРјРµРЅС‚С‹, РіРґРµ РїРѕСЃР»РµРґРЅРёР№ СЌР»РµРјРµРЅС‚ - СЌС‚Рѕ СЃР°Рј С„Р°Р№Р», Р° РІСЃРµ РїСЂРµРґС‹РґСѓС‰РёРµ - РїР°РїРєРё, РІ РєРѕС‚РѕСЂС‹Рµ РѕРЅ РІР»РѕР¶РµРЅ
     XMLFilePath.ParseIntoArray(PathPieces, TEXT("/"), false);
 
     if (PathPieces.Num() == 0) {
@@ -58,15 +57,15 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
     }
 
     FString FileName = "";
-    //Имя файла следует находить только для проверки на существование и валидность объекта из модуля Default
+    //РРјСЏ С„Р°Р№Р»Р° СЃР»РµРґСѓРµС‚ РЅР°С…РѕРґРёС‚СЊ С‚РѕР»СЊРєРѕ РґР»СЏ РїСЂРѕРІРµСЂРєРё РЅР° СЃСѓС‰РµСЃС‚РІРѕРІР°РЅРёРµ Рё РІР°Р»РёРґРЅРѕСЃС‚СЊ РѕР±СЉРµРєС‚Р° РёР· РјРѕРґСѓР»СЏ Default
     if (ModuleName == "Default") {
         TArray<FString> FileNamePieces;
-        //Берётся последний фрагмент пути до файла, который, непосредственно, будет полным именем самого файла, и разбивается на 2 части - имя и расширение
+        //Р‘РµСЂС‘С‚СЃСЏ РїРѕСЃР»РµРґРЅРёР№ С„СЂР°РіРјРµРЅС‚ РїСѓС‚Рё РґРѕ С„Р°Р№Р»Р°, РєРѕС‚РѕСЂС‹Р№, РЅРµРїРѕСЃСЂРµРґСЃС‚РІРµРЅРЅРѕ, Р±СѓРґРµС‚ РїРѕР»РЅС‹Рј РёРјРµРЅРµРј СЃР°РјРѕРіРѕ С„Р°Р№Р»Р°, Рё СЂР°Р·Р±РёРІР°РµС‚СЃСЏ РЅР° 2 С‡Р°СЃС‚Рё - РёРјСЏ Рё СЂР°СЃС€РёСЂРµРЅРёРµ
         PathPieces.Last().ParseIntoArray(FileNamePieces, TEXT("."), false);
 
         if (FileNamePieces.IsValidIndex(0)) {
-            /* Из всего пути до файла вычленяется имя файла без расширения, которое используется как индекс
-             * для поиска и, при необходимости, восстановления данных об объекте из модуля Default */
+            /* РР· РІСЃРµРіРѕ РїСѓС‚Рё РґРѕ С„Р°Р№Р»Р° РІС‹С‡Р»РµРЅСЏРµС‚СЃСЏ РёРјСЏ С„Р°Р№Р»Р° Р±РµР· СЂР°СЃС€РёСЂРµРЅРёСЏ, РєРѕС‚РѕСЂРѕРµ РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РєР°Рє РёРЅРґРµРєСЃ
+             * РґР»СЏ РїРѕРёСЃРєР° Рё, РїСЂРё РЅРµРѕР±С…РѕРґРёРјРѕСЃС‚Рё, РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёСЏ РґР°РЅРЅС‹С… РѕР± РѕР±СЉРµРєС‚Рµ РёР· РјРѕРґСѓР»СЏ Default */
             FileName = FileNamePieces[0];
         }
         else {
@@ -99,16 +98,16 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
             AbstractData->MarkPendingKill();
         }
 
-        //Если файл был из модуля Default, то производится попытка его восстановления из исходного списка
+        //Р•СЃР»Рё С„Р°Р№Р» Р±С‹Р» РёР· РјРѕРґСѓР»СЏ Default, С‚Рѕ РїСЂРѕРёР·РІРѕРґРёС‚СЃСЏ РїРѕРїС‹С‚РєР° РµРіРѕ РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёСЏ РёР· РёСЃС…РѕРґРЅРѕРіРѕ СЃРїРёСЃРєР°
         if (ModuleName == "Default") {
             UE_LOG(AbstractPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
             if (RestoringDefaultFileByName(FileName, ObjectsList)) {
                 UE_LOG(AbstractPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
-                //И после его восстановления, рекурсивно запускается эта же функция с целью ещё раз попытаться загрузить уже восстановленный файл
+                //Р РїРѕСЃР»Рµ РµРіРѕ РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёСЏ, СЂРµРєСѓСЂСЃРёРІРЅРѕ Р·Р°РїСѓСЃРєР°РµС‚СЃСЏ СЌС‚Р° Р¶Рµ С„СѓРЅРєС†РёСЏ СЃ С†РµР»СЊСЋ РµС‰С‘ СЂР°Р· РїРѕРїС‹С‚Р°С‚СЊСЃСЏ Р·Р°РіСЂСѓР·РёС‚СЊ СѓР¶Рµ РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРЅС‹Р№ С„Р°Р№Р»
                 return LoadDataFromXML(Preparer, ModuleName, XMLFilePath, FileManager, ObjectsList, UploadingData, ++RecursionDepth);
             }
             else {
-                //Если же файл восстановить не удаётся, производится остановка выполнения программы
+                //Р•СЃР»Рё Р¶Рµ С„Р°Р№Р» РІРѕСЃСЃС‚Р°РЅРѕРІРёС‚СЊ РЅРµ СѓРґР°С‘С‚СЃСЏ, РїСЂРѕРёР·РІРѕРґРёС‚СЃСЏ РѕСЃС‚Р°РЅРѕРІРєР° РІС‹РїРѕР»РЅРµРЅРёСЏ РїСЂРѕРіСЂР°РјРјС‹
                 UE_LOG(AbstractPreparer, Error, TEXT("!!! An error occurred in the AbstractPreparer class in the LoadDataFromXML function - An attempt to restore file %s failed. Abnormal termination."), *XMLFilePath);
                 FGenericPlatformMisc::RequestExit(false);
             }
@@ -341,21 +340,19 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
     return Data;
 }
 
-//Функция восстановления файла из моодуля Default по его имени (без расширения)
+//Р¤СѓРЅРєС†РёСЏ РІРѕСЃСЃС‚Р°РЅРѕРІР»РµРЅРёСЏ С„Р°Р№Р»Р° РёР· РјРѕРѕРґСѓР»СЏ Default РїРѕ РµРіРѕ РёРјРµРЅРё (Р±РµР· СЂР°СЃС€РёСЂРµРЅРёСЏ)
 bool UAbstractPreparer::RestoringDefaultFileByName(FString Name, UAbstractList* ObjectsList)
 {
     Name += ".xml";
 
     FString ModulePath = FString(FPaths::ConvertRelativePathToFull(FPaths::ProjectDir()) + TEXT("Data/Expedition interaction objects/Default/xml/"));
     FString FilePath = ModulePath + Name;
-    const FString* FileContentRef = ObjectsList->GetXmlList().Find(*Name);
+    FString FileContent = ObjectsList->GetXmlText(*Name);
 
-    if (!FileContentRef) {
+    if (FileContent == "") {
         UE_LOG(AbstractPreparer, Error, TEXT("!!!!!!!!!"));
         return false;
     }
-
-    FString FileContent = *FileContentRef;
 
     if (!FFileHelper::SaveStringToFile(FileContent, *FilePath, FFileHelper::EEncodingOptions::ForceUTF8, &IFileManager::Get(), EFileWrite::FILEWRITE_None)) {
         UE_LOG(AbstractPreparer, Error, TEXT("!!! An error occurred in the AbstractPreparer class in the ConvertRelativePathToFull function - Failed to create file %s"), *FilePath);
@@ -366,34 +363,34 @@ bool UAbstractPreparer::RestoringDefaultFileByName(FString Name, UAbstractList* 
     return true;
 }
 
-//Функция получения данных обо всех объектах взаимодействия всех модулей
+//Р¤СѓРЅРєС†РёСЏ РїРѕР»СѓС‡РµРЅРёСЏ РґР°РЅРЅС‹С… РѕР±Рѕ РІСЃРµС… РѕР±СЉРµРєС‚Р°С… РІР·Р°РёРјРѕРґРµР№СЃС‚РІРёСЏ РІСЃРµС… РјРѕРґСѓР»РµР№
 template<typename Container, typename DataType, typename PreparerType>
 void UAbstractPreparer::GetAllData(Container* DataContainer, TArray<FString> ModsDirWithAbstract, UAbstractList* ObjectsList, PreparerType* Preparer)
 {
     AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [DataContainer, ModsDirWithAbstract, ObjectsList, Preparer, this]() {
-        //Сначала проверяется не повреждены ли данные модуля Default
+        //РЎРЅР°С‡Р°Р»Р° РїСЂРѕРІРµСЂСЏРµС‚СЃСЏ РЅРµ РїРѕРІСЂРµР¶РґРµРЅС‹ Р»Рё РґР°РЅРЅС‹Рµ РјРѕРґСѓР»СЏ Default
         CheckingDefaultAbstracts(ObjectsList);
 
-        //Получение списка папок всех модулей
+        //РџРѕР»СѓС‡РµРЅРёРµ СЃРїРёСЃРєР° РїР°РїРѕРє РІСЃРµС… РјРѕРґСѓР»РµР№
         TArray<FString> Dirs;
         FString StartDirPath = FString(FPaths::ConvertRelativePathToFull(FPaths::ProjectDir()) + TEXT("Data/Expedition interaction objects"));
         FFileManagerGeneric::Get().FindFilesRecursive(Dirs, *StartDirPath, TEXT("*"), false, true);
 
         TArray<FString> ModuleNames;
-        //Так как функция FindFilesRecursive находит все вложенные директории, а не только корневые, все остальные стоит отсеять
+        //РўР°Рє РєР°Рє С„СѓРЅРєС†РёСЏ FindFilesRecursive РЅР°С…РѕРґРёС‚ РІСЃРµ РІР»РѕР¶РµРЅРЅС‹Рµ РґРёСЂРµРєС‚РѕСЂРёРё, Р° РЅРµ С‚РѕР»СЊРєРѕ РєРѕСЂРЅРµРІС‹Рµ, РІСЃРµ РѕСЃС‚Р°Р»СЊРЅС‹Рµ СЃС‚РѕРёС‚ РѕС‚СЃРµСЏС‚СЊ
         for (FString Dir : Dirs) {
-            //Путь до директории разбивается на массив последовательно вложенных папок
+            //РџСѓС‚СЊ РґРѕ РґРёСЂРµРєС‚РѕСЂРёРё СЂР°Р·Р±РёРІР°РµС‚СЃСЏ РЅР° РјР°СЃСЃРёРІ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕ РІР»РѕР¶РµРЅРЅС‹С… РїР°РїРѕРє
             TArray<FString> DirPieces;
             Dir.ParseIntoArray(DirPieces, TEXT("/"), false);
 
-            //И проверяется на каком месте находится корень для всех модулей объектов взаимодействия
+            //Р РїСЂРѕРІРµСЂСЏРµС‚СЃСЏ РЅР° РєР°РєРѕРј РјРµСЃС‚Рµ РЅР°С…РѕРґРёС‚СЃСЏ РєРѕСЂРµРЅСЊ РґР»СЏ РІСЃРµС… РјРѕРґСѓР»РµР№ РѕР±СЉРµРєС‚РѕРІ РІР·Р°РёРјРѕРґРµР№СЃС‚РІРёСЏ
             int SequentialDirectoryNumber = 0;
             DirPieces.Find("Expedition interaction objects", SequentialDirectoryNumber);
 
-            /* Отсееваются некорневые директории по длине пути. Если директория корневая,
-             * то её длинна должна быть равна последовательному номеру корня общего для всех
-             * модулей + 1. Также стоит учеть, что SequentialDirectoryNumber - это индекс,
-             * которому до последовательного номера следует прибавить ещё 1 */
+            /* РћС‚СЃРµРµРІР°СЋС‚СЃСЏ РЅРµРєРѕСЂРЅРµРІС‹Рµ РґРёСЂРµРєС‚РѕСЂРёРё РїРѕ РґР»РёРЅРµ РїСѓС‚Рё. Р•СЃР»Рё РґРёСЂРµРєС‚РѕСЂРёСЏ РєРѕСЂРЅРµРІР°СЏ,
+             * С‚Рѕ РµС‘ РґР»РёРЅРЅР° РґРѕР»Р¶РЅР° Р±С‹С‚СЊ СЂР°РІРЅР° РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕРјСѓ РЅРѕРјРµСЂСѓ РєРѕСЂРЅСЏ РѕР±С‰РµРіРѕ РґР»СЏ РІСЃРµС…
+             * РјРѕРґСѓР»РµР№ + 1. РўР°РєР¶Рµ СЃС‚РѕРёС‚ СѓС‡РµС‚СЊ, С‡С‚Рѕ SequentialDirectoryNumber - СЌС‚Рѕ РёРЅРґРµРєСЃ,
+             * РєРѕС‚РѕСЂРѕРјСѓ РґРѕ РїРѕСЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕРіРѕ РЅРѕРјРµСЂР° СЃР»РµРґСѓРµС‚ РїСЂРёР±Р°РІРёС‚СЊ РµС‰С‘ 1 */
             if (DirPieces.Num() == SequentialDirectoryNumber + 2 && DirPieces.IsValidIndex(SequentialDirectoryNumber + 1)) {
                 ModuleNames.Add(*DirPieces[SequentialDirectoryNumber + 1]);
             }
@@ -451,12 +448,12 @@ void UAbstractPreparer::GetAllData(Container* DataContainer, TArray<FString> Mod
             }
             bool DataSaverFileExist = FileManager.FileExists(*DataSaverFilePath);
 
-            //Если существует сериализованный файл данных о модуле, он загружается
+            //Р•СЃР»Рё СЃСѓС‰РµСЃС‚РІСѓРµС‚ СЃРµСЂРёР°Р»РёР·РѕРІР°РЅРЅС‹Р№ С„Р°Р№Р» РґР°РЅРЅС‹С… Рѕ РјРѕРґСѓР»Рµ, РѕРЅ Р·Р°РіСЂСѓР¶Р°РµС‚СЃСЏ
             if (DataSaverFileExist) {
                 Saver->LoadBinArray(DataSaverFilePath);
             }
 
-            //Идёт проверка не изменилось ли количество xml файлов в директории модуля и не изменился ли их хеш
+            //РРґС‘С‚ РїСЂРѕРІРµСЂРєР° РЅРµ РёР·РјРµРЅРёР»РѕСЃСЊ Р»Рё РєРѕР»РёС‡РµСЃС‚РІРѕ xml С„Р°Р№Р»РѕРІ РІ РґРёСЂРµРєС‚РѕСЂРёРё РјРѕРґСѓР»СЏ Рё РЅРµ РёР·РјРµРЅРёР»СЃСЏ Р»Рё РёС… С…РµС€
             if (Saver && XMLFilesPaths.Num() == Saver->GetBinArraySize() && Saver->CheckHashChange() &&
                 DataSaverFilePath == Saver->GetSavFilePath()) {
                 UE_LOG(AbstractPreparer, Log, TEXT("Loading will be done from a save file %s with serialized data"), *DataSaverFilePath);
@@ -464,7 +461,7 @@ void UAbstractPreparer::GetAllData(Container* DataContainer, TArray<FString> Mod
                     ChangeTextOfTheDownloadDetails.Broadcast(FString("Loading file:  " + ModuleName + ".sav"), FColor::FromHex("160124"));
                     });
 
-                //Если все файлы остались неизменными с момента сериализации, то загрузка объектов ведётся напрямую из сохранённых бинарных данных
+                //Р•СЃР»Рё РІСЃРµ С„Р°Р№Р»С‹ РѕСЃС‚Р°Р»РёСЃСЊ РЅРµРёР·РјРµРЅРЅС‹РјРё СЃ РјРѕРјРµРЅС‚Р° СЃРµСЂРёР°Р»РёР·Р°С†РёРё, С‚Рѕ Р·Р°РіСЂСѓР·РєР° РѕР±СЉРµРєС‚РѕРІ РІРµРґС‘С‚СЃСЏ РЅР°РїСЂСЏРјСѓСЋ РёР· СЃРѕС…СЂР°РЅС‘РЅРЅС‹С… Р±РёРЅР°СЂРЅС‹С… РґР°РЅРЅС‹С…
                 TMap<FString, DataType*> AbstractData;
 
                 bool done = false;
@@ -504,7 +501,7 @@ void UAbstractPreparer::GetAllData(Container* DataContainer, TArray<FString> Mod
             else {
                 UE_LOG(AbstractPreparer, Log, TEXT("Loading will be done from an array of xml files"));
 
-                //Если файлы менялись, то загрузка производится из xml файлов с их последующим сохранениев в новый sav файл
+                //Р•СЃР»Рё С„Р°Р№Р»С‹ РјРµРЅСЏР»РёСЃСЊ, С‚Рѕ Р·Р°РіСЂСѓР·РєР° РїСЂРѕРёР·РІРѕРґРёС‚СЃСЏ РёР· xml С„Р°Р№Р»РѕРІ СЃ РёС… РїРѕСЃР»РµРґСѓСЋС‰РёРј СЃРѕС…СЂР°РЅРµРЅРёРµРІ РІ РЅРѕРІС‹Р№ sav С„Р°Р№Р»
                 Saver->ClearArray();
                 for (FString XMLFilePath : XMLFilesPaths) {
                     FString FullXMLFilePath = FPaths::ConvertRelativePathToFull(FPaths::ProjectDir()) + XMLFilePath;
@@ -533,7 +530,7 @@ void UAbstractPreparer::GetAllData(Container* DataContainer, TArray<FString> Mod
                     }
                 }
 
-                //Заново сгенерированный массив данных обо всех объектах интеракции данного модуля сериализуется и сохраняется в sav файл
+                //Р—Р°РЅРѕРІРѕ СЃРіРµРЅРµСЂРёСЂРѕРІР°РЅРЅС‹Р№ РјР°СЃСЃРёРІ РґР°РЅРЅС‹С… РѕР±Рѕ РІСЃРµС… РѕР±СЉРµРєС‚Р°С… РёРЅС‚РµСЂР°РєС†РёРё РґР°РЅРЅРѕРіРѕ РјРѕРґСѓР»СЏ СЃРµСЂРёР°Р»РёР·СѓРµС‚СЃСЏ Рё СЃРѕС…СЂР°РЅСЏРµС‚СЃСЏ РІ sav С„Р°Р№Р»
                 Saver->SaveBinArray(DataSaverFilePath);
 
                 if (Saver->IsValidLowLevel() && Saver->IsRooted())

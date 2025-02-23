@@ -18,5 +18,8 @@ class ROGUELIKETHING_API UAbstractList : public UObject
 
 public:
     UFUNCTION()
-    virtual const TMap<FString, FString> GetXmlList() PURE_VIRTUAL(UAbstractList::GetXmlList, return TMap<FString, FString>{};);
+    virtual FString GetXmlText(FString FileName) PURE_VIRTUAL(UAbstractList::GetXmlList, return FString{};);
+
+    UFUNCTION()
+    virtual TArray<FString> GetModuleFilesArray() PURE_VIRTUAL(UAbstractList::GetXmlList, return TArray<FString>{};);
 };
