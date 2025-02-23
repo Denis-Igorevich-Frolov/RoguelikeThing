@@ -13,8 +13,13 @@ UCLASS(BlueprintType)
 class ROGUELIKETHING_API UModsPreparer : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
+
+private:
+	TArray<FString> GetArrayOfModDirectories(FString CategoryName);
 	
 public:
 	UFUNCTION(BlueprintCallable)
 	TArray<FString> GetArrayOfModDirectoriesHavingExpeditionInteractionObjects();
+	UFUNCTION(BlueprintCallable)
+	TArray<FString> GetArrayOfModDirectoriesHavingInventoryItems();
 };

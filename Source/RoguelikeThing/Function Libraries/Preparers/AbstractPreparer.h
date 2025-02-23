@@ -27,21 +27,22 @@ class ROGUELIKETHING_API UAbstractPreparer : public UBlueprintFunctionLibrary
 protected:
 
 	//Проверка существования объектов из модуля Default. При обнаружении их отсутствия, они восстанавливаются из исходного списка
-	void CheckingDefaultAbstracts(UAbstractList* ObjectsList);
+	void CheckingDefaultAbstracts(UAbstractList* ObjectsList, FString ModuleRoot);
 	//Функция загрузки данных об объекте из его xml файла
 	template<typename DataType, typename ListType, typename PreparerType>
-	DataType* LoadDataFromXML(PreparerType* Preparer, FString ModuleName, FString XMLFilePath, IPlatformFile& FileManager, ListType* ObjectsList,
-		DataType*(*UploadingData)(PreparerType* Preparer, DataType* Data, FXmlNode* RootNode, FString FileName, ListType* ObjectsList, FString ModuleName, FString XMLFilePath, IPlatformFile& FileManager, int RecursionDepth), int RecursionDepth = 0);
+	DataType* LoadDataFromXML(PreparerType* Preparer, FString ModuleName, FString ModuleRoot, FString XMLFilePath, IPlatformFile& FileManager,
+		ListType* ObjectsList, DataType*(*UploadingData)(PreparerType* Preparer, DataType* Data, FXmlNode* RootNode, FString FileName,
+			ListType* ObjectsList, FString ModuleName, FString XMLFilePath, IPlatformFile& FileManager, int RecursionDepth), int RecursionDepth = 0);
 
 	//Функция восстановления файла из моодуля Default по его имени (без расширения)
 	UFUNCTION(BlueprintCallable)
-	bool RestoringDefaultFileByName(FString Name, UAbstractList* ObjectsList);
+	bool RestoringDefaultFileByName(FString Name, FString ModuleRoot, UAbstractList* ObjectsList);
 
 public:
 
 	//Функция получения данных обо всех объектах взаимодействия всех модулей
 	template<typename Container, typename DataType, typename PreparerType>
-	void GetAllData(UPARAM(ref)Container* DataContainer, TArray<FString> ModsDirWithAbstract, UAbstractList* ObjectsList, PreparerType* Preparer);
+	void GetAllData(UPARAM(ref)Container* DataContainer, TArray<FString> ModsDirWithAbstract, UAbstractList* ObjectsList, FString ModuleRoot, PreparerType* Preparer);
 
 	UPROPERTY(BlueprintAssignable)
 	FChangeTextOfTheDownloadDetailsDelegate ChangeTextOfTheDownloadDetails;

@@ -4,7 +4,7 @@
 #include "RoguelikeThing/Function Libraries/Preparers/ModsPreparer.h"
 #include <HAL/FileManagerGeneric.h>
 
-TArray<FString> UModsPreparer::GetArrayOfModDirectoriesHavingExpeditionInteractionObjects()
+TArray<FString> UModsPreparer::GetArrayOfModDirectories(FString CategoryName)
 {
     TArray<FString> Result;
 
@@ -20,10 +20,10 @@ TArray<FString> UModsPreparer::GetArrayOfModDirectoriesHavingExpeditionInteracti
     FileManager.FindFilesRecursive(Dirs, *ModsDir, TEXT("*"), false, true);
 
     for (FString Dir : Dirs) {
-        if (FileManager.DirectoryExists(*FString(Dir + "/Expedition interaction objects"))) {
+        if (FileManager.DirectoryExists(*FString(Dir + "/" + CategoryName))) {
             //Получение списка папок всех модулей
             TArray<FString> ModDirs;
-            FString StartDirPath = FString(*FString(Dir + "/Expedition interaction objects"));
+            FString StartDirPath = FString(*FString(Dir + "/" + CategoryName));
             FFileManagerGeneric::Get().FindFilesRecursive(ModDirs, *StartDirPath, TEXT("*"), false, true);
 
             TArray<FString> ModuleNames;
@@ -35,7 +35,7 @@ TArray<FString> UModsPreparer::GetArrayOfModDirectoriesHavingExpeditionInteracti
 
                 //И проверяется на каком месте находится корень для всех модулей объектов взаимодействия
                 int SequentialDirectoryNumber = 0;
-                DirPieces.Find("Expedition interaction objects", SequentialDirectoryNumber);
+                DirPieces.Find(CategoryName, SequentialDirectoryNumber);
 
                 /* Отсееваются некорневые директории по длине пути. Если директория корневая,
                  * то её длинна должна быть равна последовательному номеру корня общего для всех
@@ -51,4 +51,14 @@ TArray<FString> UModsPreparer::GetArrayOfModDirectoriesHavingExpeditionInteracti
     }
 
     return Result;
+}
+
+TArray<FString> UModsPreparer::GetArrayOfModDirectoriesHavingExpeditionInteractionObjects()
+{
+    return GetArrayOfModDirectories("Expedition interaction objects");
+}
+
+TArray<FString> UModsPreparer::GetArrayOfModDirectoriesHavingInventoryItems()
+{
+    return GetArrayOfModDirectories("Inventory items");
 }

@@ -29,7 +29,7 @@ private:
 				"	<Category>Unlocking containers</Category>\n"
 				"	<SubCategory>Common</SubCategory>\n"
 				"	<Name>Ключ</Name>\n"
-				"	<MaximumAmountInStack>10 </MaximumAmountInStack>\n"
+				"	<MaximumAmountInStack>10</MaximumAmountInStack>\n"
 				"	<IsUsable>false</IsUsable>\n"
 				"	<AllowedForUseOnExpeditionInteractionObjects>true</AllowedForUseOnExpeditionInteractionObjects>\n"
 				"	<UseEvents></UseEvents>\n"

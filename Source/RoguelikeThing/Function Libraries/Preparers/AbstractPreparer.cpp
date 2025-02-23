@@ -10,11 +10,11 @@
 DEFINE_LOG_CATEGORY(AbstractPreparer);
 
 //Проверка существования объектов из модуля Default. При обнаружении их отсутствия, они восстанавливаются из исходного списка
-void UAbstractPreparer::CheckingDefaultAbstracts (UAbstractList* ObjectsList)
+void UAbstractPreparer::CheckingDefaultAbstracts (UAbstractList* ObjectsList, FString ModuleRoot)
 {
     IPlatformFile& FileManager = FPlatformFileManager::Get().GetPlatformFile();
 
-    FString ModulePath = FString(FPaths::ConvertRelativePathToFull(FPaths::ProjectDir()) + TEXT("Data/Expedition interaction objects/Default/xml"));
+    FString ModulePath = FString(FPaths::ConvertRelativePathToFull(FPaths::ProjectDir()) + TEXT("Data/") + ModuleRoot + TEXT("/Default/xml"));
     //Если директории объектов взаимодействия по умолчанию нет, она создаётся
     if (!FileManager.DirectoryExists(*ModulePath)) {
         if (!FileManager.CreateDirectoryTree(*ModulePath)) {
@@ -44,8 +44,9 @@ void UAbstractPreparer::CheckingDefaultAbstracts (UAbstractList* ObjectsList)
 
 //Функция загрузки данных об объекте из его xml файла
 template<typename DataType, typename ListType, typename PreparerType>
-DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString ModuleName, FString XMLFilePath, IPlatformFile& FileManager, ListType* ObjectsList,
-    DataType*(*UploadingData)(PreparerType* Preparer, DataType* Data, FXmlNode* RootNode, FString FileName, ListType* ObjectsList, FString ModuleName, FString XMLFilePath, IPlatformFile& FileManager, int RecursionDepth), int RecursionDepth)
+DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString ModuleName, FString ModuleRoot, FString XMLFilePath, IPlatformFile& FileManager,
+    ListType* ObjectsList, DataType*(*UploadingData)(PreparerType* Preparer, DataType* Data, FXmlNode* RootNode, FString FileName, ListType* ObjectsList,
+        FString ModuleName, FString XMLFilePath, IPlatformFile& FileManager, int RecursionDepth), int RecursionDepth)
 {
     TArray<FString> PathPieces;
     //Переданный путь до xml файла разбивается на фрагменты, где последний элемент - это сам файл, а все предыдущие - папки, в которые он вложен
@@ -101,10 +102,10 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
         //Если файл был из модуля Default, то производится попытка его восстановления из исходного списка
         if (ModuleName == "Default") {
             UE_LOG(AbstractPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
-            if (RestoringDefaultFileByName(FileName, ObjectsList)) {
+            if (RestoringDefaultFileByName(FileName, ModuleRoot, ObjectsList)) {
                 UE_LOG(AbstractPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
                 //И после его восстановления, рекурсивно запускается эта же функция с целью ещё раз попытаться загрузить уже восстановленный файл
-                return LoadDataFromXML(Preparer, ModuleName, XMLFilePath, FileManager, ObjectsList, UploadingData, ++RecursionDepth);
+                return LoadDataFromXML(Preparer, ModuleName, ModuleRoot, XMLFilePath, FileManager, ObjectsList, UploadingData, ++RecursionDepth);
             }
             else {
                 //Если же файл восстановить не удаётся, производится остановка выполнения программы
@@ -128,9 +129,9 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
 
         if (ModuleName == "Default") {
             UE_LOG(AbstractPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
-            if (RestoringDefaultFileByName(FileName, ObjectsList)) {
+            if (RestoringDefaultFileByName(FileName, ModuleRoot, ObjectsList)) {
                 UE_LOG(AbstractPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
-                return LoadDataFromXML(Preparer, ModuleName, XMLFilePath, FileManager, ObjectsList, UploadingData, ++RecursionDepth);
+                return LoadDataFromXML(Preparer, ModuleName, ModuleRoot, XMLFilePath, FileManager, ObjectsList, UploadingData, ++RecursionDepth);
             }
             else {
                 UE_LOG(AbstractPreparer, Error, TEXT("!!! An error occurred in the AbstractPreparer class in the LoadDataFromXML function - An attempt to restore file %s failed. Abnormal termination."), *XMLFilePath);
@@ -155,9 +156,9 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
 
         if (ModuleName == "Default") {
             UE_LOG(AbstractPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
-            if (RestoringDefaultFileByName(FileName, ObjectsList)) {
+            if (RestoringDefaultFileByName(FileName, ModuleRoot, ObjectsList)) {
                 UE_LOG(AbstractPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
-                return LoadDataFromXML(Preparer, ModuleName, XMLFilePath, FileManager, ObjectsList, UploadingData, ++RecursionDepth);
+                return LoadDataFromXML(Preparer, ModuleName, ModuleRoot, XMLFilePath, FileManager, ObjectsList, UploadingData, ++RecursionDepth);
             }
             else {
                 UE_LOG(AbstractPreparer, Error, TEXT("!!! An error occurred in the AbstractPreparer class in the LoadDataFromXML function - An attempt to restore file %s failed. Abnormal termination."), *XMLFilePath);
@@ -181,9 +182,9 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
 
         if (ModuleName == "Default") {
             UE_LOG(AbstractPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
-            if (RestoringDefaultFileByName(FileName, ObjectsList)) {
+            if (RestoringDefaultFileByName(FileName, ModuleRoot, ObjectsList)) {
                 UE_LOG(AbstractPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
-                return LoadDataFromXML(Preparer, ModuleName, XMLFilePath, FileManager, ObjectsList, UploadingData, ++RecursionDepth);
+                return LoadDataFromXML(Preparer, ModuleName, ModuleRoot, XMLFilePath, FileManager, ObjectsList, UploadingData, ++RecursionDepth);
             }
             else {
                 UE_LOG(AbstractPreparer, Error, TEXT("!!! An error occurred in the AbstractPreparer class in the LoadDataFromXML function - An attempt to restore file %s failed. Abnormal termination."), *XMLFilePath);
@@ -207,9 +208,9 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
 
         if (ModuleName == "Default") {
             UE_LOG(AbstractPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
-            if (RestoringDefaultFileByName(FileName, ObjectsList)) {
+            if (RestoringDefaultFileByName(FileName, ModuleRoot, ObjectsList)) {
                 UE_LOG(AbstractPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
-                return LoadDataFromXML(Preparer, ModuleName, XMLFilePath, FileManager, ObjectsList, UploadingData, ++RecursionDepth);
+                return LoadDataFromXML(Preparer, ModuleName, ModuleRoot, XMLFilePath, FileManager, ObjectsList, UploadingData, ++RecursionDepth);
             }
             else {
                 UE_LOG(AbstractPreparer, Error, TEXT("!!! An error occurred in the AbstractPreparer class in the LoadDataFromXML function - An attempt to restore file %s failed. Abnormal termination."), *XMLFilePath);
@@ -234,9 +235,9 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
 
         if (ModuleName == "Default") {
             UE_LOG(AbstractPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
-            if (RestoringDefaultFileByName(FileName, ObjectsList)) {
+            if (RestoringDefaultFileByName(FileName, ModuleRoot, ObjectsList)) {
                 UE_LOG(AbstractPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
-                return LoadDataFromXML(Preparer, ModuleName, XMLFilePath, FileManager, ObjectsList, UploadingData, ++RecursionDepth);
+                return LoadDataFromXML(Preparer, ModuleName, ModuleRoot, XMLFilePath, FileManager, ObjectsList, UploadingData, ++RecursionDepth);
             }
             else {
                 UE_LOG(AbstractPreparer, Error, TEXT("!!! An error occurred in the AbstractPreparer class in the LoadDataFromXML function - An attempt to restore file %s failed. Abnormal termination."), *XMLFilePath);
@@ -263,9 +264,9 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
 
         if (ModuleName == "Default") {
             UE_LOG(AbstractPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
-            if (RestoringDefaultFileByName(FileName, ObjectsList)) {
+            if (RestoringDefaultFileByName(FileName, ModuleRoot, ObjectsList)) {
                 UE_LOG(AbstractPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
-                return LoadDataFromXML(Preparer, ModuleName, XMLFilePath, FileManager, ObjectsList, UploadingData, ++RecursionDepth);
+                return LoadDataFromXML(Preparer, ModuleName, ModuleRoot, XMLFilePath, FileManager, ObjectsList, UploadingData, ++RecursionDepth);
             }
             else {
                 UE_LOG(AbstractPreparer, Error, TEXT("!!! An error occurred in the AbstractPreparer class in the LoadDataFromXML function - An attempt to restore file %s failed. Abnormal termination."), *XMLFilePath);
@@ -292,9 +293,9 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
 
         if (ModuleName == "Default") {
             UE_LOG(AbstractPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
-            if (RestoringDefaultFileByName(FileName, ObjectsList)) {
+            if (RestoringDefaultFileByName(FileName, ModuleRoot, ObjectsList)) {
                 UE_LOG(AbstractPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
-                return LoadDataFromXML(Preparer, ModuleName, XMLFilePath, FileManager, ObjectsList, UploadingData, ++RecursionDepth);
+                return LoadDataFromXML(Preparer, ModuleName, ModuleRoot, XMLFilePath, FileManager, ObjectsList, UploadingData, ++RecursionDepth);
             }
             else {
                 UE_LOG(AbstractPreparer, Error, TEXT("!!! An error occurred in the AbstractPreparer class in the LoadDataFromXML function - An attempt to restore file %s failed. Abnormal termination."), *XMLFilePath);
@@ -318,9 +319,9 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
 
         if (ModuleName == "Default") {
             UE_LOG(AbstractPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
-            if (RestoringDefaultFileByName(FileName, ObjectsList)) {
+            if (RestoringDefaultFileByName(FileName, ModuleRoot, ObjectsList)) {
                 UE_LOG(AbstractPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
-                return LoadDataFromXML(Preparer, ModuleName, XMLFilePath, FileManager, ObjectsList, UploadingData, ++RecursionDepth);
+                return LoadDataFromXML(Preparer, ModuleName, ModuleRoot, XMLFilePath, FileManager, ObjectsList, UploadingData, ++RecursionDepth);
             }
             else {
                 UE_LOG(AbstractPreparer, Error, TEXT("!!! An error occurred in the AbstractPreparer class in the LoadDataFromXML function - An attempt to restore file %s failed. Abnormal termination."), *XMLFilePath);
@@ -341,11 +342,11 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
 }
 
 //Функция восстановления файла из моодуля Default по его имени (без расширения)
-bool UAbstractPreparer::RestoringDefaultFileByName(FString Name, UAbstractList* ObjectsList)
+bool UAbstractPreparer::RestoringDefaultFileByName(FString Name, FString ModuleRoot, UAbstractList* ObjectsList)
 {
     Name += ".xml";
 
-    FString ModulePath = FString(FPaths::ConvertRelativePathToFull(FPaths::ProjectDir()) + TEXT("Data/Expedition interaction objects/Default/xml/"));
+    FString ModulePath = FString(FPaths::ConvertRelativePathToFull(FPaths::ProjectDir()) + TEXT("Data/") + ModuleRoot + TEXT("/Default/xml/"));
     FString FilePath = ModulePath + Name;
     FString FileContent = ObjectsList->GetXmlText(*Name);
 
@@ -365,15 +366,15 @@ bool UAbstractPreparer::RestoringDefaultFileByName(FString Name, UAbstractList* 
 
 //Функция получения данных обо всех объектах взаимодействия всех модулей
 template<typename Container, typename DataType, typename PreparerType>
-void UAbstractPreparer::GetAllData(Container* DataContainer, TArray<FString> ModsDirWithAbstract, UAbstractList* ObjectsList, PreparerType* Preparer)
+void UAbstractPreparer::GetAllData(Container* DataContainer, TArray<FString> ModsDirWithAbstract, UAbstractList* ObjectsList, FString ModuleRoot, PreparerType* Preparer)
 {
-    AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [DataContainer, ModsDirWithAbstract, ObjectsList, Preparer, this]() {
+    AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [DataContainer, ModsDirWithAbstract, ObjectsList, ModuleRoot, Preparer, this]() {
         //Сначала проверяется не повреждены ли данные модуля Default
-        CheckingDefaultAbstracts(ObjectsList);
+        CheckingDefaultAbstracts(ObjectsList, ModuleRoot);
 
         //Получение списка папок всех модулей
         TArray<FString> Dirs;
-        FString StartDirPath = FString(FPaths::ConvertRelativePathToFull(FPaths::ProjectDir()) + TEXT("Data/Expedition interaction objects"));
+        FString StartDirPath = FString(FPaths::ConvertRelativePathToFull(FPaths::ProjectDir()) + TEXT("Data/") + ModuleRoot);
         FFileManagerGeneric::Get().FindFilesRecursive(Dirs, *StartDirPath, TEXT("*"), false, true);
 
         TArray<FString> ModuleNames;
@@ -385,7 +386,7 @@ void UAbstractPreparer::GetAllData(Container* DataContainer, TArray<FString> Mod
 
             //И проверяется на каком месте находится корень для всех модулей объектов взаимодействия
             int SequentialDirectoryNumber = 0;
-            DirPieces.Find("Expedition interaction objects", SequentialDirectoryNumber);
+            DirPieces.Find(ModuleRoot, SequentialDirectoryNumber);
 
             /* Отсееваются некорневые директории по длине пути. Если директория корневая,
              * то её длинна должна быть равна последовательному номеру корня общего для всех
@@ -400,7 +401,7 @@ void UAbstractPreparer::GetAllData(Container* DataContainer, TArray<FString> Mod
 
         IPlatformFile& FileManager = FPlatformFileManager::Get().GetPlatformFile();
         for (FString ModuleName : ModuleNames) {
-            UE_LOG(AbstractPreparer, Log, TEXT("Loading of the expedition interaction objects module %s has begun"), *ModuleName);
+            UE_LOG(AbstractPreparer, Log, TEXT("Loading of the %s module %s has begun"), *ModuleRoot, *ModuleName);
 
             bool IsModDir = false;
             if (FileManager.DirectoryExists(*FString(FPaths::ConvertRelativePathToFull(FPaths::ProjectDir()) + "Mods/" + ModuleName))) {
@@ -444,7 +445,7 @@ void UAbstractPreparer::GetAllData(Container* DataContainer, TArray<FString> Mod
                 ModuleName = NamePieces.Last();
             }
             else {
-                DataSaverFilePath = FPaths::ProjectDir() + "Data/Expedition interaction objects/" + ModuleName + "/sav/" + ModuleName + ".sav";
+                DataSaverFilePath = FPaths::ProjectDir() + "Data/" + ModuleRoot + "/" + ModuleName + "/sav/" + ModuleName + ".sav";
             }
             bool DataSaverFileExist = FileManager.FileExists(*DataSaverFilePath);
 

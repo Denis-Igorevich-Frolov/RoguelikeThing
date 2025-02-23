@@ -293,4 +293,20 @@
       <Filter>Source\RoguelikeThing\Widgets\MapEditor</Filter>
     </ClInclude>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\Source\RoguelikeThing\Function Libraries\Preparers\InventoryItemsPreparer.h">
+      <Filter>Source\RoguelikeThing\Function Libraries\Preparers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\Source\RoguelikeThing\GameObjects\InventoryItemData.h">
+      <Filter>Source\RoguelikeThing\GameObjects</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\Source\RoguelikeThing\Function Libraries\Preparers\InventoryItemsPreparer.cpp">
+      <Filter>Source\RoguelikeThing\Function Libraries\Preparers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\Source\RoguelikeThing\GameObjects\InventoryItemData.cpp">
+      <Filter>Source\RoguelikeThing\GameObjects</Filter>
+    </ClCompile>
+  </ItemGroup>
 </Project>
