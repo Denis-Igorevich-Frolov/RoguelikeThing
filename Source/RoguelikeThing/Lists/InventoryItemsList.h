@@ -31,7 +31,7 @@ private:
 				"	<Name>Ключ</Name>\n"
 				"	<MaximumAmountInStack>10</MaximumAmountInStack>\n"
 				"	<AllowedForUseOnExpeditionInteractionObjects>true</AllowedForUseOnExpeditionInteractionObjects>\n"
-				"	<UseEvents></UseEvents>\n"
+				"	<UseEvents type=\"array\"></UseEvents>\n"
 				"</root>\n"
             ))
         }

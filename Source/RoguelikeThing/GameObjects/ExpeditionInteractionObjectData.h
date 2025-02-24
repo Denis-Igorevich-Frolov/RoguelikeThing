@@ -22,6 +22,9 @@ struct FInteractionCondition
 {
 	GENERATED_BODY()
 
+	UPROPERTY(BlueprintReadWrite, SaveGame)
+	TArray<FString> Conditions;
+
 	//Текст, который будет выведен при выполнении условия интеракции
 	UPROPERTY(BlueprintReadWrite, SaveGame)
 	FString InteractionText;

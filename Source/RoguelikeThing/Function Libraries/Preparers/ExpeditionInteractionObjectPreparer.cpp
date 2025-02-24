@@ -125,6 +125,40 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadObje
                 return Plug;
             }
 
+            FInteractionCondition InteractionCondition;
+
+            FXmlNode* ConditionsNode = InteractionNode->FindChildNode("Conditions");
+            if (!ConditionsNode) {
+                UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadObjectFromXML function - Failed to extract Conditions node from %s node from file %s"), *InteractionNode->GetTag(), *XMLFilePath);
+
+                if (ExpeditionInteractionObjectData && ExpeditionInteractionObjectData->IsValidLowLevel()) {
+                    if (ExpeditionInteractionObjectData->IsRooted())
+                        ExpeditionInteractionObjectData->RemoveFromRoot();
+
+                    ExpeditionInteractionObjectData->MarkPendingKill();
+                }
+
+                if (ModuleName == "Default") {
+                    UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
+                    if (Preparer->RestoringDefaultFileByName(FileName, "Expedition interaction objects", ExpeditionInteractionObjectsList)) {
+                        UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
+                        return Preparer->LoadObjectFromXML(ModuleName, XMLFilePath, FileManager, ++RecursionDepth);
+                    }
+                    else {
+                        UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadObjectFromXML function - An attempt to restore file %s failed. Abnormal termination."), *XMLFilePath);
+                        FGenericPlatformMisc::RequestExit(false);
+                    }
+                }
+
+                UExpeditionInteractionObjectData* Plug = nullptr;
+                return Plug;
+            }
+
+            TArray<FXmlNode*> Conditions = ConditionsNode->GetChildrenNodes();
+            for (FXmlNode* Condition : Conditions) {
+                InteractionCondition.Conditions.Add(Condition->GetContent());
+            }
+
             FXmlNode* EventsText = InteractionNode->FindChildNode("EventsText");
             if (!EventsText) {
                 UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadObjectFromXML function - Failed to extract EventsText node from %s node from file %s"), *InteractionNode->GetTag(), *XMLFilePath);
@@ -151,8 +185,6 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadObje
                 UExpeditionInteractionObjectData* Plug = nullptr;
                 return Plug;
             }
-
-            FInteractionCondition InteractionCondition;
             InteractionCondition.InteractionText = EventsText->GetContent();
 
             FXmlNode* EventsNode = InteractionNode->FindChildNode("Events");
