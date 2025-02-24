@@ -42,6 +42,8 @@ private:
     };
 
 public:
+	//Получение текста xml файла по его имени
 	FString GetXmlText(FString FileName) override;
+	//Получение списка имён xml файлов всех объектов в модуле
 	TArray<FString> GetModuleFilesArray() override;
 };

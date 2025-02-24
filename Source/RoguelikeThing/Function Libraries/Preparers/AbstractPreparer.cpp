@@ -10,15 +10,15 @@
 DEFINE_LOG_CATEGORY(AbstractPreparer);
 
 //Проверка существования объектов из модуля Default. При обнаружении их отсутствия, они восстанавливаются из исходного списка
-void UAbstractPreparer::CheckingDefaultAbstracts (UAbstractList* ObjectsList, FString ModuleRoot)
+void UAbstractPreparer::CheckingDefaultAbstractObjects (UAbstractList* ObjectsList, FString ModuleRoot)
 {
     IPlatformFile& FileManager = FPlatformFileManager::Get().GetPlatformFile();
 
     FString ModulePath = FString(FPaths::ConvertRelativePathToFull(FPaths::ProjectDir()) + TEXT("Data/") + ModuleRoot + TEXT("/Default/xml"));
-    //Если директории объектов взаимодействия по умолчанию нет, она создаётся
+    //Если директории модуля Default нет, она создаётся
     if (!FileManager.DirectoryExists(*ModulePath)) {
         if (!FileManager.CreateDirectoryTree(*ModulePath)) {
-            UE_LOG(AbstractPreparer, Error, TEXT("!!! An error occurred in the AbstractPreparer class in the CheckingDefaultAbstract function - Failed to create directory %s"), *ModulePath);
+            UE_LOG(AbstractPreparer, Error, TEXT("!!! An error occurred in the AbstractPreparer class in the CheckingDefaultAbstractObjects function - Failed to create directory %s"), *ModulePath);
         }
 
         UE_LOG(AbstractPreparer, Log, TEXT("Directory %s has been created"), *ModulePath);
@@ -34,7 +34,7 @@ void UAbstractPreparer::CheckingDefaultAbstracts (UAbstractList* ObjectsList, FS
             FString FileContent = *ObjectsList->GetXmlText(*FileName);
 
             if (!FFileHelper::SaveStringToFile(FileContent, *FilePath, FFileHelper::EEncodingOptions::ForceUTF8, &IFileManager::Get(), EFileWrite::FILEWRITE_None)) {
-                UE_LOG(AbstractPreparer, Error, TEXT("!!! An error occurred in the AbstractPreparer class in the CheckingDefaultAbstract function - Failed to create file %s"), *FilePath);
+                UE_LOG(AbstractPreparer, Error, TEXT("!!! An error occurred in the AbstractPreparer class in the CheckingDefaultAbstractObjects function - Failed to create file %s"), *FilePath);
             }
 
             UE_LOG(AbstractPreparer, Log, TEXT("File %s from the Default module has been created"), *FilePath);
@@ -78,11 +78,15 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
     UPROPERTY()
     DataType* AbstractData = nullptr;
 
+    //Безопасное создание UObject'ов гарантировано только в основном потоке
     AsyncTask(ENamedThreads::GameThread, [&AbstractData, this]() {
         AbstractData = NewObject<DataType>();
+        /* Так как изначально AbstractData равна nullptr, сборщик мусора то и дело наравит вмешаться
+         * в жизненный цикл переменной, так что её следует зарутировать от него подальше */
         AbstractData->AddToRoot();
         });
 
+    //А пока Saver инициализируется в основном потоке, асинхронный ждёт, пока переменная не будет готова
     while (!AbstractData) {
         FPlatformProcess::SleepNoStats(0.0f);
     }
@@ -117,6 +121,7 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
         return nullptr;
     }
 
+    //Проверяется также и IsValid у XmlFile потому что переменная может нормально создаться, а файл, связанный с ней не загрузиться
     if (!XmlFile->IsValid()) {
         UE_LOG(AbstractPreparer, Error, TEXT("!!! An error occurred in the AbstractPreparer class in the LoadDataFromXML function - xml code from file %s is not valid"), *XMLFilePath);
 
@@ -154,6 +159,9 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
             AbstractData->MarkPendingKill();
         }
 
+        if (XmlFile)
+            delete XmlFile;
+
         if (ModuleName == "Default") {
             UE_LOG(AbstractPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
             if (RestoringDefaultFileByName(FileName, ModuleRoot, ObjectsList)) {
@@ -179,6 +187,9 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
 
             AbstractData->MarkPendingKill();
         }
+
+        if (XmlFile)
+            delete XmlFile;
 
         if (ModuleName == "Default") {
             UE_LOG(AbstractPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
@@ -206,6 +217,9 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
             AbstractData->MarkPendingKill();
         }
 
+        if (XmlFile)
+            delete XmlFile;
+
         if (ModuleName == "Default") {
             UE_LOG(AbstractPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
             if (RestoringDefaultFileByName(FileName, ModuleRoot, ObjectsList)) {
@@ -232,6 +246,9 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
 
             AbstractData->MarkPendingKill();
         }
+
+        if (XmlFile)
+            delete XmlFile;
 
         if (ModuleName == "Default") {
             UE_LOG(AbstractPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
@@ -262,6 +279,9 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
             AbstractData->MarkPendingKill();
         }
 
+        if (XmlFile)
+            delete XmlFile;
+
         if (ModuleName == "Default") {
             UE_LOG(AbstractPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
             if (RestoringDefaultFileByName(FileName, ModuleRoot, ObjectsList)) {
@@ -291,6 +311,9 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
             AbstractData->MarkPendingKill();
         }
 
+        if (XmlFile)
+            delete XmlFile;
+
         if (ModuleName == "Default") {
             UE_LOG(AbstractPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
             if (RestoringDefaultFileByName(FileName, ModuleRoot, ObjectsList)) {
@@ -316,6 +339,9 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
 
             AbstractData->MarkPendingKill();
         }
+
+        if (XmlFile)
+            delete XmlFile;
 
         if (ModuleName == "Default") {
             UE_LOG(AbstractPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
@@ -351,12 +377,12 @@ bool UAbstractPreparer::RestoringDefaultFileByName(FString Name, FString ModuleR
     FString FileContent = ObjectsList->GetXmlText(*Name);
 
     if (FileContent == "") {
-        UE_LOG(AbstractPreparer, Error, TEXT("!!!!!!!!!"));
+        UE_LOG(AbstractPreparer, Error, TEXT("!!! An error occurred in the AbstractPreparer class in the RestoringDefaultFileByName function - The recoverable content of file %s of module %s is empty"), *Name, *ModuleRoot);
         return false;
     }
 
     if (!FFileHelper::SaveStringToFile(FileContent, *FilePath, FFileHelper::EEncodingOptions::ForceUTF8, &IFileManager::Get(), EFileWrite::FILEWRITE_None)) {
-        UE_LOG(AbstractPreparer, Error, TEXT("!!! An error occurred in the AbstractPreparer class in the ConvertRelativePathToFull function - Failed to create file %s"), *FilePath);
+        UE_LOG(AbstractPreparer, Error, TEXT("!!! An error occurred in the AbstractPreparer class in the RestoringDefaultFileByName function - Failed to save content to file %s"), *FilePath);
         return false;
     }
 
@@ -364,13 +390,13 @@ bool UAbstractPreparer::RestoringDefaultFileByName(FString Name, FString ModuleR
     return true;
 }
 
-//Функция получения данных обо всех объектах взаимодействия всех модулей
+//Функция получения данных обо всех объектах конкретного типа всех модулей
 template<typename Container, typename DataType, typename PreparerType>
 void UAbstractPreparer::GetAllData(Container* DataContainer, TArray<FString> ModsDirWithAbstract, UAbstractList* ObjectsList, FString ModuleRoot, PreparerType* Preparer)
 {
     AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [DataContainer, ModsDirWithAbstract, ObjectsList, ModuleRoot, Preparer, this]() {
         //Сначала проверяется не повреждены ли данные модуля Default
-        CheckingDefaultAbstracts(ObjectsList, ModuleRoot);
+        CheckingDefaultAbstractObjects(ObjectsList, ModuleRoot);
 
         //Получение списка папок всех модулей
         TArray<FString> Dirs;
@@ -384,25 +410,27 @@ void UAbstractPreparer::GetAllData(Container* DataContainer, TArray<FString> Mod
             TArray<FString> DirPieces;
             Dir.ParseIntoArray(DirPieces, TEXT("/"), false);
 
-            //И проверяется на каком месте находится корень для всех модулей объектов взаимодействия
+            //И для всех модулей проверяется на каком месте находится корень
             int SequentialDirectoryNumber = 0;
             DirPieces.Find(ModuleRoot, SequentialDirectoryNumber);
 
             /* Отсееваются некорневые директории по длине пути. Если директория корневая,
-             * то её длинна должна быть равна последовательному номеру корня общего для всех
-             * модулей + 1. Также стоит учеть, что SequentialDirectoryNumber - это индекс,
+             * то длинна её пути должна быть равна последовательному номеру корня общего для
+             * всех модулей + 1. Также стоит учеть, что SequentialDirectoryNumber - это индекс,
              * которому до последовательного номера следует прибавить ещё 1 */
             if (DirPieces.Num() == SequentialDirectoryNumber + 2 && DirPieces.IsValidIndex(SequentialDirectoryNumber + 1)) {
                 ModuleNames.Add(*DirPieces[SequentialDirectoryNumber + 1]);
             }
         }
 
+        //В конец вписка модулей добавляются моды
         ModuleNames.Append(ModsDirWithAbstract);
 
         IPlatformFile& FileManager = FPlatformFileManager::Get().GetPlatformFile();
         for (FString ModuleName : ModuleNames) {
             UE_LOG(AbstractPreparer, Log, TEXT("Loading of the %s module %s has begun"), *ModuleRoot, *ModuleName);
 
+            //Логика для загрузки обычных модулей и модовых немного отличается, так что необходимо знать какой модуль сейчас загружается
             bool IsModDir = false;
             if (FileManager.DirectoryExists(*FString(FPaths::ConvertRelativePathToFull(FPaths::ProjectDir()) + "Mods/" + ModuleName))) {
                 IsModDir = true;
@@ -419,13 +447,14 @@ void UAbstractPreparer::GetAllData(Container* DataContainer, TArray<FString> Mod
             TArray<FString> XMLFilesPaths;
             FileManager.FindFiles(XMLFilesPaths, *ModuleXMLDir, TEXT("xml"));
 
+            //У путей xml файлов отбрасывается начало вплоть до директории проекта. Это необходимо для построения относительных путей файлов
             for (FString& XMLFilePath : XMLFilesPaths) {
                 XMLFilePath = XMLFilePath.Replace(*FString(FPaths::ConvertRelativePathToFull(FPaths::ProjectDir())), *FString(""));
             }
 
             UPROPERTY()
             UDataSaver* Saver = nullptr;
-
+            //Безопасное создание UObject'ов гарантировано только в основном потоке
             AsyncTask(ENamedThreads::GameThread, [&Saver, this]() {
                 Saver = NewObject<UDataSaver>();
                 Saver->AddToRoot();
@@ -436,10 +465,11 @@ void UAbstractPreparer::GetAllData(Container* DataContainer, TArray<FString> Mod
             }
 
             FString DataSaverFilePath = "";
+            //Путь до файлов мода чуть более сложный. Сам ModuleName у модов представлен как "Имя мода/Тип изменяемых объектов/Модуль"
             if (IsModDir) {
                 TArray<FString> NamePieces;
                 ModuleName.ParseIntoArray(NamePieces, TEXT("/"), false);
-
+                //Конечное название sav переменной у модов даётся по имени изменяемого модуля объектов, а не всего модуля мода
                 DataSaverFilePath = FPaths::ProjectDir() + "Mods/" + ModuleName + "/sav/" + NamePieces.Last() + ".sav";
 
                 ModuleName = NamePieces.Last();
@@ -454,7 +484,7 @@ void UAbstractPreparer::GetAllData(Container* DataContainer, TArray<FString> Mod
                 Saver->LoadBinArray(DataSaverFilePath);
             }
 
-            //Идёт проверка не изменилось ли количество xml файлов в директории модуля и не изменился ли их хеш
+            //Идёт проверка не изменилось ли количество xml файлов в директории модуля и не изменился ли их хеш, а так же не был ли файл sav перемещён
             if (Saver && XMLFilesPaths.Num() == Saver->GetBinArraySize() && Saver->CheckHashChange() &&
                 DataSaverFilePath == Saver->GetSavFilePath()) {
                 UE_LOG(AbstractPreparer, Log, TEXT("Loading will be done from a save file %s with serialized data"), *DataSaverFilePath);
@@ -495,7 +525,13 @@ void UAbstractPreparer::GetAllData(Container* DataContainer, TArray<FString> Mod
                         }
                     }
                     else {
-                        UE_LOG(AbstractPreparer, Error, TEXT("!!!!!"));
+                        UE_LOG(AbstractPreparer, Error, TEXT("!!! An error occurred in the AbstractPreparer class in the GetAllAbstractData function - AbstractDataRef is not valid"));
+                        
+                        TArray<FString> PathPieces;
+                        XMLFilePath.ParseIntoArray(PathPieces, TEXT("/"), false);
+                        AsyncTask(ENamedThreads::GameThread, [ModuleName, PathPieces, this]() {
+                            ChangeTextOfTheDownloadDetails.Broadcast(FString("Object " + PathPieces.Last().Left(4) + " could not be loaded"), FColor::Red);
+                            });
                     }
                 }
             }
@@ -515,6 +551,7 @@ void UAbstractPreparer::GetAllData(Container* DataContainer, TArray<FString> Mod
                         ChangeTextOfTheDownloadDetails.Broadcast(FString("Loading file:  " + PathPieces.Last()), FColor::FromHex("160124"));
                         });
 
+                    //Загрузка xml файла производится через функцию дочернего класса
                     UPROPERTY()
                     DataType* AbstractData = Preparer->LoadObjectFromXML(ModuleName, FullXMLFilePath, FileManager, 0);
 

@@ -76,10 +76,10 @@ private:
 	void CheckingDefaultExpeditionInteractionObjects();
 	
 public:
+	UExpeditionInteractionObjectPreparer();
+
 	//Функция загрузки данных об объекте из его xml файла
 	UExpeditionInteractionObjectData* LoadObjectFromXML(FString ModuleName, FString XMLFilePath, IPlatformFile& FileManager, int RecursionDepth = 0);
-
-	UExpeditionInteractionObjectPreparer();
 
 	//Функция получения данных обо всех объектах взаимодействия всех модулей
 	UFUNCTION(BlueprintCallable)

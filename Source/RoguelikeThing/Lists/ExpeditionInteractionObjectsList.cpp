@@ -3,6 +3,7 @@
 
 #include "RoguelikeThing/Lists/ExpeditionInteractionObjectsList.h"
 
+//Получение текста xml файла по его имени
 FString UExpeditionInteractionObjectsList::GetXmlText(FString FileName)
 {
     TArray<FString> Keys;
@@ -15,6 +16,7 @@ FString UExpeditionInteractionObjectsList::GetXmlText(FString FileName)
     return *ExpeditionInteractionObjectsXMLs.Find(FileName);
 }
 
+//Получение списка имён xml файлов всех объектов в модуле
 TArray<FString> UExpeditionInteractionObjectsList::GetModuleFilesArray()
 {
     TArray<FString> Keys;

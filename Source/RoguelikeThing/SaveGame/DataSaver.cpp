@@ -1,4 +1,4 @@
-// Denis Igorevich Frolov did all this. Once there. All things reserved.
+п»ї// Denis Igorevich Frolov did all this. Once there. All things reserved.
 
 
 #include "RoguelikeThing/SaveGame/DataSaver.h"
@@ -7,25 +7,25 @@
 
 DEFINE_LOG_CATEGORY(DataSaver);
 
-/* Функция, добавляющая данные о предмете взаимодействия экспедиции в массив всех объектов
- * соответствующего модуля для последующего сохранения. Также сохраняется хеш исходного xml файла */
+/* Р¤СѓРЅРєС†РёСЏ, РґРѕР±Р°РІР»СЏСЋС‰Р°СЏ РґР°РЅРЅС‹Рµ Рѕ РѕР±СЉРµРєС‚Рµ РІ РјР°СЃСЃРёРІ РІСЃРµС… РѕР±СЉРµРєС‚РѕРІ СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓСЋС‰РµРіРѕ
+ * РјРѕРґСѓР»СЏ РґР»СЏ РїРѕСЃР»РµРґСѓСЋС‰РµРіРѕ СЃРѕС…СЂР°РЅРµРЅРёСЏ. РўР°РєР¶Рµ СЃРѕС…СЂР°РЅСЏРµС‚СЃСЏ С…РµС€ РёСЃС…РѕРґРЅРѕРіРѕ xml С„Р°Р№Р»Р° */
 template<typename Data>
 void UDataSaver::AddDataToBinArray(Data* ObjectData, FString SavedLocalFilePath, FString FullFilePath)
 {
     IPlatformFile& FileManager = FPlatformFileManager::Get().GetPlatformFile();
 
     if (FileManager.FileExists(*FullFilePath)) {
-        //В бинрную обёртку записываются сериализованные данные переменной ObjectData
+        //Р’ Р±РёРЅСЂРЅСѓСЋ РѕР±С‘СЂС‚РєСѓ Р·Р°РїРёСЃС‹РІР°СЋС‚СЃСЏ СЃРµСЂРёР°Р»РёР·РѕРІР°РЅРЅС‹Рµ РґР°РЅРЅС‹Рµ РїРµСЂРµРјРµРЅРЅРѕР№ ObjectData
         UPROPERTY(SaveGame)
         FBinArrayWrapper BinArrayWrapper;
-        FMemoryWriter InteractionObjectWriter = FMemoryWriter(BinArrayWrapper.BinArray);
-        FObjectAndNameAsStringProxyArchive InteractionObjectAr(InteractionObjectWriter, false);
-        InteractionObjectAr.ArIsSaveGame = true;
-        ObjectData->Serialize(InteractionObjectAr);
+        FMemoryWriter ObjectWriter = FMemoryWriter(BinArrayWrapper.BinArray);
+        FObjectAndNameAsStringProxyArchive ObjectAr(ObjectWriter, false);
+        ObjectAr.ArIsSaveGame = true;
+        ObjectData->Serialize(ObjectAr);
 
         BinData.Add(SavedLocalFilePath, BinArrayWrapper);
 
-        //Запоминается хеш исходного xml файла, который понадобится при следующей загрузке, чтобы отследить возможное изменение файла
+        //Р—Р°РїРѕРјРёРЅР°РµС‚СЃСЏ С…РµС€ РёСЃС…РѕРґРЅРѕРіРѕ xml С„Р°Р№Р»Р°, РєРѕС‚РѕСЂС‹Р№ РїРѕРЅР°РґРѕР±РёС‚СЃСЏ РїСЂРё СЃР»РµРґСѓСЋС‰РµР№ Р·Р°РіСЂСѓР·РєРµ, С‡С‚РѕР±С‹ РѕС‚СЃР»РµРґРёС‚СЊ РІРѕР·РјРѕР¶РЅРѕРµ РёР·РјРµРЅРµРЅРёРµ С„Р°Р№Р»Р°
         FMD5Hash FileHash = FMD5Hash::HashFile(*FullFilePath);
         FString Hash = LexToString(FileHash);
 
@@ -36,55 +36,58 @@ void UDataSaver::AddDataToBinArray(Data* ObjectData, FString SavedLocalFilePath,
     }
 }
 
-/* Полностью сформированный массив объектов взаимодействия экспедиции, относящихся к
- * одному модулю, сохраняется в sav файл, который будет находится по переданному пути */
+/* РџРѕР»РЅРѕСЃС‚СЊСЋ СЃС„РѕСЂРјРёСЂРѕРІР°РЅРЅС‹Р№ РјР°СЃСЃРёРІ РѕР±СЉРµРєС‚РѕРІ РѕС‚РЅРѕСЃСЏС‰РёС…СЃСЏ Рє СЃРѕС…СЂР°РЅСЏРµРјРѕРјСѓ РјРѕРґСѓР»СЋ,
+ * Р·Р°РїРёСЃС‹РІР°РµС‚СЃСЏ РІ sav С„Р°Р№Р», РєРѕС‚РѕСЂС‹Р№ Р±СѓРґРµС‚ РЅР°С…РѕРґРёС‚СЃСЏ РїРѕ РїРµСЂРµРґР°РЅРЅРѕРјСѓ РїСѓС‚Рё */
 void UDataSaver::SaveBinArray(FString FilePath)
 {
     SavFilePath = FilePath;
     TArray<uint8> BinArrayData;
-    FMemoryWriter InteractionObjectsWriter = FMemoryWriter(BinArrayData);
-    FObjectAndNameAsStringProxyArchive InteractionObjectAr(InteractionObjectsWriter, false);
-    InteractionObjectAr.ArIsSaveGame = true;
-    this->Serialize(InteractionObjectAr);
+    FMemoryWriter ObjectsWriter = FMemoryWriter(BinArrayData);
+    FObjectAndNameAsStringProxyArchive ObjectAr(ObjectsWriter, false);
+    ObjectAr.ArIsSaveGame = true;
+    this->Serialize(ObjectAr);
 
     if (!UGameplayStatics::SaveDataToSlot(BinArrayData, FilePath.LeftChop(4), 0)) {
-        UE_LOG(DataSaver, Error, TEXT("!!! AAAAAAAAAAAAA %s BinArrayData %d"), *FilePath, BinArrayData.Num());
+        UE_LOG(DataSaver, Error, TEXT("!!! An error occurred in the DataSaver class in the SaveBinArray function - Failed to save data to slot %s"), *FilePath);
     }
 }
 
-/* Загрузка массива объектов взаимодействия экспедиции, который был сохранён в слот по переданному пути.
- * Чтобы затем извлечь этот массив, следует воспользоваться функцией GetData */
+/* Р—Р°РіСЂСѓР·РєР° РјР°СЃСЃРёРІР° РѕР±СЉРµРєС‚РѕРІ РјРѕРґСѓР»СЏ, РєРѕС‚РѕСЂС‹Р№ Р±С‹Р» СЃРѕС…СЂР°РЅС‘РЅ РІ СЃР»РѕС‚ РїРѕ РїРµСЂРµРґР°РЅРЅРѕРјСѓ РїСѓС‚Рё.
+ * Р§С‚РѕР±С‹ Р·Р°С‚РµРј РёР·РІР»РµС‡СЊ СЌС‚РѕС‚ РјР°СЃСЃРёРІ, СЃР»РµРґСѓРµС‚ РІРѕСЃРїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ С„СѓРЅРєС†РёРµР№ GetData */
 void UDataSaver::LoadBinArray(FString FilePath)
 {
     TArray<uint8> BinArrayData;
     FFileHelper::LoadFileToArray(BinArrayData, *FilePath);
 
-    FMemoryReader InteractionObjectsReader = FMemoryReader(BinArrayData);
-    FObjectAndNameAsStringProxyArchive InteractionObjectsAr(InteractionObjectsReader, false);
-    InteractionObjectsAr.ArIsSaveGame = true;
+    FMemoryReader ObjectsReader = FMemoryReader(BinArrayData);
+    FObjectAndNameAsStringProxyArchive ObjectsAr(ObjectsReader, false);
 
-    //Создаётся промежуточный экземпляр этого же класса, потому что сериализация на this как-то не сработала
+    //РЎРѕР·РґР°С‘С‚СЃСЏ РїСЂРѕРјРµР¶СѓС‚РѕС‡РЅС‹Р№ СЌРєР·РµРјРїР»СЏСЂ СЌС‚РѕРіРѕ Р¶Рµ РєР»Р°СЃСЃР°, РїРѕС‚РѕРјСѓ С‡С‚Рѕ СЃРµСЂРёР°Р»РёР·Р°С†РёСЏ РЅР° this РєР°Рє-С‚Рѕ РЅРµ СЃСЂР°Р±РѕС‚Р°Р»Р°
     UPROPERTY()
     UDataSaver* Saver = nullptr;
 
+    //Р‘РµР·РѕРїР°СЃРЅРѕРµ СЃРѕР·РґР°РЅРёРµ UObject'РѕРІ РіР°СЂР°РЅС‚РёСЂРѕРІР°РЅРѕ С‚РѕР»СЊРєРѕ РІ РѕСЃРЅРѕРІРЅРѕРј РїРѕС‚РѕРєРµ
     AsyncTask(ENamedThreads::GameThread, [&Saver, this]() {
         Saver = NewObject<UDataSaver>();
+        /* РўР°Рє РєР°Рє РёР·РЅР°С‡Р°Р»СЊРЅРѕ Saver СЂР°РІРµРЅ nullptr, СЃР±РѕСЂС‰РёРє РјСѓСЃРѕСЂР° С‚Рѕ Рё РґРµР»Рѕ РЅР°СЂР°РІРёС‚ РІРјРµС€Р°С‚СЊСЃСЏ
+         * РІ Р¶РёР·РЅРµРЅРЅС‹Р№ С†РёРєР» РїРµСЂРµРјРµРЅРЅРѕР№, С‚Р°Рє С‡С‚Рѕ РµС‘ СЃР»РµРґСѓРµС‚ Р·Р°СЂСѓС‚РёСЂРѕРІР°С‚СЊ РѕС‚ РЅРµРіРѕ РїРѕРґР°Р»СЊС€Рµ */
         Saver->AddToRoot();
         });
 
+    //Рђ РїРѕРєР° Saver РёРЅРёС†РёР°Р»РёР·РёСЂСѓРµС‚СЃСЏ РІ РѕСЃРЅРѕРІРЅРѕРј РїРѕС‚РѕРєРµ, Р°СЃРёРЅС…СЂРѕРЅРЅС‹Р№ Р¶РґС‘С‚, РїРѕРєР° РїРµСЂРµРјРµРЅРЅР°СЏ РЅРµ Р±СѓРґРµС‚ РіРѕС‚РѕРІР°
     while (!Saver) {
         FPlatformProcess::SleepNoStats(0.0f);
     }
 
     if (Saver) {
-        Saver->Serialize(InteractionObjectsAr);
+        Saver->Serialize(ObjectsAr);
 
-        //Из промежуточного экземпляра все коллекции перекидываются на текущий
+        //РР· РїСЂРѕРјРµР¶СѓС‚РѕС‡РЅРѕРіРѕ СЌРєР·РµРјРїР»СЏСЂР° РІСЃРµ РґР°РЅРЅС‹Рµ РїРµСЂРµРєРёРґС‹РІР°СЋС‚СЃСЏ РЅР° С‚РµРєСѓС‰РёР№
         BinData = Saver->BinData;
         XMLFilesHash = Saver->XMLFilesHash;
         SavFilePath = Saver->SavFilePath;
 
-        //И в конце промежуточный экземпляр уничтожается за ненадобностью
+        //Р РІ РєРѕРЅС†Рµ РїСЂРѕРјРµР¶СѓС‚РѕС‡РЅС‹Р№ СЌРєР·РµРјРїР»СЏСЂ СѓРЅРёС‡С‚РѕР¶Р°РµС‚СЃСЏ Р·Р° РЅРµРЅР°РґРѕР±РЅРѕСЃС‚СЊСЋ
         if (Saver->IsValidLowLevel()) {
             if (Saver->IsRooted())
                 Saver->RemoveFromRoot();
@@ -97,7 +100,7 @@ void UDataSaver::LoadBinArray(FString FilePath)
     }
 }
 
-//Проверка изменения хешей xml фалов, связанных с текущим загруженным модулем. true - изменений нет, false - есть
+//РџСЂРѕРІРµСЂРєР° РёР·РјРµРЅРµРЅРёСЏ С…РµС€РµР№ xml С„Р°Р»РѕРІ, СЃРІСЏР·Р°РЅРЅС‹С… СЃ С‚РµРєСѓС‰РёРј Р·Р°РіСЂСѓР¶РµРЅРЅС‹Рј РјРѕРґСѓР»РµРј. true - РёР·РјРµРЅРµРЅРёР№ РЅРµС‚, false - РµСЃС‚СЊ
 bool UDataSaver::CheckHashChange()
 {
     TArray<FString> XMLFilesPaths;
@@ -106,7 +109,6 @@ bool UDataSaver::CheckHashChange()
     IPlatformFile& FileManager = FPlatformFileManager::Get().GetPlatformFile();
     for (FString FilePath : XMLFilesPaths) {
         FString FullFilePath = FPaths::ConvertRelativePathToFull(FPaths::ProjectDir()) + FilePath;
-        //Если файла, который раньше был, больше нет, то следовательно изменения очевидно происходили
         if (FileManager.FileExists(*FullFilePath)) {
             FString OldFileHash = *XMLFilesHash.Find(FilePath);
 
@@ -117,6 +119,7 @@ bool UDataSaver::CheckHashChange()
                 return false;
             }
         }
+        //Р•СЃР»Рё С„Р°Р№Р»Р°, РєРѕС‚РѕСЂС‹Р№ СЂР°РЅСЊС€Рµ Р±С‹Р», Р±РѕР»СЊС€Рµ РЅРµС‚, С‚Рѕ СЃР»РµРґРѕРІР°С‚РµР»СЊРЅРѕ РёР·РјРµРЅРµРЅРёСЏ РѕС‡РµРІРёРґРЅРѕ РїСЂРѕРёСЃС…РѕРґРёР»Рё
         else {
             return false;
         }
@@ -125,7 +128,7 @@ bool UDataSaver::CheckHashChange()
     return true;
 }
 
-//Получение количества предметов, а соответственно и xml файлов, на основании которых была сформирована информация о всех предметах модуля
+//РџРѕР»СѓС‡РµРЅРёРµ РєРѕР»РёС‡РµСЃС‚РІР° РѕР±СЉРµРєС‚РѕРІ, Р° СЃРѕРѕС‚РІРµС‚СЃС‚РІРµРЅРЅРѕ Рё xml С„Р°Р№Р»РѕРІ, РЅР° РѕСЃРЅРѕРІР°РЅРёРё РєРѕС‚РѕСЂС‹С… Р±С‹Р»Р° СЃС„РѕСЂРјРёСЂРѕРІР°РЅР° РёРЅС„РѕСЂРјР°С†РёСЏ Рѕ РІСЃРµС… РѕР±СЉРєС‚Р°С… РјРѕРґСѓР»СЏ
 int UDataSaver::GetBinArraySize()
 {
     TArray<FString> Array;
@@ -133,15 +136,16 @@ int UDataSaver::GetBinArraySize()
     return Array.Num();
 }
 
-//Полная очистка всех массивов данного модуля
+//РџРѕР»РЅР°СЏ РѕС‡РёСЃС‚РєР° РІСЃРµС… РјР°СЃСЃРёРІРѕРІ РґР°РЅРЅРѕРіРѕ РјРѕРґСѓР»СЏ
 void UDataSaver::ClearArray()
 {
     BinData.Empty();
     XMLFilesHash.Empty();
 }
 
-/* Получение коллекции всех объектов взаимодействия экспедиции загруженного модуля. Ключом коллекции
- * является путь до исходного xml файла, а значением - непосредственно данные по этому объекту */
+/* РџРѕР»СѓС‡РµРЅРёРµ РєРѕР»Р»РµРєС†РёРё РІСЃРµС… РѕР±СЉРµРєС‚РѕРІ Р·Р°РіСЂСѓР¶Р°РµРјРѕРіРѕ РјРѕРґСѓР»СЏ. РљР»СЋС‡РѕРј РєРѕР»Р»РµРєС†РёРё СЏРІР»СЏРµС‚СЃСЏ
+ * РїСѓС‚СЊ РґРѕ РёСЃС…РѕРґРЅРѕРіРѕ xml С„Р°Р№Р»Р°, Р° Р·РЅР°С‡РµРЅРёРµРј - РЅРµРїРѕСЃСЂРµРґСЃС‚РІРµРЅРЅРѕ РґР°РЅРЅС‹Рµ СЌС‚РѕРіРѕ РѕР±СЉРµРєС‚Р°.
+ * РР·-Р·Р° СЃРѕР·РґР°РЅРёСЏ СЌРєР·РµРјРїР»СЏСЂРѕРІ UObject СЌС‚Сѓ С„СѓРЅРєС†РёСЋ Р±РµР·РѕРїР°СЃРЅРѕ Р·Р°РїСѓСЃРєР°С‚СЊ С‚РѕР»СЊРєРѕ РІ РѕСЃРЅРѕРІРЅРѕРј РїРѕС‚РѕРєРµ */
 template<typename Data>
 TMap<FString, Data*> UDataSaver::GetData()
 {
@@ -154,14 +158,13 @@ TMap<FString, Data*> UDataSaver::GetData()
         FBinArrayWrapper* BinArrayWrapper = BinData.Find(Key);
 
         if (BinArrayWrapper) {
-            FMemoryReader InteractionObjectReader = FMemoryReader(BinArrayWrapper->BinArray);
-            FObjectAndNameAsStringProxyArchive InteractionObjectAr(InteractionObjectReader, false);
-            InteractionObjectAr.ArIsSaveGame = true;
+            FMemoryReader ObjectReader = FMemoryReader(BinArrayWrapper->BinArray);
+            FObjectAndNameAsStringProxyArchive ObjectAr(ObjectReader, false);
 
             UPROPERTY()
             Data* ObjectData = NewObject<Data>();
 
-            ObjectData->Serialize(InteractionObjectAr);
+            ObjectData->Serialize(ObjectAr);
 
             Result.Add(Key, ObjectData);
         }

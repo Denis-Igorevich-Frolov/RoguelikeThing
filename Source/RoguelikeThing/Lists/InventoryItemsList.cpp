@@ -3,6 +3,7 @@
 
 #include "RoguelikeThing/Lists/InventoryItemsList.h"
 
+//Получение текста xml файла по его имени
 FString UInventoryItemsList::GetXmlText(FString FileName)
 {
     TArray<FString> Keys;
@@ -15,6 +16,7 @@ FString UInventoryItemsList::GetXmlText(FString FileName)
     return *InventoryItemsXMLs.Find(FileName);
 }
 
+//Получение списка имён xml файлов всех объектов в модуле
 TArray<FString> UInventoryItemsList::GetModuleFilesArray()
 {
     TArray<FString> Keys;

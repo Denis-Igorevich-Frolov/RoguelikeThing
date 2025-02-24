@@ -7,14 +7,14 @@
 #include "RoguelikeThing/Lists/InventoryItemsList.h"
 #include "InventoryItemsPreparer.generated.h"
 
-/*************************************************************************************************************************
- * Данный класс является классом подготовки и загрузки всех всевозможных объектов взаимодействия экспедиции, которые
- * находятся во всех модулях, а также восстановления повреждённых данных связанных с объектами из модуля Default
- *************************************************************************************************************************/
+/****************************************************************************************************************
+ * Данный класс является классом подготовки и загрузки всех всевозможных итемов инвентаря, которые находятся
+ * во всех модулях, а также восстановления повреждённых данных связанных с объектами из модуля Default
+ ****************************************************************************************************************/
 
 DECLARE_LOG_CATEGORY_EXTERN(InventoryItemsPreparer, Log, All);
 
-//Структура подкатегории объектов взаимодействия
+//Структура подкатегории итемов инвентаря
 USTRUCT(BlueprintType)
 struct FInventoryItemSubCategory
 {
@@ -24,7 +24,7 @@ struct FInventoryItemSubCategory
 	TMap<FString, UInventoryItemData*> InventoryItemsDataArray;
 };
 
-//Структура категории объектов взаимодействия
+//Структура категории итемов инвентаря
 USTRUCT(BlueprintType)
 struct FInventoryItemCategory
 {
@@ -34,7 +34,7 @@ struct FInventoryItemCategory
 	TMap<FString, FInventoryItemSubCategory> InventoryItemsSubCategorysArray;
 };
 
-//Структура модуля объектов взаимодействия
+//Структура модуля итемов инвентаря
 USTRUCT(BlueprintType)
 struct FInventoryItemModule
 {
@@ -44,7 +44,7 @@ struct FInventoryItemModule
 	TMap<FString, FInventoryItemCategory> InventoryItemsCategorysArray;
 };
 
-//Контейнер со всеми объектами взаимодействия
+//Контейнер со всеми итемами инвентаря
 UCLASS(BlueprintType)
 class UInventoryItemsContainer : public UObject
 {
@@ -82,7 +82,7 @@ public:
 
 	UInventoryItemsPreparer();
 
-	//Функция получения данных обо всех объектах взаимодействия всех модулей
+	//Функция получения данных обо всех итемах инвентаря всех модулей
 	UFUNCTION(BlueprintCallable)
 	void GetAllInventoryItemsData(UPARAM(ref)UInventoryItemsContainer* InventoryItemsContainer, TArray<FString> ModsDirWithInventoryItems);
 };

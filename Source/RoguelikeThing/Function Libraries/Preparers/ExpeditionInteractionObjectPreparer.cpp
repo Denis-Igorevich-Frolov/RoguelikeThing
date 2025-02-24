@@ -10,19 +10,26 @@
 
 DEFINE_LOG_CATEGORY(ExpeditionInteractionObjectPreparer);
 
+UExpeditionInteractionObjectPreparer::UExpeditionInteractionObjectPreparer()
+{
+    ExpeditionInteractionObjectsList = CreateDefaultSubobject<UExpeditionInteractionObjectsList>("ExpeditionInteractionObjectsList");
+}
+
 //Проверка существования объектов из модуля Default. При обнаружении их отсутствия, они восстанавливаются из исходного списка
 void UExpeditionInteractionObjectPreparer::CheckingDefaultExpeditionInteractionObjects()
 {
-    CheckingDefaultAbstracts(ExpeditionInteractionObjectsList, "Expedition interaction objects");
+    CheckingDefaultAbstractObjects(ExpeditionInteractionObjectsList, "Expedition interaction objects");
 }
 
 //Функция загрузки данных об объекте из его xml файла
 UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadObjectFromXML(
     FString ModuleName, FString XMLFilePath, IPlatformFile& FileManager, int RecursionDepth)
 {
+    //Подготавливается лямбда, которая выполнит ту часть загрузки данных базового класса, которая специфична только для данных этого класса
     auto UploadingData{ [](UExpeditionInteractionObjectPreparer* Preparer, UExpeditionInteractionObjectData* ExpeditionInteractionObjectData,
         FXmlNode* RootNode, FString FileName, UExpeditionInteractionObjectsList* ExpeditionInteractionObjectsList, FString ModuleName,
         FString XMLFilePath, IPlatformFile& FileManager, int RecursionDepth) {
+
         FXmlNode* InteractionTextNode = RootNode->FindChildNode("InteractionText");
         if (!InteractionTextNode) {
             UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadObjectFromXML function - Failed to extract InteractionText node from file %s"), *XMLFilePath);
@@ -34,18 +41,24 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadObje
                 ExpeditionInteractionObjectData->MarkPendingKill();
             }
 
+            //Если файл был из модуля Default, то производится попытка его восстановления из исходного списка
             if (ModuleName == "Default") {
                 UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
                 if (Preparer->RestoringDefaultFileByName(FileName, "Expedition interaction objects", ExpeditionInteractionObjectsList)) {
                     UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
+                    /* И после его восстановления, рекурсивно запускается эта же функция с целью ещё раз попытаться
+                     * загрузить уже восстановленный файл. Переменная Preparer - это указатель на текущий экземпляр,
+                     * так что рекурсия пойдёт из функции базового класса в функцию текущего дочернего экземпляра */
                     return Preparer->LoadObjectFromXML(ModuleName, XMLFilePath, FileManager, ++RecursionDepth);
                 }
                 else {
+                    //Если же файл восстановить не удаётся, производится остановка выполнения программы
                     UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadObjectFromXML function - An attempt to restore file %s failed. Abnormal termination."), *XMLFilePath);
                     FGenericPlatformMisc::RequestExit(false);
                 }
             }
 
+            //Лямбда строга к типу возвращаемых данных, так что чтобы вернуть nullptr необходима такая затычка
             UExpeditionInteractionObjectData* Plug = nullptr;
             return Plug;
         }
@@ -83,6 +96,7 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadObje
             return Plug;
         }
 
+        //Получение списка условий взаимодействия с объектом
         TArray<FXmlNode*> TermsOfInteractions = TermsOfInteractionsNode->GetChildrenNodes();
         for (FXmlNode* InteractionNode : TermsOfInteractions) {
             if (!InteractionNode) {
@@ -168,6 +182,7 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadObje
                 return Plug;
             }
 
+            //Получение списка эвентов, вызываемых при удовлетворении данного условия взаимодействия
             TArray<FXmlNode*> Events = EventsNode->GetChildrenNodes();
             for (FXmlNode* Event : Events) {
                 if (!Event) {
@@ -205,13 +220,9 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadObje
 
         return ExpeditionInteractionObjectData;
         } };
+    //Вышеописанная лямбда передаётся в функцию базового класса
     return LoadDataFromXML<UExpeditionInteractionObjectData, UExpeditionInteractionObjectsList, UExpeditionInteractionObjectPreparer>(
         this, ModuleName, "Expedition interaction objects", XMLFilePath, FileManager, ExpeditionInteractionObjectsList, UploadingData, RecursionDepth);
-}
-
-UExpeditionInteractionObjectPreparer::UExpeditionInteractionObjectPreparer()
-{
-    ExpeditionInteractionObjectsList = CreateDefaultSubobject<UExpeditionInteractionObjectsList>("ExpeditionInteractionObjectsList");
 }
 
 //Функция получения данных обо всех объектах взаимодействия всех модулей

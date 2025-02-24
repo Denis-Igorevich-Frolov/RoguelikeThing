@@ -4,6 +4,9 @@
 #include "RoguelikeThing/Function Libraries/Preparers/ModsPreparer.h"
 #include <HAL/FileManagerGeneric.h>
 
+DEFINE_LOG_CATEGORY(ModsPreparer);
+
+//Функция, возвращающая список директорий модулей модов по переданному названию группы объектов, которую изменяет мод
 TArray<FString> UModsPreparer::GetArrayOfModDirectories(FString CategoryName)
 {
     TArray<FString> Result;
@@ -38,11 +41,15 @@ TArray<FString> UModsPreparer::GetArrayOfModDirectories(FString CategoryName)
                 DirPieces.Find(CategoryName, SequentialDirectoryNumber);
 
                 /* Отсееваются некорневые директории по длине пути. Если директория корневая,
-                 * то её длинна должна быть равна последовательному номеру корня общего для всех
-                 * модулей + 1. Также стоит учеть, что SequentialDirectoryNumber - это индекс,
+                 * то длинна её пути должна быть равна последовательному номеру корня общего для
+                 * всех модулей + 1. Также стоит учеть, что SequentialDirectoryNumber - это индекс,
                  * которому до последовательного номера следует прибавить ещё 1 */
                 if (DirPieces.Num() == SequentialDirectoryNumber + 2 && DirPieces.IsValidIndex(SequentialDirectoryNumber + 1)) {
-                    ModuleNames.Add(*FString(DirPieces[SequentialDirectoryNumber - 1] + "/" + DirPieces[SequentialDirectoryNumber] + "/" + DirPieces[SequentialDirectoryNumber + 1]));
+
+                    ModuleNames.Add(*FString(DirPieces[SequentialDirectoryNumber - 1] + "/" +
+                        DirPieces[SequentialDirectoryNumber] + "/" + DirPieces[SequentialDirectoryNumber + 1]));
+                    
+                    UE_LOG(ModsPreparer, Log, TEXT("In mod %s detected a change in list %s of module %s. The list has been modified."), *DirPieces[SequentialDirectoryNumber - 1], *DirPieces[SequentialDirectoryNumber], *DirPieces[SequentialDirectoryNumber + 1]);
                 }
             }
 
@@ -53,11 +60,13 @@ TArray<FString> UModsPreparer::GetArrayOfModDirectories(FString CategoryName)
     return Result;
 }
 
+//Функция, возвращающая список директорий модулей модов, которые изменяют список интерактивных объектов экспедиции
 TArray<FString> UModsPreparer::GetArrayOfModDirectoriesHavingExpeditionInteractionObjects()
 {
     return GetArrayOfModDirectories("Expedition interaction objects");
 }
 
+//Функция, возвращающая список директорий модулей модов, которые изменяют список итемов инвентаря
 TArray<FString> UModsPreparer::GetArrayOfModDirectoriesHavingInventoryItems()
 {
     return GetArrayOfModDirectories("Inventory items");
