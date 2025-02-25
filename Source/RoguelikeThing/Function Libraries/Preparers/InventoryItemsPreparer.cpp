@@ -20,7 +20,7 @@ UInventoryItemData* UInventoryItemsPreparer::LoadObjectFromXML(
     FString ModuleName, FString XMLFilePath, IPlatformFile& FileManager, int RecursionDepth)
 {
     auto UploadingData{ [](UInventoryItemsPreparer* Preparer, UInventoryItemData* InventoryItemData, FXmlNode* RootNode, FString FileName,
-        UInventoryItemsList* InventoryItemsList, FString ModuleName, FString XMLFilePath, IPlatformFile& FileManager, int RecursionDepth) {
+        UInventoryItemsList* InventoryItemsList, FString ModuleName, FString XMLFilePath, IPlatformFile& FileManager, FXmlFile* XmlFile, int RecursionDepth) {
         FXmlNode* MaximumAmountInStackNode = RootNode->FindChildNode("MaximumAmountInStack");
         if (!MaximumAmountInStackNode) {
             UE_LOG(InventoryItemsPreparer, Error, TEXT("!!! An error occurred in the InventoryItemsPreparer class in the LoadObjectFromXML function - Failed to extract MaximumAmountInStack node from file %s"), *XMLFilePath);

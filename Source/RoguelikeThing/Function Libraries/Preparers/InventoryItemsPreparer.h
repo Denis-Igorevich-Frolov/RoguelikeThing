@@ -3,7 +3,7 @@
 #pragma once
 
 #include "RoguelikeThing/Function Libraries/Preparers/AbstractPreparer.h"
-#include "RoguelikeThing/GameObjects/InventoryItemData.h"
+#include "RoguelikeThing/GameObjects/ObjectsData/InventoryItemData.h"
 #include "RoguelikeThing/Lists/InventoryItemsList.h"
 #include "InventoryItemsPreparer.generated.h"
 

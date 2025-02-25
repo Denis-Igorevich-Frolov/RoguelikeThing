@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
-#include "RoguelikeThing/GameObjects/AbstractData.h"
+#include "RoguelikeThing/GameObjects/ObjectsData/AbstractData.h"
 #include "RoguelikeThing/Lists/AbstractList.h"
 #include <XmlParser/Public/XmlFile.h>
 #include "AbstractPreparer.generated.h"
@@ -31,11 +31,13 @@ protected:
 	template<typename DataType, typename ListType, typename PreparerType>
 	DataType* LoadDataFromXML(PreparerType* Preparer, FString ModuleName, FString ModuleRoot, FString XMLFilePath, IPlatformFile& FileManager,
 		ListType* ObjectsList, DataType*(*UploadingData)(PreparerType* Preparer, DataType* Data, FXmlNode* RootNode, FString FileName,
-			ListType* ObjectsList, FString ModuleName, FString XMLFilePath, IPlatformFile& FileManager, int RecursionDepth), int RecursionDepth = 0);
+			ListType* ObjectsList, FString ModuleName, FString XMLFilePath, IPlatformFile& FileManager, FXmlFile* XmlFile, int RecursionDepth), int RecursionDepth = 0);
 
 	//Функция восстановления файла из моодуля Default по его имени (без расширения)
-	UFUNCTION(BlueprintCallable)
 	bool RestoringDefaultFileByName(FString Name, FString ModuleRoot, UAbstractList* ObjectsList);
+
+	template<typename DataType>
+	void EmergencyResetOfPointers(DataType* Data, FXmlFile* XmlFile);
 
 public:
 

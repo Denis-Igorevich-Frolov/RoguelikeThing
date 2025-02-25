@@ -4,7 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
-#include "RoguelikeThing/GameObjects/ExpeditionInteractionObjectData.h"
+#include "RoguelikeThing/GameObjects/ObjectsData/ExpeditionInteractionObjectData.h"
 #include "ExpeditionInteractionObject.generated.h"
 
 /**************************************************************************************************

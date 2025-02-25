@@ -46,7 +46,7 @@ void UAbstractPreparer::CheckingDefaultAbstractObjects (UAbstractList* ObjectsLi
 template<typename DataType, typename ListType, typename PreparerType>
 DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString ModuleName, FString ModuleRoot, FString XMLFilePath, IPlatformFile& FileManager,
     ListType* ObjectsList, DataType*(*UploadingData)(PreparerType* Preparer, DataType* Data, FXmlNode* RootNode, FString FileName, ListType* ObjectsList,
-        FString ModuleName, FString XMLFilePath, IPlatformFile& FileManager, int RecursionDepth), int RecursionDepth)
+        FString ModuleName, FString XMLFilePath, IPlatformFile& FileManager, FXmlFile* XmlFile, int RecursionDepth), int RecursionDepth)
 {
     TArray<FString> PathPieces;
     //Переданный путь до xml файла разбивается на фрагменты, где последний элемент - это сам файл, а все предыдущие - папки, в которые он вложен
@@ -96,12 +96,7 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
     if (!XmlFile) {
         UE_LOG(AbstractPreparer, Error, TEXT("!!! An error occurred in the AbstractPreparer class in the LoadDataFromXML function - Failed to create file %s"), *XMLFilePath);
 
-        if (AbstractData && AbstractData->IsValidLowLevel()) {
-            if (AbstractData->IsRooted())
-                AbstractData->RemoveFromRoot();
-
-            AbstractData->MarkPendingKill();
-        }
+        EmergencyResetOfPointers<DataType>(AbstractData, nullptr);
 
         //Если файл был из модуля Default, то производится попытка его восстановления из исходного списка
         if (ModuleName == "Default") {
@@ -125,12 +120,7 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
     if (!XmlFile->IsValid()) {
         UE_LOG(AbstractPreparer, Error, TEXT("!!! An error occurred in the AbstractPreparer class in the LoadDataFromXML function - xml code from file %s is not valid"), *XMLFilePath);
 
-        if (AbstractData && AbstractData->IsValidLowLevel()) {
-            if (AbstractData->IsRooted())
-                AbstractData->RemoveFromRoot();
-
-            AbstractData->MarkPendingKill();
-        }
+        EmergencyResetOfPointers<DataType>(AbstractData, nullptr);
 
         if (ModuleName == "Default") {
             UE_LOG(AbstractPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
@@ -152,15 +142,7 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
     if (!RootNode) {
         UE_LOG(AbstractPreparer, Error, TEXT("!!! An error occurred in the AbstractPreparer class in the LoadDataFromXML function - Failed to extract RootNode from file %s"), *XMLFilePath);
 
-        if (AbstractData && AbstractData->IsValidLowLevel()) {
-            if (AbstractData->IsRooted())
-                AbstractData->RemoveFromRoot();
-
-            AbstractData->MarkPendingKill();
-        }
-
-        if (XmlFile)
-            delete XmlFile;
+        EmergencyResetOfPointers<DataType>(AbstractData, XmlFile);
 
         if (ModuleName == "Default") {
             UE_LOG(AbstractPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
@@ -181,15 +163,7 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
     if (!IdNode) {
         UE_LOG(AbstractPreparer, Error, TEXT("!!! An error occurred in the AbstractPreparer class in the LoadDataFromXML function - Failed to extract id node from file %s"), *XMLFilePath);
 
-        if (AbstractData && AbstractData->IsValidLowLevel()) {
-            if (AbstractData->IsRooted())
-                AbstractData->RemoveFromRoot();
-
-            AbstractData->MarkPendingKill();
-        }
-
-        if (XmlFile)
-            delete XmlFile;
+        EmergencyResetOfPointers<DataType>(AbstractData, XmlFile);
 
         if (ModuleName == "Default") {
             UE_LOG(AbstractPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
@@ -210,15 +184,7 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
     if (id == "") {
         UE_LOG(AbstractPreparer, Error, TEXT("!!! An error occurred in the AbstractPreparer class in the LoadDataFromXML function - Id node from file %s is empty"), *XMLFilePath);
 
-        if (AbstractData && AbstractData->IsValidLowLevel()) {
-            if (AbstractData->IsRooted())
-                AbstractData->RemoveFromRoot();
-
-            AbstractData->MarkPendingKill();
-        }
-
-        if (XmlFile)
-            delete XmlFile;
+        EmergencyResetOfPointers<DataType>(AbstractData, XmlFile);
 
         if (ModuleName == "Default") {
             UE_LOG(AbstractPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
@@ -240,15 +206,7 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
     if (!CategoryNode) {
         UE_LOG(AbstractPreparer, Error, TEXT("!!! An error occurred in the AbstractPreparer class in the LoadDataFromXML function - Failed to extract Category node from file %s"), *XMLFilePath);
 
-        if (AbstractData && AbstractData->IsValidLowLevel()) {
-            if (AbstractData->IsRooted())
-                AbstractData->RemoveFromRoot();
-
-            AbstractData->MarkPendingKill();
-        }
-
-        if (XmlFile)
-            delete XmlFile;
+        EmergencyResetOfPointers<DataType>(AbstractData, XmlFile);
 
         if (ModuleName == "Default") {
             UE_LOG(AbstractPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
@@ -272,15 +230,7 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
     if (!SubCategoryNode) {
         UE_LOG(AbstractPreparer, Error, TEXT("!!! An error occurred in the AbstractPreparer class in the LoadDataFromXML function - Failed to extract SubCategory node from file %s"), *XMLFilePath);
 
-        if (AbstractData && AbstractData->IsValidLowLevel()) {
-            if (AbstractData->IsRooted())
-                AbstractData->RemoveFromRoot();
-
-            AbstractData->MarkPendingKill();
-        }
-
-        if (XmlFile)
-            delete XmlFile;
+        EmergencyResetOfPointers<DataType>(AbstractData, XmlFile);
 
         if (ModuleName == "Default") {
             UE_LOG(AbstractPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
@@ -304,15 +254,7 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
     if (!NameNode) {
         UE_LOG(AbstractPreparer, Error, TEXT("!!! An error occurred in the AbstractPreparer class in the LoadDataFromXML function - Failed to extract Name node from file %s"), *XMLFilePath);
 
-        if (AbstractData && AbstractData->IsValidLowLevel()) {
-            if (AbstractData->IsRooted())
-                AbstractData->RemoveFromRoot();
-
-            AbstractData->MarkPendingKill();
-        }
-
-        if (XmlFile)
-            delete XmlFile;
+        EmergencyResetOfPointers<DataType>(AbstractData, XmlFile);
 
         if (ModuleName == "Default") {
             UE_LOG(AbstractPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
@@ -333,15 +275,7 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
     if (Name == "") {
         UE_LOG(AbstractPreparer, Error, TEXT("!!! An error occurred in the AbstractPreparer class in the LoadDataFromXML function - Name node from file %s is empty"), *XMLFilePath);
 
-        if (AbstractData && AbstractData->IsValidLowLevel()) {
-            if (AbstractData->IsRooted())
-                AbstractData->RemoveFromRoot();
-
-            AbstractData->MarkPendingKill();
-        }
-
-        if (XmlFile)
-            delete XmlFile;
+        EmergencyResetOfPointers<DataType>(AbstractData, XmlFile);
 
         if (ModuleName == "Default") {
             UE_LOG(AbstractPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
@@ -359,7 +293,7 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
     }
     AbstractData->Name = Name;
 
-    DataType* Data = UploadingData(Preparer, AbstractData, RootNode, FileName, ObjectsList, ModuleName, XMLFilePath, FileManager, RecursionDepth);
+    DataType* Data = UploadingData(Preparer, AbstractData, RootNode, FileName, ObjectsList, ModuleName, XMLFilePath, FileManager, XmlFile, RecursionDepth);
 
     if (XmlFile)
         delete XmlFile;
@@ -388,6 +322,20 @@ bool UAbstractPreparer::RestoringDefaultFileByName(FString Name, FString ModuleR
 
     UE_LOG(AbstractPreparer, Log, TEXT("File %s has been restored"), *FilePath);
     return true;
+}
+
+template<typename DataType>
+void UAbstractPreparer::EmergencyResetOfPointers(DataType* Data, FXmlFile* XmlFile)
+{
+    if (Data && Data->IsValidLowLevel()) {
+        if (Data->IsRooted())
+            Data->RemoveFromRoot();
+
+        Data->MarkPendingKill();
+    }
+
+    if (XmlFile)
+        delete XmlFile;
 }
 
 //Функция получения данных обо всех объектах конкретного типа всех модулей

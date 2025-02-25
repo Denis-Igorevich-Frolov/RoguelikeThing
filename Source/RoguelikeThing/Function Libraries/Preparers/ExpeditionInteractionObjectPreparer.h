@@ -3,7 +3,7 @@
 #pragma once
 
 #include "RoguelikeThing/Function Libraries/Preparers/AbstractPreparer.h"
-#include "RoguelikeThing/GameObjects/ExpeditionInteractionObjectData.h"
+#include "RoguelikeThing/GameObjects/ObjectsData/ExpeditionInteractionObjectData.h"
 #include "RoguelikeThing/Lists/ExpeditionInteractionObjectsList.h"
 #include "ExpeditionInteractionObjectPreparer.generated.h"
 
