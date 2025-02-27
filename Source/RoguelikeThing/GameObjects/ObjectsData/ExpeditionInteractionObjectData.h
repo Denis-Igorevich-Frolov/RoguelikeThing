@@ -47,7 +47,4 @@ public:
 	//Все возможные условия взаимодействия с объектом
 	UPROPERTY(BlueprintReadWrite, SaveGame)
 	TMap<FString, FInteractionCondition> TermsOfInteractions;
-
-	UPROPERTY(BlueprintReadWrite, SaveGame)
-	TMap<FString, FString> ObjectSpriteNames;
 };

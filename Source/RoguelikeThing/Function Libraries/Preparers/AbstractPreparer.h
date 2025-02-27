@@ -31,13 +31,14 @@ protected:
 	template<typename DataType, typename ListType, typename PreparerType>
 	DataType* LoadDataFromXML(PreparerType* Preparer, FString ModuleName, FString ModuleRoot, FString XMLFilePath, IPlatformFile& FileManager,
 		ListType* ObjectsList, DataType*(*UploadingData)(PreparerType* Preparer, DataType* Data, FXmlNode* RootNode, FString FileName,
-			ListType* ObjectsList, FString ModuleName, FString XMLFilePath, IPlatformFile& FileManager, FXmlFile* XmlFile, int RecursionDepth), int RecursionDepth = 0);
+			ListType* ObjectsList, FString ModuleName, FString XMLFilePath, IPlatformFile& FileManager, bool IsModDir,
+			int RecursionDepth), bool IsModDir, int RecursionDepth = 0);
 
 	//Функция восстановления файла из моодуля Default по его имени (без расширения)
 	bool RestoringDefaultFileByName(FString Name, FString ModuleRoot, UAbstractList* ObjectsList);
 
 	template<typename DataType>
-	void EmergencyResetOfPointers(DataType* Data, FXmlFile* XmlFile);
+	void EmergencyResetOfPointers(DataType* Data);
 
 public:
 

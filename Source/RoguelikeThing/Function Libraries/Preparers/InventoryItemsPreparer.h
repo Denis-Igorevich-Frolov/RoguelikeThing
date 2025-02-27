@@ -3,7 +3,7 @@
 #pragma once
 
 #include "RoguelikeThing/Function Libraries/Preparers/AbstractPreparer.h"
-#include "RoguelikeThing/GameObjects/ObjectsData/InventoryItemData.h"
+#include "RoguelikeThing/Function Libraries/Preparers/Containers/InventoryItemsContainer.h"
 #include "RoguelikeThing/Lists/InventoryItemsList.h"
 #include "InventoryItemsPreparer.generated.h"
 
@@ -13,55 +13,6 @@
  ****************************************************************************************************************/
 
 DECLARE_LOG_CATEGORY_EXTERN(InventoryItemsPreparer, Log, All);
-
-//Структура подкатегории итемов инвентаря
-USTRUCT(BlueprintType)
-struct FInventoryItemSubCategory
-{
-	GENERATED_BODY()
-
-	UPROPERTY(BlueprintReadWrite)
-	TMap<FString, UInventoryItemData*> InventoryItemsDataArray;
-};
-
-//Структура категории итемов инвентаря
-USTRUCT(BlueprintType)
-struct FInventoryItemCategory
-{
-	GENERATED_BODY()
-
-	UPROPERTY(BlueprintReadWrite)
-	TMap<FString, FInventoryItemSubCategory> InventoryItemsSubCategorysArray;
-};
-
-//Структура модуля итемов инвентаря
-USTRUCT(BlueprintType)
-struct FInventoryItemModule
-{
-	GENERATED_BODY()
-
-	UPROPERTY(BlueprintReadWrite)
-	TMap<FString, FInventoryItemCategory> InventoryItemsCategorysArray;
-};
-
-//Контейнер со всеми итемами инвентаря
-UCLASS(BlueprintType)
-class UInventoryItemsContainer : public UObject
-{
-	GENERATED_BODY()
-
-private:
-
-	UPROPERTY()
-	TMap<FString, FInventoryItemModule> InventoryItemsModulesArray;
-
-public:
-	UFUNCTION(BlueprintCallable)
-	void AddData(FString ModuleName, FString CategoryName, FString SubCategoryName,
-		FString ObjectId, UInventoryItemData* InventoryItemsData);
-	UFUNCTION(BlueprintCallable)
-	const UInventoryItemData* const FindData(FString ModuleName, FString CategoryName, FString SubCategoryName, FString ObjectId);
-};
 
 UCLASS(BlueprintType)
 class ROGUELIKETHING_API UInventoryItemsPreparer : public UAbstractPreparer
@@ -78,7 +29,7 @@ private:
 
 public:
 	//Функция загрузки данных об объекте из его xml файла
-	UInventoryItemData* LoadObjectFromXML(FString ModuleName, FString XMLFilePath, IPlatformFile& FileManager, int RecursionDepth = 0);
+	UInventoryItemData* LoadObjectFromXML(FString ModuleName, FString XMLFilePath, IPlatformFile& FileManager, bool IsModDir, int RecursionDepth = 0);
 
 	UInventoryItemsPreparer();
 
