@@ -8,7 +8,7 @@ public class RoguelikeThing : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "SQLiteCore", "SQLiteSupport", "UMG", "XmlParser" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "SQLiteCore", "SQLiteSupport", "UMG", "XmlParser", "Paper2D" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 

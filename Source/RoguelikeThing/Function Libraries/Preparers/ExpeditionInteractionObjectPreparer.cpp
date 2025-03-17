@@ -235,9 +235,9 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadObje
                 }
             }
 
-            FXmlNode* SpritesNode = ResourcesNode->FindChildNode("Sprites");
-            if (!SpritesNode) {
-                UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadObjectFromXML function - Failed to extract Sprites node from %s node from file %s"), *InteractionNode->GetTag(), *XMLFilePath);
+            FXmlNode* TexturesNode = ResourcesNode->FindChildNode("Textures");
+            if (!TexturesNode) {
+                UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadObjectFromXML function - Failed to extract Textures node from %s node from file %s"), *InteractionNode->GetTag(), *XMLFilePath);
 
                 Preparer->EmergencyResetOfPointers<UExpeditionInteractionObjectData>(ExpeditionInteractionObjectData);
 
@@ -257,10 +257,10 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadObje
                 }
             }
 
-            TArray<FXmlNode*> Sprites = SpritesNode->GetChildrenNodes();
-            for (FXmlNode* Sprite : Sprites) {
-                if (!Sprite) {
-                    UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadObjectFromXML function - Sprite node from %s node from file %s is not valid"), *InteractionNode->GetTag(), *XMLFilePath);
+            TArray<FXmlNode*> Textures = TexturesNode->GetChildrenNodes();
+            for (FXmlNode* Texture : Textures) {
+                if (!Texture) {
+                    UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadObjectFromXML function - Texture node from %s node from file %s is not valid"), *InteractionNode->GetTag(), *XMLFilePath);
 
                     Preparer->EmergencyResetOfPointers<UExpeditionInteractionObjectData>(ExpeditionInteractionObjectData);
 
@@ -280,8 +280,17 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadObje
                     }
                 }
 
-                ExpeditionInteractionObjectData->SpritePaths.Add(Sprite->GetTag(),
-                    *FString(TEXT("Data/Expedition interaction objects/") + ModuleName + TEXT("/Sprites") + Sprite->GetContent()));
+                if (IsModDir) {
+                    TArray<FString> PathPeces;
+                    XMLFilePath.ParseIntoArray(PathPeces, TEXT("/"));
+
+                    ExpeditionInteractionObjectData->TexturePaths.Add(Texture->GetTag(),
+                        *FString(TEXT("Mods/") + PathPeces[PathPeces.Num() - 5] + "/Expedition interaction objects/" + ModuleName + TEXT("/textures/") + Texture->GetContent()));
+                }
+                else {
+                    ExpeditionInteractionObjectData->TexturePaths.Add(Texture->GetTag(),
+                        *FString(TEXT("Data/Expedition interaction objects/") + ModuleName + TEXT("/Textures/") + Texture->GetContent()));
+                }
             }
         }
 

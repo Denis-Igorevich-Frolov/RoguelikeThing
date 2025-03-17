@@ -40,10 +40,10 @@ private:
 				"		</Regular>\n"
 				"	</TermsOfInteractions>\n"
 				"	<Resources type=\"array\">\n"
-				"		<Sprites type=\"array\">\n"
+				"		<Textures type=\"array\">\n"
 				"			<Unused>CloseWoodChest.png</Unused>\n"
 				"			<Used>OpenWoodChest.png</Used>\n"
-				"		</Sprites>\n"
+				"		</Textures>\n"
 				"	</Resources>\n"
 				"</root>\n"
             ))

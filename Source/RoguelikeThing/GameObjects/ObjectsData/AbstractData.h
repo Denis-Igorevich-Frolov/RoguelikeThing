@@ -29,5 +29,5 @@ public:
 	FString Name;
 
 	UPROPERTY(BlueprintReadWrite, SaveGame)
-	TMap<FString, FString> SpritePaths;
+	TMap<FString, FString> TexturePaths;
 };
