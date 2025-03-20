@@ -19,7 +19,4 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetTexture(UTexture2D* Texture, ESpritePivotMode::Type Pivot);
-	
-	UFUNCTION(BlueprintCallable)
-	void SetDefaultMaterial(UMaterialInterface* Material);
 };
