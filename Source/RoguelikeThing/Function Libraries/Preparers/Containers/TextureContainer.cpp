@@ -7,6 +7,7 @@ DEFINE_LOG_CATEGORY(TextureContainer);
 
 void UTextureContainer::AddTexture(FString ModuleName, FString CategoryName, FString SubCategoryName, FString OwnerObjectName, FString TextureTag, UTexture2D* Texture)
 {
+    UE_LOG(LogTemp, Log, TEXT("ModuleName: %s, CategoryName: %s, SubCategoryName: %s, OwnerObjectName: %s, TextureTag: %s"), *ModuleName, *CategoryName, *SubCategoryName, *OwnerObjectName, *TextureTag);
     FTextureModule& Module = TexturesArray.FindOrAdd(ModuleName);
     FTextureCategory& Category = Module.TextureCategorysArray.FindOrAdd(CategoryName);
     FTextureSubCategory& SubCategory = Category.TextureSubCategorysArray.FindOrAdd(SubCategoryName);

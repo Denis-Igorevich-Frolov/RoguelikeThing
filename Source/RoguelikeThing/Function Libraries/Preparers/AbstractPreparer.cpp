@@ -178,6 +178,9 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
 
         FGenericPlatformMisc::RequestExit(false);
     }
+
+    //id += FString::FromInt(FDateTime::Now().GetMillisecond());
+
     AbstractData->id = id;
 
     FXmlNode* CategoryNode = RootNode->FindChildNode("Category");
@@ -496,7 +499,6 @@ void UAbstractPreparer::GetAllData(Container* DataContainer, TArray<FString> Mod
             }
         }
         AsyncTask(ENamedThreads::GameThread, [this]() {
-            ChangeTextOfTheDownloadDetails.Broadcast(FString("Data loading complite"), FColor::Green);
             LoadingComplete.Broadcast();
             });
         });

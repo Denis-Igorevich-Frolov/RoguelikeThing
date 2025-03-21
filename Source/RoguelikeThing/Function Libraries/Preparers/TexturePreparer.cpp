@@ -27,21 +27,28 @@ void UTexturePreparer::PrepareAllExpeditionInteractionObjectsTextures(
             TexturePaths.GenerateKeyArray(Keys);
             for (FString Keyy : Keys) {
                 FString Value = *TexturePaths.Find(Keyy);
-                UE_LOG(TexturePreparer, Log, TEXT("%s: %s"), *Keyy, *Value);
+
                 TArray<FString> PathPieces;
                 Value.ParseIntoArray(PathPieces, TEXT("/"));
-                UE_LOG(TexturePreparer, Log, TEXT("%s"), *PathPieces[PathPieces.Num() - 3]);
 
                 UPROPERTY()
-                UTexture2D* texture = FImageUtils::ImportFileAsTexture2D(*FString(FPaths::ConvertRelativePathToFull(FPaths::ProjectDir()) + Value));
+                UTexture2D* texture = nullptr;
+                AsyncTask(ENamedThreads::GameThread, [&PathPieces, &texture, &ExpeditionInteractionObjectTexturesContainer, Data, Value, Keyy, this]() {
+                    ChangeTextOfTheDownloadDetails.Broadcast(FString("Loading file:  " + PathPieces[PathPieces.Num() - 1]), FColor::FromHex("160124"));
+
+                    texture = FImageUtils::ImportFileAsTexture2D(*FString(FPaths::ConvertRelativePathToFull(FPaths::ProjectDir()) + Value));
+                    });
+
+                while (!texture) {
+                    FPlatformProcess::SleepNoStats(0.0f);
+                }
+
                 ExpeditionInteractionObjectTexturesContainer->AddTexture(PathPieces[PathPieces.Num() - 3], Data->Category, Data->SubCategory, Data->id, Keyy, texture);
             }
-            AsyncTask(ENamedThreads::GameThread, [this]() {
-                //ChangeTextOfTheDownloadDetails.Broadcast(FString("Loading file:  " + ModuleName + ".sav"), FColor::FromHex("160124"));
-                });
         }
 
         AsyncTask(ENamedThreads::GameThread, [this]() {
+            ChangeTextOfTheDownloadDetails.Broadcast(FString("Data loading complite"), FColor::Green);
             LoadingComplet.Broadcast();
             });
         });

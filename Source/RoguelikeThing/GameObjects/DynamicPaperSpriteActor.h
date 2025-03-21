@@ -14,8 +14,14 @@ class ROGUELIKETHING_API ADynamicPaperSpriteActor : public APaperSpriteActor
 {
 	GENERATED_BODY()
 
-public:
-
-	UFUNCTION(BlueprintCallable)
+protected:
+	UFUNCTION(BlueprintCallable, meta=(BlueprintProtected))
 	void UpdateTexture(UTexture2D* Texture, ESpritePivotMode::Type Pivot = ESpritePivotMode::Center_Center);
+	
+	UFUNCTION(BlueprintCallable, meta=(BlueprintProtected))
+	FVector2D SpritePivotModeSwitch(ESpritePivotMode::Type Pivot);
+	
+public:
+	UFUNCTION(BlueprintCallable, BlueprintImplementableEvent)
+	void SetTexture(UTexture2D* Texture, ESpritePivotMode::Type Pivot = ESpritePivotMode::Center_Center);
 };
