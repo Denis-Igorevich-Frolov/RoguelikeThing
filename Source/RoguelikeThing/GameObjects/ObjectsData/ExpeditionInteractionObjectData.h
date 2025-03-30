@@ -40,6 +40,9 @@ class ROGUELIKETHING_API UExpeditionInteractionObjectData : public UAbstractData
 	GENERATED_BODY()
 	
 public:
+	UPROPERTY(BlueprintReadWrite, SaveGame)
+	FString ModuleLocalPath;
+
 	//Текст, который будет выведен при попытке взаимодействия с объектом
 	UPROPERTY(BlueprintReadWrite, SaveGame)
 	FString InteractionText;

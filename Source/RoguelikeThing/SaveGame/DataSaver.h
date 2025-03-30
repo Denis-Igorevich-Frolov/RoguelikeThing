@@ -46,7 +46,7 @@ public:
 	 * путь до исходного xml файла, а значением - непосредственно данные этого объекта.
 	 * Из-за создания экземпляров UObject эту функцию безопасно запускать только в основном потоке */
 	template<typename Data>
-	TMap<FString, Data*> GetData();
+	TMap<FString, Data*> GetData(bool SafeForAsyncThread = false);
 	/* Полностью сформированный массив объектов относящихся к сохраняемому модулю,
 	 * записывается в sav файл, который будет находится по переданному пути */
 	void SaveBinArray(FString FilePath);

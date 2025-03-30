@@ -179,8 +179,6 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
         FGenericPlatformMisc::RequestExit(false);
     }
 
-    //id += FString::FromInt(FDateTime::Now().GetMillisecond());
-
     AbstractData->id = id;
 
     FXmlNode* CategoryNode = RootNode->FindChildNode("Category");
@@ -275,6 +273,8 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
     AbstractData->Name = Name;
 
     DataType* Data = UploadingData(Preparer, AbstractData, RootNode, FileName, ObjectsList, ModuleName, XMLFilePath, FileManager, IsModDir, RecursionDepth);
+
+    //Data->id += FString::FromInt(FDateTime::Now().GetMillisecond());
 
     return Data;
 }
@@ -418,15 +418,7 @@ void UAbstractPreparer::GetAllData(Container* DataContainer, TArray<FString> Mod
                 //Если все файлы остались неизменными с момента сериализации, то загрузка объектов ведётся напрямую из сохранённых бинарных данных
                 TMap<FString, DataType*> AbstractData;
 
-                bool done = false;
-                AsyncTask(ENamedThreads::GameThread, [&AbstractData, &Saver, &done]() {
-                    AbstractData = Saver->GetData<DataType>();
-                    done = true;
-                    });
-
-                while (!done) {
-                    FPlatformProcess::SleepNoStats(0.0f);
-                }
+                AbstractData = Saver->GetData<DataType>(true);
 
                 for (FString XMLFilePath : XMLFilesPaths) {
                     DataType** AbstractDataRef = AbstractData.Find(XMLFilePath);

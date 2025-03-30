@@ -280,12 +280,28 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadObje
                     XMLFilePath.ParseIntoArray(PathPeces, TEXT("/"));
 
                     ExpeditionInteractionObjectData->TexturePaths.Add(Texture->GetTag(),
-                        *FString(TEXT("Mods/") + PathPeces[PathPeces.Num() - 5] + "/Expedition interaction objects/" + ModuleName + TEXT("/textures/") + Texture->GetContent()));
+                        *FString(TEXT("Mods/") + PathPeces[PathPeces.Num() - 5] + "/Expedition interaction objects/" + ModuleName + TEXT("/textures/") +
+                            ExpeditionInteractionObjectData->id + "/" + Texture->GetContent()));
+
+                    UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("%s"), *FString(TEXT("Mods/") + PathPeces[PathPeces.Num() - 5] + "/Expedition interaction objects/" + ModuleName + TEXT("/textures/") +
+                        ExpeditionInteractionObjectData->id + "/" + Texture->GetContent()));
                 }
                 else {
                     ExpeditionInteractionObjectData->TexturePaths.Add(Texture->GetTag(),
-                        *FString(TEXT("Data/Expedition interaction objects/") + ModuleName + TEXT("/Textures/") + Texture->GetContent()));
+                        *FString(TEXT("Data/Expedition interaction objects/") + ModuleName + TEXT("/textures/") + ExpeditionInteractionObjectData->id + "/" + Texture->GetContent()));
+
+                    UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("%s"), *FString(TEXT("Data/Expedition interaction objects/") + ModuleName + TEXT("/textures/") + ExpeditionInteractionObjectData->id + "/" + Texture->GetContent()));
                 }
+            }
+
+            if (IsModDir) {
+                TArray<FString> PathPeces;
+                XMLFilePath.ParseIntoArray(PathPeces, TEXT("/"));
+
+                ExpeditionInteractionObjectData->ModuleLocalPath = "Mods/" + PathPeces[PathPeces.Num() - 5] + "/Expedition interaction objects/" + ModuleName + "/";
+            }
+            else {
+                ExpeditionInteractionObjectData->ModuleLocalPath = "Data/Expedition interaction objects/" + ModuleName + "/";
             }
         }
 

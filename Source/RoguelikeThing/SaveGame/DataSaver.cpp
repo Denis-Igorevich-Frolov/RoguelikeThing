@@ -147,7 +147,7 @@ void UDataSaver::ClearArray()
  * путь до исходного xml файла, а значением - непосредственно данные этого объекта.
  * Из-за создания экземпляров UObject эту функцию безопасно запускать только в основном потоке */
 template<typename Data>
-TMap<FString, Data*> UDataSaver::GetData()
+TMap<FString, Data*> UDataSaver::GetData(bool SafeForAsyncThread)
 {
     TMap<FString, Data*> Result;
 
@@ -162,7 +162,20 @@ TMap<FString, Data*> UDataSaver::GetData()
             FObjectAndNameAsStringProxyArchive ObjectAr(ObjectReader, false);
 
             UPROPERTY()
-            Data* ObjectData = NewObject<Data>();
+            Data* ObjectData = nullptr;
+            
+            if (SafeForAsyncThread) {
+                AsyncTask(ENamedThreads::GameThread, [&ObjectData, this]() {
+                    ObjectData = NewObject<Data>();
+                    });
+
+                while (!ObjectData) {
+                    FPlatformProcess::SleepNoStats(0.0f);
+                }
+            }
+            else {
+                ObjectData = NewObject<Data>();
+            }
 
             ObjectData->Serialize(ObjectAr);
 
