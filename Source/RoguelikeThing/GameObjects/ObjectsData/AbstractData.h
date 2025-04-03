@@ -20,6 +20,9 @@ public:
 	FString id;
 
 	UPROPERTY(BlueprintReadWrite, SaveGame)
+	FString Module;
+
+	UPROPERTY(BlueprintReadWrite, SaveGame)
 	FString Category;
 
 	UPROPERTY(BlueprintReadWrite, SaveGame)

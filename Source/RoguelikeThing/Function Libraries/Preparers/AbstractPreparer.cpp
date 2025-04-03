@@ -137,6 +137,8 @@ DataType* UAbstractPreparer::LoadDataFromXML(PreparerType* Preparer, FString Mod
         FGenericPlatformMisc::RequestExit(false);
     }
 
+    AbstractData->Module = ModuleName;
+
     FXmlNode* IdNode = RootNode->FindChildNode("id");
     if (!IdNode) {
         UE_LOG(AbstractPreparer, Error, TEXT("!!! An error occurred in the AbstractPreparer class in the LoadDataFromXML function - Failed to extract id node from file %s"), *XMLFilePath);
