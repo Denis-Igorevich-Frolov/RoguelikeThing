@@ -22,6 +22,9 @@ class ROGUELIKETHING_API UInventoryItemData : public UAbstractData
 	GENERATED_BODY()
 
 public:
+	UPROPERTY(BlueprintReadWrite, SaveGame)
+	FString ModuleLocalPath;
+
 	//Максимальное количество итемов данного типа, которое будет умещаться в 1 ячейку инвентаря
 	UPROPERTY(BlueprintReadWrite, SaveGame)
 	int MaximumAmountInStack;

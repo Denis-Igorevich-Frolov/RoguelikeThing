@@ -58,4 +58,6 @@ public:
 		FString ObjectId, UInventoryItemData* InventoryItemsData);
 	UFUNCTION(BlueprintCallable)
 	const UInventoryItemData* const FindData(FString ModuleName, FString CategoryName, FString SubCategoryName, FString ObjectId);
+	UFUNCTION(BlueprintCallable)
+	TMap<FString, UInventoryItemData*> GetAllObjects();
 };

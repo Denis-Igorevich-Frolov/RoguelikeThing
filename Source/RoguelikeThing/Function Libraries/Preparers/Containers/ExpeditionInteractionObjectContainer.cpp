@@ -43,7 +43,7 @@ const UExpeditionInteractionObjectData* const UExpeditionInteractionObjectContai
     }
 }
 
-TMap<FString, UExpeditionInteractionObjectData*> UExpeditionInteractionObjectContainer::GetAllInteractionObjects()
+TMap<FString, UExpeditionInteractionObjectData*> UExpeditionInteractionObjectContainer::GetAllObjects()
 {
     TMap<FString, UExpeditionInteractionObjectData*> Result;
 

@@ -191,6 +191,102 @@ UInventoryItemData* UInventoryItemsPreparer::LoadObjectFromXML(
             InventoryItemData->UseEvents.Add(EventNode->GetTag(), UseEvent);
         }
 
+        FXmlNode* ResourcesNode = RootNode->FindChildNode("Resources");
+        if (!ResourcesNode) {
+            UE_LOG(InventoryItemsPreparer, Error, TEXT("!!! An error occurred in the InventoryItemsPreparer class in the LoadObjectFromXML function - Failed to extract Resources node from %s node from file %s"), *ResourcesNode->GetTag(), *XMLFilePath);
+
+            Preparer->EmergencyResetOfPointers<UInventoryItemData>(InventoryItemData);
+
+            if (ModuleName == "Default" && !IsModDir) {
+                UE_LOG(InventoryItemsPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
+                if (Preparer->RestoringDefaultFileByName(FileName, "Inventory items", InventoryItemsList)) {
+                    UE_LOG(InventoryItemsPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
+                    return Preparer->LoadObjectFromXML(ModuleName, XMLFilePath, FileManager, IsModDir, ++RecursionDepth);
+                }
+                else {
+                    UE_LOG(InventoryItemsPreparer, Error, TEXT("!!! An error occurred in the InventoryItemsPreparer class in the LoadObjectFromXML function - An attempt to restore file %s failed. Abnormal termination."), *XMLFilePath);
+                    FGenericPlatformMisc::RequestExit(false);
+                }
+            }
+            else {
+                FGenericPlatformMisc::RequestExit(false);
+            }
+        }
+
+        FXmlNode* TexturesNode = ResourcesNode->FindChildNode("Textures");
+        if (!TexturesNode) {
+            UE_LOG(InventoryItemsPreparer, Error, TEXT("!!! An error occurred in the InventoryItemsPreparer class in the LoadObjectFromXML function - Failed to extract Textures node from %s node from file %s"), *ResourcesNode->GetTag(), *XMLFilePath);
+
+            Preparer->EmergencyResetOfPointers<UInventoryItemData>(InventoryItemData);
+
+            if (ModuleName == "Default" && !IsModDir) {
+                UE_LOG(InventoryItemsPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
+                if (Preparer->RestoringDefaultFileByName(FileName, "Inventory items", InventoryItemsList)) {
+                    UE_LOG(InventoryItemsPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
+                    return Preparer->LoadObjectFromXML(ModuleName, XMLFilePath, FileManager, IsModDir, ++RecursionDepth);
+                }
+                else {
+                    UE_LOG(InventoryItemsPreparer, Error, TEXT("!!! An error occurred in the InventoryItemsPreparer class in the LoadObjectFromXML function - An attempt to restore file %s failed. Abnormal termination."), *XMLFilePath);
+                    FGenericPlatformMisc::RequestExit(false);
+                }
+            }
+            else {
+                FGenericPlatformMisc::RequestExit(false);
+            }
+        }
+
+        TArray<FXmlNode*> Textures = TexturesNode->GetChildrenNodes();
+        for (FXmlNode* Texture : Textures) {
+            if (!Texture) {
+                UE_LOG(InventoryItemsPreparer, Error, TEXT("!!! An error occurred in the InventoryItemsPreparer class in the LoadObjectFromXML function - Texture node from %s node from file %s is not valid"), *ResourcesNode->GetTag(), *XMLFilePath);
+
+                Preparer->EmergencyResetOfPointers<UInventoryItemData>(InventoryItemData);
+
+                if (ModuleName == "Default" && !IsModDir) {
+                    UE_LOG(InventoryItemsPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
+                    if (Preparer->RestoringDefaultFileByName(FileName, "Inventory items", InventoryItemsList)) {
+                        UE_LOG(InventoryItemsPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
+                        return Preparer->LoadObjectFromXML(ModuleName, XMLFilePath, FileManager, IsModDir, ++RecursionDepth);
+                    }
+                    else {
+                        UE_LOG(InventoryItemsPreparer, Error, TEXT("!!! An error occurred in the InventoryItemsPreparer class in the LoadObjectFromXML function - An attempt to restore file %s failed. Abnormal termination."), *XMLFilePath);
+                        FGenericPlatformMisc::RequestExit(false);
+                    }
+                }
+                else {
+                    FGenericPlatformMisc::RequestExit(false);
+                }
+            }
+
+            if (IsModDir) {
+                TArray<FString> PathPeces;
+                XMLFilePath.ParseIntoArray(PathPeces, TEXT("/"));
+
+                InventoryItemData->TexturePaths.Add(Texture->GetTag(),
+                    *FString(TEXT("Mods/") + PathPeces[PathPeces.Num() - 5] + "/Inventory items/" + ModuleName + TEXT("/textures/") +
+                        InventoryItemData->id + "/" + Texture->GetContent()));
+
+                UE_LOG(InventoryItemsPreparer, Error, TEXT("%s"), *FString(TEXT("Mods/") + PathPeces[PathPeces.Num() - 5] + "/Inventory items/" + ModuleName + TEXT("/textures/") +
+                    InventoryItemData->id + "/" + Texture->GetContent()));
+            }
+            else {
+                InventoryItemData->TexturePaths.Add(Texture->GetTag(),
+                    *FString(TEXT("Data/Inventory items/") + ModuleName + TEXT("/textures/") + InventoryItemData->id + "/" + Texture->GetContent()));
+
+                UE_LOG(InventoryItemsPreparer, Error, TEXT("%s"), *FString(TEXT("Data/Inventory items/") + ModuleName + TEXT("/textures/") + InventoryItemData->id + "/" + Texture->GetContent()));
+            }
+        }
+
+        if (IsModDir) {
+            TArray<FString> PathPeces;
+            XMLFilePath.ParseIntoArray(PathPeces, TEXT("/"));
+
+            InventoryItemData->ModuleLocalPath = "Mods/" + PathPeces[PathPeces.Num() - 5] + "/Inventory items/" + ModuleName + "/";
+        }
+        else {
+            InventoryItemData->ModuleLocalPath = "Data/Inventory items/" + ModuleName + "/";
+        }
+
         return InventoryItemData;
     } };
     //Вышеописанная лямбда передаётся в функцию базового класса

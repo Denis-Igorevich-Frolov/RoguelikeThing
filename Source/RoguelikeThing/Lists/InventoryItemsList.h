@@ -32,6 +32,11 @@ private:
 				"	<MaximumAmountInStack>10</MaximumAmountInStack>\n"
 				"	<AllowedForUseOnExpeditionInteractionObjects>true</AllowedForUseOnExpeditionInteractionObjects>\n"
 				"	<UseEvents type=\"array\"></UseEvents>\n"
+				"	<Resources type=\"array\">\n"
+				"		<Textures type = \"array\">\n"
+				"			<Inventory>Key.png</Inventory>\n"
+				"		</Textures>\n"
+				"	</Resources>\n"
 				"</root>\n"
             ))
         }

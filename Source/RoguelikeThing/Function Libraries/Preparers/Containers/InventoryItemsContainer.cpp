@@ -40,3 +40,32 @@ const UInventoryItemData* const UInventoryItemsContainer::FindData(FString Modul
         return nullptr;
     }
 }
+
+TMap<FString, UInventoryItemData*> UInventoryItemsContainer::GetAllObjects()
+{
+    TMap<FString, UInventoryItemData*> Result;
+
+    TArray<FInventoryItemModule> Modules;
+    InventoryItemsModulesArray.GenerateValueArray(Modules);
+
+    for (FInventoryItemModule Module : Modules) {
+        TArray<FInventoryItemCategory> Categorys;
+        Module.InventoryItemsCategorysArray.GenerateValueArray(Categorys);
+
+        for (FInventoryItemCategory Category : Categorys) {
+            TArray<FInventoryItemSubCategory> SubCategorys;
+            Category.InventoryItemsSubCategorysArray.GenerateValueArray(SubCategorys);
+
+            for (FInventoryItemSubCategory SubCategory : SubCategorys) {
+                TArray<FString> DataNames;
+                SubCategory.InventoryItemsDataArray.GenerateKeyArray(DataNames);
+
+                for (FString Name : DataNames) {
+                    Result.Add(Name, *SubCategory.InventoryItemsDataArray.Find(Name));
+                }
+            }
+        }
+    }
+
+    return Result;
+}

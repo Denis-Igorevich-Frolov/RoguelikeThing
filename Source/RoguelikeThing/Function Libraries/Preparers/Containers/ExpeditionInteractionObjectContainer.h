@@ -58,5 +58,5 @@ public:
 	UFUNCTION(BlueprintCallable)
 	const UExpeditionInteractionObjectData* const FindData(FString ModuleName, FString CategoryName, FString SubCategoryName, FString ObjectId);
 	UFUNCTION(BlueprintCallable)
-	TMap<FString, UExpeditionInteractionObjectData*> GetAllInteractionObjects();
+	TMap<FString, UExpeditionInteractionObjectData*> GetAllObjects();
 };

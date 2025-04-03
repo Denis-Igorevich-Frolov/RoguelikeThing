@@ -8,22 +8,20 @@
 
 DEFINE_LOG_CATEGORY(TexturePreparer);
 
-void UTexturePreparer::PrepareAllExpeditionInteractionObjectsTextures(
-    UPARAM(ref)UExpeditionInteractionObjectContainer* ExpeditionInteractionObjectContainer, UPARAM(ref)UTextureContainer* ExpeditionInteractionObjectTexturesContainer)
+template<typename GameObjectContainer, typename GameObjectData>
+void UTexturePreparer::PrepareAllTextures(GameObjectContainer* ObjectContainer, UTextureContainer* TexturesContainer)
 {
-    AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [ExpeditionInteractionObjectContainer, ExpeditionInteractionObjectTexturesContainer, this]() {
-        if (!ExpeditionInteractionObjectContainer) {
+    AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [ObjectContainer, TexturesContainer, this]() {
+        if (!ObjectContainer) {
             UE_LOG(TexturePreparer, Error, TEXT("!!!!!!!"));
             return;
         }
 
-        TMap<FString, UExpeditionInteractionObjectData*> InteractionObjects = ExpeditionInteractionObjectContainer->GetAllInteractionObjects();
+        TMap<FString, GameObjectData*> InteractionObjects = ObjectContainer->GetAllObjects();
         TArray<FString> InteractionObjectsKeys;
         InteractionObjects.GenerateKeyArray(InteractionObjectsKeys);
 
-        for (FString ItemName : InteractionObjectsKeys){
-            //UE_LOG(TexturePreparer, Error, TEXT("ItemName %s"), *ItemName);
-
+        for (FString ItemName : InteractionObjectsKeys) {
             UPROPERTY()
             UFileBinArrayData* FileBinArrayData = nullptr;
             AsyncTask(ENamedThreads::GameThread, [&FileBinArrayData, this]() {
@@ -34,7 +32,7 @@ void UTexturePreparer::PrepareAllExpeditionInteractionObjectsTextures(
                 FPlatformProcess::SleepNoStats(0.0f);
             }
 
-            UExpeditionInteractionObjectData* Data = *InteractionObjects.Find(ItemName);
+            GameObjectData* Data = *InteractionObjects.Find(ItemName);
 
             TMap<FString, FString> TexturePaths = Data->TexturePaths;
             TArray<FString> Keys;
@@ -79,7 +77,7 @@ void UTexturePreparer::PrepareAllExpeditionInteractionObjectsTextures(
                     UPROPERTY()
                     UTexture2D* texture = nullptr;
 
-                    AsyncTask(ENamedThreads::GameThread, [FileBinData, &PathPieces, &texture, &ExpeditionInteractionObjectTexturesContainer, Data, this]() {
+                    AsyncTask(ENamedThreads::GameThread, [FileBinData, &PathPieces, &texture, &TexturesContainer, Data, this]() {
                         ChangeTextOfTheDownloadDetails.Broadcast(FString("Loading file:  " + PathPieces[PathPieces.Num() - 4] + "/sav/Textures.sav"), FColor::FromHex("160124"));
 
                         texture = FImageUtils::ImportBufferAsTexture2D(FileBinData->FileBinary.ObjectsBinArray);
@@ -89,7 +87,7 @@ void UTexturePreparer::PrepareAllExpeditionInteractionObjectsTextures(
                         FPlatformProcess::SleepNoStats(0.0f);
                     }
 
-                    ExpeditionInteractionObjectTexturesContainer->AddTexture(PathPieces[PathPieces.Num() - 4], Data->Category,
+                    TexturesContainer->AddTexture(PathPieces[PathPieces.Num() - 4], Data->Category,
                         Data->SubCategory, Data->id, FileBinData->FileBinary.FileTag, texture);
                 }
             }
@@ -109,7 +107,7 @@ void UTexturePreparer::PrepareAllExpeditionInteractionObjectsTextures(
 
                     UPROPERTY()
                     UTexture2D* texture = nullptr;
-                    AsyncTask(ENamedThreads::GameThread, [&FullTextureFilePath, &FileBinArray, &PathPieces, &texture, &ExpeditionInteractionObjectTexturesContainer, Data, Value, FileTag, this]() {
+                    AsyncTask(ENamedThreads::GameThread, [&FullTextureFilePath, &FileBinArray, &PathPieces, &texture, &TexturesContainer, Data, Value, FileTag, this]() {
                         ChangeTextOfTheDownloadDetails.Broadcast(FString("Loading file:  " + PathPieces[PathPieces.Num() - 1]), FColor::FromHex("160124"));
 
                         FullTextureFilePath = FString(FPaths::ConvertRelativePathToFull(FPaths::ProjectDir()) + Value);
@@ -133,7 +131,7 @@ void UTexturePreparer::PrepareAllExpeditionInteractionObjectsTextures(
 
                     Saver->AddDataToBinArray<UFileBinArrayData>(FileBinArrayData, Value, FullTextureFilePath);
 
-                    ExpeditionInteractionObjectTexturesContainer->AddTexture(PathPieces[PathPieces.Num() - 4], Data->Category, Data->SubCategory, Data->id, FileTag, texture);
+                    TexturesContainer->AddTexture(PathPieces[PathPieces.Num() - 4], Data->Category, Data->SubCategory, Data->id, FileTag, texture);
                 }
 
                 TArray<FString> SavPathPieces;
@@ -158,4 +156,15 @@ void UTexturePreparer::PrepareAllExpeditionInteractionObjectsTextures(
             LoadingComplet.Broadcast();
             });
         });
+}
+
+void UTexturePreparer::PrepareAllExpeditionInteractionObjectsTextures(
+    UPARAM(ref)UExpeditionInteractionObjectContainer* ObjectContainer, UPARAM(ref)UTextureContainer* TexturesContainer)
+{
+    PrepareAllTextures<UExpeditionInteractionObjectContainer, UExpeditionInteractionObjectData>(ObjectContainer, TexturesContainer);
+}
+
+void UTexturePreparer::PrepareAllInventoryItemsTextures(UPARAM(ref)UInventoryItemsContainer* InventoryItemContainer, UPARAM(ref)UTextureContainer* InventoryItemTexturesContainer)
+{
+    PrepareAllTextures<UInventoryItemsContainer, UInventoryItemData>(InventoryItemContainer, InventoryItemTexturesContainer);
 }

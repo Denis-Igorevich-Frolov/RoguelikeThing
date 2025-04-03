@@ -6,6 +6,7 @@
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "Containers/ExpeditionInteractionObjectContainer.h"
 #include "Containers/TextureContainer.h"
+#include "Containers/InventoryItemsContainer.h"
 #include "TexturePreparer.generated.h"
 
 /**
@@ -21,11 +22,18 @@ UCLASS(BlueprintType)
 class ROGUELIKETHING_API UTexturePreparer : public UBlueprintFunctionLibrary
 {
 	GENERATED_BODY()
+
+private:
+	template<typename GameObjectContainer, typename GameObjectData>
+	void PrepareAllTextures(GameObjectContainer* ExpeditionInteractionObjectContainer, UTextureContainer* ExpeditionInteractionObjectTexturesContainer);
 	
 public:
 	UFUNCTION(BlueprintCallable)
 	void PrepareAllExpeditionInteractionObjectsTextures(UPARAM(ref)UExpeditionInteractionObjectContainer* ExpeditionInteractionObjectContainer,
 		UPARAM(ref)UTextureContainer* ExpeditionInteractionObjectTexturesContainer);
+
+	UFUNCTION(BlueprintCallable)
+	void PrepareAllInventoryItemsTextures(UPARAM(ref)UInventoryItemsContainer* InventoryItemContainer, UPARAM(ref)UTextureContainer* InventoryItemTexturesContainer);
 
 	UPROPERTY(BlueprintAssignable)
 	FChangeTextOfThePreparTexturesDetailsDelegate ChangeTextOfTheDownloadDetails;
