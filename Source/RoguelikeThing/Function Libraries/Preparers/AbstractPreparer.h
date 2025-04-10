@@ -44,7 +44,8 @@ public:
 
 	//Функция получения данных обо всех объектах конкретного типа всех модулей
 	template<typename Container, typename DataType, typename PreparerType>
-	void GetAllData(UPARAM(ref)Container* DataContainer, TArray<FString> ModsDirWithAbstract, UAbstractList* ObjectsList, FString ModuleRoot, PreparerType* Preparer);
+	void GetAllData(UPARAM(ref)Container* DataContainer, TArray<FString> ModsDirWithAbstract, UAbstractList* ObjectsList, FString ModuleRoot, PreparerType* Preparer,
+		void(*AdditionaCalculations)(Container* Cont) = {});
 
 	UPROPERTY(BlueprintAssignable)
 	FChangeTextOfTheDownloadDetailsDelegate ChangeTextOfTheDownloadDetails;

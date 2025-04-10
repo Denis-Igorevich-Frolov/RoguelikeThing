@@ -3,6 +3,7 @@
 #pragma once
 
 #include "RoguelikeThing/GameObjects/ObjectsData/AbstractData.h"
+#include "InteractionConditions/AbstractInteractionCondition.h"
 #include "ExpeditionInteractionObjectData.generated.h"
 
 /*********************************************************************************************************************************
@@ -23,7 +24,10 @@ struct FInteractionCondition
 	GENERATED_BODY()
 
 	UPROPERTY(BlueprintReadWrite, SaveGame)
-	TArray<FString> Conditions;
+	TArray<FString> ConditionsText;
+
+	UPROPERTY(BlueprintReadWrite)
+	TArray<UAbstractInteractionCondition*> Conditions;
 
 	//Текст, который будет выведен при выполнении условия интеракции
 	UPROPERTY(BlueprintReadWrite, SaveGame)
@@ -32,6 +36,8 @@ struct FInteractionCondition
 	//Эвенты, которые будут выведены при выполнении условия интеракции
 	UPROPERTY(BlueprintReadWrite, SaveGame)
 	TMap<FString, FInteractionEvent> InteractionEvents;
+
+	void PrepareConditions();
 };
 
 UCLASS(BlueprintType)

@@ -317,9 +317,10 @@ void UAbstractPreparer::EmergencyResetOfPointers(DataType* Data)
 
 //Функция получения данных обо всех объектах конкретного типа всех модулей
 template<typename Container, typename DataType, typename PreparerType>
-void UAbstractPreparer::GetAllData(Container* DataContainer, TArray<FString> ModsDirWithAbstract, UAbstractList* ObjectsList, FString ModuleRoot, PreparerType* Preparer)
+void UAbstractPreparer::GetAllData(Container* DataContainer, TArray<FString> ModsDirWithAbstract, UAbstractList* ObjectsList, FString ModuleRoot, PreparerType* Preparer,
+    void(*AdditionaCalculations)(Container* Cont))
 {
-    AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [DataContainer, ModsDirWithAbstract, ObjectsList, ModuleRoot, Preparer, this]() {
+    AsyncTask(ENamedThreads::AnyHiPriThreadHiPriTask, [AdditionaCalculations, DataContainer, ModsDirWithAbstract, ObjectsList, ModuleRoot, Preparer, this]() {
         //Сначала проверяется не повреждены ли данные модуля Default
         CheckingDefaultAbstractObjects(ObjectsList, ModuleRoot);
 
@@ -492,6 +493,10 @@ void UAbstractPreparer::GetAllData(Container* DataContainer, TArray<FString> Mod
                     Saver->RemoveFromRoot();
             }
         }
+
+        if (AdditionaCalculations)
+            AdditionaCalculations(DataContainer);
+
         AsyncTask(ENamedThreads::GameThread, [this]() {
             LoadingComplete.Broadcast();
             });

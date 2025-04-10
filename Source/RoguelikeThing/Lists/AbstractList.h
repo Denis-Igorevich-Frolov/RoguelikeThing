@@ -22,5 +22,5 @@ public:
 
     //Получение списка имён xml файлов всех объектов в модуле
     UFUNCTION()
-    virtual TArray<FString> GetModuleFilesArray() PURE_VIRTUAL(UAbstractList::GetXmlList, return TArray<FString>{};);
+    virtual TArray<FString> GetModuleFilesArray() PURE_VIRTUAL(UAbstractList::GetModuleFilesArray, return TArray<FString>{};);
 };

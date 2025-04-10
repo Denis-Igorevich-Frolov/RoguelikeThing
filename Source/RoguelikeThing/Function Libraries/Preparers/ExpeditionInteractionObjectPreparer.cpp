@@ -130,7 +130,7 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadObje
 
             TArray<FXmlNode*> Conditions = ConditionsNode->GetChildrenNodes();
             for (FXmlNode* Condition : Conditions) {
-                InteractionCondition.Conditions.Add(Condition->GetContent());
+                InteractionCondition.ConditionsText.Add(Condition->GetContent());
             }
 
             FXmlNode* EventsText = InteractionNode->FindChildNode("EventsText");
@@ -316,6 +316,22 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadObje
 void UExpeditionInteractionObjectPreparer::GetAllObjectsData(
     UExpeditionInteractionObjectContainer* ExpeditionInteractionObjectContainer, TArray<FString> ModsDirWithInteractionObjects)
 {
+    auto AdditionaCalculations{ [](UExpeditionInteractionObjectContainer* Cont) {
+        TMap<FString, UExpeditionInteractionObjectData*> ExpeditionInteractionObjectsData = Cont->GetAllObjects();
+        TArray<UExpeditionInteractionObjectData*> DataArray;
+        ExpeditionInteractionObjectsData.GenerateValueArray(DataArray);
+
+        for (UExpeditionInteractionObjectData* Data : DataArray) {
+            TArray<FString> InteractionConditionsKeys;
+            Data->TermsOfInteractions.GenerateKeyArray(InteractionConditionsKeys);
+
+            for (FString Key : InteractionConditionsKeys) {
+                FInteractionCondition* Condition = Data->TermsOfInteractions.Find(Key);
+                Condition->PrepareConditions();
+            }
+        }
+        } };
+
     GetAllData<UExpeditionInteractionObjectContainer, UExpeditionInteractionObjectData, UExpeditionInteractionObjectPreparer>(
-        ExpeditionInteractionObjectContainer, ModsDirWithInteractionObjects, ExpeditionInteractionObjectsList, "Expedition interaction objects", this);
+        ExpeditionInteractionObjectContainer, ModsDirWithInteractionObjects, ExpeditionInteractionObjectsList, "Expedition interaction objects", this, AdditionaCalculations);
 }
