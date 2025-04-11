@@ -327,7 +327,7 @@ void UExpeditionInteractionObjectPreparer::GetAllObjectsData(
 
             for (FString Key : InteractionConditionsKeys) {
                 FInteractionCondition* Condition = Data->TermsOfInteractions.Find(Key);
-                Condition->PrepareConditions();
+                Condition->PrepareConditions(Cont);
             }
         }
         } };

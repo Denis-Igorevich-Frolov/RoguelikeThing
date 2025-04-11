@@ -15,8 +15,6 @@ class ROGUELIKETHING_API UAbstractInteractionCondition : public UObject
 	GENERATED_BODY()
 	
 public:
-	~UAbstractInteractionCondition();
-
 	UFUNCTION(BlueprintCallable)
 	virtual bool CheckCondition();
 };

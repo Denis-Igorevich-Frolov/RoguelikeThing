@@ -31,4 +31,9 @@ private:
 public:
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
     ELogType LogType = ELogType::REGULAR;
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FString CurrentCallingItemID;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int CurrentCallingItemQuantity;
 };

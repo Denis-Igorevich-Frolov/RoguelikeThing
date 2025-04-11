@@ -17,7 +17,7 @@ struct FInteractionEvent
 	GENERATED_BODY()
 };
 
-//Структура условия взаимодействия с объектом.  !!!!!На данный момент находящаяся в состоянии зачаточном и существующая для подготовки методов, сопряжённых с её будущим функционалом
+//Структура условия взаимодействия с объектом.
 USTRUCT(BlueprintType)
 struct FInteractionCondition
 {
@@ -37,7 +37,7 @@ struct FInteractionCondition
 	UPROPERTY(BlueprintReadWrite, SaveGame)
 	TMap<FString, FInteractionEvent> InteractionEvents;
 
-	void PrepareConditions();
+	void PrepareConditions(UObject* Parent);
 };
 
 UCLASS(BlueprintType)
