@@ -3,7 +3,7 @@
 
 #include "RoguelikeThing/GameObjects/ObjectsData/InteractionConditions/AbstractInteractionCondition.h"
 
-bool UAbstractInteractionCondition::CheckCondition()
+CheckConditionResult UAbstractInteractionCondition::CheckCondition()
 {
-    return true;
+    return CheckConditionResult::CONFIRMED;
 }

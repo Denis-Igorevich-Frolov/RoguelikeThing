@@ -9,6 +9,7 @@
 /**
  * 
  */
+
 UCLASS()
 class ROGUELIKETHING_API UInteractionConditionUsingItem : public UAbstractInteractionCondition
 {
@@ -19,7 +20,10 @@ private:
 	int Quantity = 0;
 
 public:
-	void Init(FString itemID, int quantity);
+	UPROPERTY(BlueprintReadWrite)
+	FString LackOfQuantityText = "";
 
-	bool CheckCondition() override;
+	void Init(FString itemID, int quantity, FString lackOfQuantityText);
+
+	CheckConditionResult CheckCondition() override;
 };

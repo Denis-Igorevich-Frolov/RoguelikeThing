@@ -15,6 +15,14 @@ enum class ConditionType : uint8 {
 	USE_ITEM UMETA(DisplayName = "Use item")
 };
 
+UENUM(BlueprintType)
+enum class CheckConditionResult : uint8 {
+	CONFIRMED UMETA(DisplayName = "Confirmed"),
+	FAILED UMETA(DisplayName = "Failed"),
+	MISSING_ITEMS UMETA(DisplayName = "Missing items")
+};
+
+
 UCLASS(BlueprintType)
 class ROGUELIKETHING_API UAbstractInteractionCondition : public UObject
 {
@@ -25,5 +33,5 @@ public:
 	ConditionType ConditionType;
 
 	UFUNCTION(BlueprintCallable)
-	virtual bool CheckCondition();
+	virtual CheckConditionResult CheckCondition();
 };

@@ -5,21 +5,28 @@
 #include <RoguelikeThing/MyGameInstance.h>
 #include <Kismet/GameplayStatics.h>
 
-void UInteractionConditionUsingItem::Init(FString itemID, int quantity)
+void UInteractionConditionUsingItem::Init(FString itemID, int quantity, FString lackOfQuantityText)
 {
     ItemID = itemID;
     Quantity = quantity;
+    LackOfQuantityText = lackOfQuantityText;
 }
 
-bool UInteractionConditionUsingItem::CheckCondition()
+CheckConditionResult UInteractionConditionUsingItem::CheckCondition()
 {
     UPROPERTY()
     UMyGameInstance* MyGameInstance = Cast<UMyGameInstance>(UGameplayStatics::GetGameInstance(GetWorld()));
 
     if (MyGameInstance) {
-        return (MyGameInstance->CurrentCallingItemID == ItemID && MyGameInstance->CurrentCallingItemQuantity >= Quantity);
+        if (MyGameInstance->CurrentCallingItemID == ItemID) {
+            if (MyGameInstance->CurrentCallingItemQuantity >= Quantity) {
+                return CheckConditionResult::CONFIRMED;
+            }
+            else {
+                return CheckConditionResult::MISSING_ITEMS;
+            }
+        }
     }
-    else {
-        return false;
-    }
+
+    return CheckConditionResult::FAILED;
 }
