@@ -18,6 +18,7 @@ void FInteractionCondition::PrepareConditions(UObject* Parent)
                 FPlatformProcess::SleepNoStats(0.0f);
             }
 
+            InteractionCondition->ConditionType = ConditionType::REGULAR;
             Conditions.Add(InteractionCondition);
         }
         else {
@@ -57,6 +58,7 @@ void FInteractionCondition::PrepareConditions(UObject* Parent)
                 while (!InteractionCondition) {
                     FPlatformProcess::SleepNoStats(0.0f);
                 }
+                InteractionCondition->ConditionType = ConditionType::USE_ITEM;
 
                 Conditions.Add(InteractionCondition);
             }
