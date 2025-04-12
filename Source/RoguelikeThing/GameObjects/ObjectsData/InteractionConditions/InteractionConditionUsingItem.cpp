@@ -20,6 +20,7 @@ CheckConditionResult UInteractionConditionUsingItem::CheckCondition()
     if (MyGameInstance) {
         if (MyGameInstance->CurrentCallingItemID == ItemID) {
             if (MyGameInstance->CurrentCallingItemQuantity >= Quantity) {
+                MyGameInstance->CurrentCallingItemQuantity = MyGameInstance->CurrentCallingItemQuantity - Quantity;
                 return CheckConditionResult::CONFIRMED;
             }
             else {

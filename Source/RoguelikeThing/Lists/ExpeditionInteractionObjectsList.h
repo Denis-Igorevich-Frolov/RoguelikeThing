@@ -33,7 +33,7 @@ private:
 				"	<TermsOfInteractions type=\"array\">\n"
 				"		<KeyInteraction>\n"
 				"			<Conditions type=\"array\">\n"
-				"				<Condition>Use item[id:Key, quantity:1]</Condition>\n"
+				"				<Condition>Use item[id:Key, quantity:1, lack of quantity text:Ещё бы немного ключей...]</Condition>\n"
 				"			</Conditions>\n"
 				"			<EventsText>Ключ с лёгкостью отпирает замок.</EventsText>\n"
 				"			<Events type=\"array\"></Events>\n"

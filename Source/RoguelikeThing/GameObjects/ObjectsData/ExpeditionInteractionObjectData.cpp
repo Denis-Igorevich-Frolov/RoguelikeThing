@@ -40,6 +40,7 @@ void FInteractionCondition::PrepareConditions(UObject* Parent)
 
                     if (ConditionParametersPieces.Num() == 2) {
                         ConditionParametersPieces[0].RemoveSpacesInline();
+                        ConditionParametersPieces[0] = ConditionParametersPieces[0].ToLower();
 
                         if (ConditionParametersPieces[0] == "id") {
                             ItemID = ConditionParametersPieces[1];
@@ -47,7 +48,7 @@ void FInteractionCondition::PrepareConditions(UObject* Parent)
                         else if (ConditionParametersPieces[0] == "quantity") {
                             Quantity = FCString::Atoi(*ConditionParametersPieces[1]);
                         }
-                        else if (ConditionParametersPieces[0] == "Lackofquantitytext") {
+                        else if (ConditionParametersPieces[0] == "lackofquantitytext") {
                             LackOfQuantityText = ConditionParametersPieces[1];
                         }
                     }
