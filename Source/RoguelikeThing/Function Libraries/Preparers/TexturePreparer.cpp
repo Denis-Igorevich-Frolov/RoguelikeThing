@@ -21,79 +21,88 @@ void UTexturePreparer::PrepareAllTextures(GameObjectContainer* ObjectContainer, 
         TArray<FString> InteractionObjectsKeys;
         InteractionObjects.GenerateKeyArray(InteractionObjectsKeys);
 
-        for (FString ItemName : InteractionObjectsKeys) {
-            UPROPERTY()
-            UFileBinArrayData* FileBinArrayData = nullptr;
-            AsyncTask(ENamedThreads::GameThread, [&FileBinArrayData, this]() {
-                FileBinArrayData = NewObject<UFileBinArrayData>();
-                });
+        UPROPERTY()
+        UDataSaver* Saver = nullptr;
+        //Ѕезопасное создание UObject'ов гарантировано только в основном потоке
+        AsyncTask(ENamedThreads::GameThread, [&Saver, this]() {
+            Saver = NewObject<UDataSaver>();
+            Saver->AddToRoot();
+            });
 
-            while (!FileBinArrayData) {
-                FPlatformProcess::SleepNoStats(0.0f);
-            }
+        while (!Saver) {
+            FPlatformProcess::SleepNoStats(0.0f);
+        }
 
-            GameObjectData* Data = *InteractionObjects.Find(ItemName);
+        if (InteractionObjectsKeys.Num() == 0) {
+            UE_LOG(TexturePreparer, Error, TEXT("!!! InteractionObjectsKeys.Num() == 0"));
+            return;
+        }
 
-            TMap<FString, FString> TexturePaths = Data->TexturePaths;
-            TArray<FString> Keys;
-            TexturePaths.GenerateKeyArray(Keys);
+        GameObjectData* TestData = *InteractionObjects.Find(InteractionObjectsKeys.Last());
 
-            UPROPERTY()
-            UDataSaver* Saver = nullptr;
-            //Ѕезопасное создание UObject'ов гарантировано только в основном потоке
-            AsyncTask(ENamedThreads::GameThread, [&Saver, this]() {
-                Saver = NewObject<UDataSaver>();
-                Saver->AddToRoot();
-                });
+        FString SavFilePath = FPaths::ProjectDir() + TestData->ModuleLocalPath + "sav/Textures.sav";
 
-            while (!Saver) {
-                FPlatformProcess::SleepNoStats(0.0f);
-            }
+        IPlatformFile& FileManager = FPlatformFileManager::Get().GetPlatformFile();
+        bool DataSaverFileExist = FileManager.FileExists(*SavFilePath);
 
-            FString SavFilePath = FPaths::ProjectDir() + Data->ModuleLocalPath + "sav/Textures.sav";
+        //≈сли существует сериализованный файл данных о модуле, он загружаетс€
+        if (DataSaverFileExist) {
+            Saver->LoadBinArray(SavFilePath);
+        }
 
-            IPlatformFile& FileManager = FPlatformFileManager::Get().GetPlatformFile();
-            bool DataSaverFileExist = FileManager.FileExists(*SavFilePath);
+        if (DataSaverFileExist && Saver && Saver->CheckHashChange() && SavFilePath == Saver->GetSavFilePath()) {
+            UE_LOG(TexturePreparer, Error, TEXT("Load sav"));
 
-            //≈сли существует сериализованный файл данных о модуле, он загружаетс€
-            if (DataSaverFileExist) {
-                Saver->LoadBinArray(SavFilePath);
-            }
+            //GameObjectData* Data = *InteractionObjects.Find(ItemName);
+            TMap<FString, UFileBinArrayData*> DataArray = Saver->GetData<UFileBinArrayData>(true);
 
-            if (DataSaverFileExist && Saver && Saver->CheckHashChange() && SavFilePath == Saver->GetSavFilePath()) {
-                UE_LOG(TexturePreparer, Error, TEXT("Load sav"));
+            TArray<FString> DataPaths;
+            DataArray.GenerateKeyArray(DataPaths);
 
-                TMap<FString, UFileBinArrayData*> DataArray = Saver->GetData<UFileBinArrayData>(true);
+            for (FString DataPath : DataPaths) {
+                TArray<FString> PathPieces;
+                DataPath.ParseIntoArray(PathPieces, TEXT("/"));
 
-                TArray<FString> DataPaths;
-                DataArray.GenerateKeyArray(DataPaths);
+                UFileBinArrayData* FileBinData = *DataArray.Find(DataPath);
+                UPROPERTY()
+                UTexture2D* texture = nullptr;
 
-                for (FString DataPath : DataPaths) {
+                AsyncTask(ENamedThreads::GameThread, [FileBinData, &PathPieces, &texture, &TexturesContainer, this]() {
+                    ChangeTextOfTheDownloadDetails.Broadcast(FString("Loading file:  " + PathPieces[PathPieces.Num() - 4] + "/sav/Textures.sav"), FColor::FromHex("160124"));
 
-                    TArray<FString> PathPieces;
-                    DataPath.ParseIntoArray(PathPieces, TEXT("/"));
+                    texture = FImageUtils::ImportBufferAsTexture2D(FileBinData->FileBinary.ObjectsBinArray);
+                    });
 
-                    UFileBinArrayData* FileBinData = *DataArray.Find(DataPath);
-                    UPROPERTY()
-                    UTexture2D* texture = nullptr;
-
-                    AsyncTask(ENamedThreads::GameThread, [FileBinData, &PathPieces, &texture, &TexturesContainer, Data, this]() {
-                        ChangeTextOfTheDownloadDetails.Broadcast(FString("Loading file:  " + PathPieces[PathPieces.Num() - 4] + "/sav/Textures.sav"), FColor::FromHex("160124"));
-
-                        texture = FImageUtils::ImportBufferAsTexture2D(FileBinData->FileBinary.ObjectsBinArray);
-                        });
-
-                    while (!texture) {
-                        FPlatformProcess::SleepNoStats(0.0f);
-                    }
-
-                    TexturesContainer->AddTexture(PathPieces[PathPieces.Num() - 4], Data->Category,
-                        Data->SubCategory, Data->id, FileBinData->FileBinary.FileTag, texture);
+                while (!texture) {
+                    FPlatformProcess::SleepNoStats(0.0f);
                 }
+
+                TexturesContainer->AddTexture(FileBinData->ModuleName, FileBinData->CategoryName,
+                    FileBinData->SubCategoryName, FileBinData->ItemName, FileBinData->TextureTag, texture);
             }
-            else {
+        }
+        else {
+            FString LastLacalFilePath;
+
+            for (FString ItemName : InteractionObjectsKeys) {
                 UE_LOG(TexturePreparer, Error, TEXT("Load png"));
-                FString LastLacalFilePath;
+
+                UPROPERTY()
+                UFileBinArrayData* FileBinArrayData = nullptr;
+                AsyncTask(ENamedThreads::GameThread, [&FileBinArrayData, this]() {
+                    FileBinArrayData = NewObject<UFileBinArrayData>();
+                    });
+
+                while (!FileBinArrayData) {
+                    FPlatformProcess::SleepNoStats(0.0f);
+                }
+
+                GameObjectData* Data = *InteractionObjects.Find(ItemName);
+
+                TMap<FString, FString> TexturePaths = Data->TexturePaths;
+                TArray<FString> Keys;
+                TexturePaths.GenerateKeyArray(Keys);
+
                 for (FString FileTag : Keys) {
 
                     FString Value = *TexturePaths.Find(FileTag);
@@ -123,32 +132,30 @@ void UTexturePreparer::PrepareAllTextures(GameObjectContainer* ObjectContainer, 
                     UPROPERTY()
                     FFileBinary FileBinary;
 
-                    FileBinary.FileTag = FileTag;
+                    //FileBinary.FileTag = FileTag;
                     FileBinary.ObjectsBinArray = FileBinArray;
 
-                    FileBinArrayData->ItemName = ItemName;
-                    FileBinArrayData->FileBinary = FileBinary;
+                    FileBinArrayData->Init(PathPieces[PathPieces.Num() - 4], Data->Category, Data->SubCategory, Data->id, FileTag, FileBinary);
 
                     Saver->AddDataToBinArray<UFileBinArrayData>(FileBinArrayData, Value, FullTextureFilePath);
 
                     TexturesContainer->AddTexture(PathPieces[PathPieces.Num() - 4], Data->Category, Data->SubCategory, Data->id, FileTag, texture);
                 }
-
-                TArray<FString> SavPathPieces;
-                LastLacalFilePath.ParseIntoArray(SavPathPieces, TEXT("/"));
-
-                FString ModuleSavPath = FPaths::ProjectDir();
-
-                for (int i = 0; i < SavPathPieces.Num() - 3; i++) {
-                    ModuleSavPath += SavPathPieces[i];
-                    ModuleSavPath += "/";
-                }
-
-                ModuleSavPath += "sav/Textures.sav";
-
-                Saver->SaveBinArray(ModuleSavPath);
             }
 
+            TArray<FString> SavPathPieces;
+            LastLacalFilePath.ParseIntoArray(SavPathPieces, TEXT("/"));
+
+            FString ModuleSavPath = FPaths::ProjectDir();
+
+            for (int i = 0; i < SavPathPieces.Num() - 3; i++) {
+                ModuleSavPath += SavPathPieces[i];
+                ModuleSavPath += "/";
+            }
+
+            ModuleSavPath += "sav/Textures.sav";
+
+            Saver->SaveBinArray(ModuleSavPath);
         }
 
         AsyncTask(ENamedThreads::GameThread, [this]() {

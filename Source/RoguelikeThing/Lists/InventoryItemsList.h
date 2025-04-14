@@ -39,7 +39,29 @@ private:
 				"	</Resources>\n"
 				"</root>\n"
             ))
-        }
+        },
+		{
+			"Money.xml",
+
+			FString(UTF8_TO_TCHAR(
+				"<?xml version=\"1.0\" encoding=\"UTF - 8\"?>\n"
+				"\n"
+				"<root>\n"
+				"	<id>Money</id>\n"
+				"	<Category>Currency</Category>\n"
+				"	<SubCategory>Common</SubCategory>\n"
+				"	<Name>Золото</Name>\n"
+				"	<MaximumAmountInStack>2500</MaximumAmountInStack>\n"
+				"	<AllowedForUseOnExpeditionInteractionObjects>false</AllowedForUseOnExpeditionInteractionObjects>\n"
+				"	<UseEvents type=\"array\"></UseEvents>\n"
+				"	<Resources type=\"array\">\n"
+				"		<Textures type = \"array\">\n"
+				"			<Inventory>Money.png</Inventory>\n"
+				"		</Textures>\n"
+				"	</Resources>\n"
+				"</root>\n"
+			))
+		}
     };
 
 public:
