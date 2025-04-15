@@ -71,3 +71,42 @@ TMap<FString, UExpeditionInteractionObjectData*> UExpeditionInteractionObjectCon
 
     return Result;
 }
+
+TArray<FString> UExpeditionInteractionObjectContainer::GetAllModulesName()
+{
+    TArray<FString> ModulesName;
+    InteractionObjectsModulesArray.GenerateKeyArray(ModulesName);
+
+    return ModulesName;
+}
+
+TMap<FString, UExpeditionInteractionObjectData*> UExpeditionInteractionObjectContainer::GetAllObjectsFromeModule(FString ModuleName)
+{
+    if (!InteractionObjectsModulesArray.Contains(ModuleName)) {
+        UE_LOG(LogTemp, Error, TEXT("!InteractionObjectsModulesArray.Contains(ModuleName)"));
+        return TMap<FString, UExpeditionInteractionObjectData*>();
+    }
+
+    TMap<FString, UExpeditionInteractionObjectData*> Result;
+
+    FExpeditionInteractionObjectModule Module = *InteractionObjectsModulesArray.Find(ModuleName);
+
+    TArray<FExpeditionInteractionObjectCategory> Categorys;
+    Module.InteractionObjectsCategorysArray.GenerateValueArray(Categorys);
+
+    for (FExpeditionInteractionObjectCategory Category : Categorys) {
+        TArray<FExpeditionInteractionObjectSubCategory> SubCategorys;
+        Category.InteractionObjectsSubCategorysArray.GenerateValueArray(SubCategorys);
+
+        for (FExpeditionInteractionObjectSubCategory SubCategory : SubCategorys) {
+            TArray<FString> DataNames;
+            SubCategory.InteractionObjectsDataArray.GenerateKeyArray(DataNames);
+
+            for (FString Name : DataNames) {
+                Result.Add(Name, *SubCategory.InteractionObjectsDataArray.Find(Name));
+            }
+        }
+    }
+
+    return Result;
+}

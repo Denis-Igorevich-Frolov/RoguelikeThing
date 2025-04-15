@@ -3,24 +3,48 @@
   "WorkspaceRootPath": "E:\\Unreal projects\\RoguelikeThing\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Preparers\\Containers\\ExpeditionInteractionObjectContainer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Function Libraries\\Preparers\\Containers\\ExpeditionInteractionObjectContainer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Preparers\\Containers\\ExpeditionInteractionObjectContainer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Function Libraries\\Preparers\\Containers\\ExpeditionInteractionObjectContainer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Preparers\\TexturePreparer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Function Libraries\\Preparers\\TexturePreparer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionEvents\\AbstractInteractionEvent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionEvents\\AbstractInteractionEvent.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Preparers\\TexturePreparer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Function Libraries\\Preparers\\TexturePreparer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionEvents\\AbstractInteractionEvent.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionEvents\\AbstractInteractionEvent.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionConditions\\InteractionConditionUsingItem.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionConditions\\InteractionConditionUsingItem.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionConditions\\InteractionConditionUsingItem.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionConditions\\InteractionConditionUsingItem.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionConditions\\AbstractInteractionCondition.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
+      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionConditions\\AbstractInteractionCondition.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Preparers\\InventoryItemsPreparer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Function Libraries\\Preparers\\InventoryItemsPreparer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Preparers\\Containers\\TextureContainer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Function Libraries\\Preparers\\Containers\\TextureContainer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Preparers\\AbstractPreparer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Function Libraries\\Preparers\\AbstractPreparer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Preparers\\Containers\\TextureContainer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Function Libraries\\Preparers\\Containers\\TextureContainer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Preparers\\Containers\\InventoryItemsContainer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -33,22 +57,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Preparers\\AbstractPreparer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Function Libraries\\Preparers\\AbstractPreparer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Preparers\\TexturePreparer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Function Libraries\\Preparers\\TexturePreparer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Lists\\InventoryItemsList.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Lists\\InventoryItemsList.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionConditions\\InteractionConditionUsingItem.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionConditions\\InteractionConditionUsingItem.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionConditions\\InteractionConditionUsingItem.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionConditions\\InteractionConditionUsingItem.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionConditions\\AbstractInteractionCondition.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -67,20 +75,8 @@
       "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InventoryItemData.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionConditions\\AbstractInteractionCondition.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionConditions\\AbstractInteractionCondition.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Lists\\ExpeditionInteractionObjectsList.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Lists\\ExpeditionInteractionObjectsList.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\GameObjects\\ObjectsData\\ExpeditionInteractionObjectData.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\GameObjects\\ObjectsData\\ExpeditionInteractionObjectData.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Preparers\\Containers\\ExpeditionInteractionObjectContainer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Function Libraries\\Preparers\\Containers\\ExpeditionInteractionObjectContainer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Preparers\\ExpeditionInteractionObjectPreparer.cpp||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -93,10 +89,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Preparers\\ExpeditionInteractionObjectPreparer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
       "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Function Libraries\\Preparers\\ExpeditionInteractionObjectPreparer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Preparers\\Containers\\ExpeditionInteractionObjectContainer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
-      "RelativeMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|solutionrelative:Source\\RoguelikeThing\\Function Libraries\\Preparers\\Containers\\ExpeditionInteractionObjectContainer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{036188F8-EA2F-4298-91B2-2024265E2078}|Intermediate\\ProjectFiles\\RoguelikeThing.vcxproj|E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Preparers\\InventoryItemsPreparer.h||{D0E1A5C6-B359-4E41-9B60-3365922C2A22}",
@@ -118,37 +110,11 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 18,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "TextureContainer.cpp",
-              "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Preparers\\Containers\\TextureContainer.cpp",
-              "RelativeDocumentMoniker": "Source\\RoguelikeThing\\Function Libraries\\Preparers\\Containers\\TextureContainer.cpp",
-              "ToolTip": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Preparers\\Containers\\TextureContainer.cpp",
-              "RelativeToolTip": "Source\\RoguelikeThing\\Function Libraries\\Preparers\\Containers\\TextureContainer.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAiAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-04-13T15:36:59.619Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "TextureContainer.h",
-              "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Preparers\\Containers\\TextureContainer.h",
-              "RelativeDocumentMoniker": "Source\\RoguelikeThing\\Function Libraries\\Preparers\\Containers\\TextureContainer.h",
-              "ToolTip": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Preparers\\Containers\\TextureContainer.h",
-              "RelativeToolTip": "Source\\RoguelikeThing\\Function Libraries\\Preparers\\Containers\\TextureContainer.h",
-              "ViewState": "AgIAACQAAAAAAAAAAAAgwDQAAAAqAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-04-13T15:36:57.969Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
               "Title": "TexturePreparer.h",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Preparers\\TexturePreparer.h",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\Function Libraries\\Preparers\\TexturePreparer.h",
@@ -156,90 +122,87 @@
               "RelativeToolTip": "Source\\RoguelikeThing\\Function Libraries\\Preparers\\TexturePreparer.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-04-13T14:50:15.687Z",
+              "WhenOpened": "2025-04-15T15:41:43.475Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 2,
               "Title": "TexturePreparer.cpp",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Preparers\\TexturePreparer.cpp",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\Function Libraries\\Preparers\\TexturePreparer.cpp",
               "ToolTip": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Preparers\\TexturePreparer.cpp",
               "RelativeToolTip": "Source\\RoguelikeThing\\Function Libraries\\Preparers\\TexturePreparer.cpp",
-              "ViewState": "AgIAADUAAAAAAAAAAAAAAEEAAAAjAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABMAAABLAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-04-13T14:50:17.922Z",
+              "WhenOpened": "2025-04-15T15:41:45.156Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "InventoryItemsList.h",
-              "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Lists\\InventoryItemsList.h",
-              "RelativeDocumentMoniker": "Source\\RoguelikeThing\\Lists\\InventoryItemsList.h",
-              "ToolTip": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Lists\\InventoryItemsList.h",
-              "RelativeToolTip": "Source\\RoguelikeThing\\Lists\\InventoryItemsList.h",
-              "ViewState": "AgIAABkAAAAAAAAAAAAmwDsAAAAVAAAAAAAAAA==",
+              "DocumentIndex": 5,
+              "Title": "AbstractInteractionEvent.h",
+              "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionEvents\\AbstractInteractionEvent.h",
+              "RelativeDocumentMoniker": "Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionEvents\\AbstractInteractionEvent.h",
+              "ToolTip": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionEvents\\AbstractInteractionEvent.h",
+              "RelativeToolTip": "Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionEvents\\AbstractInteractionEvent.h",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-04-13T14:26:32.774Z",
+              "WhenOpened": "2025-04-14T23:20:09.365Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
-              "Title": "ExpeditionInteractionObjectsList.h",
-              "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Lists\\ExpeditionInteractionObjectsList.h",
-              "RelativeDocumentMoniker": "Source\\RoguelikeThing\\Lists\\ExpeditionInteractionObjectsList.h",
-              "ToolTip": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Lists\\ExpeditionInteractionObjectsList.h",
-              "RelativeToolTip": "Source\\RoguelikeThing\\Lists\\ExpeditionInteractionObjectsList.h",
-              "ViewState": "AgIAABIAAAAAAAAAAAAAACIAAAAmAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-04-11T23:13:13.344Z",
+              "DocumentIndex": 3,
+              "Title": "AbstractInteractionEvent.cpp",
+              "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionEvents\\AbstractInteractionEvent.cpp",
+              "RelativeDocumentMoniker": "Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionEvents\\AbstractInteractionEvent.cpp",
+              "ToolTip": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionEvents\\AbstractInteractionEvent.cpp",
+              "RelativeToolTip": "Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionEvents\\AbstractInteractionEvent.cpp",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAABeAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
+              "WhenOpened": "2025-04-14T23:13:42.03Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 6,
               "Title": "InteractionConditionUsingItem.h",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionConditions\\InteractionConditionUsingItem.h",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionConditions\\InteractionConditionUsingItem.h",
               "ToolTip": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionConditions\\InteractionConditionUsingItem.h",
               "RelativeToolTip": "Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionConditions\\InteractionConditionUsingItem.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAAAeAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAYAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-04-10T23:30:34.454Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-10T23:30:34.454Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 7,
               "Title": "InteractionConditionUsingItem.cpp",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionConditions\\InteractionConditionUsingItem.cpp",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionConditions\\InteractionConditionUsingItem.cpp",
               "ToolTip": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionConditions\\InteractionConditionUsingItem.cpp",
               "RelativeToolTip": "Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionConditions\\InteractionConditionUsingItem.cpp",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAABYAAABqAAAAAAAAAA==",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAA4AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-04-10T23:30:33.634Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-10T23:30:33.634Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 8,
               "Title": "AbstractInteractionCondition.h",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionConditions\\AbstractInteractionCondition.h",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionConditions\\AbstractInteractionCondition.h",
               "ToolTip": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionConditions\\AbstractInteractionCondition.h",
               "RelativeToolTip": "Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionConditions\\AbstractInteractionCondition.h",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB8AAAABAAAAAAAAAA==",
+              "ViewState": "AgIAAAUAAAAAAAAAAAAswBoAAAAtAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-04-08T17:44:44.638Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-08T17:44:44.638Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 14,
               "Title": "AbstractInteractionCondition.cpp",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionConditions\\AbstractInteractionCondition.cpp",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionConditions\\AbstractInteractionCondition.cpp",
@@ -247,8 +210,7 @@
               "RelativeToolTip": "Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InteractionConditions\\AbstractInteractionCondition.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAqAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-04-08T17:44:28.105Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-08T17:44:28.105Z"
             },
             {
               "$type": "Document",
@@ -260,12 +222,11 @@
               "RelativeToolTip": "Source\\RoguelikeThing\\GameObjects\\ObjectsData\\ExpeditionInteractionObjectData.h",
               "ViewState": "AgIAABgAAAAAAAAAAAAAACYAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-04-08T18:26:15.764Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-08T18:26:15.764Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 15,
               "Title": "ExpeditionInteractionObjectData.cpp",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\GameObjects\\ObjectsData\\ExpeditionInteractionObjectData.cpp",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\GameObjects\\ObjectsData\\ExpeditionInteractionObjectData.cpp",
@@ -273,12 +234,11 @@
               "RelativeToolTip": "Source\\RoguelikeThing\\GameObjects\\ObjectsData\\ExpeditionInteractionObjectData.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAACUAAAA+AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-04-08T18:26:37.1Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-08T18:26:37.1Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 17,
               "Title": "InventoryItemData.h",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InventoryItemData.h",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InventoryItemData.h",
@@ -286,12 +246,11 @@
               "RelativeToolTip": "Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InventoryItemData.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAACAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-04-02T18:11:06.275Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-02T18:11:06.275Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 16,
               "Title": "InventoryItemData.cpp",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InventoryItemData.cpp",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InventoryItemData.cpp",
@@ -299,12 +258,11 @@
               "RelativeToolTip": "Source\\RoguelikeThing\\GameObjects\\ObjectsData\\InventoryItemData.cpp",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-04-03T18:25:36.275Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-03T18:25:36.275Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 12,
               "Title": "InventoryItemsContainer.h",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Preparers\\Containers\\InventoryItemsContainer.h",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\Function Libraries\\Preparers\\Containers\\InventoryItemsContainer.h",
@@ -312,12 +270,11 @@
               "RelativeToolTip": "Source\\RoguelikeThing\\Function Libraries\\Preparers\\Containers\\InventoryItemsContainer.h",
               "ViewState": "AgIAABgAAAAAAAAAAAAAAD4AAAACAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-04-02T17:05:20.381Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-02T17:05:20.381Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 11,
               "Title": "InventoryItemsContainer.cpp",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Preparers\\Containers\\InventoryItemsContainer.cpp",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\Function Libraries\\Preparers\\Containers\\InventoryItemsContainer.cpp",
@@ -325,12 +282,11 @@
               "RelativeToolTip": "Source\\RoguelikeThing\\Function Libraries\\Preparers\\Containers\\InventoryItemsContainer.cpp",
               "ViewState": "AgIAABgAAAAAAAAAAAAAACUAAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-04-02T17:05:19.915Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-02T17:05:19.915Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 24,
               "Title": "DataSaver.h",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\SaveGame\\DataSaver.h",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\SaveGame\\DataSaver.h",
@@ -338,12 +294,11 @@
               "RelativeToolTip": "Source\\RoguelikeThing\\SaveGame\\DataSaver.h",
               "ViewState": "AgIAABUAAAAAAAAAAAAIwDoAAAAXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-03-30T11:51:22.284Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-30T11:51:22.284Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 20,
               "Title": "DataSaver.cpp",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\SaveGame\\DataSaver.cpp",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\SaveGame\\DataSaver.cpp",
@@ -351,12 +306,11 @@
               "RelativeToolTip": "Source\\RoguelikeThing\\SaveGame\\DataSaver.cpp",
               "ViewState": "AgIAAJwAAAAAAAAAAAAAALgAAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-03-30T11:53:16.691Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-30T11:53:16.691Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 23,
               "Title": "AbstractData.h",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\GameObjects\\ObjectsData\\AbstractData.h",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\GameObjects\\ObjectsData\\AbstractData.h",
@@ -364,38 +318,37 @@
               "RelativeToolTip": "Source\\RoguelikeThing\\GameObjects\\ObjectsData\\AbstractData.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAnAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-03-17T17:41:04.006Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-03-17T17:41:04.006Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 1,
               "Title": "ExpeditionInteractionObjectContainer.h",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Preparers\\Containers\\ExpeditionInteractionObjectContainer.h",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\Function Libraries\\Preparers\\Containers\\ExpeditionInteractionObjectContainer.h",
               "ToolTip": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Preparers\\Containers\\ExpeditionInteractionObjectContainer.h",
               "RelativeToolTip": "Source\\RoguelikeThing\\Function Libraries\\Preparers\\Containers\\ExpeditionInteractionObjectContainer.h",
-              "ViewState": "AgIAACQAAAAAAAAAAAAswDwAAABCAAAAAAAAAA==",
+              "ViewState": "AgIAACEAAAAAAAAAAAAswD4AAABdAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
               "WhenOpened": "2025-03-02T13:19:00.72Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 0,
               "Title": "ExpeditionInteractionObjectContainer.cpp",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Preparers\\Containers\\ExpeditionInteractionObjectContainer.cpp",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\Function Libraries\\Preparers\\Containers\\ExpeditionInteractionObjectContainer.cpp",
               "ToolTip": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Preparers\\Containers\\ExpeditionInteractionObjectContainer.cpp",
               "RelativeToolTip": "Source\\RoguelikeThing\\Function Libraries\\Preparers\\Containers\\ExpeditionInteractionObjectContainer.cpp",
-              "ViewState": "AgIAABgAAAAAAAAAAAAAAEkAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAD8AAAAAAAAAAAAAAFMAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
               "WhenOpened": "2025-03-02T13:19:02.16Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 22,
               "Title": "InventoryItemsPreparer.h",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Preparers\\InventoryItemsPreparer.h",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\Function Libraries\\Preparers\\InventoryItemsPreparer.h",
@@ -403,12 +356,11 @@
               "RelativeToolTip": "Source\\RoguelikeThing\\Function Libraries\\Preparers\\InventoryItemsPreparer.h",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAAnAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-02-27T20:47:34.565Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-27T20:47:34.565Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 9,
               "Title": "InventoryItemsPreparer.cpp",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Preparers\\InventoryItemsPreparer.cpp",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\Function Libraries\\Preparers\\InventoryItemsPreparer.cpp",
@@ -416,12 +368,11 @@
               "RelativeToolTip": "Source\\RoguelikeThing\\Function Libraries\\Preparers\\InventoryItemsPreparer.cpp",
               "ViewState": "AgIAAPYAAAAAAAAAAAAAADABAAAOAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-02-27T20:47:33.853Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-27T20:47:33.853Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 21,
               "Title": "ExpeditionInteractionObjectPreparer.h",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Preparers\\ExpeditionInteractionObjectPreparer.h",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\Function Libraries\\Preparers\\ExpeditionInteractionObjectPreparer.h",
@@ -429,12 +380,11 @@
               "RelativeToolTip": "Source\\RoguelikeThing\\Function Libraries\\Preparers\\ExpeditionInteractionObjectPreparer.h",
               "ViewState": "AgIAAAMAAAAAAAAAAAAAACUAAAAXAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-02-27T20:47:30.76Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-27T20:47:30.76Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 19,
               "Title": "ExpeditionInteractionObjectPreparer.cpp",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Preparers\\ExpeditionInteractionObjectPreparer.cpp",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\Function Libraries\\Preparers\\ExpeditionInteractionObjectPreparer.cpp",
@@ -442,12 +392,11 @@
               "RelativeToolTip": "Source\\RoguelikeThing\\Function Libraries\\Preparers\\ExpeditionInteractionObjectPreparer.cpp",
               "ViewState": "AgIAAC8BAAAAAAAAAAAAAEwBAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-02-27T20:47:32.277Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-27T20:47:32.277Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 13,
               "Title": "AbstractPreparer.h",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Preparers\\AbstractPreparer.h",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\Function Libraries\\Preparers\\AbstractPreparer.h",
@@ -455,12 +404,11 @@
               "RelativeToolTip": "Source\\RoguelikeThing\\Function Libraries\\Preparers\\AbstractPreparer.h",
               "ViewState": "AgIAABoAAAAAAAAAAAAgwC4AAAAQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000680|",
-              "WhenOpened": "2025-02-27T20:44:49.222Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-27T20:44:49.222Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 10,
               "Title": "AbstractPreparer.cpp",
               "DocumentMoniker": "E:\\Unreal projects\\RoguelikeThing\\Source\\RoguelikeThing\\Function Libraries\\Preparers\\AbstractPreparer.cpp",
               "RelativeDocumentMoniker": "Source\\RoguelikeThing\\Function Libraries\\Preparers\\AbstractPreparer.cpp",
@@ -468,8 +416,7 @@
               "RelativeToolTip": "Source\\RoguelikeThing\\Function Libraries\\Preparers\\AbstractPreparer.cpp",
               "ViewState": "AgIAAJoBAAAAAAAAAAAgwLEBAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000677|",
-              "WhenOpened": "2025-02-27T20:47:17.532Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-02-27T20:47:17.532Z"
             }
           ]
         },

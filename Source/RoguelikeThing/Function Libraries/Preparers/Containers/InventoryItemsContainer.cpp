@@ -69,3 +69,42 @@ TMap<FString, UInventoryItemData*> UInventoryItemsContainer::GetAllObjects()
 
     return Result;
 }
+
+TArray<FString> UInventoryItemsContainer::GetAllModulesName()
+{
+    TArray<FString> ModulesName;
+    InventoryItemsModulesArray.GenerateKeyArray(ModulesName);
+
+    return ModulesName;
+}
+
+TMap<FString, UInventoryItemData*> UInventoryItemsContainer::GetAllObjectsFromeModule(FString ModuleName)
+{
+    if (!InventoryItemsModulesArray.Contains(ModuleName)) {
+        UE_LOG(LogTemp, Error, TEXT("!InventoryItemsModulesArray.Contains(ModuleName)"));
+        return TMap<FString, UInventoryItemData*>();
+    }
+
+    TMap<FString, UInventoryItemData*> Result;
+
+    FInventoryItemModule Module = *InventoryItemsModulesArray.Find(ModuleName);
+
+    TArray<FInventoryItemCategory> Categorys;
+    Module.InventoryItemsCategorysArray.GenerateValueArray(Categorys);
+
+    for (FInventoryItemCategory Category : Categorys) {
+        TArray<FInventoryItemSubCategory> SubCategorys;
+        Category.InventoryItemsSubCategorysArray.GenerateValueArray(SubCategorys);
+
+        for (FInventoryItemSubCategory SubCategory : SubCategorys) {
+            TArray<FString> DataNames;
+            SubCategory.InventoryItemsDataArray.GenerateKeyArray(DataNames);
+
+            for (FString Name : DataNames) {
+                Result.Add(Name, *SubCategory.InventoryItemsDataArray.Find(Name));
+            }
+        }
+    }
+
+    return Result;
+}

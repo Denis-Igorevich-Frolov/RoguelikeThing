@@ -60,4 +60,6 @@ public:
 	const UInventoryItemData* const FindData(FString ModuleName, FString CategoryName, FString SubCategoryName, FString ObjectId);
 	UFUNCTION(BlueprintCallable)
 	TMap<FString, UInventoryItemData*> GetAllObjects();
+	TArray<FString> GetAllModulesName();
+	TMap<FString, UInventoryItemData*> GetAllObjectsFromeModule(FString ModuleName);
 };
