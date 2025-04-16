@@ -14,4 +14,8 @@ class ROGUELIKETHING_API UAbstractInteractionEvent : public UObject
 {
 	GENERATED_BODY()
 	
+public:
+
+	UFUNCTION(BlueprintCallable)
+	virtual void DoThing() PURE_VIRTUAL(UAbstractInteractionEvent::DoThing, );
 };

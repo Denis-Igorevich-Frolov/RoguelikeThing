@@ -16,6 +16,9 @@ class ROGUELIKETHING_API UInteractionConditionUsingItem : public UAbstractIntera
 	GENERATED_BODY()
 
 private:
+	FString ItemModule = "";
+	FString ItemCategory = "";
+	FString ItemSubCategory = "";
 	FString ItemID = "";
 	int Quantity = 0;
 
@@ -23,7 +26,7 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	FString LackOfQuantityText = "";
 
-	void Init(FString itemID, int quantity, FString lackOfQuantityText);
+	void Init(FString itemModule, FString itemCategory, FString itemSubCategory, FString itemID, int quantity, FString lackOfQuantityText);
 
 	CheckConditionResult CheckCondition() override;
 };

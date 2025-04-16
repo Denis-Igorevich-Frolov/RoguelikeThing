@@ -18,6 +18,23 @@ enum class ELogType : uint8 {
     DETAILED      UMETA(DisplayName = "Detailed"),
 };
 
+USTRUCT(BlueprintType)
+struct FCurrentCallingItemInfo
+{
+    GENERATED_BODY()
+
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FString ItemModule;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FString ItemCategory;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FString ItemSubCategory;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    FString ItemID;
+    UPROPERTY(EditAnywhere, BlueprintReadWrite)
+    int ItemQuantity;
+};
+
 UCLASS()
 class ROGUELIKETHING_API UMyGameInstance : public UGameInstance
 {
@@ -33,7 +50,8 @@ public:
     ELogType LogType = ELogType::REGULAR;
 
     UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    FString CurrentCallingItemID;
-    UPROPERTY(EditAnywhere, BlueprintReadWrite)
-    int CurrentCallingItemQuantity;
+    FCurrentCallingItemInfo CurrentCallingItemInfo;
+
+    UFUNCTION(BlueprintImplementableEvent)
+    void AddItemToInventory(const FString& ItemModule, const FString& ItemCategory, const FString& ItemSubCategory, const FString& ItemID, int Quantity);
 };

@@ -202,8 +202,7 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadObje
                     }
                 }
 
-                FInteractionEvent InteractionEvent;
-                InteractionCondition.InteractionEvents.Add(Event->GetTag(), InteractionEvent);
+                InteractionCondition.InteractionEventsText.Add(Event->GetContent());
             }
 
             ExpeditionInteractionObjectData->TermsOfInteractions.Add(InteractionNode->GetTag(), InteractionCondition);
@@ -328,6 +327,7 @@ void UExpeditionInteractionObjectPreparer::GetAllObjectsData(
             for (FString Key : InteractionConditionsKeys) {
                 FInteractionCondition* Condition = Data->TermsOfInteractions.Find(Key);
                 Condition->PrepareConditions(Cont);
+                Condition->PrepareEvents(Cont);
             }
         }
         } };

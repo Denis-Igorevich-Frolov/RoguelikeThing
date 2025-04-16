@@ -4,18 +4,12 @@
 
 #include "RoguelikeThing/GameObjects/ObjectsData/AbstractData.h"
 #include "InteractionConditions/AbstractInteractionCondition.h"
+#include "InteractionEvents/AbstractInteractionEvent.h"
 #include "ExpeditionInteractionObjectData.generated.h"
 
 /*********************************************************************************************************************************
  * Данный класс является классом полного описания всех свойств и ивентов одного отдельно взятого объекта интеракции экспедиции
  *********************************************************************************************************************************/
-
-//Структура ивента, связанного с объектом.		!!!!!На данный момент находящаяся в состоянии зачаточном и существующая для подготовки методов, сопряжённых с её будущим функционалом
-USTRUCT(BlueprintType)
-struct FInteractionEvent
-{
-	GENERATED_BODY()
-};
 
 //Структура условия взаимодействия с объектом.
 USTRUCT(BlueprintType)
@@ -35,9 +29,13 @@ struct FInteractionCondition
 
 	//Эвенты, которые будут выведены при выполнении условия интеракции
 	UPROPERTY(BlueprintReadWrite, SaveGame)
-	TMap<FString, FInteractionEvent> InteractionEvents;
+	TArray<FString> InteractionEventsText;
+	
+	UPROPERTY(BlueprintReadWrite, SaveGame)
+	TArray<UAbstractInteractionEvent*> InteractionEvents;
 
 	void PrepareConditions(UObject* Parent);
+	void PrepareEvents(UObject* Parent);
 };
 
 UCLASS(BlueprintType)
