@@ -69,15 +69,15 @@ void FInteractionCondition::PrepareConditions(UObject* Parent)
 
                 UPROPERTY()
                 UInteractionConditionUsingItem* InteractionCondition = nullptr;
-                AsyncTask(ENamedThreads::GameThread, [&InteractionCondition, ItemModule, ItemCategory, ItemSubCategory, ItemID, Quantity, LackOfQuantityText, Parent, this]() {
+                AsyncTask(ENamedThreads::GameThread, [&InteractionCondition, Parent]() {
                     InteractionCondition = NewObject<UInteractionConditionUsingItem>(Parent);
-                    InteractionCondition->Init(ItemModule, ItemCategory, ItemSubCategory, ItemID, Quantity, LackOfQuantityText);
                     });
 
                 while (!InteractionCondition) {
                     FPlatformProcess::SleepNoStats(0.0f);
                 }
 
+                InteractionCondition->Init(ItemModule, ItemCategory, ItemSubCategory, ItemID, Quantity, LackOfQuantityText);
                 InteractionCondition->ConditionType = ConditionType::USE_ITEM;
 
                 Conditions.Add(InteractionCondition);
@@ -131,15 +131,15 @@ void FInteractionCondition::PrepareEvents(UObject* Parent)
 
             UPROPERTY()
             UAddItemEvent* InteractionEvent = nullptr;
-            AsyncTask(ENamedThreads::GameThread, [&InteractionEvent, ItemModule, ItemCategory, ItemSubCategory, ItemID, Quantity, Parent, this]() {
+            AsyncTask(ENamedThreads::GameThread, [&InteractionEvent, Parent]() {
                 InteractionEvent = NewObject<UAddItemEvent>(Parent);
-                InteractionEvent->Init(ItemModule, ItemCategory, ItemSubCategory, ItemID, Quantity);
                 });
 
             while (!InteractionEvent) {
                 FPlatformProcess::SleepNoStats(0.0f);
             }
 
+            InteractionEvent->Init(ItemModule, ItemCategory, ItemSubCategory, ItemID, Quantity);
             InteractionEvents.Add(InteractionEvent);
         }
     }
