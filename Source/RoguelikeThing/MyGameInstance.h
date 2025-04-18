@@ -54,4 +54,6 @@ public:
 
     UFUNCTION(BlueprintImplementableEvent)
     void AddItemToInventory(const FString& ItemModule, const FString& ItemCategory, const FString& ItemSubCategory, const FString& ItemID, int Quantity);
+    UFUNCTION(BlueprintImplementableEvent)
+    void MakeObjectUsed();
 };

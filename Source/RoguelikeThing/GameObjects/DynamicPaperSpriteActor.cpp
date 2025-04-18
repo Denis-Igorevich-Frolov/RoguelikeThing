@@ -10,8 +10,13 @@ void ADynamicPaperSpriteActor::UpdateTexture(UTexture2D* Texture, ESpritePivotMo
 	UPaperSpriteComponent* Render = Super::GetRenderComponent();
 	Render->SetMobility(EComponentMobility::Stationary);
 	UDynamicPaperSprite* Sprite = dynamic_cast<UDynamicPaperSprite*>(Render->GetSprite());
-	if (!Sprite)
-		Sprite = NewObject<UDynamicPaperSprite>();
+
+	if (Sprite) {
+		Sprite->MarkPendingKill();
+	}
+
+    Sprite = NewObject<UDynamicPaperSprite>();
+
 	Sprite->SetTexture(Texture, Pivot);
 	Render->SetSprite(Sprite);
 }
