@@ -294,6 +294,70 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadObje
             }
         }
 
+        FXmlNode* SoundsNode = ResourcesNode->FindChildNode("Sounds");
+        if (!SoundsNode) {
+            UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadObjectFromXML function - Failed to extract Sounds node from %s node from file %s"), *ResourcesNode->GetTag(), *XMLFilePath);
+
+            Preparer->EmergencyResetOfPointers<UExpeditionInteractionObjectData>(ExpeditionInteractionObjectData);
+
+            if (ModuleName == "Default" && !IsModDir) {
+                UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
+                if (Preparer->RestoringDefaultFileByName(FileName, "Expedition interaction objects", ExpeditionInteractionObjectsList)) {
+                    UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
+                    return Preparer->LoadObjectFromXML(ModuleName, XMLFilePath, FileManager, IsModDir, ++RecursionDepth);
+                }
+                else {
+                    UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadObjectFromXML function - An attempt to restore file %s failed. Abnormal termination."), *XMLFilePath);
+                    FGenericPlatformMisc::RequestExit(false);
+                }
+            }
+            else {
+                FGenericPlatformMisc::RequestExit(false);
+            }
+        }
+
+        TArray<FXmlNode*> Sounds = SoundsNode->GetChildrenNodes();
+        for (FXmlNode* Sound : Sounds) {
+            if (!Sound) {
+                UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadObjectFromXML function - Sound node from %s node from file %s is not valid"), *ResourcesNode->GetTag(), *XMLFilePath);
+
+                Preparer->EmergencyResetOfPointers<UExpeditionInteractionObjectData>(ExpeditionInteractionObjectData);
+
+                if (ModuleName == "Default" && !IsModDir) {
+                    UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
+                    if (Preparer->RestoringDefaultFileByName(FileName, "Expedition interaction objects", ExpeditionInteractionObjectsList)) {
+                        UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
+                        return Preparer->LoadObjectFromXML(ModuleName, XMLFilePath, FileManager, IsModDir, ++RecursionDepth);
+                    }
+                    else {
+                        UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadObjectFromXML function - An attempt to restore file %s failed. Abnormal termination."), *XMLFilePath);
+                        FGenericPlatformMisc::RequestExit(false);
+                    }
+                }
+                else {
+                    FGenericPlatformMisc::RequestExit(false);
+                }
+            }
+
+            if (IsModDir) {
+                TArray<FString> PathPeces;
+                XMLFilePath.ParseIntoArray(PathPeces, TEXT("/"));
+
+                ExpeditionInteractionObjectData->SoundPaths.Add(Sound->GetTag(),
+                    *FString(TEXT("Mods/") + PathPeces[PathPeces.Num() - 5] + "/Expedition interaction objects/" + ModuleName + TEXT("/sounds/") +
+                        ExpeditionInteractionObjectData->id + "/" + Sound->GetContent()));
+
+                UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("%s"), *FString(TEXT("Mods/") + PathPeces[PathPeces.Num() - 5] + "/Expedition interaction objects/" + ModuleName + TEXT("/sounds/") +
+                    ExpeditionInteractionObjectData->id + "/" + Sound->GetContent()));
+            }
+            else {
+                ExpeditionInteractionObjectData->SoundPaths.Add(Sound->GetTag(),
+                    *FString(TEXT("Data/Expedition interaction objects/") + ModuleName + TEXT("/sounds/") + ExpeditionInteractionObjectData->id + "/" + Sound->GetContent()));
+
+                UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("%s"), *FString(TEXT("Data/Expedition interaction objects/") + ModuleName + TEXT("/sounds/") + ExpeditionInteractionObjectData->id + "/" + Sound->GetContent()));
+            }
+        }
+
         if (IsModDir) {
             TArray<FString> PathPeces;
             XMLFilePath.ParseIntoArray(PathPeces, TEXT("/"));

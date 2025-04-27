@@ -5,7 +5,8 @@
 *.db-shm
 *.opendb
 
-/Data/*
+/Data/**/*.sav
+/Data/**/*.xml
 /Mods/*
 /Binaries/*
 /DerivedDataCache/*

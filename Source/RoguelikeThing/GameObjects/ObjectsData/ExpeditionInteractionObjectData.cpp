@@ -95,7 +95,7 @@ void FInteractionCondition::PrepareEvents(UObject* Parent)
 
 
         if (EventPieces.Num() == 1) {
-            if (EventPieces[0] == "Make an object used") {
+            if (EventPieces[0] == "Make the object used") {
                 UPROPERTY()
                 UMakeObjectUsedEvent* InteractionEvent = nullptr;
                 AsyncTask(ENamedThreads::GameThread, [&InteractionEvent, Parent]() {

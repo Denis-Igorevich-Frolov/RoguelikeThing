@@ -33,4 +33,7 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, SaveGame)
 	TMap<FString, FString> TexturePaths;
+
+	UPROPERTY(BlueprintReadWrite, SaveGame)
+	TMap<FString, FString> SoundPaths;
 };

@@ -38,6 +38,7 @@ private:
 				"			<EventsText>Ключ с лёгкостью отпирает замок.</EventsText>\n"
 				"			<Events type=\"array\">\n"
 				"				<Event>Add item[Module:Default, Category:Currency, SubCategory:Common, id:Money, quantity:3000]</Event>\n"
+				"				<Event>Make the object used</Event>\n"
 				"			</Events>\n"
 				"		</KeyInteraction>\n"
 				"\n"
@@ -54,6 +55,9 @@ private:
 				"			<Unused>CloseWoodChest.png</Unused>\n"
 				"			<Used>OpenWoodChest.png</Used>\n"
 				"		</Textures>\n"
+				"		<Sounds type=\"array\">\n"
+				"			<Using>Openning.wav</Using>\n"
+				"		</Sounds>\n"
 				"	</Resources>\n"
 				"</root>\n"
             ))
