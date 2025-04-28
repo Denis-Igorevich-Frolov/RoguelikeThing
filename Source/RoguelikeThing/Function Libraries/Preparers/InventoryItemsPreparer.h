@@ -5,6 +5,7 @@
 #include "RoguelikeThing/Function Libraries/Preparers/AbstractPreparer.h"
 #include "RoguelikeThing/Function Libraries/Preparers/Containers/InventoryItemsContainer.h"
 #include "RoguelikeThing/Lists/InventoryItemsList.h"
+#include "RoguelikeThing/Interfaces/TexturesLoadableInterface.h"
 #include "InventoryItemsPreparer.generated.h"
 
 /****************************************************************************************************************
@@ -15,7 +16,7 @@
 DECLARE_LOG_CATEGORY_EXTERN(InventoryItemsPreparer, Log, All);
 
 UCLASS(BlueprintType)
-class ROGUELIKETHING_API UInventoryItemsPreparer : public UAbstractPreparer
+class ROGUELIKETHING_API UInventoryItemsPreparer : public UAbstractPreparer, public ITexturesLoadableInterface
 {
 	GENERATED_BODY()
 

@@ -5,6 +5,8 @@
 #include "RoguelikeThing/Function Libraries/Preparers/AbstractPreparer.h"
 #include "RoguelikeThing/Lists/ExpeditionInteractionObjectsList.h"
 #include "RoguelikeThing/Function Libraries/Preparers/Containers/ExpeditionInteractionObjectContainer.h"
+#include "RoguelikeThing/Interfaces/TexturesLoadableInterface.h"
+#include "RoguelikeThing/Interfaces/SoundsLoadableInterface.h"
 #include "ExpeditionInteractionObjectPreparer.generated.h"
 
 /*************************************************************************************************************************
@@ -15,7 +17,7 @@
 DECLARE_LOG_CATEGORY_EXTERN(ExpeditionInteractionObjectPreparer, Log, All);
 
 UCLASS(BlueprintType)
-class ROGUELIKETHING_API UExpeditionInteractionObjectPreparer : public UAbstractPreparer
+class ROGUELIKETHING_API UExpeditionInteractionObjectPreparer : public UAbstractPreparer, public ITexturesLoadableInterface, public ISoundsLoadableInterface
 {
 	GENERATED_BODY()
 

@@ -25,6 +25,11 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadObje
         FXmlNode* RootNode, FString FileName, UExpeditionInteractionObjectsList* ExpeditionInteractionObjectsList, FString ModuleName,
         FString XMLFilePath, IPlatformFile& FileManager, bool IsModDir, int RecursionDepth) {
 
+        if (RecursionDepth > 100) {
+            UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadObjectFromXML function - Too many unsuccessful file recovery attempts while trying to load file %s. The Default module files are corrupted. Please check the integrity of your data or reinstall the game."), *XMLFilePath);
+            FGenericPlatformMisc::RequestExit(false);
+        }
+
         FXmlNode* InteractionTextNode = RootNode->FindChildNode("InteractionText");
         if (!InteractionTextNode) {
             UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadObjectFromXML function - Failed to extract InteractionText node from file %s"), *XMLFilePath);
@@ -80,7 +85,7 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadObje
             }
         }
 
-        //Получение списка условий взаимодействия с объектом
+        //Получение списка всех груп условий взаимодействия с объектом
         TArray<FXmlNode*> TermsOfInteractions = TermsOfInteractionsNode->GetChildrenNodes();
         for (FXmlNode* InteractionNode : TermsOfInteractions) {
             if (!InteractionNode) {
@@ -128,11 +133,13 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadObje
                 }
             }
 
+            //Сборка всех подусловий в одно единое множество условий взаимодействия с объектом
             TArray<FXmlNode*> Conditions = ConditionsNode->GetChildrenNodes();
             for (FXmlNode* Condition : Conditions) {
                 InteractionCondition.ConditionsText.Add(Condition->GetContent());
             }
 
+            //Получение текста, которое будет выведено на экран при выполнении вышеописанных условий
             FXmlNode* EventsText = InteractionNode->FindChildNode("EventsText");
             if (!EventsText) {
                 UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadObjectFromXML function - Failed to extract EventsText node from %s node from file %s"), *InteractionNode->GetTag(), *XMLFilePath);
@@ -178,7 +185,7 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadObje
                 }
             }
 
-            //Получение списка эвентов, вызываемых при удовлетворении данного условия взаимодействия
+            //Получение списка эвентов, которые будут выполнены при выполнении вышеописанных условий
             TArray<FXmlNode*> Events = EventsNode->GetChildrenNodes();
             for (FXmlNode* Event : Events) {
                 if (!Event) {
@@ -252,51 +259,9 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadObje
             }
         }
 
-        TArray<FXmlNode*> Textures = TexturesNode->GetChildrenNodes();
-        for (FXmlNode* Texture : Textures) {
-            if (!Texture) {
-                UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadObjectFromXML function - Texture node from %s node from file %s is not valid"), *ResourcesNode->GetTag(), *XMLFilePath);
-
-                Preparer->EmergencyResetOfPointers<UExpeditionInteractionObjectData>(ExpeditionInteractionObjectData);
-
-                if (ModuleName == "Default" && !IsModDir) {
-                    UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
-                    if (Preparer->RestoringDefaultFileByName(FileName, "Expedition interaction objects", ExpeditionInteractionObjectsList)) {
-                        UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
-                        return Preparer->LoadObjectFromXML(ModuleName, XMLFilePath, FileManager, IsModDir, ++RecursionDepth);
-                    }
-                    else {
-                        UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadObjectFromXML function - An attempt to restore file %s failed. Abnormal termination."), *XMLFilePath);
-                        FGenericPlatformMisc::RequestExit(false);
-                    }
-                }
-                else {
-                    FGenericPlatformMisc::RequestExit(false);
-                }
-            }
-
-            if (IsModDir) {
-                TArray<FString> PathPeces;
-                XMLFilePath.ParseIntoArray(PathPeces, TEXT("/"));
-
-                ExpeditionInteractionObjectData->TexturePaths.Add(Texture->GetTag(),
-                    *FString(TEXT("Mods/") + PathPeces[PathPeces.Num() - 5] + "/Expedition interaction objects/" + ModuleName + TEXT("/textures/") +
-                        ExpeditionInteractionObjectData->id + "/" + Texture->GetContent()));
-
-                UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("%s"), *FString(TEXT("Mods/") + PathPeces[PathPeces.Num() - 5] + "/Expedition interaction objects/" + ModuleName + TEXT("/textures/") +
-                    ExpeditionInteractionObjectData->id + "/" + Texture->GetContent()));
-            }
-            else {
-                ExpeditionInteractionObjectData->TexturePaths.Add(Texture->GetTag(),
-                    *FString(TEXT("Data/Expedition interaction objects/") + ModuleName + TEXT("/textures/") + ExpeditionInteractionObjectData->id + "/" + Texture->GetContent()));
-
-                UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("%s"), *FString(TEXT("Data/Expedition interaction objects/") + ModuleName + TEXT("/textures/") + ExpeditionInteractionObjectData->id + "/" + Texture->GetContent()));
-            }
-        }
-
-        FXmlNode* SoundsNode = ResourcesNode->FindChildNode("Sounds");
-        if (!SoundsNode) {
-            UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadObjectFromXML function - Failed to extract Sounds node from %s node from file %s"), *ResourcesNode->GetTag(), *XMLFilePath);
+        if (!Preparer->LoadTextures(ResourcesNode, ExpeditionInteractionObjectData, XMLFilePath, IsModDir, ModuleName,
+            "Expedition interaction objects")) {
+            UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadObjectFromXML function - Failed to load textures specified in file %s"), *XMLFilePath);
 
             Preparer->EmergencyResetOfPointers<UExpeditionInteractionObjectData>(ExpeditionInteractionObjectData);
 
@@ -316,45 +281,25 @@ UExpeditionInteractionObjectData* UExpeditionInteractionObjectPreparer::LoadObje
             }
         }
 
-        TArray<FXmlNode*> Sounds = SoundsNode->GetChildrenNodes();
-        for (FXmlNode* Sound : Sounds) {
-            if (!Sound) {
-                UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadObjectFromXML function - Sound node from %s node from file %s is not valid"), *ResourcesNode->GetTag(), *XMLFilePath);
+        if (!Preparer->LoadSounds(ResourcesNode, ExpeditionInteractionObjectData, XMLFilePath, IsModDir, ModuleName,
+            "Expedition interaction objects")) {
+            UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadObjectFromXML function - Failed to load sounds specified in file %s"), *XMLFilePath);
 
-                Preparer->EmergencyResetOfPointers<UExpeditionInteractionObjectData>(ExpeditionInteractionObjectData);
+            Preparer->EmergencyResetOfPointers<UExpeditionInteractionObjectData>(ExpeditionInteractionObjectData);
 
-                if (ModuleName == "Default" && !IsModDir) {
-                    UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
-                    if (Preparer->RestoringDefaultFileByName(FileName, "Expedition interaction objects", ExpeditionInteractionObjectsList)) {
-                        UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
-                        return Preparer->LoadObjectFromXML(ModuleName, XMLFilePath, FileManager, IsModDir, ++RecursionDepth);
-                    }
-                    else {
-                        UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadObjectFromXML function - An attempt to restore file %s failed. Abnormal termination."), *XMLFilePath);
-                        FGenericPlatformMisc::RequestExit(false);
-                    }
+            if (ModuleName == "Default" && !IsModDir) {
+                UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
+                if (Preparer->RestoringDefaultFileByName(FileName, "Expedition interaction objects", ExpeditionInteractionObjectsList)) {
+                    UE_LOG(ExpeditionInteractionObjectPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
+                    return Preparer->LoadObjectFromXML(ModuleName, XMLFilePath, FileManager, IsModDir, ++RecursionDepth);
                 }
                 else {
+                    UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("!!! An error occurred in the ExpeditionInteractionObjectPreparer class in the LoadObjectFromXML function - An attempt to restore file %s failed. Abnormal termination."), *XMLFilePath);
                     FGenericPlatformMisc::RequestExit(false);
                 }
             }
-
-            if (IsModDir) {
-                TArray<FString> PathPeces;
-                XMLFilePath.ParseIntoArray(PathPeces, TEXT("/"));
-
-                ExpeditionInteractionObjectData->SoundPaths.Add(Sound->GetTag(),
-                    *FString(TEXT("Mods/") + PathPeces[PathPeces.Num() - 5] + "/Expedition interaction objects/" + ModuleName + TEXT("/sounds/") +
-                        ExpeditionInteractionObjectData->id + "/" + Sound->GetContent()));
-
-                UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("%s"), *FString(TEXT("Mods/") + PathPeces[PathPeces.Num() - 5] + "/Expedition interaction objects/" + ModuleName + TEXT("/sounds/") +
-                    ExpeditionInteractionObjectData->id + "/" + Sound->GetContent()));
-            }
             else {
-                ExpeditionInteractionObjectData->SoundPaths.Add(Sound->GetTag(),
-                    *FString(TEXT("Data/Expedition interaction objects/") + ModuleName + TEXT("/sounds/") + ExpeditionInteractionObjectData->id + "/" + Sound->GetContent()));
-
-                UE_LOG(ExpeditionInteractionObjectPreparer, Error, TEXT("%s"), *FString(TEXT("Data/Expedition interaction objects/") + ModuleName + TEXT("/sounds/") + ExpeditionInteractionObjectData->id + "/" + Sound->GetContent()));
+                FGenericPlatformMisc::RequestExit(false);
             }
         }
 

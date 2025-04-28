@@ -17,6 +17,12 @@ UInventoryItemData* UInventoryItemsPreparer::LoadObjectFromXML(
 {
     auto UploadingData{ [](UInventoryItemsPreparer* Preparer, UInventoryItemData* InventoryItemData, FXmlNode* RootNode, FString FileName,
         UInventoryItemsList* InventoryItemsList, FString ModuleName, FString XMLFilePath, IPlatformFile& FileManager, bool IsModDir, int RecursionDepth) {
+
+        if (RecursionDepth > 100) {
+            UE_LOG(InventoryItemsPreparer, Error, TEXT("!!! An error occurred in the InventoryItemsPreparer class in the LoadObjectFromXML function - Too many unsuccessful file recovery attempts while trying to load file %s. The Default module files are corrupted. Please check the integrity of your data or reinstall the game."), *XMLFilePath);
+            FGenericPlatformMisc::RequestExit(false);
+        }
+
         FXmlNode* MaximumAmountInStackNode = RootNode->FindChildNode("MaximumAmountInStack");
         if (!MaximumAmountInStackNode) {
             UE_LOG(InventoryItemsPreparer, Error, TEXT("!!! An error occurred in the InventoryItemsPreparer class in the LoadObjectFromXML function - Failed to extract MaximumAmountInStack node from file %s"), *XMLFilePath);
@@ -213,9 +219,8 @@ UInventoryItemData* UInventoryItemsPreparer::LoadObjectFromXML(
             }
         }
 
-        FXmlNode* TexturesNode = ResourcesNode->FindChildNode("Textures");
-        if (!TexturesNode) {
-            UE_LOG(InventoryItemsPreparer, Error, TEXT("!!! An error occurred in the InventoryItemsPreparer class in the LoadObjectFromXML function - Failed to extract Textures node from %s node from file %s"), *ResourcesNode->GetTag(), *XMLFilePath);
+        if (!Preparer->LoadTextures(ResourcesNode, InventoryItemData, XMLFilePath, IsModDir, ModuleName, "Inventory items")) {
+            UE_LOG(InventoryItemsPreparer, Error, TEXT("!!! An error occurred in the InventoryItemsPreparer class in the LoadObjectFromXML function - Failed to load textures specified in file %s"), *XMLFilePath);
 
             Preparer->EmergencyResetOfPointers<UInventoryItemData>(InventoryItemData);
 
@@ -232,48 +237,6 @@ UInventoryItemData* UInventoryItemsPreparer::LoadObjectFromXML(
             }
             else {
                 FGenericPlatformMisc::RequestExit(false);
-            }
-        }
-
-        TArray<FXmlNode*> Textures = TexturesNode->GetChildrenNodes();
-        for (FXmlNode* Texture : Textures) {
-            if (!Texture) {
-                UE_LOG(InventoryItemsPreparer, Error, TEXT("!!! An error occurred in the InventoryItemsPreparer class in the LoadObjectFromXML function - Texture node from %s node from file %s is not valid"), *ResourcesNode->GetTag(), *XMLFilePath);
-
-                Preparer->EmergencyResetOfPointers<UInventoryItemData>(InventoryItemData);
-
-                if (ModuleName == "Default" && !IsModDir) {
-                    UE_LOG(InventoryItemsPreparer, Log, TEXT("An attempt is made to restore default file %s"), *XMLFilePath);
-                    if (Preparer->RestoringDefaultFileByName(FileName, "Inventory items", InventoryItemsList)) {
-                        UE_LOG(InventoryItemsPreparer, Log, TEXT("The attempt to recover file %s was successful"), *XMLFilePath);
-                        return Preparer->LoadObjectFromXML(ModuleName, XMLFilePath, FileManager, IsModDir, ++RecursionDepth);
-                    }
-                    else {
-                        UE_LOG(InventoryItemsPreparer, Error, TEXT("!!! An error occurred in the InventoryItemsPreparer class in the LoadObjectFromXML function - An attempt to restore file %s failed. Abnormal termination."), *XMLFilePath);
-                        FGenericPlatformMisc::RequestExit(false);
-                    }
-                }
-                else {
-                    FGenericPlatformMisc::RequestExit(false);
-                }
-            }
-
-            if (IsModDir) {
-                TArray<FString> PathPeces;
-                XMLFilePath.ParseIntoArray(PathPeces, TEXT("/"));
-
-                InventoryItemData->TexturePaths.Add(Texture->GetTag(),
-                    *FString(TEXT("Mods/") + PathPeces[PathPeces.Num() - 5] + "/Inventory items/" + ModuleName + TEXT("/textures/") +
-                        InventoryItemData->id + "/" + Texture->GetContent()));
-
-                UE_LOG(InventoryItemsPreparer, Error, TEXT("%s"), *FString(TEXT("Mods/") + PathPeces[PathPeces.Num() - 5] + "/Inventory items/" + ModuleName + TEXT("/textures/") +
-                    InventoryItemData->id + "/" + Texture->GetContent()));
-            }
-            else {
-                InventoryItemData->TexturePaths.Add(Texture->GetTag(),
-                    *FString(TEXT("Data/Inventory items/") + ModuleName + TEXT("/textures/") + InventoryItemData->id + "/" + Texture->GetContent()));
-
-                UE_LOG(InventoryItemsPreparer, Error, TEXT("%s"), *FString(TEXT("Data/Inventory items/") + ModuleName + TEXT("/textures/") + InventoryItemData->id + "/" + Texture->GetContent()));
             }
         }
 
